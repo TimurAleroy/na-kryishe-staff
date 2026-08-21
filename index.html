@@ -626,8 +626,13 @@
   let currentEmployeeName = '';
   let currentJobRole = '';
   let ASSIGNABLE_ROLES_CLIENT = ['Кальянщик', 'Бармен', 'Повар', 'Официант', 'Администратор']; // запасной список, если запрос к серверу не успеет
-  // Скрытый вход в анонимный опрос eNPS — только по QR-коду из служебного помещения (?enps=1)
-  const enpsMode = new URLSearchParams(window.location.search).get('enps') === '1';
+  // Скрытый вход в анонимный опрос eNPS — только по QR-коду из служебного помещения (?enps=1).
+  // Если ссылку открывают через Telegram-механизм startapp (не обычный URL) — параметр
+  // приходит не в window.location.search, а в initDataUnsafe.start_param, проверяем оба варианта.
+  const urlWantsEnps = new URLSearchParams(window.location.search).get('enps') === '1';
+  const tgStartParamEnps = tg?.initDataUnsafe?.start_param || '';
+  const tgWantsEnps = tgStartParamEnps === 'enps' || tgStartParamEnps.includes('enps');
+  const enpsMode = urlWantsEnps || tgWantsEnps;
 
   async function attemptLogin() {
     try {
