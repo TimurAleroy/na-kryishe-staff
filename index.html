@@ -256,6 +256,7 @@
     .menu-item-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
     .menu-item-row:last-child { border-bottom: none; }
     .menu-item-name.unavailable { color: var(--text-muted); text-decoration: line-through; }
+    .menu-subsec { font-family: 'Jost', sans-serif; font-size: 12px; letter-spacing: 0.5px; color: var(--text-sub); margin: 10px 0 2px; font-weight: 300; }
 
     /* OVERLAY */
     .overlay {
@@ -1440,18 +1441,33 @@
       });
 
       const CATEGORY_ORDER = ['Кальян', 'Еда', 'Напитки'];
-      el.innerHTML = CATEGORY_ORDER.filter(c => byCategory[c]?.length).map(cat => {
-        const canEdit = canEditMenuCategory(cat);
-        const rows = byCategory[cat].map(it => `
-          <div class="menu-item-row">
+
+      function renderRow(it) {
+        const canEdit = canEditMenuCategory(it.category);
+        return `<div class="menu-item-row">
             <div class="menu-item-name${it.available ? '' : ' unavailable'}">${it.name}</div>
             <div class="avail-toggle${it.available ? ' on' : ''}${canEdit ? '' : ' disabled'}"
               ${canEdit ? `onclick="toggleMenuItem(this, '${it.id}', ${it.available})"` : ''}>
               <div class="avail-knob"></div>
             </div>
-          </div>
-        `).join('');
-        return `<div class="sec" style="margin-top:18px;">${cat}</div>${rows}`;
+          </div>`;
+      }
+
+      el.innerHTML = CATEGORY_ORDER.filter(c => byCategory[c]?.length).map(cat => {
+        const catItems = byCategory[cat];
+        const plain = catItems.filter(it => !it.subcategory);
+        const grouped = catItems.filter(it => it.subcategory);
+
+        const subOrder = [];
+        grouped.forEach(it => { if (!subOrder.includes(it.subcategory)) subOrder.push(it.subcategory); });
+
+        const plainHtml = plain.map(renderRow).join('');
+        const groupedHtml = subOrder.map(sub => {
+          const subItems = grouped.filter(it => it.subcategory === sub);
+          return `<div class="menu-subsec">${sub}</div>${subItems.map(renderRow).join('')}`;
+        }).join('');
+
+        return `<div class="sec" style="margin-top:18px;">${cat}</div>${plainHtml}${groupedHtml}`;
       }).join('');
     } catch {
       el.innerHTML = '<div class="empty-state">Не удалось загрузить меню</div>';
