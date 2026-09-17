@@ -304,6 +304,14 @@
     .overlay-btn.primary { background: var(--accent-dim); border-color: rgba(184,115,51,0.35); color: var(--accent); }
 
     .loading { text-align: center; padding: 30px; color: var(--text-muted); font-size: 13px; }
+
+    /* ДЕСКТОП: Telegram Mini App всегда открывается в узком вьюпорте (как на
+       телефоне), так что это правило там никогда не сработает — трогает
+       только обычный браузер на компьютере. */
+    @media (min-width: 700px) {
+      body { max-width: 900px; }
+      .grid-2 { grid-template-columns: repeat(3, 1fr); }
+    }
   </style>
 </head>
 <body>
