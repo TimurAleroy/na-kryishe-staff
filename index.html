@@ -305,12 +305,28 @@
 
     .loading { text-align: center; padding: 30px; color: var(--text-muted); font-size: 13px; }
 
+    /* Элементы, которые существуют только в десктопной версии — на мобильном
+       и в Telegram их вообще нет в раскладке, просто спрятаны */
+    .desktop-only { display: none; }
+
     /* ДЕСКТОП: Telegram Mini App всегда открывается в узком вьюпорте (как на
        телефоне), так что это правило там никогда не сработает — трогает
        только обычный браузер на компьютере. */
     @media (min-width: 700px) {
       body { max-width: 900px; }
       .grid-2 { grid-template-columns: repeat(3, 1fr); }
+      .desktop-only { display: block; }
+
+      .gt-toolbar { display: flex; gap: 10px; align-items: center; margin: 14px 0; flex-wrap: wrap; }
+      .gt-toolbar input[type="text"] { flex: 1; min-width: 200px; }
+      .gt-row {
+        display: grid; grid-template-columns: 2fr 1fr 1.4fr 1.2fr;
+        gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--border);
+        align-items: center; font-size: 13px; cursor: pointer;
+      }
+      .gt-row:hover { background: var(--bg-card-hover); }
+      .gt-head { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); cursor: default; }
+      .gt-head:hover { background: none; }
     }
   </style>
 </head>
@@ -526,6 +542,33 @@
     <div><h1 style="font-size:14px;letter-spacing:1px;">Статистика</h1></div>
   </div>
   <div style="padding:0 16px" id="statsContent"><div class="loading">Загружаю...</div></div>
+  <div style="padding:0 16px" id="statsDesktopDashboard" class="desktop-only"></div>
+</div>
+
+<!-- ГОСТИ: ЕДИНАЯ ТАБЛИЦА (только десктоп) -->
+<div class="screen" id="screen-guests-table">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('home')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Гости</h1></div>
+  </div>
+  <div style="padding:0 16px">
+    <div class="gt-toolbar">
+      <input type="text" class="form-input" id="gtSearch" placeholder="Поиск по имени" oninput="gtUpdateFilter('search', this.value)">
+      <select class="form-input" id="gtStatus" style="max-width:160px;" onchange="gtUpdateFilter('status', this.value)">
+        <option value="Все">Все статусы</option>
+        <option value="VIP">VIP</option>
+        <option value="Постоянный">Постоянный</option>
+        <option value="Редкий">Редкий</option>
+      </select>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-sub);cursor:pointer;white-space:nowrap;">
+        <input type="checkbox" id="gtAtRisk" onchange="gtUpdateFilter('onlyAtRisk', this.checked)"> Только риск оттока
+      </label>
+      <button class="btn-primary" style="white-space:nowrap;" onclick="exportGuestsTableXlsx()">Скачать .xlsx</button>
+    </div>
+    <div id="guestsTableContent"><div class="loading">Загружаю...</div></div>
+  </div>
 </div>
 
 <!-- RECENT GUESTS -->
@@ -829,8 +872,8 @@
     const roleLabel = document.getElementById('roleLabel');
     const grid = document.getElementById('quickActionsGrid');
 
-    const qcard = (icon, title, sub, onclick) => `
-      <div class="qcard" onclick="${onclick}">
+    const qcard = (icon, title, sub, onclick, extraClass) => `
+      <div class="qcard${extraClass ? ' ' + extraClass : ''}" onclick="${onclick}">
         <div class="qcard-icon">${icon}</div>
         <div class="qcard-title">${title}</div>
         <div class="qcard-sub">${sub}</div>
@@ -844,6 +887,7 @@
       problem: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2L2 20h20L12 2z"/><line x1="12" y1="10" x2="12" y2="14"/><line x1="12" y1="17" x2="12" y2="17"/></svg>',
       events: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M12 3l1.3 5.7L19 10l-5.7 1.3L12 17l-1.3-5.7L5 10l5.7-1.3L12 3z"/></svg>',
       stats: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="6" y1="20" x2="6" y2="12"/><line x1="12" y1="20" x2="12" y2="6"/><line x1="18" y1="20" x2="18" y2="14"/></svg>',
+      guestsTable: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="10" x2="9" y2="20"/></svg>',
       checklist: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>',
       schedule: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>',
       stoplist: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="9"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
@@ -866,6 +910,7 @@
       html += qcard(icons.inactive, 'Давно не было', '30+ дней', "openInactiveGuests()");
       html += qcard(icons.events, 'Афиша', 'Мероприятия', "openEvents()");
       html += qcard(icons.stats, 'Статистика', 'CSI · NPS · eNPS', "openStats()");
+      html += qcard(icons.guestsTable, 'Гости', 'Таблица', "openGuestsTable()", 'desktop-only');
     } else {
       roleLabel.textContent = nameLabel;
     }
@@ -1566,8 +1611,186 @@
       }
 
       el.innerHTML = html;
+
+      // Десктопная динамика — отдельный запрос, чтобы мобильный не тратил на него трафик впустую
+      if (window.innerWidth >= 700) loadStatsDesktopDashboard();
     } catch {
       el.innerHTML = '<div class="empty-state">Не удалось загрузить статистику</div>';
+    }
+  }
+
+  // ─── ДЕСКТОП: НЕДЕЛЬНАЯ ДИНАМИКА ────────────────────
+
+  function formatWeekShort(iso) {
+    const [, m, d] = iso.split('-');
+    return `${d}.${m}`;
+  }
+
+  function miniBarChart(series, key, opts) {
+    opts = opts || {};
+    const vals = series.map(w => w[key]);
+    if (!vals.some(v => v !== null)) return '<div class="empty-state" style="padding:8px 0;font-size:12px;">Недостаточно данных</div>';
+    const validVals = vals.filter(v => v !== null);
+    const max = opts.max !== undefined ? opts.max : Math.max(...validVals);
+    const min = opts.min !== undefined ? opts.min : Math.min(0, Math.min(...validVals));
+    const range = (max - min) || 1;
+
+    const bars = series.map(w => {
+      const v = w[key];
+      const pct = v === null ? 0 : Math.max(3, ((v - min) / range) * 100);
+      return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="font-size:10px;color:var(--text-sub);">${v !== null ? v : '—'}</div>
+        <div style="width:100%;max-width:26px;height:60px;display:flex;align-items:flex-end;">
+          <div style="width:100%;height:${pct}%;background:var(--accent);border-radius:4px 4px 0 0;opacity:${v === null ? 0.15 : 1};"></div>
+        </div>
+        <div style="font-size:9px;color:var(--text-muted);">${formatWeekShort(w.week)}</div>
+      </div>`;
+    }).join('');
+
+    return `<div style="display:flex;align-items:flex-end;gap:4px;">${bars}</div>`;
+  }
+
+  function weekComparison(series, key, unit) {
+    if (series.length < 2) return '';
+    const last = series[series.length - 1][key];
+    const prev = series[series.length - 2][key];
+    if (last === null || prev === null) return '';
+    const diff = Math.round((last - prev) * 10) / 10;
+    if (diff === 0) return `<div style="font-size:11px;color:var(--text-muted);margin-top:4px;">→ без изменений к прошлой неделе</div>`;
+    const arrow = diff > 0 ? '↑' : '↓';
+    const color = diff > 0 ? 'var(--accent)' : '#8B4A3D';
+    return `<div style="font-size:11px;color:${color};margin-top:4px;">${arrow} ${diff > 0 ? '+' : ''}${diff}${unit || ''} к прошлой неделе</div>`;
+  }
+
+  async function loadStatsDesktopDashboard() {
+    const wrap = document.getElementById('statsDesktopDashboard');
+    wrap.innerHTML = '<div class="loading">Считаю динамику...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/stats-weekly?pin=${getPin()}`);
+      const data = await res.json();
+      const series = data.weeks || [];
+      if (!series.length) { wrap.innerHTML = ''; return; }
+
+      const block = (title, key, opts, unit) => `
+        <div style="margin-bottom:16px;">
+          <div style="font-size:11px;letter-spacing:0.5px;color:var(--text-sub);margin-bottom:6px;">${title}</div>
+          ${miniBarChart(series, key, opts)}
+          ${weekComparison(series, key, unit)}
+        </div>`;
+
+      let html = '<div class="sec">Динамика · последние недели</div>';
+      html += block('CSI (0–10)', 'csi', { min: 0, max: 10 }, '');
+      html += block('NPS гостей', 'nps', { min: -100, max: 100 }, '');
+      html += block('eNPS команды', 'enps', { min: -100, max: 100 }, '');
+      html += block('Визиты', 'visits', { min: 0 }, '');
+
+      wrap.innerHTML = html;
+    } catch {
+      wrap.innerHTML = '';
+    }
+  }
+
+  // ─── ДЕСКТОП: ЕДИНАЯ ТАБЛИЦА ГОСТЕЙ ──────────────────
+
+  let guestsTableData = [];
+  let guestsTableFilter = { search: '', status: 'Все', onlyAtRisk: false };
+
+  async function openGuestsTable() {
+    showScreen('guests-table');
+    const el = document.getElementById('guestsTableContent');
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/guests-table?pin=${getPin()}`);
+      if (res.status === 401 || res.status === 403) { showScreen('pin'); return; }
+      guestsTableData = await res.json();
+      renderGuestsTable();
+    } catch {
+      el.innerHTML = '<div class="empty-state">Не удалось загрузить список</div>';
+    }
+  }
+
+  function gtUpdateFilter(key, value) {
+    guestsTableFilter[key] = value;
+    renderGuestsTable();
+  }
+
+  function gtFilteredRows() {
+    let rows = guestsTableData;
+    if (guestsTableFilter.search) {
+      const q = guestsTableFilter.search.toLowerCase();
+      rows = rows.filter(g => g.name.toLowerCase().includes(q));
+    }
+    if (guestsTableFilter.status !== 'Все') {
+      rows = rows.filter(g => g.status === guestsTableFilter.status);
+    }
+    if (guestsTableFilter.onlyAtRisk) {
+      rows = rows.filter(g => g.atRisk);
+    }
+    return rows;
+  }
+
+  function renderGuestsTable() {
+    const el = document.getElementById('guestsTableContent');
+    const rows = gtFilteredRows();
+
+    if (!rows.length) {
+      el.innerHTML = '<div class="empty-state">Никого не найдено</div>';
+      return;
+    }
+
+    const header = `<div class="gt-row gt-head">
+      <div>Имя</div><div>Статус</div><div>Последний визит</div><div>Метка</div>
+    </div>`;
+
+    const body = rows.map(g => {
+      const lastVisitLabel = g.lastVisit
+        ? `${formatWeekShort(g.lastVisit)}${g.daysSince !== null ? ' · ' + g.daysSince + ' дн. назад' : ''}`
+        : 'Визитов не было';
+      return `<div class="gt-row" onclick="openGuestCard('${g.id}')">
+        <div>${g.name}</div>
+        <div>${g.status || '—'}</div>
+        <div>${lastVisitLabel}</div>
+        <div>${g.atRisk ? '<span style="color:#8B4A3D;">Риск оттока</span>' : ''}</div>
+      </div>`;
+    }).join('');
+
+    el.innerHTML = header + body;
+  }
+
+  // Библиотека для .xlsx грузится только по клику на кнопку — мобильный
+  // пользователь (у него и кнопки-то нет) никогда её не скачивает.
+  let xlsxLibPromise = null;
+  function ensureXlsxLib() {
+    if (window.XLSX) return Promise.resolve();
+    if (xlsxLibPromise) return xlsxLibPromise;
+    xlsxLibPromise = new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+    return xlsxLibPromise;
+  }
+
+  async function exportGuestsTableXlsx() {
+    try {
+      await ensureXlsxLib();
+      const rows = gtFilteredRows().map(g => ({
+        'Имя': g.name,
+        'Телефон': g.phone,
+        'Статус': g.status,
+        'Последний визит': g.lastVisit || '',
+        'Дней с визита': g.daysSince !== null ? g.daysSince : '',
+        'Риск оттока': g.atRisk ? 'Да' : ''
+      }));
+      const ws = XLSX.utils.json_to_sheet(rows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Гости');
+      const dateLabel = new Date().toISOString().split('T')[0];
+      XLSX.writeFile(wb, `na-kryishe-guests-${dateLabel}.xlsx`);
+    } catch {
+      alert('Не удалось сформировать файл — проверьте соединение');
     }
   }
 
@@ -1797,7 +2020,7 @@
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'events', 'add-event', 'stats', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist'];
+  const screens = ['pin', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'events', 'add-event', 'stats', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table'];
   function showScreen(name) {
     screens.forEach(s => document.getElementById('screen-' + s)?.classList.remove('active'));
     document.getElementById('screen-' + name)?.classList.add('active');
