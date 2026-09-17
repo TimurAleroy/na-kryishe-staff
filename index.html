@@ -748,7 +748,7 @@
   let currentRole = 'staff';
   let currentEmployeeName = '';
   let currentJobRole = '';
-  let ASSIGNABLE_ROLES_CLIENT = ['Кальянщик', 'Бармен', 'Повар', 'Официант', 'Администратор']; // запасной список, если запрос к серверу не успеет
+  let ASSIGNABLE_ROLES_CLIENT = ['КМ', 'Бармен', 'Повар', 'Официант', 'Администратор']; // запасной список, если запрос к серверу не успеет
   // Скрытый вход в анонимный опрос eNPS — только по QR-коду из служебного помещения (?enps=1).
   // Если ссылку открывают через Telegram-механизм startapp (не обычный URL) — параметр
   // приходит не в window.location.search, а в initDataUnsafe.start_param, проверяем оба варианта.
@@ -1398,7 +1398,7 @@
   // ─── СТОП-ЛИСТ (снятие позиций меню "В наличии") ────
   // Смотрят все, переключает только тот, чья категория — та же логика роль→категория,
   // что и на сервере (сервер всё равно перепроверяет сам, это только для интерфейса).
-  const MENU_CATEGORY_EDIT_ROLE = { 'Напитки': 'Бармен', 'Еда': 'Повар', 'Кальян': 'Кальянщик' };
+  const MENU_CATEGORY_EDIT_ROLE = { 'Напитки': 'Бармен', 'Еда': 'Повар', 'Кальян': 'КМ' };
   function canEditMenuCategory(category) {
     return currentJobRole === 'Администратор' || MENU_CATEGORY_EDIT_ROLE[category] === currentJobRole;
   }
