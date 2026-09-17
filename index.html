@@ -414,7 +414,7 @@
   </div>
 </div>
 
-<!-- ГРАФИК СМЕН. Сотрудник видит только свой месяц, админ — всю команду и правит смены -->
+<!-- ГРАФИК СМЕН. Вся команда видит, кто с кем работает; правит только администратор -->
 <div class="screen" id="screen-schedule">
   <div class="header">
     <div class="back-btn" onclick="showScreen('home')">
@@ -832,7 +832,7 @@
     html += qcard(icons.problem, 'Проблема', 'Сообщить', "openReportProblem()");
     html += qcard(icons.problem, 'Проблемы', 'Открытые', "openProblems()");
     html += qcard(icons.checklist, 'Чек-лист', 'Смена', "openChecklist()");
-    html += qcard(icons.schedule, 'График', 'Смены', "openSchedule()");
+    html += qcard(icons.schedule, 'График', 'Кто когда работает', "openSchedule()");
     html += qcard(icons.stoplist, 'Стоп-лист', 'Меню', "openStoplist()");
 
     const nameLabel = currentEmployeeName ? `${currentEmployeeName} · ${currentJobRole}` : (currentRole === 'admin' ? 'Администратор · Гости' : 'Персонал · Гости');
@@ -1114,9 +1114,8 @@
   }
 
   // ─── ГРАФИК СМЕН (замена Supershift) ────────────
-  // Сотрудник видит только свой месяц (сервер и так фильтрует чужие данные),
-  // администратор — всю команду. Интерфейс — сетка месяца в духе Supershift:
-  // один взгляд на месяц, у каждого дня — статус. Правит только администратор.
+  // Вся команда видит весь месяц — кто с кем работает. Правит только администратор.
+  // Интерфейс — сетка месяца в духе Supershift: один взгляд на месяц, у каждого дня — статус.
 
   let scheduleMonthOffset = 0;
   let scheduleEmployeesCache = null; // [{id, name, role}] — грузит только админ, для формы
@@ -1205,9 +1204,8 @@
     document.getElementById('scheduleMonthLabel').textContent = `${MONTHS_NOM[month]} ${year}`;
 
     try {
-      const isAdmin = currentRole === 'admin';
       const [employees, shiftsRes] = await Promise.all([
-        isAdmin ? ensureScheduleEmployees() : Promise.resolve([]),
+        ensureScheduleEmployees(),
         fetch(`${PROXY_BASE}/api/staff/schedule?pin=${getPin()}&from=${from}&to=${to}`)
       ]);
       if (shiftsRes.status === 401) { showScreen('pin'); return; }
@@ -1230,10 +1228,12 @@
         if (c.iso === today) classes.push('today');
         if (c.iso === selectedScheduleDate) classes.push('selected');
 
+        // Один человек в этот день — видно сразу его статус цветом.
+        // Несколько — точный список только по тапу, в ячейке просто счётчик.
         let indicator = '';
-        if (dayShifts.length === 1 && !isAdmin) {
+        if (dayShifts.length === 1) {
           indicator = `<div class="cal-day-dot" style="background:${SHIFT_STATUS_COLOR[dayShifts[0].status] || 'var(--accent)'}"></div>`;
-        } else if (dayShifts.length) {
+        } else if (dayShifts.length > 1) {
           indicator = `<div class="cal-day-badge">${dayShifts.length}</div>`;
         }
 
@@ -1273,40 +1273,27 @@
     const dayShifts = scheduleShiftsByDate[selectedScheduleDate] || [];
     const heading = `<div class="sec" style="margin:0 0 8px;">${formatDayHeading(selectedScheduleDate)}</div>`;
 
-    if (!isAdmin) {
-      // Сотрудник видит только собственную запись (сервер уже отфильтровал остальное)
-      if (!dayShifts.length) {
-        panel.innerHTML = heading + `<div style="color:var(--text-muted);font-size:13px;">Смена не назначена</div>`;
-        return;
-      }
-      const s = dayShifts[0];
-      const isOff = s.status !== 'Работает';
-      panel.innerHTML = heading + `<div class="history-item">
-        <div>
-          <div class="history-text"><span class="cal-status-dot" style="background:${SHIFT_STATUS_COLOR[s.status]}"></span>${s.status}${s.time ? ' · ' + s.time : ''}</div>
-          ${s.note ? `<div class="history-date">${s.note}</div>` : ''}
-        </div>
-      </div>`;
-      return;
-    }
-
-    // Админ: полный список смен этого дня + возможность добавить/изменить
+    // Вся команда видит один и тот же список; кликабельность и кнопка добавления — только у админа.
     const rowsHtml = dayShifts.length
       ? dayShifts.map(s => {
           const emp = scheduleEmployeesById[s.employeeId];
           const empName = emp ? emp.name : 'Сотрудник';
           const isOff = s.status !== 'Работает';
-          return `<div class="history-item" onclick="openAddShift('${selectedScheduleDate}','${s.id}')" style="cursor:pointer;">
+          const clickAttr = isAdmin ? `onclick="openAddShift('${selectedScheduleDate}','${s.id}')" style="cursor:pointer;"` : '';
+          return `<div class="history-item" ${clickAttr}>
             <div>
               <div class="history-text"><span class="cal-status-dot" style="background:${SHIFT_STATUS_COLOR[s.status]}"></span>${empName}</div>
-              <div class="history-date">${isOff ? s.status : (s.time || 'Работает')}</div>
+              <div class="history-date">${isOff ? s.status : (s.time || emp?.role || 'Работает')}</div>
             </div>
           </div>`;
         }).join('')
       : `<div style="padding:4px 0 12px;color:var(--text-muted);font-size:12px;">Смены не назначены</div>`;
 
-    panel.innerHTML = heading + rowsHtml +
-      `<button class="btn-primary btn-full" style="margin-top:10px;" onclick="openAddShift('${selectedScheduleDate}')">+ Добавить смену</button>`;
+    const addBtn = isAdmin
+      ? `<button class="btn-primary btn-full" style="margin-top:10px;" onclick="openAddShift('${selectedScheduleDate}')">+ Добавить смену</button>`
+      : '';
+
+    panel.innerHTML = heading + rowsHtml + addBtn;
   }
 
   async function openAddShift(dateISO, shiftId) {
