@@ -493,6 +493,28 @@
   <div style="padding:0 16px" id="problemsContent"><div class="loading">Загружаю...</div></div>
 </div>
 
+<!-- БРОНИ (бот + сайт — единый список) -->
+<div class="screen" id="screen-bookings">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('home')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><path d="M8 14l2 2 4-4"/></svg>Брони</h1></div>
+  </div>
+  <div style="padding:0 16px" id="bookingsContent"><div class="loading">Загружаю...</div></div>
+</div>
+
+<!-- БРОНЬ: ДЕТАЛИ -->
+<div class="screen" id="screen-booking-detail">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('bookings')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Бронь</h1></div>
+  </div>
+  <div style="padding:0 16px" id="bookingDetailContent"></div>
+</div>
+
 <!-- ADMIN: EVENTS -->
 <div class="screen" id="screen-events">
   <div class="header">
@@ -978,7 +1000,8 @@
       guestsTable: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="10" x2="9" y2="20"/></svg>',
       checklist: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>',
       schedule: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>',
-      stoplist: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="9"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+      stoplist: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="9"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+      bookings: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><path d="M8 14l2 2 4-4"/></svg>'
     };
 
     let html = '';
@@ -995,6 +1018,7 @@
 
     if (currentRole === 'admin') {
       roleLabel.textContent = nameLabel;
+      html += qcard(icons.bookings, 'Брони', 'Столы и мероприятия', "openBookings()");
       html += qcard(icons.inactive, 'Давно не было', '30+ дней', "openInactiveGuests()");
       html += qcard(icons.events, 'Афиша', 'Мероприятия', "openEvents()");
       html += qcard(icons.stats, 'Статистика', 'CSI · NPS · eNPS', "openStats()");
@@ -1035,6 +1059,186 @@
   }
 
   // ─── АДМИН: ПРОБЛЕМЫ ───────────────────────────
+
+  // ─── БРОНИ (бот + сайт — читаем единый список, редактируем через Telegram) ──
+
+  let bookingsListData = [];
+  let currentBookingIndex = null;
+  let bookingEditMode = false;
+  let bookingActionNotice = null;
+
+  const BOOKING_STATUS_STYLE = {
+    confirmed: { color: '#4ade80', label: 'Подтверждено' },
+    pending: { color: '#f59e0b', label: 'Ожидает подтверждения' }
+  };
+
+  async function openBookings() {
+    showScreen('bookings');
+    const el = document.getElementById('bookingsContent');
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/bookings?pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      bookingsListData = await res.json();
+      renderBookingsList();
+    } catch {
+      el.innerHTML = '<div class="empty-state">Не удалось загрузить брони</div>';
+    }
+  }
+
+  function renderBookingsList() {
+    const el = document.getElementById('bookingsContent');
+    if (!bookingsListData.length) {
+      el.innerHTML = '<div class="empty-state">Броней пока нет</div>';
+      return;
+    }
+
+    el.innerHTML = bookingsListData.map((b, idx) => {
+      const st = BOOKING_STATUS_STYLE[b.status] || BOOKING_STATUS_STYLE.pending;
+      const kindLine = b.eventName ? `${b.kind} · ${b.eventName}` : b.kind;
+      return `
+        <div class="visit-item" onclick="openBookingDetail(${idx})" style="cursor:pointer;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <div class="visit-date">${b.display}</div>
+            <span style="flex-shrink:0;font-size:9.5px;letter-spacing:0.5px;text-transform:uppercase;color:${st.color};border:1px solid ${st.color};border-radius:100px;padding:2px 8px;white-space:nowrap;">${st.label}</span>
+          </div>
+          <div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>${b.name}${b.guests ? ` · ${b.guests} гост.` : ''}</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px;">${kindLine}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function openBookingDetail(idx) {
+    currentBookingIndex = idx;
+    bookingEditMode = false;
+    bookingActionNotice = null;
+    showScreen('booking-detail');
+    renderBookingDetail();
+  }
+
+  function renderBookingDetail() {
+    const b = bookingsListData[currentBookingIndex];
+    const el = document.getElementById('bookingDetailContent');
+    if (!b) { el.innerHTML = '<div class="empty-state">Бронь не найдена</div>'; return; }
+
+    const st = BOOKING_STATUS_STYLE[b.status] || BOOKING_STATUS_STYLE.pending;
+    const kindLine = b.eventName ? `${b.kind} · ${b.eventName}` : b.kind;
+    const noticeHtml = bookingActionNotice
+      ? `<div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.35);color:#f59e0b;border-radius:12px;padding:10px 14px;font-size:12.5px;margin-bottom:14px;line-height:1.5;">${bookingActionNotice}</div>`
+      : '';
+
+    if (bookingEditMode) {
+      const dtParts = (b.iso || '').split('T');
+      const currentDate = dtParts[0] || '';
+      const currentTime = (dtParts[1] || '').slice(0, 5);
+      el.innerHTML = `
+        ${noticeHtml}
+        <div class="guest-name">${b.name}</div>
+        <div class="form-group" style="margin-top:14px;"><label class="form-label">Дата</label><input class="form-input" type="date" id="bkEditDate" value="${currentDate}"></div>
+        <div class="form-group"><label class="form-label">Время</label><input class="form-input" type="time" id="bkEditTime" value="${currentTime}"></div>
+        <div class="form-group"><label class="form-label">Гостей</label><input class="form-input" type="number" min="1" id="bkEditGuests" value="${b.guests || ''}"></div>
+        <div class="form-group"><label class="form-label">Комментарий</label><textarea class="form-input" id="bkEditComment">${b.comment || ''}</textarea></div>
+        <button class="btn-primary btn-full" onclick="saveBookingEdit()">Сохранить</button>
+        <button class="btn-primary btn-full" style="margin-top:8px;background:transparent;" onclick="bookingEditMode=false;renderBookingDetail();">Отмена</button>
+      `;
+      return;
+    }
+
+    el.innerHTML = `
+      ${noticeHtml}
+      <div class="guest-name">${b.name}</div>
+      <div class="status-pill" style="background:${st.color}22;color:${st.color};border:1px solid ${st.color}55;">${st.label}</div>
+
+      <div class="visit-item" style="margin-top:14px;">
+        <div class="visit-date">${b.display}</div>
+        <div class="visit-detail">${kindLine}</div>
+        ${b.guests ? `<div class="visit-detail">Гостей: ${b.guests}</div>` : ''}
+        ${b.comment ? `<div class="visit-detail">💬 ${b.comment}</div>` : ''}
+        <div class="visit-detail"><a href="tel:${b.phone}" style="color:var(--text-sub);text-decoration:none;">📱 ${b.phone || 'Телефон не указан'}</a></div>
+      </div>
+
+      ${b.status === 'pending' ? `<button class="btn-primary btn-full" id="bkConfirmBtn" onclick="confirmBookingAction()">✅ Подтвердить</button>` : ''}
+      <button class="btn-primary btn-full" style="margin-top:8px;" onclick="openBookingEdit()">✏️ Изменить</button>
+      <button class="btn-primary btn-full" style="margin-top:8px;background:rgba(239,68,68,0.12);color:#ef4444;border-color:rgba(239,68,68,0.35);" onclick="cancelBookingAction()">❌ Отменить бронь</button>
+    `;
+  }
+
+  function openBookingEdit() {
+    bookingEditMode = true;
+    renderBookingDetail();
+  }
+
+  async function confirmBookingAction() {
+    const b = bookingsListData[currentBookingIndex];
+    const btn = document.getElementById('bkConfirmBtn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Подтверждаем...'; }
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/bookings/confirm?pin=${getPin()}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), phone: b.phone, entry: b.entry })
+      });
+      const data = await res.json();
+      if (!res.ok) { alert(data.error || 'Не удалось подтвердить'); renderBookingDetail(); return; }
+      b.status = 'confirmed';
+      bookingActionNotice = data.notified ? null : 'Подтверждено, но гостя уведомить не удалось — свяжитесь сами.';
+      renderBookingDetail();
+    } catch {
+      alert('Не удалось подтвердить');
+      renderBookingDetail();
+    }
+  }
+
+  async function cancelBookingAction() {
+    if (!confirm('Отменить эту бронь?')) return;
+    const b = bookingsListData[currentBookingIndex];
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/bookings/cancel?pin=${getPin()}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), phone: b.phone, entry: b.entry })
+      });
+      const data = await res.json();
+      if (!res.ok) { alert(data.error || 'Не удалось отменить'); return; }
+      bookingsListData.splice(currentBookingIndex, 1);
+      showScreen('bookings');
+      renderBookingsList();
+      if (!data.notified) alert('Бронь отменена, но гостя уведомить не удалось — свяжитесь сами.');
+    } catch {
+      alert('Не удалось отменить');
+    }
+  }
+
+  async function saveBookingEdit() {
+    const b = bookingsListData[currentBookingIndex];
+    const dateVal = document.getElementById('bkEditDate').value;
+    const timeVal = document.getElementById('bkEditTime').value;
+    const guestsVal = document.getElementById('bkEditGuests').value;
+    const commentVal = document.getElementById('bkEditComment').value;
+    if (!dateVal || !timeVal) { alert('Укажите дату и время'); return; }
+
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/bookings/edit?pin=${getPin()}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), phone: b.phone, entry: b.entry, dateISO: dateVal, time: timeVal, guests: guestsVal, comment: commentVal })
+      });
+      const data = await res.json();
+      if (!res.ok) { alert(data.error || 'Не удалось сохранить'); return; }
+      b.entry = data.newEntry;
+      b.display = data.newDisplayText;
+      b.status = 'confirmed';
+      b.iso = `${dateVal}T${timeVal}:00`;
+      b.guests = guestsVal ? Number(guestsVal) : null;
+      b.comment = commentVal || '';
+      bookingActionNotice = data.notified ? null : 'Изменено, но гостя уведомить не удалось — свяжитесь сами.';
+      bookingEditMode = false;
+      renderBookingDetail();
+    } catch {
+      alert('Не удалось сохранить');
+    }
+  }
 
   async function openProblems() {
     showScreen('problems');
@@ -2108,7 +2312,7 @@
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'events', 'add-event', 'stats', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table'];
+  const screens = ['pin', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'bookings', 'booking-detail', 'events', 'add-event', 'stats', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table'];
   function showScreen(name) {
     screens.forEach(s => document.getElementById('screen-' + s)?.classList.remove('active'));
     document.getElementById('screen-' + name)?.classList.add('active');
