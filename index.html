@@ -188,6 +188,94 @@
 
     .sec { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin: 20px 0 10px; }
 
+    /* GUEST CARD — шапка с аватаром, алерт-полоса, автотеги, ручные теги, избранное */
+    .card-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+    .card-avatar {
+      width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, rgba(184,115,51,0.38), rgba(184,115,51,0.08));
+      border: 1px solid rgba(184,115,51,0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Jost', sans-serif; font-size: 20px; color: var(--accent);
+    }
+    .card-header-text .guest-name { margin-bottom: 6px; }
+    .card-header-text .status-pill { margin-bottom: 0; }
+
+    .alert-strip { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+    .alert-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 500; padding: 6px 11px 6px 10px;
+      border-radius: 100px; line-height: 1.3;
+    }
+    .alert-badge svg { flex-shrink: 0; }
+    .alert-badge.risk { background: rgba(245,158,11,0.14); color: #f59e0b; border: 1px solid rgba(245,158,11,0.35); }
+    .alert-badge.negative { background: rgba(239,68,68,0.14); color: #ef4444; border: 1px solid rgba(239,68,68,0.35); }
+    .alert-badge.allergy { background: rgba(239,68,68,0.16); color: #f87171; border: 1px solid rgba(239,68,68,0.4); }
+
+    .autotag-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 13px 15px; margin-bottom: 8px; display: flex; align-items: flex-start; gap: 12px;
+    }
+    .autotag-card.risk { border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.05); }
+    .autotag-card.negative { border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.05); }
+    .autotag-icon {
+      flex-shrink: 0; width: 30px; height: 30px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center; margin-top: 1px;
+    }
+    .autotag-card.risk .autotag-icon { background: rgba(245,158,11,0.18); color: #f59e0b; }
+    .autotag-card.negative .autotag-icon { background: rgba(239,68,68,0.18); color: #ef4444; }
+    .autotag-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+    .autotag-detail { font-size: 12px; color: var(--text-sub); line-height: 1.5; }
+    .autotag-empty { font-size: 12px; color: var(--text-muted); padding: 2px 2px 4px; }
+
+    .tag-group-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin: 16px 0 8px; }
+    .tag-group-label:first-child { margin-top: 0; }
+    .tag-chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag-chip {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--accent-dim); border: 1px solid rgba(184,115,51,0.4); color: var(--accent);
+      border-radius: 100px; padding: 8px 8px 8px 14px; font-size: 12.5px;
+    }
+    .tag-chip.allergy { background: rgba(239,68,68,0.14); border-color: rgba(239,68,68,0.4); color: #f87171; }
+    .tag-chip-remove {
+      width: 16px; height: 16px; border-radius: 50%; background: rgba(0,0,0,0.18);
+      display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+    }
+    .tag-chip-remove:active { background: rgba(0,0,0,0.34); }
+    .tag-add-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px dashed var(--border); color: var(--text-muted);
+      border-radius: 100px; padding: 8px 14px; font-size: 12.5px; cursor: pointer;
+    }
+    .tag-add-chip:active { background: var(--bg-card-hover); }
+    .tag-add-row { display: flex; gap: 8px; margin-top: 10px; }
+    .tag-add-row input {
+      flex: 1; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 9px 12px; color: var(--text); font-size: 13px; font-family: 'Inter', sans-serif; outline: none;
+    }
+    .tag-add-row input:focus { border-color: rgba(184,115,51,0.4); }
+    .tag-add-row button {
+      background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(184,115,51,0.35);
+      border-radius: 10px; padding: 0 16px; font-size: 13px; cursor: pointer;
+    }
+    .tag-presets { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+    .tag-preset-chip {
+      font-size: 11.5px; color: var(--text-sub); border: 1px solid var(--border);
+      border-radius: 100px; padding: 6px 11px; cursor: pointer;
+    }
+    .tag-preset-chip:active { background: var(--bg-card-hover); }
+
+    .favorite-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 14px 16px; display: flex; align-items: center; gap: 12px;
+    }
+    .favorite-icon {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: rgba(184,115,51,0.18); border: 1px solid rgba(184,115,51,0.35);
+      display: flex; align-items: center; justify-content: center; color: var(--accent); flex-shrink: 0;
+    }
+    .favorite-name { font-size: 14px; color: var(--text); font-weight: 500; }
+    .favorite-freq { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+
     /* FORM */
     .form-group { margin-bottom: 14px; }
     .form-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; display: block; }
@@ -2189,6 +2277,7 @@
 
   async function openGuestCard(id) {
     showScreen('card');
+    tagAddGroup = null;
     const el = document.getElementById('cardContent');
     el.innerHTML = '<div class="loading">Загружаю...</div>';
 
@@ -2241,6 +2330,161 @@
     return 'redkiy';
   }
 
+  // ─── РУЧНЫЕ ТЕГИ: пресеты, состояние формы добавления ──
+
+  const TAG_PRESETS = {
+    special: ['VIP', 'Знаменитость', 'Молодожёны', 'День рождения', 'Постоянный столик', 'Не любит шум', 'Требует внимания'],
+    allergy: ['Орехи', 'Морепродукты', 'Глютен', 'Лактоза', 'Мёд', 'Цитрусовые']
+  };
+
+  let tagAddGroup = null; // 'special' | 'allergy' | null — какая группа сейчас в режиме добавления тега
+
+  function escHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+  function escJs(s) {
+    return String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+  }
+
+  function openTagAdd(group) {
+    tagAddGroup = (tagAddGroup === group) ? null : group;
+    renderGuestCard(currentGuest);
+    if (tagAddGroup) {
+      setTimeout(() => { const el = document.getElementById('tagAddInput'); if (el) el.focus(); }, 50);
+    }
+  }
+
+  function submitTagAddInput(group) {
+    const input = document.getElementById('tagAddInput');
+    if (input) addManualTag(group, input.value);
+  }
+
+  async function addManualTag(group, tagName) {
+    const name = (tagName || '').trim();
+    if (!name) return;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/guest/${currentGuest.id}/tag?pin=${getPin()}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), group, tag: name, action: 'add' })
+      });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      if (group === 'special') currentGuest.tagsSpecial = data.tags;
+      else currentGuest.tagsAllergy = data.tags;
+      tagAddGroup = null;
+      renderGuestCard(currentGuest);
+    } catch {
+      alert('Не удалось добавить тег');
+    }
+  }
+
+  async function removeManualTag(group, tagName) {
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/guest/${currentGuest.id}/tag?pin=${getPin()}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), group, tag: tagName, action: 'remove' })
+      });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      if (group === 'special') currentGuest.tagsSpecial = data.tags;
+      else currentGuest.tagsAllergy = data.tags;
+      renderGuestCard(currentGuest);
+    } catch {
+      alert('Не удалось удалить тег');
+    }
+  }
+
+  function renderTagGroup(group, tags, label) {
+    const isAllergy = group === 'allergy';
+    const chips = (tags || []).map(t => `
+      <div class="tag-chip${isAllergy ? ' allergy' : ''}">
+        <span>${escHtml(t)}</span>
+        <div class="tag-chip-remove" onclick="removeManualTag('${group}','${escJs(t)}')">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>
+        </div>
+      </div>
+    `).join('');
+
+    const addChip = `<div class="tag-add-chip" onclick="openTagAdd('${group}')">+ Добавить</div>`;
+
+    const addRow = tagAddGroup === group ? `
+      <div class="tag-add-row">
+        <input id="tagAddInput" type="text" placeholder="${isAllergy ? 'Например, орехи' : 'Например, VIP'}" onkeydown="if(event.key==='Enter') submitTagAddInput('${group}')">
+        <button onclick="submitTagAddInput('${group}')">ОК</button>
+      </div>
+      <div class="tag-presets">
+        ${TAG_PRESETS[group].filter(p => !(tags || []).includes(p)).map(p => `<div class="tag-preset-chip" onclick="addManualTag('${group}','${escJs(p)}')">${escHtml(p)}</div>`).join('')}
+      </div>
+    ` : '';
+
+    return `
+      <div class="tag-group-label">${label}</div>
+      <div class="tag-chip-row">${chips}${addChip}</div>
+      ${addRow}
+    `;
+  }
+
+  // ─── АВТОТЕГИ И ИЗБРАННОЕ (вычисляются на бэкенде) ──
+
+  function renderAutoTags(guest) {
+    const at = guest.autoTags || {};
+    const cards = [];
+    if (at.atRisk) {
+      const detail = at.daysSince === null
+        ? 'Ещё не было ни одного визита'
+        : `Не был(а) ${at.daysSince} дн. — обычно заходит чаще`;
+      cards.push(`
+        <div class="autotag-card risk">
+          <div class="autotag-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 17l-8.5-8.5-5 5L2 7"/><path d="M16 7h6v6"/></svg></div>
+          <div><div class="autotag-title">Риск оттока</div><div class="autotag-detail">${detail}</div></div>
+        </div>
+      `);
+    }
+    if (at.negativeReview) {
+      const nr = at.negativeReview;
+      const dateStr = nr.date ? new Date(nr.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) : '';
+      cards.push(`
+        <div class="autotag-card negative">
+          <div class="autotag-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 15s1.5-2 4-2 4 2 4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
+          <div><div class="autotag-title">Негативный отзыв</div><div class="autotag-detail">Низкая оценка «${escHtml(nr.category || '')}»: ${nr.score}/5${dateStr ? ' от ' + dateStr : ''}</div></div>
+        </div>
+      `);
+    }
+    return cards.length ? cards.join('') : '<div class="autotag-empty">Без особых пометок</div>';
+  }
+
+  function renderFavorites(guest) {
+    const fav = guest.favorites || {};
+    if (!fav.hookah) {
+      return '<div class="autotag-empty">Недостаточно данных о визитах</div>';
+    }
+    return `
+      <div class="favorite-card">
+        <div class="favorite-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 3v7a2 2 0 002 2v9M8 3v7"/><path d="M17 3c-1.5 0-2.5 1.5-2.5 4s1 4 2.5 4v10"/></svg></div>
+        <div>
+          <div class="favorite-name">${escHtml(fav.hookah.name)}</div>
+          <div class="favorite-freq">${fav.hookah.count} из ${fav.visitsWithHookah} визитов с кальяном</div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderAlertStrip(guest) {
+    const badges = [];
+    if ((guest.tagsAllergy || []).length) {
+      badges.push(`<div class="alert-badge allergy"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 21h20L12 2z"/><line x1="12" y1="9" x2="12" y2="14"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Аллергия: ${escHtml(guest.tagsAllergy.join(', '))}</div>`);
+    }
+    if (guest.autoTags?.atRisk) {
+      badges.push(`<div class="alert-badge risk"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 17l-8.5-8.5-5 5L2 7"/><path d="M16 7h6v6"/></svg>Риск оттока</div>`);
+    }
+    if (guest.autoTags?.negativeReview) {
+      badges.push(`<div class="alert-badge negative"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>Негативный отзыв</div>`);
+    }
+    return badges.length ? `<div class="alert-strip">${badges.join('')}</div>` : '';
+  }
+
   function renderGuestCard(guest) {
     const el = document.getElementById('cardContent');
     const editIcon = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
@@ -2260,8 +2504,15 @@
       : '<div class="empty-state">Визитов пока нет</div>';
 
     el.innerHTML = `
-      <div class="guest-name">${guest.name}</div>
-      <div class="status-pill ${statusClass(guest.status)}">${guest.status || 'Не указан'}</div>
+      <div class="card-header">
+        <div class="card-avatar">${(guest.name || '?').charAt(0).toUpperCase()}</div>
+        <div class="card-header-text">
+          <div class="guest-name">${escHtml(guest.name)}</div>
+          <div class="status-pill ${statusClass(guest.status)}">${guest.status || 'Не указан'}</div>
+        </div>
+      </div>
+
+      ${renderAlertStrip(guest)}
 
       <div class="info-row" onclick="openEditField('status','Статус гостя')">
         <div class="info-row-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2l7 4v6c0 5-3 8-7 10-4-2-7-5-7-10V6l7-4z"/></svg></div>
@@ -2287,7 +2538,17 @@
         <div class="info-row-edit">${editIcon}</div>
       </div>
 
-      <button class="btn-primary btn-full" onclick="openAddVisit()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M8 3v7a2 2 0 002 2v9M8 3v7"/><path d="M17 3c-1.5 0-2.5 1.5-2.5 4s1 4 2.5 4v10"/></svg>Добавить визит</button>
+      <div class="sec">Автотеги</div>
+      ${renderAutoTags(guest)}
+
+      <div class="sec">Ручные теги</div>
+      ${renderTagGroup('special', guest.tagsSpecial, 'Особые')}
+      ${renderTagGroup('allergy', guest.tagsAllergy, 'Аллергии')}
+
+      <div class="sec">Любимые позиции</div>
+      ${renderFavorites(guest)}
+
+      <button class="btn-primary btn-full" style="margin-top:20px" onclick="openAddVisit()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M8 3v7a2 2 0 002 2v9M8 3v7"/><path d="M17 3c-1.5 0-2.5 1.5-2.5 4s1 4 2.5 4v10"/></svg>Добавить визит</button>
 
       <div class="sec">Последние визиты</div>
       ${visitsHtml}
