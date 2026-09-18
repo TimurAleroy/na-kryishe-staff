@@ -186,6 +186,48 @@
     .visit-date { font-size: 11px; color: var(--accent); letter-spacing: 0.5px; margin-bottom: 6px; }
     .visit-detail { font-size: 13px; color: var(--text-sub); line-height: 1.6; }
 
+    /* BOOKING CARDS — крупные боксы в стиле qcard */
+    .booking-list { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+    .booking-card {
+      border: 1px solid transparent;
+      border-radius: 18px;
+      padding: 18px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      background-image:
+        linear-gradient(var(--bg-card), var(--bg-card)),
+        linear-gradient(135deg, rgba(240,223,192,0.26) 0%, rgba(240,223,192,0.04) 45%, transparent 75%);
+      background-origin: border-box;
+      background-clip: padding-box, border-box;
+      transition: transform 0.1s, filter 0.15s;
+    }
+    .booking-card:active { transform: scale(0.98); filter: brightness(1.12); }
+    .booking-card::before {
+      content: '';
+      position: absolute;
+      top: -10%; left: -10%;
+      width: 55%; height: 70%;
+      background: radial-gradient(circle, rgba(184,115,51,0.14) 0%, rgba(184,115,51,0.07) 35%, rgba(184,115,51,0.02) 60%, transparent 85%);
+      pointer-events: none;
+      z-index: -1;
+    }
+    .booking-card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .booking-card-icon {
+      width: 42px; height: 42px;
+      border-radius: 12px;
+      background: rgba(184,115,51,0.22);
+      border: 1px solid rgba(184,115,51,0.4);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .booking-card-date { font-family: 'Jost', sans-serif; font-size: 18px; font-weight: 500; color: var(--text); flex: 1; line-height: 1.3; }
+    .booking-card-status { flex-shrink: 0; font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; border-radius: 100px; padding: 4px 11px; white-space: nowrap; }
+    .booking-card-meta { font-size: 14.5px; color: var(--text-sub); display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+    .booking-card-kind { font-size: 12px; color: var(--text-muted); }
+
     .sec { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin: 20px 0 10px; }
 
     /* GUEST CARD — шапка с аватаром, алерт-полоса, автотеги, ручные теги, избранное */
@@ -1093,20 +1135,21 @@
       return;
     }
 
-    el.innerHTML = bookingsListData.map((b, idx) => {
+    el.innerHTML = '<div class="booking-list">' + bookingsListData.map((b, idx) => {
       const st = BOOKING_STATUS_STYLE[b.status] || BOOKING_STATUS_STYLE.pending;
       const kindLine = b.eventName ? `${b.kind} · ${b.eventName}` : b.kind;
       return `
-        <div class="visit-item" onclick="openBookingDetail(${idx})" style="cursor:pointer;">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-            <div class="visit-date">${b.display}</div>
-            <span style="flex-shrink:0;font-size:9.5px;letter-spacing:0.5px;text-transform:uppercase;color:${st.color};border:1px solid ${st.color};border-radius:100px;padding:2px 8px;white-space:nowrap;">${st.label}</span>
+        <div class="booking-card" onclick="openBookingDetail(${idx})">
+          <div class="booking-card-top">
+            <div class="booking-card-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><path d="M8 14l2 2 4-4"/></svg></div>
+            <div class="booking-card-date">${b.display}</div>
+            <span class="booking-card-status" style="color:${st.color};border:1px solid ${st.color};">${st.label}</span>
           </div>
-          <div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>${b.name}${b.guests ? ` · ${b.guests} гост.` : ''}</div>
-          <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px;">${kindLine}</div>
+          <div class="booking-card-meta"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="flex-shrink:0;"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>${b.name}${b.guests ? ` · ${b.guests} гост.` : ''}</div>
+          <div class="booking-card-kind">${kindLine}</div>
         </div>
       `;
-    }).join('');
+    }).join('') + '</div>';
   }
 
   function openBookingDetail(idx) {
@@ -1154,13 +1197,13 @@
         <div class="visit-date">${b.display}</div>
         <div class="visit-detail">${kindLine}</div>
         ${b.guests ? `<div class="visit-detail">Гостей: ${b.guests}</div>` : ''}
-        ${b.comment ? `<div class="visit-detail">💬 ${b.comment}</div>` : ''}
-        <div class="visit-detail"><a href="tel:${b.phone}" style="color:var(--text-sub);text-decoration:none;">📱 ${b.phone || 'Телефон не указан'}</a></div>
+        ${b.comment ? `<div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>${b.comment}</div>` : ''}
+        <div class="visit-detail"><a href="tel:${b.phone}" style="color:var(--text-sub);text-decoration:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="18" x2="14" y2="18"/></svg>${b.phone || 'Телефон не указан'}</a></div>
       </div>
 
-      ${b.status === 'pending' ? `<button class="btn-primary btn-full" id="bkConfirmBtn" onclick="confirmBookingAction()">✅ Подтвердить</button>` : ''}
-      <button class="btn-primary btn-full" style="margin-top:8px;" onclick="openBookingEdit()">✏️ Изменить</button>
-      <button class="btn-primary btn-full" style="margin-top:8px;background:rgba(239,68,68,0.12);color:#ef4444;border-color:rgba(239,68,68,0.35);" onclick="cancelBookingAction()">❌ Отменить бронь</button>
+      ${b.status === 'pending' ? `<button class="btn-primary btn-full" id="bkConfirmBtn" onclick="confirmBookingAction()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><path d="M4 12l5 5L20 6"/></svg>Подтвердить</button>` : ''}
+      <button class="btn-primary btn-full" style="margin-top:8px;" onclick="openBookingEdit()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:6px;display:inline-block"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Изменить</button>
+      <button class="btn-primary btn-full" style="margin-top:8px;background:rgba(239,68,68,0.12);color:#ef4444;border-color:rgba(239,68,68,0.35);" onclick="cancelBookingAction()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg>Отменить бронь</button>
     `;
   }
 
