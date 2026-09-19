@@ -1082,7 +1082,11 @@
     let shiftCards = '';
     shiftCards += qcard(icons.checklist, 'Чек-лист', 'Смена', "openChecklist()");
     shiftCards += qcard(icons.schedule, 'График', 'Кто когда работает', "openSchedule()");
-    shiftCards += qcard(icons.stoplist, 'Стоп-лист', 'Меню', "openStoplist()");
+    // Официанту стоп-лист не нужен вообще — у него нет ни одной категории меню,
+    // за которую он отвечает, так что сам бокс для него скрываем целиком.
+    if (currentJobRole !== 'Официант') {
+      shiftCards += qcard(icons.stoplist, 'Стоп-лист', 'Меню', "openStoplist()");
+    }
 
     let attentionCards = '';
     attentionCards += qcard(icons.problem, 'Проблема', 'Сообщить', "openReportProblem()");
@@ -1869,8 +1873,15 @@
   // ─── СТОП-ЛИСТ (снятие позиций меню "В наличии") ────
   // Смотрят все, переключает только тот, чья категория — та же логика роль→категория,
   // что и на сервере (сервер всё равно перепроверяет сам, это только для интерфейса).
-  const MENU_CATEGORY_EDIT_ROLE = { 'Напитки': 'Бармен', 'Еда': 'Повар', 'Кальян': 'КМ' };
+  const MENU_CATEGORY_EDIT_ROLE = { 'Напитки': 'Бармен', 'Коктейли': 'Бармен', 'Алкоголь': 'Бармен', 'Еда': 'Повар', 'Кальян': 'КМ' };
   function canEditMenuCategory(category) {
+    return currentJobRole === 'Администратор' || MENU_CATEGORY_EDIT_ROLE[category] === currentJobRole;
+  }
+  // Видимость категорий в самом стоп-листе: администратор видит всё, у остальных —
+  // только та категория (категории), за которую отвечает их роль. Официант сюда
+  // вообще не попадает (карточка для него скрыта), но на случай прямого захода
+  // (например, по истории браузера) — тоже получит пустой экран, а не чужие категории.
+  function canViewMenuCategory(category) {
     return currentJobRole === 'Администратор' || MENU_CATEGORY_EDIT_ROLE[category] === currentJobRole;
   }
 
@@ -1899,7 +1910,12 @@
         byCategory[it.category].push(it);
       });
 
-      const CATEGORY_ORDER = ['Кальян', 'Еда', 'Напитки'];
+      const CATEGORY_ORDER = ['Кальян', 'Еда', 'Напитки', 'Коктейли', 'Алкоголь'].filter(canViewMenuCategory);
+
+      if (!CATEGORY_ORDER.length) {
+        el.innerHTML = '<div class="empty-state">Стоп-лист недоступен для вашей роли</div>';
+        return;
+      }
 
       function renderRow(it) {
         const canEdit = canEditMenuCategory(it.category);
