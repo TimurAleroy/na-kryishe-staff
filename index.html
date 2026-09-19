@@ -138,9 +138,28 @@
       display: flex; align-items: center; justify-content: center;
       margin-bottom: 10px;
       color: var(--accent);
+      position: relative;
     }
     .qcard-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
     .qcard-sub { font-size: 10px; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text-muted); }
+
+    /* Группы быстрых действий */
+    .qgroup-label {
+      grid-column: 1 / -1;
+      font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted);
+      margin: 18px 0 2px;
+    }
+    .qgroup-label:first-child { margin-top: 0; }
+
+    /* Статус-точка на карточке — зелёная в норме, красная когда требует внимания */
+    .qcard-dot {
+      position: absolute; top: -4px; right: -4px;
+      width: 11px; height: 11px; border-radius: 50%;
+      background: #4ade80;
+      border: 2px solid var(--bg-card);
+      transition: background 0.2s;
+    }
+    .qcard-dot.alert { background: #ef4444; }
 
     .result-item {
       background: var(--bg-card);
@@ -238,7 +257,9 @@
       border: 1px solid rgba(184,115,51,0.4);
       display: flex; align-items: center; justify-content: center;
       font-family: 'Jost', sans-serif; font-size: 20px; color: var(--accent);
+      overflow: hidden;
     }
+    .card-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .card-header-text .guest-name { margin-bottom: 6px; }
     .card-header-text .status-pill { margin-bottom: 0; }
 
@@ -1024,12 +1045,17 @@
     const roleLabel = document.getElementById('roleLabel');
     const grid = document.getElementById('quickActionsGrid');
 
-    const qcard = (icon, title, sub, onclick, extraClass) => `
-      <div class="qcard${extraClass ? ' ' + extraClass : ''}" onclick="${onclick}">
-        <div class="qcard-icon">${icon}</div>
+    const qcard = (icon, title, sub, onclick, opts = {}) => {
+      const extraClass = opts.extraClass ? ' ' + opts.extraClass : '';
+      const dotHtml = opts.dotId ? `<span class="qcard-dot" id="${opts.dotId}"></span>` : '';
+      return `
+      <div class="qcard${extraClass}" onclick="${onclick}">
+        <div class="qcard-icon">${icon}${dotHtml}</div>
         <div class="qcard-title">${title}</div>
         <div class="qcard-sub">${sub}</div>
       </div>`;
+    };
+    const qgroup = (label) => `<div class="qgroup-label">${label}</div>`;
 
     const icons = {
       birthday: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2c-1.5 2.5-3 4.5-3 7a3 3 0 006 0c0-2.5-1.5-4.5-3-7z"/><line x1="12" y1="14" x2="12" y2="22"/></svg>',
@@ -1046,30 +1072,71 @@
       bookings: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><path d="M8 14l2 2 4-4"/></svg>'
     };
 
-    let html = '';
-    html += qcard(icons.birthday, 'Именинники', 'Сегодня', "openBirthdays()");
-    html += qcard(icons.recent, 'Недавние', 'Просмотренные', "openRecentGuests()");
-    html += qcard(icons.vip, 'VIP-гости', 'Список', "openGuestsByStatus('VIP')");
-    html += qcard(icons.problem, 'Проблема', 'Сообщить', "openReportProblem()");
-    html += qcard(icons.problem, 'Проблемы', 'Открытые', "openProblems()");
-    html += qcard(icons.checklist, 'Чек-лист', 'Смена', "openChecklist()");
-    html += qcard(icons.schedule, 'График', 'Кто когда работает', "openSchedule()");
-    html += qcard(icons.stoplist, 'Стоп-лист', 'Меню', "openStoplist()");
+    // Группы: «Гости» — с кем работаешь; «Смена» — операционка по бару;
+    // «Внимание» — то, что может гореть (точки-статусы); «Аналитика» — цифры и обзор.
+    let guestsCards = '';
+    guestsCards += qcard(icons.birthday, 'Именинники', 'Сегодня', "openBirthdays()");
+    guestsCards += qcard(icons.vip, 'VIP-гости', 'Список', "openGuestsByStatus('VIP')");
+    guestsCards += qcard(icons.recent, 'Недавние', 'Просмотренные', "openRecentGuests()");
+
+    let shiftCards = '';
+    shiftCards += qcard(icons.checklist, 'Чек-лист', 'Смена', "openChecklist()");
+    shiftCards += qcard(icons.schedule, 'График', 'Кто когда работает', "openSchedule()");
+    shiftCards += qcard(icons.stoplist, 'Стоп-лист', 'Меню', "openStoplist()");
+
+    let attentionCards = '';
+    attentionCards += qcard(icons.problem, 'Проблема', 'Сообщить', "openReportProblem()");
+    attentionCards += qcard(icons.problem, 'Проблемы', 'Открытые', "openProblems()", { dotId: 'qdotProblems' });
+
+    let analyticsCards = '';
 
     const nameLabel = currentEmployeeName ? `${currentEmployeeName} · ${currentJobRole}` : (currentRole === 'admin' ? 'Администратор · Гости' : 'Персонал · Гости');
+    roleLabel.textContent = nameLabel;
 
     if (currentRole === 'admin') {
-      roleLabel.textContent = nameLabel;
-      html += qcard(icons.bookings, 'Брони', 'Столы и мероприятия', "openBookings()");
-      html += qcard(icons.inactive, 'Давно не было', '30+ дней', "openInactiveGuests()");
-      html += qcard(icons.events, 'Афиша', 'Мероприятия', "openEvents()");
-      html += qcard(icons.stats, 'Статистика', 'CSI · NPS · eNPS', "openStats()");
-      html += qcard(icons.guestsTable, 'Гости', 'Таблица', "openGuestsTable()", 'desktop-only');
-    } else {
-      roleLabel.textContent = nameLabel;
+      attentionCards += qcard(icons.bookings, 'Брони', 'Столы и мероприятия', "openBookings()", { dotId: 'qdotBookings' });
+      guestsCards += qcard(icons.inactive, 'Давно не было', '30+ дней', "openInactiveGuests()");
+      guestsCards += qcard(icons.guestsTable, 'Гости', 'Таблица', "openGuestsTable()", { extraClass: 'desktop-only' });
+      analyticsCards += qcard(icons.events, 'Афиша', 'Мероприятия', "openEvents()");
+      analyticsCards += qcard(icons.stats, 'Статистика', 'CSI · NPS · eNPS', "openStats()");
     }
 
+    let html = '';
+    html += qgroup('Гости') + guestsCards;
+    html += qgroup('Смена') + shiftCards;
+    html += qgroup('Внимание') + attentionCards;
+    if (analyticsCards) html += qgroup('Аналитика') + analyticsCards;
+
     grid.innerHTML = html;
+    refreshQuickActionStatus();
+  }
+
+  // Статус-точки на «Проблемы»/«Брони»: зелёная в норме, красная — если есть открытая
+  // проблема или бронь, ожидающая подтверждения. Не блокирует показ сетки — догружается следом.
+  async function refreshQuickActionStatus() {
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/problems?pin=${getPin()}`);
+      if (res.ok) {
+        const list = await res.json();
+        setQuickActionDot('qdotProblems', Array.isArray(list) && list.length > 0);
+      }
+    } catch {}
+
+    if (currentRole === 'admin') {
+      try {
+        const res = await fetch(`${PROXY_BASE}/api/staff/bookings?pin=${getPin()}`);
+        if (res.ok) {
+          const list = await res.json();
+          const hasPending = Array.isArray(list) && list.some(b => b.status === 'pending');
+          setQuickActionDot('qdotBookings', hasPending);
+        }
+      } catch {}
+    }
+  }
+
+  function setQuickActionDot(id, isAlert) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('alert', !!isAlert);
   }
 
   // ─── ИМЕНИННИКИ ────────────────────────────────
@@ -2521,10 +2588,12 @@
   // ─── GUEST CARD ────────────────────────────────
 
   let currentGuest = null;
+  let currentGuestPhotoUrl = null; // фото из Telegram для открытой карточки, если нашлось
 
   async function openGuestCard(id) {
     showScreen('card');
     tagAddGroup = null;
+    currentGuestPhotoUrl = null;
     const el = document.getElementById('cardContent');
     el.innerHTML = '<div class="loading">Загружаю...</div>';
 
@@ -2535,9 +2604,25 @@
       currentGuest = guest;
       renderGuestCard(guest);
       trackRecentGuest(guest.id, guest.name);
+      loadGuestPhoto(id);
     } catch {
       el.innerHTML = '<div class="empty-state">Не удалось загрузить карточку</div>';
     }
+  }
+
+  // Фото гостя из Telegram — подгружается отдельно и не блокирует показ карточки.
+  // Есть не у всех (нет публичного фото / гость не заходил через бота) — тогда просто остаются инициалы.
+  async function loadGuestPhoto(id) {
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/guest/${id}/photo?pin=${getPin()}`);
+      if (!res.ok) return;
+      const { photoUrl } = await res.json();
+      if (!photoUrl) return;
+      if (!currentGuest || currentGuest.id !== id) return; // ушли с карточки, пока грузилось
+      currentGuestPhotoUrl = photoUrl;
+      const avatarEl = document.getElementById('cardAvatar');
+      if (avatarEl) avatarEl.innerHTML = `<img src="${photoUrl}" alt="">`;
+    } catch {}
   }
 
   // ─── НЕДАВНО ПРОСМОТРЕННЫЕ (localStorage, до 5 штук) ──
@@ -2752,7 +2837,7 @@
 
     el.innerHTML = `
       <div class="card-header">
-        <div class="card-avatar">${(guest.name || '?').charAt(0).toUpperCase()}</div>
+        <div class="card-avatar" id="cardAvatar">${currentGuestPhotoUrl ? `<img src="${currentGuestPhotoUrl}" alt="">` : (guest.name || '?').charAt(0).toUpperCase()}</div>
         <div class="card-header-text">
           <div class="guest-name">${escHtml(guest.name)}</div>
           <div class="status-pill ${statusClass(guest.status)}">${guest.status || 'Не указан'}</div>
