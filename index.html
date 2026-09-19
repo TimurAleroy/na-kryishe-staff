@@ -151,15 +151,15 @@
     }
     .qgroup-label:first-child { margin-top: 0; }
 
-    /* Статус-точка на карточке — зелёная в норме, красная когда требует внимания */
+    /* Статус-точка на карточке — не видна в норме, красная только когда есть что-то необработанное */
     .qcard-dot {
+      display: none;
       position: absolute; top: -4px; right: -4px;
       width: 11px; height: 11px; border-radius: 50%;
-      background: #4ade80;
+      background: #ef4444;
       border: 2px solid var(--bg-card);
-      transition: background 0.2s;
     }
-    .qcard-dot.alert { background: #ef4444; }
+    .qcard-dot.alert { display: block; }
 
     .result-item {
       background: var(--bg-card);
