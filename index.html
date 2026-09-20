@@ -1120,12 +1120,11 @@
       bookings: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><path d="M8 14l2 2 4-4"/></svg>'
     };
 
-    // Группы: «Гости» — с кем работаешь; «Смена» — операционка по бару;
-    // «Внимание» — то, что может гореть (точки-статусы); «Аналитика» — цифры и обзор.
-    let guestsCards = '';
-    guestsCards += qcard(icons.birthday, 'Именинники', 'Сегодня', "openBirthdays()");
-    guestsCards += qcard(icons.vip, 'VIP-гости', 'Список', "openGuestsByStatus('VIP')");
-    guestsCards += qcard(icons.recent, 'Недавние', 'Просмотренные', "openRecentGuests()");
+    // Группы отсортированы по тому, как часто ими реально пользуются за смену:
+    // «Внимание» (брони/проблемы — то, что открываешь постоянно) → «Смена»
+    // (рутина каждой смены) → «Гости» (точечный просмотр карточек) →
+    // «Аналитика» (обзор и цифры, открывается не во время потока гостей).
+    let attentionCards = '';
 
     let shiftCards = '';
     shiftCards += qcard(icons.checklist, 'Чек-лист', 'Смена', "openChecklist()");
@@ -1136,27 +1135,35 @@
       shiftCards += qcard(icons.stoplist, 'Стоп-лист', 'Меню', "openStoplist()");
     }
 
-    let attentionCards = '';
-    attentionCards += qcard(icons.problem, 'Проблема', 'Сообщить', "openReportProblem()");
-    attentionCards += qcard(icons.problem, 'Проблемы', 'Открытые', "openProblems()", { dotId: 'qdotProblems' });
+    let guestsCards = '';
+    guestsCards += qcard(icons.birthday, 'Именинники', 'Сегодня', "openBirthdays()");
+    guestsCards += qcard(icons.vip, 'VIP-гости', 'Список', "openGuestsByStatus('VIP')");
+    guestsCards += qcard(icons.recent, 'Недавние', 'Просмотренные', "openRecentGuests()");
 
     let analyticsCards = '';
 
     const nameLabel = currentEmployeeName ? `${currentEmployeeName} · ${currentJobRole}` : (currentRole === 'admin' ? 'Администратор · Гости' : 'Персонал · Гости');
     roleLabel.textContent = nameLabel;
 
+    // Брони — самое частое действие админа за смену, поэтому первая карточка
+    // в первой группе, а не в конце списка.
     if (currentRole === 'admin') {
       attentionCards += qcard(icons.bookings, 'Брони', 'Столы и мероприятия', "openBookings()", { dotId: 'qdotBookings' });
+    }
+    attentionCards += qcard(icons.problem, 'Проблемы', 'Открытые', "openProblems()", { dotId: 'qdotProblems' });
+    attentionCards += qcard(icons.problem, 'Проблема', 'Сообщить', "openReportProblem()");
+
+    if (currentRole === 'admin') {
       guestsCards += qcard(icons.inactive, 'Давно не было', '30+ дней', "openInactiveGuests()");
-      guestsCards += qcard(icons.guestsTable, 'Гости', 'Таблица', "openGuestsTable()", { extraClass: 'desktop-only' });
+      analyticsCards += qcard(icons.guestsTable, 'Гости', 'Таблица', "openGuestsTable()", { extraClass: 'desktop-only' });
       analyticsCards += qcard(icons.events, 'Афиша', 'Мероприятия', "openEvents()");
       analyticsCards += qcard(icons.stats, 'Статистика', 'CSI · NPS · eNPS', "openStats()");
     }
 
     let html = '';
-    html += qgroup('Гости') + guestsCards;
+    if (attentionCards) html += qgroup('Внимание') + attentionCards;
     html += qgroup('Смена') + shiftCards;
-    html += qgroup('Внимание') + attentionCards;
+    html += qgroup('Гости') + guestsCards;
     if (analyticsCards) html += qgroup('Аналитика') + analyticsCards;
 
     grid.innerHTML = html;
