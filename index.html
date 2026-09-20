@@ -1297,7 +1297,7 @@
     const occ = lastOccupiedTables[val];
     if (occ) {
       warnEl.style.display = 'block';
-      warnEl.textContent = `⚠ «${val}» уже назначен брони ${occ.name}${occ.time ? ' на ' + occ.time : ''} в этот день. Можно оставить, если уверены, что конфликта нет.`;
+      warnEl.textContent = `⚠ «${val}» уже назначен брони ${occ.name}${occ.time ? ' на ' + occ.time : ''}. Можно оставить, если уверены, что конфликта нет.`;
     } else {
       warnEl.style.display = 'none';
       warnEl.textContent = '';
@@ -1379,6 +1379,16 @@
     if (!name) { alert('Укажите имя гостя'); return; }
     if (!phone || phone.replace(/\D/g, '').length < 11) { alert('Укажите телефон гостя'); return; }
     if (!dateVal || !timeVal) { alert('Укажите дату и время'); return; }
+
+    // Финальная проверка конфликта прямо перед созданием — не полагаемся
+    // только на подсказку в списке (вдруг сотрудник не заметил, дата
+    // сменилась после открытия формы и т.п.).
+    if (tableVal) {
+      const occ = getOccupiedTablesForDate(dateVal, null)[tableVal];
+      if (occ && !confirm(`Стол «${tableVal}» уже назначен брони ${occ.name}${occ.time ? ' на ' + occ.time : ''}.\n\nВсё равно создать бронь на этот стол?`)) {
+        return;
+      }
+    }
 
     const btn = document.getElementById('abSubmitBtn');
     btn.disabled = true;
@@ -1515,6 +1525,14 @@
   async function saveTableAssign() {
     const b = bookingsListData[currentBookingIndex];
     const table = document.getElementById('bkTableSelect').value;
+
+    if (table) {
+      const occ = getOccupiedTablesForDate((b.iso || '').slice(0, 10), b.entry)[table];
+      if (occ && !confirm(`Стол «${table}» уже назначен брони ${occ.name}${occ.time ? ' на ' + occ.time : ''}.\n\nВсё равно сохранить?`)) {
+        return;
+      }
+    }
+
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/bookings/table?pin=${getPin()}`, {
         method: 'POST',
