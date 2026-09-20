@@ -526,8 +526,10 @@
     </div>
     <button class="btn-primary btn-full" onclick="openNewGuest()">+ Новый гость</button>
 
-    <div class="sec">Результаты</div>
-    <div id="searchResults"><div class="empty-state">Введите имя или номер телефона для поиска</div></div>
+    <div id="resultsSection" style="display:none;">
+      <div class="sec">Результаты</div>
+      <div id="searchResults"></div>
+    </div>
 
     <div class="sec">Быстрые действия</div>
     <div class="grid-2" id="quickActionsGrid"></div>
@@ -2666,6 +2668,7 @@
     const resultsEl = document.getElementById('searchResults');
     if (!phone || phone === '+7') { alert('Введите номер телефона'); return; }
 
+    showResultsSection();
     resultsEl.innerHTML = '<div class="loading">Ищу по номеру...</div>';
 
     try {
@@ -2689,6 +2692,12 @@
     }
   }
 
+  // «Результаты» скрыты, пока ничего не искали — появляются только когда
+  // реально запускается поиск (по имени или по телефону).
+  function showResultsSection() {
+    document.getElementById('resultsSection').style.display = '';
+  }
+
   // Одно поле для телефона: если ввели ровно 4 цифры — ищем по последним
   // 4 цифрам сразу по обеим базам; если ввели полный номер (10-11 цифр) —
   // ищем точным совпадением. Промежуточная длина — просим доввести номер.
@@ -2706,6 +2715,7 @@
   }
 
   async function runLast4Search(digits, resultsEl) {
+    showResultsSection();
     resultsEl.innerHTML = '<div class="loading">Ищу по номеру...</div>';
 
     try {
@@ -2737,6 +2747,7 @@
   async function doSearch() {
     const name = document.getElementById('searchInput').value.trim();
     const resultsEl = document.getElementById('searchResults');
+    showResultsSection();
     if (!name) {
       resultsEl.innerHTML = '<div class="empty-state">Введите имя гостя для поиска</div>';
       return;
