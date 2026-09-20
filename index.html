@@ -603,7 +603,7 @@
     <div class="form-row form-group" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
       <div>
         <label class="form-label">Дата</label>
-        <input class="form-input" id="abDate" type="date">
+        <input class="form-input" id="abDate" type="date" onchange="refreshAddBookingTableOptions()">
       </div>
       <div>
         <label class="form-label">Время</label>
@@ -616,9 +616,10 @@
     </div>
     <div class="form-group">
       <label class="form-label">Стол (необязательно, можно назначить позже)</label>
-      <select class="form-input" id="abTable">
+      <select class="form-input" id="abTable" onchange="onTableSelectChange('abTable','abTableConflictWarning')">
         <option value="">— не выбран —</option>
       </select>
+      <div id="tableConflictWarningHolder"></div>
     </div>
     <div class="form-group">
       <label class="form-label">Комментарий (необязательно)</label>
@@ -1250,12 +1251,57 @@
     { label: 'Терраса', count: 7 },
     { label: 'VIP', count: 3 }
   ];
-  function tableOptionsHtml(selected) {
+  // Кто ещё занял стол в этот же день — считаем прямо по уже загруженному
+  // списку броней (bookingsListData), без похода на сервер. Для лаунжа не
+  // делим по часам: если стол на эту дату уже за кем-то, для второй брони
+  // в этот же вечер это почти всегда конфликт, поэтому смотрим по дате целиком.
+  function getOccupiedTablesForDate(dateStr, excludeEntry) {
+    const occupied = {};
+    if (!dateStr) return occupied;
+    for (const b of bookingsListData) {
+      if (!b.table || !b.iso) continue;
+      if (excludeEntry && b.entry === excludeEntry) continue;
+      if (b.iso.slice(0, 10) !== dateStr) continue;
+      occupied[b.table] = { name: b.name, time: b.iso.slice(11, 16) || '' };
+    }
+    return occupied;
+  }
+
+  // Последняя карта занятости — читается обработчиком onchange у селекта
+  // стола, чтобы показать предупреждение под ним (не блокируем выбор,
+  // просто предупреждаем — сотрудник может знать то, чего нет в системе).
+  let lastOccupiedTables = {};
+
+  function tableOptionsHtml(selected, occupied) {
+    lastOccupiedTables = occupied || {};
     return TABLE_GROUPS.map(g => {
       const opts = Array.from({ length: g.count }, (_, i) => `${g.label} ${i + 1}`)
-        .map(v => `<option value="${escHtml(v)}" ${v === selected ? 'selected' : ''}>${escHtml(v)}</option>`).join('');
+        .map(v => {
+          const occ = lastOccupiedTables[v];
+          const label = occ ? `${v} — занято (${occ.name}${occ.time ? ', ' + occ.time : ''})` : v;
+          const marker = occ ? '🔴 ' : '🟢 ';
+          return `<option value="${escHtml(v)}" ${v === selected ? 'selected' : ''}>${marker}${escHtml(label)}</option>`;
+        }).join('');
       return `<optgroup label="${escHtml(g.label)}">${opts}</optgroup>`;
     }).join('');
+  }
+
+  function tableConflictWarningHtml(warningId) {
+    return `<div id="${warningId}" style="display:none;margin-top:8px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.35);color:#f59e0b;border-radius:12px;padding:10px 14px;font-size:12.5px;line-height:1.5;"></div>`;
+  }
+
+  function onTableSelectChange(selectId, warningId) {
+    const val = document.getElementById(selectId).value;
+    const warnEl = document.getElementById(warningId || 'tableConflictWarning');
+    if (!warnEl) return;
+    const occ = lastOccupiedTables[val];
+    if (occ) {
+      warnEl.style.display = 'block';
+      warnEl.textContent = `⚠ «${val}» уже назначен брони ${occ.name}${occ.time ? ' на ' + occ.time : ''} в этот день. Можно оставить, если уверены, что конфликта нет.`;
+    } else {
+      warnEl.style.display = 'none';
+      warnEl.textContent = '';
+    }
   }
 
   async function openBookings() {
@@ -1306,9 +1352,19 @@
     document.getElementById('abTime').value = '20:00';
     document.getElementById('abGuests').value = '';
     document.getElementById('abComment').value = '';
-    const tableSelect = document.getElementById('abTable');
-    tableSelect.innerHTML = '<option value="">— не выбран —</option>' + tableOptionsHtml('');
+    document.getElementById('tableConflictWarningHolder').innerHTML = tableConflictWarningHtml('abTableConflictWarning');
+    refreshAddBookingTableOptions();
     showScreen('add-booking');
+  }
+
+  // Пересобирает список столов с пометками занятости под выбранную в форме
+  // дату — вызывается при открытии формы и при каждой смене даты.
+  function refreshAddBookingTableOptions() {
+    const tableSelect = document.getElementById('abTable');
+    const keepSelected = tableSelect.value;
+    const dateVal = document.getElementById('abDate').value;
+    tableSelect.innerHTML = '<option value="">— не выбран —</option>' + tableOptionsHtml(keepSelected, getOccupiedTablesForDate(dateVal, null));
+    onTableSelectChange('abTable', 'abTableConflictWarning');
   }
 
   async function submitAddBooking() {
@@ -1387,10 +1443,11 @@
     const tableBlockHtml = bookingTableEditMode ? `
       <div class="visit-item" style="margin-top:14px;">
         <label class="form-label">Стол</label>
-        <select class="form-input" id="bkTableSelect">
+        <select class="form-input" id="bkTableSelect" onchange="onTableSelectChange('bkTableSelect','tableConflictWarning')">
           <option value="">— не выбран —</option>
-          ${tableOptionsHtml(b.table || '')}
+          ${tableOptionsHtml(b.table || '', getOccupiedTablesForDate((b.iso || '').slice(0, 10), b.entry))}
         </select>
+        ${tableConflictWarningHtml('tableConflictWarning')}
         <div style="display:flex;gap:8px;margin-top:10px;">
           <button class="btn-primary" style="flex:1;" onclick="saveTableAssign()">Сохранить</button>
           <button class="btn-primary" style="flex:1;background:transparent;" onclick="bookingTableEditMode=false;renderBookingDetail();">Отмена</button>
