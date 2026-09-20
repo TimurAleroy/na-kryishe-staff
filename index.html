@@ -521,16 +521,16 @@
       <button class="btn-primary" onclick="doSearch()">Найти</button>
     </div>
     <div class="search-box" style="margin-top:10px;">
-      <input class="search-input" id="last4Input" type="tel" inputmode="numeric" maxlength="4" placeholder="Посл. 4 цифры телефона" oninput="this.value=this.value.replace(/\D/g,'').slice(0,4)" onkeydown="if(event.key==='Enter') doLast4Search()">
-      <button class="btn-primary" onclick="doLast4Search()">Найти</button>
+      <input class="search-input" id="phoneSearchInput" type="tel" inputmode="numeric" placeholder="По номеру телефона" oninput="this.value=this.value.replace(/\D/g,'').slice(0,11)" onkeydown="if(event.key==='Enter') doPhoneSearch()">
+      <button class="btn-primary" onclick="doPhoneSearch()">Найти</button>
     </div>
     <button class="btn-primary btn-full" onclick="openNewGuest()">+ Новый гость</button>
 
+    <div class="sec">Результаты</div>
+    <div id="searchResults"><div class="empty-state">Введите имя или номер телефона для поиска</div></div>
+
     <div class="sec">Быстрые действия</div>
     <div class="grid-2" id="quickActionsGrid"></div>
-
-    <div class="sec">Результаты</div>
-    <div id="searchResults"><div class="empty-state">Введите имя гостя для поиска</div></div>
   </div>
 </div>
 
@@ -2658,8 +2658,11 @@
     `;
   }
 
-  async function searchByPhone(fallbackName) {
-    const phone = document.getElementById('fallbackPhoneInput').value.trim();
+  // explicitPhone — когда номер уже известен (например, из единого поля поиска
+  // по телефону на главном экране); без него читаем из fallbackPhoneInput —
+  // поля "может, имя указано неточно" под результатами поиска по имени.
+  async function searchByPhone(fallbackName, explicitPhone) {
+    const phone = (explicitPhone !== undefined ? explicitPhone : document.getElementById('fallbackPhoneInput').value).trim();
     const resultsEl = document.getElementById('searchResults');
     if (!phone || phone === '+7') { alert('Введите номер телефона'); return; }
 
@@ -2686,15 +2689,23 @@
     }
   }
 
-  async function doLast4Search() {
-    const digits = document.getElementById('last4Input').value.trim();
+  // Одно поле для телефона: если ввели ровно 4 цифры — ищем по последним
+  // 4 цифрам сразу по обеим базам; если ввели полный номер (10-11 цифр) —
+  // ищем точным совпадением. Промежуточная длина — просим доввести номер.
+  async function doPhoneSearch() {
+    const digits = document.getElementById('phoneSearchInput').value.trim();
     const resultsEl = document.getElementById('searchResults');
 
-    if (digits.length !== 4) {
-      alert('Введите ровно 4 цифры');
-      return;
+    if (digits.length === 4) {
+      await runLast4Search(digits, resultsEl);
+    } else if (digits.length >= 10) {
+      await searchByPhone('', digits);
+    } else {
+      alert('Введите последние 4 цифры номера или номер телефона полностью');
     }
+  }
 
+  async function runLast4Search(digits, resultsEl) {
     resultsEl.innerHTML = '<div class="loading">Ищу по номеру...</div>';
 
     try {
