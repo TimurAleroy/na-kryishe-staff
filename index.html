@@ -1178,6 +1178,14 @@
     if (el) el.classList.toggle('alert', !!isAlert);
   }
 
+  // Пересчитывает точку «Брони» прямо по уже загруженным данным в браузере —
+  // без похода на сервер. Вызывается сразу после подтверждения/отмены/правки
+  // брони, чтобы точка на главном экране обновилась в тот же момент, а не
+  // только после перезахода в приложение.
+  function refreshBookingsDot() {
+    setQuickActionDot('qdotBookings', bookingsListData.some(b => b.status === 'pending'));
+  }
+
   // ─── ИМЕНИННИКИ ────────────────────────────────
 
   async function openBirthdays() {
@@ -1491,6 +1499,7 @@
       const data = await res.json();
       if (!res.ok) { alert(data.error || 'Не удалось подтвердить'); renderBookingDetail(); return; }
       b.status = 'confirmed';
+      refreshBookingsDot();
       bookingActionNotice = data.notified ? null : 'Подтверждено, но гостя уведомить не удалось — свяжитесь сами.';
       renderBookingDetail();
     } catch {
@@ -1542,6 +1551,7 @@
       const data = await res.json();
       if (!res.ok) { alert(data.error || 'Не удалось отменить'); return; }
       bookingsListData.splice(currentBookingIndex, 1);
+      refreshBookingsDot();
       showScreen('bookings');
       renderBookingsList();
       if (!data.notified) alert('Бронь отменена, но гостя уведомить не удалось — свяжитесь сами.');
@@ -1572,6 +1582,7 @@
       b.iso = `${dateVal}T${timeVal}:00`;
       b.guests = guestsVal ? Number(guestsVal) : null;
       b.comment = commentVal || '';
+      refreshBookingsDot();
       bookingActionNotice = data.notified ? null : 'Изменено, но гостя уведомить не удалось — свяжитесь сами.';
       bookingEditMode = false;
       renderBookingDetail();
