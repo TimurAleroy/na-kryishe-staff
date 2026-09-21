@@ -456,9 +456,79 @@
       .gt-head { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); cursor: default; }
       .gt-head:hover { background: none; }
     }
+
+    /* БОКОВЫЕ ПАНЕЛИ (только широкий десктоп, только админ) ───────────────
+       Тело страницы центрировано и ограничено max-width (480/900px) — на
+       большом мониторе по бокам остаётся пустое место. Панели прибиты к
+       краям этой центральной колонки через position:fixed и расчёт от 50vw,
+       поэтому не требуют переверстки самой колонки и не мешают Telegram
+       Mini App (там вьюпорт всегда узкий, брейкпоинт не сработает).
+       Видимость панели — это ДВА независимых условия: медиа-запрос по
+       ширине экрана (CSS) и класс .role-ok, который JS вешает только
+       администратору (не-админам панели вообще не показываем). */
+    .desk-panel {
+      display: none;
+      position: fixed;
+      top: 24px;
+      width: 230px;
+      max-height: calc(100vh - 48px);
+      overflow-y: auto;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 16px;
+      z-index: 10;
+    }
+    /* 900px — ширина центральной колонки на десктопе (см. брейкпоинт выше),
+       450 — её половина, 16 — отступ от колонки, 230 — ширина самой панели. */
+    .desk-panel.left { left: calc(50vw - 450px - 16px - 230px); }
+    .desk-panel.right { left: calc(50vw + 450px + 16px); }
+    .desk-panel .dp-date { font-size: 13px; color: var(--text-sub); margin-bottom: 18px; text-transform: capitalize; }
+    .desk-panel .dp-section { margin-bottom: 20px; }
+    .desk-panel .dp-section:last-child { margin-bottom: 0; }
+    .desk-panel .dp-label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .desk-panel .dp-count { color: var(--accent); font-family: 'Jost', sans-serif; font-size: 13px; }
+    .desk-panel .dp-row { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; cursor: pointer; }
+    .desk-panel .dp-row:last-child { border-bottom: none; }
+    .desk-panel .dp-row:hover { color: var(--accent); }
+    .desk-panel .dp-row .dp-sub { color: var(--text-muted); font-size: 11px; margin-top: 2px; }
+    .desk-panel .dp-empty { font-size: 12px; color: var(--text-muted); padding: 4px 0; }
+    .desk-panel .dp-loading { font-size: 12px; color: var(--text-muted); }
+
+    /* 900(колонка) + 16*2(отступы) + 230*2(панели) = 1392 — при более узком
+       окне панели просто не показываем, чтобы не наезжали на контент. */
+    @media (min-width: 1392px) {
+      .desk-panel.role-ok { display: block; }
+    }
   </style>
 </head>
 <body>
+
+<!-- БОКОВЫЕ ПАНЕЛИ ДЕСКТОПА (см. .desk-panel в <style>) — только заполняются
+     JS-ом (loadDeskPanels), и только администратору; у остальных ролей
+     класс role-ok никогда не выставляется, так что панели не показываются
+     даже на широком экране. -->
+<aside class="desk-panel left" id="deskLeft">
+  <div class="dp-date" id="dpDate"></div>
+  <div class="dp-section">
+    <div class="dp-label"><span>На смене</span></div>
+    <div id="dpShift"><div class="dp-loading">Загружаю...</div></div>
+  </div>
+  <div class="dp-section">
+    <div class="dp-label"><span>Именинники сегодня</span></div>
+    <div id="dpBirthdays"><div class="dp-loading">Загружаю...</div></div>
+  </div>
+</aside>
+<aside class="desk-panel right" id="deskRight">
+  <div class="dp-section">
+    <div class="dp-label"><span>Проблемы</span><span class="dp-count" id="dpProblemsCount"></span></div>
+    <div id="dpProblems"><div class="dp-loading">Загружаю...</div></div>
+  </div>
+  <div class="dp-section">
+    <div class="dp-label"><span>Ждут подтверждения</span><span class="dp-count" id="dpBookingsCount"></span></div>
+    <div id="dpBookings"><div class="dp-loading">Загружаю...</div></div>
+  </div>
+</aside>
 
 <!-- PIN SCREEN -->
 <div class="screen active" id="screen-pin">
@@ -1176,6 +1246,90 @@
   function setQuickActionDot(id, isAlert) {
     const el = document.getElementById(id);
     if (el) el.classList.toggle('alert', !!isAlert);
+  }
+
+  // ─── БОКОВЫЕ ПАНЕЛИ ДЕСКТОПА (сводка дня, только у админа) ─────────────
+  // Заполняют пустые поля по бокам центральной колонки на широких мониторах
+  // (см. .desk-panel в <style> — видимость там же решается медиа-запросом).
+  // Вызывается из showScreen() при каждом возврате на главный экран, чтобы
+  // данные не протухали, если весь день не перезаходить в приложение.
+  // Если панелей нет в разметке (например, при частичном обновлении файла) —
+  // просто ничего не делает, остальной интерфейс не затрагивает.
+  async function loadDeskPanels() {
+    const left = document.getElementById('deskLeft');
+    const right = document.getElementById('deskRight');
+    if (!left || !right) return;
+
+    if (currentRole !== 'admin') {
+      left.classList.remove('role-ok');
+      right.classList.remove('role-ok');
+      return;
+    }
+    left.classList.add('role-ok');
+    right.classList.add('role-ok');
+
+    const dateEl = document.getElementById('dpDate');
+    if (dateEl) dateEl.textContent = new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
+
+    const today = todayISO();
+    const pin = getPin();
+
+    // Каждый блок грузится и падает независимо от остальных — проблема с
+    // одним источником (например, Notion не ответил на график) не должна
+    // оставлять остальные блоки в вечном "Загружаю...".
+    (async () => {
+      const el = document.getElementById('dpShift');
+      try {
+        const [shiftsRes, employeesRes] = await Promise.all([
+          fetch(`${PROXY_BASE}/api/staff/schedule?pin=${pin}&from=${today}&to=${today}`),
+          fetch(`${PROXY_BASE}/api/staff/employees-list?pin=${pin}`)
+        ]);
+        const shifts = shiftsRes.ok ? await shiftsRes.json() : [];
+        const employees = employeesRes.ok ? await employeesRes.json() : [];
+        const working = Array.isArray(shifts) ? shifts.filter(s => s.status === 'Работает') : [];
+        if (!working.length) { el.innerHTML = '<div class="dp-empty">Никто не отмечен</div>'; return; }
+        el.innerHTML = working.map(s => {
+          const emp = Array.isArray(employees) ? employees.find(e => e.id === s.employeeId) : null;
+          const name = emp ? emp.name : 'Сотрудник';
+          return `<div class="dp-row" onclick="openSchedule()">${name}${emp?.role ? `<div class="dp-sub">${emp.role}</div>` : ''}</div>`;
+        }).join('');
+      } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
+    })();
+
+    (async () => {
+      const el = document.getElementById('dpBirthdays');
+      try {
+        const res = await fetch(`${PROXY_BASE}/api/staff/birthdays?pin=${pin}`);
+        const list = res.ok ? await res.json() : [];
+        if (!Array.isArray(list) || !list.length) { el.innerHTML = '<div class="dp-empty">Сегодня никого нет</div>'; return; }
+        el.innerHTML = list.map(g => `<div class="dp-row" onclick="openGuestCard('${g.id}')">${g.name}</div>`).join('');
+      } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
+    })();
+
+    (async () => {
+      const el = document.getElementById('dpProblems');
+      const countEl = document.getElementById('dpProblemsCount');
+      try {
+        const res = await fetch(`${PROXY_BASE}/api/staff/problems?pin=${pin}`);
+        const list = res.ok ? await res.json() : [];
+        if (countEl) countEl.textContent = Array.isArray(list) && list.length ? String(list.length) : '';
+        if (!Array.isArray(list) || !list.length) { el.innerHTML = '<div class="dp-empty">Открытых нет</div>'; return; }
+        el.innerHTML = list.slice(0, 5).map(p => `<div class="dp-row" onclick="openProblems()">${p.category || 'Проблема'}${p.responsible ? `<div class="dp-sub">${p.responsible}</div>` : ''}</div>`).join('');
+      } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
+    })();
+
+    (async () => {
+      const el = document.getElementById('dpBookings');
+      const countEl = document.getElementById('dpBookingsCount');
+      try {
+        const res = await fetch(`${PROXY_BASE}/api/staff/bookings?pin=${pin}`);
+        const list = res.ok ? await res.json() : [];
+        const pending = Array.isArray(list) ? list.filter(b => b.status === 'pending') : [];
+        if (countEl) countEl.textContent = pending.length ? String(pending.length) : '';
+        if (!pending.length) { el.innerHTML = '<div class="dp-empty">Все подтверждены</div>'; return; }
+        el.innerHTML = pending.slice(0, 5).map(b => `<div class="dp-row" onclick="openBookings()">${b.name || 'Гость'}<div class="dp-sub">${b.display || ''}</div></div>`).join('');
+      } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
+    })();
   }
 
   // Пересчитывает точку «Брони» прямо по уже загруженным данным в браузере —
@@ -2702,6 +2856,9 @@
     screens.forEach(s => document.getElementById('screen-' + s)?.classList.remove('active'));
     document.getElementById('screen-' + name)?.classList.add('active');
     window.scrollTo(0, 0);
+    // Боковые панели десктопа обновляем при каждом возврате на главный —
+    // так они не протухают за весь день без перезахода в приложение.
+    if (name === 'home') loadDeskPanels();
   }
 
   // ─── SEARCH ────────────────────────────────────
