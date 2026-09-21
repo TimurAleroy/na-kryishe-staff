@@ -542,7 +542,15 @@
     <div id="dpBookings"><div class="dp-loading">Загружаю...</div></div>
   </div>
   <div class="dp-section">
-    <div class="dp-label"><span>Задачи</span><span class="dp-count" id="dpFounderTasksCount"></span></div>
+    <div class="dp-label">
+      <span>Задачи</span>
+      <span style="display:flex;align-items:center;gap:8px;">
+        <span class="dp-count" id="dpFounderTasksCount"></span>
+        <span id="dpFounderTaskAddBtn" style="display:none;cursor:pointer;line-height:0;" onclick="event.stopPropagation();openFounderTasks(true)" title="Новая задача">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </span>
+      </span>
+    </div>
     <div id="dpFounderTasks"><div class="dp-loading">Загружаю...</div></div>
   </div>
 </aside>
@@ -1255,7 +1263,7 @@
     // "Задачи" видно и Администратору, и Основателю — ставить новую задачу
     // внутри экрана может только Основатель (см. openFounderTasks).
     if (currentRole === 'admin') {
-      attentionCards += qcard(icons.checklist, 'Задачи', currentJobRole === 'Основатель' ? 'От вас' : 'От основателя', "openFounderTasks()", { dotId: 'qdotFounderTasks' });
+      attentionCards += qcard(icons.checklist, 'Задачи', 'Открытые', "openFounderTasks()", { dotId: 'qdotFounderTasks' });
     }
 
     if (currentRole === 'admin') {
@@ -1398,6 +1406,10 @@
     // лёгкий превью-список без действий; сама работа с задачами (поставить,
     // отметить готовой) — на отдельном экране screen-founder-tasks,
     // который открывается и с десктопа, и с телефона (см. openFounderTasks).
+    // Плюс в углу — только у Основателя, чтобы поставить задачу прямо
+    // с главного экрана, не открывая полный список.
+    const addBtn = document.getElementById('dpFounderTaskAddBtn');
+    if (addBtn) addBtn.style.display = currentJobRole === 'Основатель' ? 'inline-flex' : 'none';
     (async () => {
       const el = document.getElementById('dpFounderTasks');
       const countEl = document.getElementById('dpFounderTasksCount');
@@ -1416,13 +1428,17 @@
   // "Готово" видит любой admin-role (Администратор или Основатель);
   // форму постановки новой задачи — только сам Основатель. ───
 
-  function openFounderTasks() {
+  // openComposer=true — сразу открыть форму постановки задачи (используется
+  // плюсом в углу десктопной панели, чтобы не делать два клика подряд).
+  function openFounderTasks(openComposer) {
     showScreen('founder-tasks');
+    const isFounder = currentJobRole === 'Основатель';
     const newBtnWrap = document.getElementById('founderTaskNewBtnWrap');
-    if (newBtnWrap) newBtnWrap.style.display = currentJobRole === 'Основатель' ? 'block' : 'none';
+    if (newBtnWrap) newBtnWrap.style.display = isFounder ? 'block' : 'none';
     const composer = document.getElementById('founderTaskComposer');
     if (composer) composer.style.display = 'none';
     loadFounderTasksScreen();
+    if (openComposer && isFounder) toggleFounderTaskComposer();
   }
 
   async function loadFounderTasksScreen() {
