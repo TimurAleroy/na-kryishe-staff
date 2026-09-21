@@ -1220,6 +1220,13 @@
 
   let bookingsListData = [];
   let currentBookingIndex = null;
+  // Пока одно действие над бронью (подтвердить/назначить стол/отменить/сохранить
+  // правку) выполняется — не даём запустить второе поверх него. Раньше можно было,
+  // например, тапнуть "Сохранить" у стола и сразу же "Подтвердить" не дожидаясь
+  // ответа первого запроса — на медленной мобильной сети оба запроса летели почти
+  // одновременно и второй мог уйти со старым, ещё не обновлённым entry. Бэкенд
+  // теперь и сам это безопасно отклоняет, но проще вообще не давать так тапнуть.
+  let bookingActionBusy = false;
   let bookingEditMode = false;
   let bookingTableEditMode = false;
   let bookingActionNotice = null;
@@ -1487,6 +1494,8 @@
   }
 
   async function confirmBookingAction() {
+    if (bookingActionBusy) return;
+    bookingActionBusy = true;
     const b = bookingsListData[currentBookingIndex];
     const btn = document.getElementById('bkConfirmBtn');
     if (btn) { btn.disabled = true; btn.textContent = 'Подтверждаем...'; }
@@ -1497,13 +1506,14 @@
         body: JSON.stringify({ pin: getPin(), phone: b.phone, entry: b.entry })
       });
       const data = await res.json();
-      if (!res.ok) { alert(data.error || 'Не удалось подтвердить'); renderBookingDetail(); return; }
+      if (!res.ok) { alert(data.error || 'Не удалось подтвердить'); return; }
       b.status = 'confirmed';
       refreshBookingsDot();
       bookingActionNotice = data.notified ? null : 'Подтверждено, но гостя уведомить не удалось — свяжитесь сами.';
-      renderBookingDetail();
     } catch {
       alert('Не удалось подтвердить');
+    } finally {
+      bookingActionBusy = false;
       renderBookingDetail();
     }
   }
@@ -1512,6 +1522,7 @@
   // подтверждения и не отправляет гостю никаких уведомлений (это чисто
   // внутренняя рабочая пометка для персонала).
   async function saveTableAssign() {
+    if (bookingActionBusy) return;
     const b = bookingsListData[currentBookingIndex];
     const table = document.getElementById('bkTableSelect').value;
 
@@ -1522,6 +1533,7 @@
       }
     }
 
+    bookingActionBusy = true;
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/bookings/table?pin=${getPin()}`, {
         method: 'POST',
@@ -1533,14 +1545,18 @@
       b.table = table;
       b.entry = data.newEntry;
       bookingTableEditMode = false;
-      renderBookingDetail();
     } catch {
       alert('Не удалось сохранить стол');
+    } finally {
+      bookingActionBusy = false;
+      renderBookingDetail();
     }
   }
 
   async function cancelBookingAction() {
+    if (bookingActionBusy) return;
     if (!confirm('Отменить эту бронь?')) return;
+    bookingActionBusy = true;
     const b = bookingsListData[currentBookingIndex];
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/bookings/cancel?pin=${getPin()}`, {
@@ -1557,10 +1573,13 @@
       if (!data.notified) alert('Бронь отменена, но гостя уведомить не удалось — свяжитесь сами.');
     } catch {
       alert('Не удалось отменить');
+    } finally {
+      bookingActionBusy = false;
     }
   }
 
   async function saveBookingEdit() {
+    if (bookingActionBusy) return;
     const b = bookingsListData[currentBookingIndex];
     const dateVal = document.getElementById('bkEditDate').value;
     const timeVal = document.getElementById('bkEditTime').value;
@@ -1568,6 +1587,7 @@
     const commentVal = document.getElementById('bkEditComment').value;
     if (!dateVal || !timeVal) { alert('Укажите дату и время'); return; }
 
+    bookingActionBusy = true;
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/bookings/edit?pin=${getPin()}`, {
         method: 'POST',
@@ -1585,9 +1605,11 @@
       refreshBookingsDot();
       bookingActionNotice = data.notified ? null : 'Изменено, но гостя уведомить не удалось — свяжитесь сами.';
       bookingEditMode = false;
-      renderBookingDetail();
     } catch {
       alert('Не удалось сохранить');
+    } finally {
+      bookingActionBusy = false;
+      renderBookingDetail();
     }
   }
 
