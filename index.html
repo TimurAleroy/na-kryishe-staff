@@ -9,9 +9,14 @@
     @import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap');
 
     :root {
-      --bg: #140B00;
-      --bg-card: #241005;
-      --bg-card-hover: #2E140A;
+      /* Фон приведён к тому же тону, что на маркетинговом сайте (index.html
+         репозитория na-kryishe-site) — был холоднее и темнее (#140B00),
+         сайт заметно теплее и светлее (#1E1004). --bg-card-hover пересчитан
+         пропорционально (тот же шаг +10/+4/+5 от bg-card, что был раньше),
+         чтобы карточки не потерялись на новом, более светлом фоне. */
+      --bg: #1E1004;
+      --bg-card: #20120A;
+      --bg-card-hover: #2A160F;
       --accent: #B87333;
       --accent-dim: rgba(184, 115, 51, 0.14);
       --text: #F0DFC0;
