@@ -508,44 +508,6 @@
     .desk-panel .dp-empty { font-size: 12px; color: var(--text-muted); padding: 4px 0; }
     .desk-panel .dp-loading { font-size: 12px; color: var(--text-muted); }
 
-    /* Блок «Задачи от основателя» — отдельная карточка внутри правой панели,
-       не путать со списком «Проблемы» выше. Задачи ставит только роль
-       "Основатель" (кнопка ниже), а видят и закрывают — она сама и Администратор. */
-    .dp-task { display: block; cursor: default; }
-    .dp-task:hover { color: inherit; }
-    .dp-task-text { color: var(--text); margin-bottom: 3px; }
-    .dp-task-actions { display: flex; gap: 6px; margin-top: 6px; }
-    .dp-task-actions button {
-      flex: 1; background: none; border: 1px solid var(--border); color: var(--text-sub);
-      border-radius: 6px; padding: 5px 6px; font-size: 10.5px; font-family: inherit;
-      cursor: pointer; transition: border-color 0.15s, color 0.15s;
-    }
-    .dp-task-actions button:hover { border-color: var(--accent); color: var(--accent); }
-    .dp-task-actions button.primary { border-color: var(--accent); color: var(--accent); }
-    .dp-new-task-btn {
-      width: 100%; margin-top: 10px; background: none; border: 1px dashed var(--border);
-      color: var(--text-muted); border-radius: 6px; padding: 8px; font-size: 11.5px;
-      font-family: inherit; cursor: pointer; transition: border-color 0.15s, color 0.15s;
-    }
-    .dp-new-task-btn:hover { border-color: var(--accent); color: var(--accent); }
-    .dp-task-form { margin-top: 10px; }
-    .dp-task-form textarea {
-      width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
-      color: var(--text); font-family: inherit; font-size: 12px; padding: 8px; resize: vertical;
-      box-sizing: border-box;
-    }
-    .dp-task-form-row { display: flex; gap: 6px; margin-top: 6px; }
-    .dp-task-form-row select, .dp-task-form-row input[type="date"] {
-      flex: 1; min-width: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
-      color: var(--text); font-family: inherit; font-size: 11px; padding: 6px;
-    }
-    .dp-task-form-submit {
-      width: 100%; margin-top: 8px; background: var(--accent); border: none; color: var(--bg);
-      border-radius: 6px; padding: 8px; font-size: 11.5px; font-family: inherit; font-weight: 500;
-      cursor: pointer;
-    }
-    .dp-task-form-error { font-size: 10.5px; color: #ef4444; margin-top: 6px; }
-
     /* 900(колонка) + 16*2(отступы) + 230*2(панели) = 1392 — при более узком
        окне панели просто не показываем, чтобы не наезжали на контент. */
     @media (min-width: 1392px) {
@@ -582,20 +544,6 @@
   <div class="dp-section">
     <div class="dp-label"><span>Задачи</span><span class="dp-count" id="dpFounderTasksCount"></span></div>
     <div id="dpFounderTasks"><div class="dp-loading">Загружаю...</div></div>
-    <button class="dp-new-task-btn" id="dpFounderTaskNewBtn" style="display:none;" onclick="toggleFounderTaskForm()">+ Новая задача</button>
-    <div class="dp-task-form" id="dpFounderTaskForm" style="display:none;">
-      <textarea id="ftText" rows="2" placeholder="Что нужно сделать"></textarea>
-      <div class="dp-task-form-row">
-        <select id="ftSeverity">
-          <option value="Низкая">Низкий приоритет</option>
-          <option value="Средняя" selected>Средний приоритет</option>
-          <option value="Высокая">Высокий приоритет</option>
-        </select>
-        <input type="date" id="ftDeadline">
-      </div>
-      <button class="dp-task-form-submit" onclick="submitFounderTask()">Отправить</button>
-      <div class="dp-task-form-error" id="ftError"></div>
-    </div>
   </div>
 </aside>
 
@@ -672,6 +620,33 @@
     <div><h1 style="font-size:14px;letter-spacing:1px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M12 2L2 20h20L12 2z"/><line x1="12" y1="10" x2="12" y2="14"/><line x1="12" y1="17" x2="12" y2="17"/></svg>Открытые проблемы</h1></div>
   </div>
   <div style="padding:0 16px" id="problemsContent"><div class="loading">Загружаю...</div></div>
+</div>
+
+<!-- ЗАДАЧИ (от основателя) — экран общий для десктопа и телефона -->
+<div class="screen" id="screen-founder-tasks">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('home')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Задачи</h1></div>
+  </div>
+  <div style="padding:0 16px">
+    <div id="founderTaskNewBtnWrap" style="display:none;margin-bottom:14px;">
+      <button class="btn-primary btn-full" onclick="toggleFounderTaskComposer()">+ Новая задача</button>
+    </div>
+    <div id="founderTaskComposer" style="display:none;margin-bottom:16px;">
+      <div class="form-group">
+        <label class="form-label">Что нужно сделать</label>
+        <textarea class="form-input" id="ftText" placeholder="Текст задачи"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Срок (необязательно)</label>
+        <input class="form-input" type="date" id="ftDeadline">
+      </div>
+      <button class="btn-primary btn-full" id="ftSubmitBtn" onclick="submitFounderTask()">Отправить</button>
+    </div>
+    <div id="founderTasksContent"><div class="loading">Загружаю...</div></div>
+  </div>
 </div>
 
 <!-- БРОНИ (бот + сайт — единый список) -->
@@ -1277,6 +1252,11 @@
     }
     attentionCards += qcard(icons.problem, 'Проблемы', 'Открытые', "openProblems()", { dotId: 'qdotProblems' });
     attentionCards += qcard(icons.problem, 'Проблема', 'Сообщить', "openReportProblem()");
+    // "Задачи" видно и Администратору, и Основателю — ставить новую задачу
+    // внутри экрана может только Основатель (см. openFounderTasks).
+    if (currentRole === 'admin') {
+      attentionCards += qcard(icons.checklist, 'Задачи', currentJobRole === 'Основатель' ? 'От вас' : 'От основателя', "openFounderTasks()", { dotId: 'qdotFounderTasks' });
+    }
 
     if (currentRole === 'admin') {
       guestsCards += qcard(icons.inactive, 'Давно не было', '30+ дней', "openInactiveGuests()");
@@ -1313,6 +1293,14 @@
           const list = await res.json();
           const hasPending = Array.isArray(list) && list.some(b => b.status === 'pending');
           setQuickActionDot('qdotBookings', hasPending);
+        }
+      } catch {}
+
+      try {
+        const res = await fetch(`${PROXY_BASE}/api/admin/founder-tasks?pin=${getPin()}`);
+        if (res.ok) {
+          const list = await res.json();
+          setQuickActionDot('qdotFounderTasks', Array.isArray(list) && list.length > 0);
         }
       } catch {}
     }
@@ -1406,100 +1394,108 @@
       } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
     })();
 
-    // «Задачи от основателя» — только роль "Основатель" видит кнопку постановки
-    // новой задачи; сам список (и кнопки "В работу"/"Готово") виден и ей, и
-    // обычному Администратору, поэтому загружаем всегда, когда мы уже здесь.
-    const newTaskBtn = document.getElementById('dpFounderTaskNewBtn');
-    if (newTaskBtn) newTaskBtn.style.display = currentJobRole === 'Основатель' ? 'block' : 'none';
-    loadFounderTasks();
+    // «Задачи» — здесь, как и в «Проблемы»/«Ждут подтверждения» выше, только
+    // лёгкий превью-список без действий; сама работа с задачами (поставить,
+    // отметить готовой) — на отдельном экране screen-founder-tasks,
+    // который открывается и с десктопа, и с телефона (см. openFounderTasks).
+    (async () => {
+      const el = document.getElementById('dpFounderTasks');
+      const countEl = document.getElementById('dpFounderTasksCount');
+      try {
+        const res = await fetch(`${PROXY_BASE}/api/admin/founder-tasks?pin=${pin}`);
+        const list = res.ok ? await res.json() : [];
+        if (countEl) countEl.textContent = Array.isArray(list) && list.length ? String(list.length) : '';
+        if (!Array.isArray(list) || !list.length) { el.innerHTML = '<div class="dp-empty">Задач нет</div>'; return; }
+        el.innerHTML = list.slice(0, 5).map(t => `<div class="dp-row" onclick="openFounderTasks()">${t.text || 'Задача'}${t.deadline ? `<div class="dp-sub">до ${t.deadline}</div>` : ''}</div>`).join('');
+      } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
+    })();
   }
 
-  async function loadFounderTasks() {
-    const el = document.getElementById('dpFounderTasks');
-    const countEl = document.getElementById('dpFounderTasksCount');
+  // ─── ЗАДАЧИ (от основателя) — отдельный экран, доступен и на десктопе, и
+  // на телефоне, в отличие от боковых панелей выше. Список и кнопку
+  // "Готово" видит любой admin-role (Администратор или Основатель);
+  // форму постановки новой задачи — только сам Основатель. ───
+
+  function openFounderTasks() {
+    showScreen('founder-tasks');
+    const newBtnWrap = document.getElementById('founderTaskNewBtnWrap');
+    if (newBtnWrap) newBtnWrap.style.display = currentJobRole === 'Основатель' ? 'block' : 'none';
+    const composer = document.getElementById('founderTaskComposer');
+    if (composer) composer.style.display = 'none';
+    loadFounderTasksScreen();
+  }
+
+  async function loadFounderTasksScreen() {
+    const el = document.getElementById('founderTasksContent');
     if (!el) return;
-    const severityColor = { 'Высокая': '#ef4444', 'Средняя': '#f0b429', 'Низкая': 'var(--text-muted)' };
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
     try {
       const res = await fetch(`${PROXY_BASE}/api/admin/founder-tasks?pin=${getPin()}`);
-      const list = res.ok ? await res.json() : [];
-      if (countEl) countEl.textContent = Array.isArray(list) && list.length ? String(list.length) : '';
-      if (!Array.isArray(list) || !list.length) { el.innerHTML = '<div class="dp-empty">Задач нет</div>'; return; }
-      el.innerHTML = list.map(t => {
-        const sevColor = severityColor[t.severity] || 'var(--text-muted)';
-        return `
-        <div class="dp-row dp-task">
-          <div class="dp-task-text">${t.text || 'Задача'}</div>
-          <div class="dp-sub">
-            ${t.deadline ? `до ${t.deadline}` : ''}${t.severity ? ` · <span style="color:${sevColor}">${t.severity}</span>` : ''}${t.status === 'В работе' ? ' · в работе' : ''}
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { showScreen('home'); return; }
+      const list = await res.json();
+      if (!Array.isArray(list) || !list.length) { el.innerHTML = '<div class="empty-state">Задач нет</div>'; return; }
+      el.innerHTML = list.map(t => `
+        <div class="visit-item">
+          <div class="visit-detail">${t.text || '—'}</div>
+          ${t.deadline ? `<div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>${t.deadline}</div>` : ''}
+          <div style="margin-top:10px;">
+            <button class="btn-primary btn-full" onclick="founderTaskDone('${t.id}')">Готово</button>
           </div>
-          <div class="dp-task-actions">
-            ${t.status === 'Задачи' ? `<button onclick="founderTaskTake('${t.id}')">В работу</button>` : ''}
-            <button class="primary" onclick="founderTaskResolve('${t.id}')">Готово</button>
-          </div>
-        </div>`;
-      }).join('');
-    } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
+        </div>`).join('');
+    } catch { el.innerHTML = '<div class="empty-state">Не удалось загрузить</div>'; }
   }
 
-  function toggleFounderTaskForm() {
-    const form = document.getElementById('dpFounderTaskForm');
-    if (!form) return;
-    const showing = form.style.display !== 'none';
-    form.style.display = showing ? 'none' : 'block';
+  function toggleFounderTaskComposer() {
+    const el = document.getElementById('founderTaskComposer');
+    if (!el) return;
+    const showing = el.style.display !== 'none';
+    el.style.display = showing ? 'none' : 'block';
     if (!showing) {
+      document.getElementById('ftText').value = '';
       const deadlineEl = document.getElementById('ftDeadline');
-      if (deadlineEl && !deadlineEl.value) deadlineEl.value = todayISO();
-      document.getElementById('ftError').textContent = '';
+      if (deadlineEl) deadlineEl.value = '';
     }
   }
 
   async function submitFounderTask() {
     const text = document.getElementById('ftText').value.trim();
-    const severity = document.getElementById('ftSeverity').value;
+    if (!text) { alert('Укажите текст задачи'); return; }
     const deadline = document.getElementById('ftDeadline').value;
-    const errorEl = document.getElementById('ftError');
-    if (!text) { errorEl.textContent = 'Укажите текст задачи'; return; }
-    errorEl.textContent = '';
 
+    const btn = document.getElementById('ftSubmitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Отправляем...';
     try {
       const res = await fetch(`${PROXY_BASE}/api/founder/task?pin=${getPin()}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: getPin(), text, severity, deadline })
+        body: JSON.stringify({ pin: getPin(), text, deadline })
       });
       const data = await res.json();
-      if (!res.ok) { errorEl.textContent = data.error || 'Не удалось поставить задачу'; return; }
-      document.getElementById('ftText').value = '';
-      toggleFounderTaskForm();
+      btn.disabled = false;
+      btn.textContent = 'Отправить';
+      if (!res.ok) { alert(data.error || 'Не удалось поставить задачу'); return; }
       showSuccess('Задача поставлена', '');
-      loadFounderTasks();
+      toggleFounderTaskComposer();
+      loadFounderTasksScreen();
     } catch {
-      errorEl.textContent = 'Не удалось поставить задачу';
+      btn.disabled = false;
+      btn.textContent = 'Отправить';
+      alert('Не удалось поставить задачу');
     }
   }
 
-  async function founderTaskTake(id) {
+  async function founderTaskDone(id) {
     try {
-      const res = await fetch(`${PROXY_BASE}/api/founder/task/${id}/take?pin=${getPin()}`, {
+      const res = await fetch(`${PROXY_BASE}/api/founder/task/${id}/done?pin=${getPin()}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: getPin() })
-      });
-      if (!res.ok) { alert('Не удалось обновить задачу'); return; }
-      loadFounderTasks();
-    } catch { alert('Не удалось обновить задачу'); }
-  }
-
-  async function founderTaskResolve(id) {
-    try {
-      const res = await fetch(`${PROXY_BASE}/api/founder/task/${id}/resolve?pin=${getPin()}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: getPin() })
+        body: JSON.stringify({ pin: getPin(), done: true })
       });
       if (!res.ok) { alert('Не удалось закрыть задачу'); return; }
       showSuccess('Задача закрыта', '');
-      loadFounderTasks();
+      loadFounderTasksScreen();
     } catch { alert('Не удалось закрыть задачу'); }
   }
 
@@ -3022,7 +3018,7 @@
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'stats', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table'];
+  const screens = ['pin', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'stats', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table'];
   function showScreen(name) {
     screens.forEach(s => document.getElementById('screen-' + s)?.classList.remove('active'));
     document.getElementById('screen-' + name)?.classList.add('active');
