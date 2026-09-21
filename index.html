@@ -654,6 +654,8 @@
       <button class="btn-primary btn-full" id="ftSubmitBtn" onclick="submitFounderTask()">Отправить</button>
     </div>
     <div id="founderTasksContent"><div class="loading">Загружаю...</div></div>
+    <div class="sec" style="cursor:pointer;" onclick="toggleFounderTasksDone()" id="founderTasksDoneToggle">Показать выполненные</div>
+    <div id="founderTasksDoneContent" style="display:none;"></div>
   </div>
 </div>
 
@@ -1437,6 +1439,12 @@
     if (newBtnWrap) newBtnWrap.style.display = isFounder ? 'block' : 'none';
     const composer = document.getElementById('founderTaskComposer');
     if (composer) composer.style.display = 'none';
+    // Раздел "Выполненные" каждый раз сворачиваем заново — чтобы не тянуть
+    // лишний запрос, если человек в этот заход туда не заглядывает.
+    const doneContent = document.getElementById('founderTasksDoneContent');
+    if (doneContent) { doneContent.style.display = 'none'; doneContent.innerHTML = ''; }
+    const doneToggle = document.getElementById('founderTasksDoneToggle');
+    if (doneToggle) doneToggle.textContent = 'Показать выполненные';
     loadFounderTasksScreen();
     if (openComposer && isFounder) toggleFounderTaskComposer();
   }
@@ -1455,8 +1463,8 @@
         <div class="visit-item">
           <div class="visit-detail">${t.text || '—'}</div>
           ${t.deadline ? `<div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>${t.deadline}</div>` : ''}
-          <div style="margin-top:10px;">
-            <button class="btn-primary btn-full" onclick="founderTaskDone('${t.id}')">Готово</button>
+          <div style="display:flex;justify-content:flex-end;margin-top:10px;">
+            <button class="btn-primary" style="padding:8px 16px;font-size:12px;" onclick="founderTaskDone('${t.id}')">Готово</button>
           </div>
         </div>`).join('');
     } catch { el.innerHTML = '<div class="empty-state">Не удалось загрузить</div>'; }
@@ -1512,7 +1520,61 @@
       if (!res.ok) { alert('Не удалось закрыть задачу'); return; }
       showSuccess('Задача закрыта', '');
       loadFounderTasksScreen();
+      // Если раздел "Выполненные" уже раскрыт — сразу подтягиваем в него
+      // только что закрытую задачу, чтобы было видно, что она не потерялась.
+      const doneContent = document.getElementById('founderTasksDoneContent');
+      if (doneContent && doneContent.style.display !== 'none') loadFounderTasksDoneContent();
     } catch { alert('Не удалось закрыть задачу'); }
+  }
+
+  // "Показать выполненные" — свёрнутый по умолчанию раздел ниже открытых
+  // задач. Нужен, чтобы было видно: закрытая задача не пропала, а реально
+  // отмечена готовой — а не просто исчезла из списка без следа.
+  function toggleFounderTasksDone() {
+    const el = document.getElementById('founderTasksDoneContent');
+    const label = document.getElementById('founderTasksDoneToggle');
+    if (!el) return;
+    const showing = el.style.display !== 'none';
+    if (showing) {
+      el.style.display = 'none';
+      if (label) label.textContent = 'Показать выполненные';
+    } else {
+      el.style.display = 'block';
+      if (label) label.textContent = 'Скрыть выполненные';
+      loadFounderTasksDoneContent();
+    }
+  }
+
+  async function loadFounderTasksDoneContent() {
+    const el = document.getElementById('founderTasksDoneContent');
+    if (!el) return;
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/founder-tasks?done=1&pin=${getPin()}`);
+      const list = await res.json();
+      if (!Array.isArray(list) || !list.length) { el.innerHTML = '<div class="empty-state">Выполненных пока нет</div>'; return; }
+      el.innerHTML = list.map(t => `
+        <div class="visit-item">
+          <div class="visit-detail" style="text-decoration:line-through;color:var(--text-muted);">${t.text || '—'}</div>
+          <div style="display:flex;justify-content:flex-end;margin-top:10px;">
+            <button class="btn-primary" style="padding:8px 16px;font-size:12px;" onclick="founderTaskUndo('${t.id}')">Вернуть в открытые</button>
+          </div>
+        </div>`).join('');
+    } catch { el.innerHTML = '<div class="empty-state">Не удалось загрузить</div>'; }
+  }
+
+  // На случай если "Готово" нажали по ошибке
+  async function founderTaskUndo(id) {
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/founder/task/${id}/done?pin=${getPin()}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), done: false })
+      });
+      if (!res.ok) { alert('Не удалось вернуть задачу'); return; }
+      loadFounderTasksScreen();
+      loadFounderTasksDoneContent();
+    } catch { alert('Не удалось вернуть задачу'); }
   }
 
   // Пересчитывает точку «Брони» прямо по уже загруженным данным в браузере —
