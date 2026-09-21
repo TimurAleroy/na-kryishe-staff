@@ -508,6 +508,44 @@
     .desk-panel .dp-empty { font-size: 12px; color: var(--text-muted); padding: 4px 0; }
     .desk-panel .dp-loading { font-size: 12px; color: var(--text-muted); }
 
+    /* Блок «Задачи от основателя» — отдельная карточка внутри правой панели,
+       не путать со списком «Проблемы» выше. Задачи ставит только роль
+       "Основатель" (кнопка ниже), а видят и закрывают — она сама и Администратор. */
+    .dp-task { display: block; cursor: default; }
+    .dp-task:hover { color: inherit; }
+    .dp-task-text { color: var(--text); margin-bottom: 3px; }
+    .dp-task-actions { display: flex; gap: 6px; margin-top: 6px; }
+    .dp-task-actions button {
+      flex: 1; background: none; border: 1px solid var(--border); color: var(--text-sub);
+      border-radius: 6px; padding: 5px 6px; font-size: 10.5px; font-family: inherit;
+      cursor: pointer; transition: border-color 0.15s, color 0.15s;
+    }
+    .dp-task-actions button:hover { border-color: var(--accent); color: var(--accent); }
+    .dp-task-actions button.primary { border-color: var(--accent); color: var(--accent); }
+    .dp-new-task-btn {
+      width: 100%; margin-top: 10px; background: none; border: 1px dashed var(--border);
+      color: var(--text-muted); border-radius: 6px; padding: 8px; font-size: 11.5px;
+      font-family: inherit; cursor: pointer; transition: border-color 0.15s, color 0.15s;
+    }
+    .dp-new-task-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .dp-task-form { margin-top: 10px; }
+    .dp-task-form textarea {
+      width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+      color: var(--text); font-family: inherit; font-size: 12px; padding: 8px; resize: vertical;
+      box-sizing: border-box;
+    }
+    .dp-task-form-row { display: flex; gap: 6px; margin-top: 6px; }
+    .dp-task-form-row select, .dp-task-form-row input[type="date"] {
+      flex: 1; min-width: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+      color: var(--text); font-family: inherit; font-size: 11px; padding: 6px;
+    }
+    .dp-task-form-submit {
+      width: 100%; margin-top: 8px; background: var(--accent); border: none; color: var(--bg);
+      border-radius: 6px; padding: 8px; font-size: 11.5px; font-family: inherit; font-weight: 500;
+      cursor: pointer;
+    }
+    .dp-task-form-error { font-size: 10.5px; color: #ef4444; margin-top: 6px; }
+
     /* 900(колонка) + 16*2(отступы) + 230*2(панели) = 1392 — при более узком
        окне панели просто не показываем, чтобы не наезжали на контент. */
     @media (min-width: 1392px) {
@@ -540,6 +578,24 @@
   <div class="dp-section">
     <div class="dp-label"><span>Ждут подтверждения</span><span class="dp-count" id="dpBookingsCount"></span></div>
     <div id="dpBookings"><div class="dp-loading">Загружаю...</div></div>
+  </div>
+  <div class="dp-section">
+    <div class="dp-label"><span>Задачи</span><span class="dp-count" id="dpFounderTasksCount"></span></div>
+    <div id="dpFounderTasks"><div class="dp-loading">Загружаю...</div></div>
+    <button class="dp-new-task-btn" id="dpFounderTaskNewBtn" style="display:none;" onclick="toggleFounderTaskForm()">+ Новая задача</button>
+    <div class="dp-task-form" id="dpFounderTaskForm" style="display:none;">
+      <textarea id="ftText" rows="2" placeholder="Что нужно сделать"></textarea>
+      <div class="dp-task-form-row">
+        <select id="ftSeverity">
+          <option value="Низкая">Низкий приоритет</option>
+          <option value="Средняя" selected>Средний приоритет</option>
+          <option value="Высокая">Высокий приоритет</option>
+        </select>
+        <input type="date" id="ftDeadline">
+      </div>
+      <button class="dp-task-form-submit" onclick="submitFounderTask()">Отправить</button>
+      <div class="dp-task-form-error" id="ftError"></div>
+    </div>
   </div>
 </aside>
 
@@ -1100,6 +1156,12 @@
   let currentEmployeeName = '';
   let currentJobRole = '';
   let ASSIGNABLE_ROLES_CLIENT = ['КМ', 'Бармен', 'Повар', 'Официант', 'Администратор']; // запасной список, если запрос к серверу не успеет
+
+  // "Основатель" — роль-надстройка над "Администратор" (см. server.js): та же
+  // проверка на клиенте, чтобы кнопки "взять/закрыть/редактировать" не гасли у неё.
+  function isAdminRole(role) {
+    return role === 'Администратор' || role === 'Основатель';
+  }
   // Скрытый вход в анонимный опрос eNPS — только по QR-коду из служебного помещения (?enps=1).
   // Если ссылку открывают через Telegram-механизм startapp (не обычный URL) — параметр
   // приходит не в window.location.search, а в initDataUnsafe.start_param, проверяем оба варианта.
@@ -1343,6 +1405,102 @@
         el.innerHTML = pending.slice(0, 5).map(b => `<div class="dp-row" onclick="openBookings()">${b.name || 'Гость'}<div class="dp-sub">${b.display || ''}</div></div>`).join('');
       } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
     })();
+
+    // «Задачи от основателя» — только роль "Основатель" видит кнопку постановки
+    // новой задачи; сам список (и кнопки "В работу"/"Готово") виден и ей, и
+    // обычному Администратору, поэтому загружаем всегда, когда мы уже здесь.
+    const newTaskBtn = document.getElementById('dpFounderTaskNewBtn');
+    if (newTaskBtn) newTaskBtn.style.display = currentJobRole === 'Основатель' ? 'block' : 'none';
+    loadFounderTasks();
+  }
+
+  async function loadFounderTasks() {
+    const el = document.getElementById('dpFounderTasks');
+    const countEl = document.getElementById('dpFounderTasksCount');
+    if (!el) return;
+    const severityColor = { 'Высокая': '#ef4444', 'Средняя': '#f0b429', 'Низкая': 'var(--text-muted)' };
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/founder-tasks?pin=${getPin()}`);
+      const list = res.ok ? await res.json() : [];
+      if (countEl) countEl.textContent = Array.isArray(list) && list.length ? String(list.length) : '';
+      if (!Array.isArray(list) || !list.length) { el.innerHTML = '<div class="dp-empty">Задач нет</div>'; return; }
+      el.innerHTML = list.map(t => {
+        const sevColor = severityColor[t.severity] || 'var(--text-muted)';
+        return `
+        <div class="dp-row dp-task">
+          <div class="dp-task-text">${t.text || 'Задача'}</div>
+          <div class="dp-sub">
+            ${t.deadline ? `до ${t.deadline}` : ''}${t.severity ? ` · <span style="color:${sevColor}">${t.severity}</span>` : ''}${t.status === 'В работе' ? ' · в работе' : ''}
+          </div>
+          <div class="dp-task-actions">
+            ${t.status === 'Задачи' ? `<button onclick="founderTaskTake('${t.id}')">В работу</button>` : ''}
+            <button class="primary" onclick="founderTaskResolve('${t.id}')">Готово</button>
+          </div>
+        </div>`;
+      }).join('');
+    } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
+  }
+
+  function toggleFounderTaskForm() {
+    const form = document.getElementById('dpFounderTaskForm');
+    if (!form) return;
+    const showing = form.style.display !== 'none';
+    form.style.display = showing ? 'none' : 'block';
+    if (!showing) {
+      const deadlineEl = document.getElementById('ftDeadline');
+      if (deadlineEl && !deadlineEl.value) deadlineEl.value = todayISO();
+      document.getElementById('ftError').textContent = '';
+    }
+  }
+
+  async function submitFounderTask() {
+    const text = document.getElementById('ftText').value.trim();
+    const severity = document.getElementById('ftSeverity').value;
+    const deadline = document.getElementById('ftDeadline').value;
+    const errorEl = document.getElementById('ftError');
+    if (!text) { errorEl.textContent = 'Укажите текст задачи'; return; }
+    errorEl.textContent = '';
+
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/founder/task?pin=${getPin()}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), text, severity, deadline })
+      });
+      const data = await res.json();
+      if (!res.ok) { errorEl.textContent = data.error || 'Не удалось поставить задачу'; return; }
+      document.getElementById('ftText').value = '';
+      toggleFounderTaskForm();
+      showSuccess('Задача поставлена', '');
+      loadFounderTasks();
+    } catch {
+      errorEl.textContent = 'Не удалось поставить задачу';
+    }
+  }
+
+  async function founderTaskTake(id) {
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/founder/task/${id}/take?pin=${getPin()}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin() })
+      });
+      if (!res.ok) { alert('Не удалось обновить задачу'); return; }
+      loadFounderTasks();
+    } catch { alert('Не удалось обновить задачу'); }
+  }
+
+  async function founderTaskResolve(id) {
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/founder/task/${id}/resolve?pin=${getPin()}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin() })
+      });
+      if (!res.ok) { alert('Не удалось закрыть задачу'); return; }
+      showSuccess('Задача закрыта', '');
+      loadFounderTasks();
+    } catch { alert('Не удалось закрыть задачу'); }
   }
 
   // Пересчитывает точку «Брони» прямо по уже загруженным данным в браузере —
@@ -1794,7 +1952,7 @@
       }
 
       const severityColor = { 'Высокая': '#ef4444', 'Средняя': '#f0b429', 'Низкая': 'var(--text-muted)' };
-      const canAct = (p) => currentJobRole === 'Администратор' || currentJobRole === p.responsible;
+      const canAct = (p) => isAdminRole(currentJobRole) || currentJobRole === p.responsible;
 
       el.innerHTML = list.map(p => {
         const sevColor = severityColor[p.severity] || 'var(--text-muted)';
@@ -2301,14 +2459,14 @@
   // что и на сервере (сервер всё равно перепроверяет сам, это только для интерфейса).
   const MENU_CATEGORY_EDIT_ROLE = { 'Напитки': 'Бармен', 'Коктейли': 'Бармен', 'Алкоголь': 'Бармен', 'Еда': 'Повар', 'Кальян': 'КМ' };
   function canEditMenuCategory(category) {
-    return currentJobRole === 'Администратор' || MENU_CATEGORY_EDIT_ROLE[category] === currentJobRole;
+    return isAdminRole(currentJobRole) || MENU_CATEGORY_EDIT_ROLE[category] === currentJobRole;
   }
   // Видимость категорий в самом стоп-листе: администратор видит всё, у остальных —
   // только та категория (категории), за которую отвечает их роль. Официант сюда
   // вообще не попадает (карточка для него скрыта), но на случай прямого захода
   // (например, по истории браузера) — тоже получит пустой экран, а не чужие категории.
   function canViewMenuCategory(category) {
-    return currentJobRole === 'Администратор' || MENU_CATEGORY_EDIT_ROLE[category] === currentJobRole;
+    return isAdminRole(currentJobRole) || MENU_CATEGORY_EDIT_ROLE[category] === currentJobRole;
   }
 
   async function openStoplist() {
