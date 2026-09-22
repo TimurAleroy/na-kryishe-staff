@@ -531,6 +531,18 @@
     <div class="dp-label"><span>Именинники сегодня</span></div>
     <div id="dpBirthdays"><div class="dp-loading">Загружаю...</div></div>
   </div>
+  <div class="dp-section">
+    <div class="dp-label">
+      <span>Афиша</span>
+      <span style="display:flex;align-items:center;gap:8px;">
+        <span class="dp-count" id="dpEventsCount"></span>
+        <span style="cursor:pointer;line-height:0;" onclick="event.stopPropagation();openAddEvent()" title="Новое мероприятие">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </span>
+      </span>
+    </div>
+    <div id="dpEvents"><div class="dp-loading">Загружаю...</div></div>
+  </div>
 </aside>
 <aside class="desk-panel right" id="deskRight">
   <div class="dp-section">
@@ -1376,6 +1388,26 @@
         const list = res.ok ? await res.json() : [];
         if (!Array.isArray(list) || !list.length) { el.innerHTML = '<div class="dp-empty">Сегодня никого нет</div>'; return; }
         el.innerHTML = list.map(g => `<div class="dp-row" onclick="openGuestCard('${g.id}')">${g.name}</div>`).join('');
+      } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
+    })();
+
+    // «Афиша» — лёгкий превью-список ближайших мероприятий, как и остальные
+    // панели; полный список с возможностью править/удалять — на экране
+    // "Мероприятия" (openEvents → openEditEvent), плюс в углу — быстрое
+    // добавление нового прямо с главного экрана (openAddEvent).
+    (async () => {
+      const el = document.getElementById('dpEvents');
+      const countEl = document.getElementById('dpEventsCount');
+      const MONTHS = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+      try {
+        const res = await fetch(`${PROXY_BASE}/api/admin/events?pin=${pin}`);
+        const list = res.ok ? await res.json() : [];
+        if (countEl) countEl.textContent = Array.isArray(list) && list.length ? String(list.length) : '';
+        if (!Array.isArray(list) || !list.length) { el.innerHTML = '<div class="dp-empty">Ближайших нет</div>'; return; }
+        el.innerHTML = list.slice(0, 5).map(e => {
+          const d = new Date(e.date);
+          return `<div class="dp-row" onclick="openEvents()">${e.name || 'Мероприятие'}<div class="dp-sub">${d.getDate()} ${MONTHS[d.getMonth()]} · ${e.format || ''}</div></div>`;
+        }).join('');
       } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
     })();
 
