@@ -578,7 +578,7 @@
     .hz-tdot.pending { background: #f59e0b; }
     .hz-tbusy { display: inline-block; width: 14px; height: 8px; border-radius: 3px; background: rgba(74,222,128,0.18); border: 1px solid rgba(74,222,128,0.3); margin: 0 2px 0 8px; }
     .hz-zonehead { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin: 14px 2px 8px; font-size: 13px; color: var(--text); }
-    .hz-wrap { background: #170C03; border: 1px solid var(--border); border-radius: 16px; padding: 6px; max-width: 640px; margin: 0 auto; }
+    .hz-wrap { background: #170C03; border: 1px solid var(--border); border-radius: 16px; padding: 6px; }
     .hz-svg { display: block; width: 100%; height: auto; font-family: 'Inter', sans-serif; user-select: none; -webkit-user-select: none; }
     .hz-wall { fill: none; stroke: rgba(240,223,192,0.12); stroke-width: 1.5; }
     .hz-window { stroke: rgba(125,180,230,0.55); stroke-width: 3; stroke-linecap: round; }
@@ -619,28 +619,51 @@
     .hz-item { display: flex; align-items: center; justify-content: space-between; gap: 6px 10px; flex-wrap: wrap; padding: 9px 0; border-top: 1px solid var(--border); font-size: 13px; color: var(--text); cursor: pointer; }
     .hz-item .bk-flags { margin-top: 0; }
     .hz-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 7px; vertical-align: 1px; }
-    .tl-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 14px; background: #170C03; -webkit-overflow-scrolling: touch; }
+    .tl-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 16px; background: #150B03; -webkit-overflow-scrolling: touch; box-shadow: 0 6px 24px rgba(0,0,0,0.25); }
     .tl-grid { position: relative; }
-    .tl-head { display: flex; height: 26px; }
-    .tl-corner { width: 64px; flex-shrink: 0; position: sticky; left: 0; background: #170C03; z-index: 3; border-right: 1px solid var(--border); }
-    .tl-hours { position: relative; height: 26px; flex-shrink: 0; }
-    .tl-hour { position: absolute; top: 7px; padding-left: 4px; font-size: 10.5px; color: var(--text-muted); border-left: 1px solid rgba(240,223,192,0.12); height: 19px; }
-    .tl-row { display: flex; border-top: 1px solid var(--border); }
-    .tl-rowlabel { width: 64px; flex-shrink: 0; position: sticky; left: 0; z-index: 2; background: #170C03; padding: 4px 8px; border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
-    .tl-rowtitle { font-family: 'Jost', sans-serif; font-size: 15px; color: var(--text); line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .tl-rowlabel.small .tl-rowtitle { font-family: 'Inter', sans-serif; font-size: 10.5px; white-space: normal; }
-    .tl-rowsub { font-size: 9.5px; color: var(--text-muted); }
+    .tl-head { display: flex; height: 32px; border-bottom: 1px solid rgba(240,223,192,0.1); background: linear-gradient(180deg, rgba(240,223,192,0.035), transparent); }
+    .tl-corner { width: 64px; flex-shrink: 0; position: sticky; left: 0; background: #150B03; z-index: 4; border-right: 1px solid var(--border); }
+    .tl-hours { position: relative; height: 32px; flex-shrink: 0; }
+    .tl-hour { position: absolute; top: 0; height: 32px; padding: 9px 0 0 6px; font-size: 11px; font-weight: 500; color: var(--text-sub); border-left: 1px solid rgba(240,223,192,0.14); font-variant-numeric: tabular-nums; }
+    .tl-hour.past { color: var(--text-muted); opacity: 0.7; }
+    .tl-halftick { position: absolute; bottom: 0; width: 1px; height: 6px; background: rgba(240,223,192,0.14); }
+    .tl-nowbadge { position: absolute; top: 5px; transform: translateX(-50%); background: #ef4444; color: #fff; font-size: 10.5px; font-weight: 600; padding: 3px 7px; border-radius: 7px; z-index: 3; box-shadow: 0 2px 8px rgba(239,68,68,0.45); font-variant-numeric: tabular-nums; }
+    .tl-section { position: relative; height: 24px; display: flex; align-items: center; border-top: 1px solid rgba(240,223,192,0.08); background: rgba(240,223,192,0.03); }
+    .tl-section span { position: sticky; left: 0; padding: 0 12px; font-size: 9.5px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--text-muted); }
+    .tl-row { display: flex; border-top: 1px solid rgba(240,223,192,0.05); transition: background 0.15s; }
+    .tl-row.odd { background: rgba(240,223,192,0.018); }
+    @media (hover: hover) { .tl-row:hover { background: rgba(184,115,51,0.05); } }
+    .tl-rowlabel { width: 64px; flex-shrink: 0; position: sticky; left: 0; z-index: 2; background: #150B03; padding: 4px 10px; border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+    .tl-row.odd .tl-rowlabel { background: #170D05; }
+    .tl-rowtitle { font-family: 'Jost', sans-serif; font-size: 17px; font-weight: 500; color: var(--text); line-height: 1.05; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tl-rowlabel.small .tl-rowtitle { font-family: 'Inter', sans-serif; font-size: 10.5px; font-weight: 400; white-space: normal; line-height: 1.25; }
+    .tl-rowsub { display: flex; align-items: center; gap: 3px; font-size: 10px; color: var(--text-muted); margin-top: 2px; }
     .tl-row.conflict .tl-rowtitle { color: #f87171; }
-    .tl-track { position: relative; flex-shrink: 0; background-image: linear-gradient(to right, rgba(240,223,192,0.06) 1px, transparent 1px); }
-    .tl-bar { position: absolute; height: 24px; border-radius: 7px; padding: 0 7px; font-size: 11.5px; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; border: 1px solid; color: var(--text); box-sizing: border-box; }
-    .tl-bar.confirmed { background: rgba(74,222,128,0.2); border-color: rgba(74,222,128,0.6); }
-    .tl-bar.pending { background: rgba(245,158,11,0.2); border-color: rgba(245,158,11,0.7); }
-    .tl-bar.conflict { border-color: #ef4444; box-shadow: inset 0 0 0 1px #ef4444; }
-    .tl-bar.past { opacity: 0.45; }
-    .tl-bar b { font-weight: 600; margin-right: 2px; }
-    .tl-flag.danger { color: #f87171; }
-    .tl-flag.vip { color: var(--accent); }
-    .tl-now { position: absolute; top: 26px; bottom: 0; width: 2px; margin-left: -1px; background: #ef4444; z-index: 1; pointer-events: none; }
+    .tl-track { position: relative; flex-shrink: 0; cursor: pointer;
+      background-image: linear-gradient(to right, rgba(240,223,192,0.08) 1px, transparent 1px), linear-gradient(to right, rgba(240,223,192,0.035) 1px, transparent 1px); }
+    .tl-track.no-add { cursor: default; }
+    .tl-bar { position: absolute; height: 28px; display: flex; align-items: center; gap: 7px; padding: 0 10px 0 5px; border-radius: 10px; border: 1px solid; border-left-width: 3px; box-sizing: border-box;
+      font-size: 12.5px; color: var(--text); white-space: nowrap; overflow: hidden; cursor: pointer; z-index: 1;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.35); transition: transform 0.12s, box-shadow 0.12s; }
+    @media (hover: hover) { .tl-bar:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,0.45); } }
+    .tl-bar.confirmed { background: linear-gradient(90deg, rgba(74,222,128,0.30), rgba(74,222,128,0.13) 45%, rgba(74,222,128,0.04)); border-color: rgba(74,222,128,0.4); border-left-color: #4ade80; }
+    .tl-bar.pending { background: linear-gradient(90deg, rgba(245,158,11,0.30), rgba(245,158,11,0.13) 45%, rgba(245,158,11,0.04)); border-color: rgba(245,158,11,0.45); border-left-color: #f59e0b; }
+    .tl-bar.conflict { border-color: rgba(239,68,68,0.75); border-left-color: #ef4444;
+      background-image: repeating-linear-gradient(135deg, rgba(239,68,68,0.10) 0 6px, transparent 6px 12px), linear-gradient(90deg, rgba(239,68,68,0.25), rgba(239,68,68,0.05)); }
+    .tl-count { flex-shrink: 0; min-width: 19px; height: 19px; padding: 0 5px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .tl-bar.confirmed .tl-count { background: rgba(74,222,128,0.28); color: #bbf7d0; }
+    .tl-bar.pending .tl-count { background: rgba(245,158,11,0.3); color: #fde68a; }
+    .tl-bar.conflict .tl-count { background: rgba(239,68,68,0.3); color: #fecaca; }
+    .tl-name { font-weight: 500; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+    .tl-time { font-size: 10.5px; color: var(--text-muted); flex-shrink: 0; font-variant-numeric: tabular-nums; }
+    .tl-ic { flex-shrink: 0; font-size: 11px; margin-left: -3px; }
+    .tl-ic.danger { color: #f87171; }
+    .tl-ic.vip { color: var(--accent); }
+    .tl-past { position: absolute; top: 32px; bottom: 0; pointer-events: none; z-index: 0;
+      background: repeating-linear-gradient(135deg, rgba(0,0,0,0.16) 0 5px, rgba(0,0,0,0.08) 5px 10px); }
+    .tl-ghost { position: absolute; display: none; align-items: center; justify-content: center; border: 1px dashed rgba(184,115,51,0.7); border-radius: 9px; background: rgba(184,115,51,0.12); color: var(--accent); font-size: 11px; font-weight: 500; pointer-events: none; z-index: 1; font-variant-numeric: tabular-nums; }
+    .tl-ghost.on { display: flex; }
+    .tl-now { position: absolute; top: 26px; bottom: 0; width: 2px; margin-left: -1px; background: #ef4444; z-index: 1; pointer-events: none; box-shadow: 0 0 8px rgba(239,68,68,0.6); }
     .desktop-only { display: none; }
 
     /* ДЕСКТОП: Telegram Mini App всегда открывается в узком вьюпорте (как на
@@ -2146,38 +2169,42 @@
   // 7–9 диваны у дальней стены (справа налево), 10–13 центр, «Бар» — 6 мест у стойки.
   // Места: 1–3, 10, 13 — по 2; 5 — 3; 4, 6, 7–9, 11, 12 — по 4; бар — 6. Терраса добавится отдельной зоной.
   // label: где подпись режима — [x, y, выравнивание]
+  // Координаты — в «базовой» ширине 400. На широком экране схема растягивается
+  // вширь (см. layoutZone): столы и мебель того же размера, а расстояния между ними
+  // по горизонтали больше. ax — к чему привязана координата x: 'S' — растягивается,
+  // 'L' — к левой стене (барная стойка), 'R' — к правой стене (банкетка и столы 4–6).
   const HALL_ZONES = [{
     id: 'main',
     title: 'Общий зал',
-    width: 400,
+    baseWidth: 400,
     height: 394,
-    decor: [
-      '<rect x="2" y="2" width="396" height="388" rx="10" class="hz-wall"/>',
+    decor: (W, S) => [
+      `<rect x="2" y="2" width="${W - 4}" height="388" rx="10" class="hz-wall"/>`,
       // окно — только вдоль столов 2 и 3, под столом 1 глухая стена
-      '<line x1="168" y1="390" x2="396" y2="390" class="hz-window"/>',
-      '<text x="282" y="386" text-anchor="middle" class="hz-note">окна</text>',
+      `<line x1="${S(205) - 37}" y1="390" x2="${W - 4}" y2="390" class="hz-window"/>`,
+      `<text x="${(S(205) - 37 + W - 4) / 2}" y="386" text-anchor="middle" class="hz-note">окна</text>`,
       // барная стойка
       '<path d="M10 118 H30 V302 H10 Z" class="hz-counter"/>',
       '<text x="20" y="214" text-anchor="middle" class="hz-note" transform="rotate(-90 20 214)">стойка</text>',
       // диваны кабинок у дальней стены
       ...[131, 235, 339].flatMap(c => [
-        `<rect x="${c - 47}" y="10" width="22" height="60" rx="6" class="hz-sofa"/>`,
-        `<rect x="${c + 25}" y="10" width="22" height="60" rx="6" class="hz-sofa"/>`
+        `<rect x="${S(c) - 47}" y="10" width="22" height="60" rx="6" class="hz-sofa"/>`,
+        `<rect x="${S(c) + 25}" y="10" width="22" height="60" rx="6" class="hz-sofa"/>`
       ]),
       // колонна и двусторонний диван между овальными столами
-      '<rect x="152" y="178" width="14" height="56" rx="2" class="hz-pillar"/>',
-      '<rect x="182" y="171" width="52" height="70" rx="8" class="hz-sofa"/>',
-      '<line x1="182" y1="206" x2="234" y2="206" class="hz-sofa-line"/>',
+      `<rect x="${S(159) - 7}" y="178" width="14" height="56" rx="2" class="hz-pillar"/>`,
+      `<rect x="${S(208) - 26}" y="171" width="52" height="70" rx="8" class="hz-sofa"/>`,
+      `<line x1="${S(208) - 26}" y1="206" x2="${S(208) + 26}" y2="206" class="hz-sofa-line"/>`,
       // банкетка вдоль правой стены
-      '<rect x="374" y="118" width="18" height="192" rx="6" class="hz-sofa"/>'
+      `<rect x="${W - 26}" y="118" width="18" height="192" rx="6" class="hz-sofa"/>`
     ],
     tables: [
       { key: 'Общий зал 1', short: '1', seats: 2, shape: 'round', x: 100, y: 356, r: 18, ticks: 'lr', label: [100, 330, 'middle'], labelMax: 100 },
       { key: 'Общий зал 2', short: '2', seats: 2, shape: 'round', x: 205, y: 356, r: 18, ticks: 'lr', label: [205, 330, 'middle'], labelMax: 100 },
       { key: 'Общий зал 3', short: '3', seats: 2, shape: 'round', x: 310, y: 356, r: 18, ticks: 'lr', label: [310, 330, 'middle'], labelMax: 100 },
-      { key: 'Общий зал 4', short: '4', seats: 4, shape: 'rect', x: 352, y: 278, w: 36, h: 50, ticks: 'l2', label: [319, 282, 'end'], labelMax: 80 },
-      { key: 'Общий зал 5', short: '5', seats: 3, shape: 'rect', x: 352, y: 214, w: 36, h: 46, ticks: 'l1', label: [319, 218, 'end'], labelMax: 80 },
-      { key: 'Общий зал 6', short: '6', seats: 4, shape: 'rect', x: 352, y: 150, w: 36, h: 50, ticks: 'l2', label: [319, 154, 'end'], labelMax: 80 },
+      { key: 'Общий зал 4', short: '4', seats: 4, shape: 'rect', x: 352, ax: 'R', y: 278, w: 36, h: 50, ticks: 'l2', label: [319, 282, 'end'], labelMax: 80 },
+      { key: 'Общий зал 5', short: '5', seats: 3, shape: 'rect', x: 352, ax: 'R', y: 214, w: 36, h: 46, ticks: 'l1', label: [319, 218, 'end'], labelMax: 80 },
+      { key: 'Общий зал 6', short: '6', seats: 4, shape: 'rect', x: 352, ax: 'R', y: 150, w: 36, h: 50, ticks: 'l2', label: [319, 154, 'end'], labelMax: 80 },
       { key: 'Общий зал 7', short: '7', seats: 4, shape: 'rect', x: 339, y: 40, w: 40, h: 52, ticks: '', label: [339, 84, 'middle'], labelMax: 100 },
       { key: 'Общий зал 8', short: '8', seats: 4, shape: 'rect', x: 235, y: 40, w: 40, h: 52, ticks: '', label: [235, 84, 'middle'], labelMax: 100 },
       { key: 'Общий зал 9', short: '9', seats: 4, shape: 'rect', x: 131, y: 40, w: 40, h: 52, ticks: '', label: [131, 84, 'middle'], labelMax: 100 },
@@ -2185,9 +2212,32 @@
       { key: 'Общий зал 11', short: '11', seats: 4, shape: 'oval', x: 208, y: 150, w: 52, h: 28, ticks: 't2', label: [208, 116, 'middle'], labelMax: 80 },
       { key: 'Общий зал 12', short: '12', seats: 4, shape: 'oval', x: 208, y: 262, w: 52, h: 28, ticks: 'b2', label: [208, 304, 'middle'], labelMax: 80 },
       { key: 'Общий зал 13', short: '13', seats: 2, shape: 'round', x: 118, y: 262, r: 18, ticks: 'tb', label: [118, 304, 'middle'], labelMax: 90 },
-      { key: 'Бар', short: 'Бар', seats: 6, shape: 'bar', x: 36, y: 120, w: 18, h: 180, ticks: '', label: [60, 214, 'start'], labelMax: 88 }
+      { key: 'Бар', short: 'Бар', seats: 6, shape: 'bar', x: 36, ax: 'L', y: 120, w: 18, h: 180, ticks: '', label: [60, 214, 'start'], labelMax: 88 }
     ]
   }];
+
+  // Раскладка зоны под ширину контейнера (px): на телефоне — как есть (ширина 400),
+  // на широком экране — вширь, чтобы схема заняла всю ширину и не стала слишком высокой.
+  function layoutZone(zone, containerPx) {
+    const base = zone.baseWidth;
+    const cw = Math.max(1, containerPx || 0);
+    const targetHeightPx = Math.min(cw, 620);
+    const W = Math.max(base, Math.round(zone.height * (cw / targetHeightPx)));
+    const k = (W - 4) / (base - 4);
+    const S = x => Math.round((2 + (x - 2) * k) * 10) / 10;
+    const pos = (x, a) => a === 'L' ? x : a === 'R' ? W - (base - x) : S(x);
+    const tables = zone.tables.map(t => {
+      const ax = t.ax || 'S';
+      const [lx, ly, anchor] = t.label;
+      return {
+        ...t,
+        x: pos(t.x, ax),
+        label: [pos(lx, ax), ly, anchor],
+        labelMax: ax === 'S' ? Math.min(Math.round(t.labelMax * k), 160) : (ax === 'L' ? Math.min(Math.round(t.labelMax * k), 150) : t.labelMax + Math.round((k - 1) * 60))
+      };
+    });
+    return { width: W, height: zone.height, decor: zone.decor(W, S), tables, title: zone.title };
+  }
   const HALL_TABLES = HALL_ZONES.flatMap(z => z.tables.map(t => ({ ...t, zone: z.id })));
 
   // Стол в брони записан текстом («Общий зал 7»). Сравниваем без учёта регистра,
@@ -2351,9 +2401,15 @@
   }
 
   // ─── ГРАФИК: столы × время ─────────────────────
-  const TL_PX_PER_HOUR = 64;
+  // На телефоне — 64 px на час и прокрутка вбок, на широком экране часы растягиваются
+  // на всю ширину. Слева — столы (секциями: общий зал, другие зоны, без стола),
+  // прошедшее время притенено, красная линия с меткой — «сейчас».
   const TL_LABEL_W = 64;
-  const TL_LANE_H = 30;
+  const TL_LANE_H = 34;
+  const TL_MIN_PX_PER_HOUR = 64;
+  let tlPxPerHour = TL_MIN_PX_PER_HOUR;
+
+  const TL_PERSON_ICON = '<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.2-4 4.3-6 8-6s6.8 2 8 6"/></svg>';
 
   function renderTimeline() {
     const body = document.getElementById('bookingsViewBody');
@@ -2364,31 +2420,48 @@
       axisEnd = Math.max(axisEnd, Math.ceil(it.end / 60) * 60);
     }
     const hours = (axisEnd - axisStart) / 60;
-    const W = hours * TL_PX_PER_HOUR;
-    const px = min => ((min - axisStart) / 60) * TL_PX_PER_HOUR;
+    tlPxPerHour = Math.max(TL_MIN_PX_PER_HOUR, Math.floor((body.clientWidth - TL_LABEL_W - 2) / hours));
+    const PX = tlPxPerHour;
+    const W = hours * PX;
+    const px = min => ((min - axisStart) / 60) * PX;
 
-    // строки: столы схемы → другие столы (терраса, VIP…) → без стола
-    const rows = HALL_TABLES.map(t => ({ key: t.key, title: t.short, sub: `${t.seats} чел`, items: [] }));
+    // строки: общий зал (столы схемы) → другие зоны (терраса, VIP…) → без стола
+    const rows = HALL_TABLES.map(t => ({ key: t.key, title: t.short, seats: t.seats, items: [], section: 'Общий зал' }));
     const byKey = Object.fromEntries(rows.map(r => [r.key, r]));
     const others = {};
-    const noTable = { key: '', title: 'Без стола', sub: '', items: [], noTable: true };
+    const noTable = { key: '', title: 'Без стола', items: [], noTable: true, section: 'Без стола' };
     for (const it of items) {
       if (it.table) byKey[it.table.key].items.push(it);
-      else if (it.b.table) (others[it.b.table] = others[it.b.table] || { key: it.b.table, title: it.b.table, sub: '', items: [], other: true }).items.push(it);
+      else if (it.b.table) (others[it.b.table] = others[it.b.table] || { key: it.b.table, title: it.b.table, items: [], other: true, section: 'Другие зоны' }).items.push(it);
       else noTable.items.push(it);
     }
     const allRows = [...rows, ...Object.values(others).sort((a, c) => a.title.localeCompare(c.title, 'ru')), noTable];
 
     const now = venueNow();
-    const nowX = hallDate === now.day && now.min >= axisStart && now.min <= axisEnd ? px(now.min) : null;
+    const isToday = hallDate === now.day;
+    const nowX = isToday && now.min >= axisStart && now.min <= axisEnd ? px(now.min) : null;
+    const pastX = isToday ? Math.min(W, Math.max(0, px(now.min))) : 0;
 
+    // шапка: часы и получасовые засечки
     let head = `<div class="tl-head" style="width:${TL_LABEL_W + W}px"><div class="tl-corner"></div><div class="tl-hours" style="width:${W}px">`;
-    for (let h = 0; h < hours; h++) head += `<div class="tl-hour" style="left:${h * TL_PX_PER_HOUR}px">${hhmm(axisStart + h * 60).slice(0, 2)}</div>`;
+    for (let h = 0; h < hours; h++) {
+      const m = axisStart + h * 60;
+      head += `<div class="tl-hour${isToday && m + 60 <= now.min ? ' past' : ''}" style="left:${h * PX}px">${hhmm(m)}</div>`;
+      head += `<div class="tl-halftick" style="left:${h * PX + PX / 2}px"></div>`;
+    }
+    if (nowX !== null) head += `<div class="tl-nowbadge" style="left:${nowX}px">${hhmm(now.min)}</div>`;
     head += '</div></div>';
 
     let rowsHtml = '';
+    let section = null;
+    let zebra = 0;
     allRows.forEach((row, ri) => {
-      // раскладка по дорожкам: пересекающиеся брони одного стола — друг под другом
+      if (row.section !== section) {
+        section = row.section;
+        zebra = 0;
+        rowsHtml += `<div class="tl-section" style="width:${TL_LABEL_W + W}px"><span>${escHtml(section)}</span></div>`;
+      }
+      // раскладка по дорожкам: две брони одного стола — друг под другом
       const lanes = [];
       for (const it of row.items) {
         let lane = lanes.findIndex(endAt => endAt <= it.start);
@@ -2397,31 +2470,38 @@
         it.lane = lane;
       }
       const conflict = !row.noTable && lanes.length > 1;
-      const h = Math.max(1, lanes.length) * TL_LANE_H + 6;
+      const h = Math.max(1, lanes.length) * TL_LANE_H + 4;
       const bars = row.items.map(it => {
         const b = it.b;
-        const past = hallDate === now.day && it.end <= now.min;
-        const cls = ['tl-bar', b.status === 'pending' ? 'pending' : 'confirmed', past ? 'past' : '', conflict ? 'conflict' : ''].join(' ');
+        const cls = ['tl-bar', b.status === 'pending' ? 'pending' : 'confirmed', conflict ? 'conflict' : ''].join(' ');
         const flags = bookingGuestFlags(b, true);
-        const flagIcons = flags.some(f => f.cls === 'danger') ? '<span class="tl-flag danger">⚠</span>' : '';
-        const vip = flags.some(f => f.text === 'VIP') ? '<span class="tl-flag vip">★</span>' : '';
-        const bd = flags.some(f => f.text === 'ДР') ? '<span class="tl-flag">🎂</span>' : '';
+        const icons = [
+          flags.some(f => f.cls === 'danger') ? '<span class="tl-ic danger">⚠</span>' : '',
+          flags.some(f => f.text === 'VIP') ? '<span class="tl-ic vip">★</span>' : '',
+          flags.some(f => f.text === 'ДР') ? '<span class="tl-ic">🎂</span>' : ''
+        ].join('');
         const extra = row.noTable && b.kind && b.kind !== 'Стол' ? ` · ${escHtml(b.kind)}` : '';
-        return `<div class="${cls}" style="left:${px(it.start) + 1}px;width:${Math.max(18, px(it.end) - px(it.start) - 2)}px;top:${3 + it.lane * TL_LANE_H}px"
-          onclick="event.stopPropagation();openBookingDetail(${it.idx})" title="${escHtml(`${hhmm(it.start)} ${b.name}`)}">
-          <b>${b.guests ? escHtml(String(b.guests)) : '·'}</b> ${escHtml(b.name)}${extra} ${flagIcons}${vip}${bd}
+        const width = Math.max(24, px(it.end) - px(it.start) - 3);
+        return `<div class="${cls}" style="left:${px(it.start) + 1}px;width:${width}px;top:${3 + it.lane * TL_LANE_H}px"
+          onclick="event.stopPropagation();openBookingDetail(${it.idx})" title="${escHtml(`${hhmm(it.start)} · ${b.name}${b.guests ? ' · ' + b.guests + ' чел.' : ''}${b.status === 'pending' ? ' · ждёт подтверждения' : ''}`)}">
+          ${b.guests ? `<span class="tl-count">${escHtml(String(b.guests))}</span>` : ''}<span class="tl-name">${escHtml(b.name)}${extra}</span>${icons}<span class="tl-time">с ${hhmm(it.start)}</span>
         </div>`;
       }).join('');
-      const label = `<div class="tl-rowlabel${row.other || row.noTable ? ' small' : ''}"><div class="tl-rowtitle">${escHtml(row.title)}</div>${row.sub ? `<div class="tl-rowsub">${escHtml(row.sub)}</div>` : ''}</div>`;
-      rowsHtml += `<div class="tl-row${conflict ? ' conflict' : ''}" style="height:${h}px;width:${TL_LABEL_W + W}px">${label}
-        <div class="tl-track" style="width:${W}px;background-size:${TL_PX_PER_HOUR / 2}px 100%" onclick="tlTrackClick(event, ${ri})">${bars}</div></div>`;
+      const label = row.other || row.noTable
+        ? `<div class="tl-rowlabel small"><div class="tl-rowtitle">${escHtml(row.title)}</div></div>`
+        : `<div class="tl-rowlabel"><div class="tl-rowtitle">${escHtml(row.title)}</div><div class="tl-rowsub">${TL_PERSON_ICON}${row.seats}</div></div>`;
+      rowsHtml += `<div class="tl-row${conflict ? ' conflict' : ''}${zebra++ % 2 ? ' odd' : ''}" style="height:${h}px;width:${TL_LABEL_W + W}px">${label}
+        <div class="tl-track${row.noTable ? ' no-add' : ''}" style="width:${W}px;background-size:${PX}px 100%, ${PX / 2}px 100%" data-row="${ri}"
+          onclick="tlTrackClick(event, ${ri})" onmousemove="tlTrackHover(event, ${ri})" onmouseleave="tlHideGhost()">${bars}</div></div>`;
     });
 
     body.innerHTML = `
       <div class="tl-scroll" id="tlScroll">
         <div class="tl-grid" style="width:${TL_LABEL_W + W}px">
           ${head}${rowsHtml}
+          ${pastX > 0 ? `<div class="tl-past" style="left:${TL_LABEL_W}px;width:${pastX}px"></div>` : ''}
           ${nowX !== null ? `<div class="tl-now" style="left:${TL_LABEL_W + nowX}px"></div>` : ''}
+          <div class="tl-ghost" id="tlGhost"></div>
         </div>
       </div>
       <div class="hz-legend">
@@ -2433,7 +2513,8 @@
       ${renderUntimedList()}`;
     tlRowsCache = allRows;
     tlAxisStart = axisStart;
-    // прокрутить к текущему времени (или к вечеру)
+    tlLastWidth = body.clientWidth;
+    // если график шире экрана — прокрутить к текущему времени (или к вечеру)
     const scroller = document.getElementById('tlScroll');
     const focusMin = nowX !== null ? now.min - 60 : 18 * 60;
     scroller.scrollLeft = Math.max(0, px(focusMin));
@@ -2441,13 +2522,44 @@
 
   let tlRowsCache = [];
   let tlAxisStart = VENUE_OPEN_MIN;
+  let tlLastWidth = 0;
+  function tlMinuteAt(event) {
+    const rect = event.currentTarget.getBoundingClientRect();
+    return tlAxisStart + Math.floor(((event.clientX - rect.left) / tlPxPerHour) * 4) * 15;
+  }
   function tlTrackClick(event, rowIndex) {
     const row = tlRowsCache[rowIndex];
     if (!row || row.noTable) return;
-    const rect = event.currentTarget.getBoundingClientRect();
-    const min = tlAxisStart + Math.floor(((event.clientX - rect.left) / TL_PX_PER_HOUR) * 4) * 15;
-    openAddBookingAt(hallDate, min, row.key);
+    openAddBookingAt(hallDate, tlMinuteAt(event), row.key);
   }
+  // Подсказка при наведении мышью: «+ 20:15» там, где можно записать новую бронь
+  function tlTrackHover(event, rowIndex) {
+    const ghost = document.getElementById('tlGhost');
+    const row = tlRowsCache[rowIndex];
+    if (!ghost || !row || row.noTable || event.target.closest('.tl-bar')) { tlHideGhost(); return; }
+    const min = tlMinuteAt(event);
+    const track = event.currentTarget;
+    const grid = track.closest('.tl-grid').getBoundingClientRect();
+    const tr = track.getBoundingClientRect();
+    ghost.style.left = `${tr.left - grid.left + ((min - tlAxisStart) / 60) * tlPxPerHour}px`;
+    ghost.style.top = `${tr.top - grid.top + 3}px`;
+    ghost.style.width = `${Math.max(46, tlPxPerHour / 4)}px`;
+    ghost.style.height = `${TL_LANE_H - 6}px`;
+    ghost.textContent = `+ ${hhmm(min)}`;
+    ghost.classList.add('on');
+  }
+  function tlHideGhost() {
+    document.getElementById('tlGhost')?.classList.remove('on');
+  }
+  window.addEventListener('resize', () => {
+    clearTimeout(window.__tlResize);
+    window.__tlResize = setTimeout(() => {
+      const body = document.getElementById('bookingsViewBody');
+      const active = document.getElementById('screen-bookings')?.classList.contains('active');
+      if (!body || !active || bookingsView !== 'timeline' || body.clientWidth === tlLastWidth) return;
+      renderTimeline();
+    }, 200);
+  });
 
   // Новая бронь на выбранные стол и время (время после полуночи — на следующую дату)
   function openAddBookingAt(day, min, tableKey) {
@@ -2596,7 +2708,8 @@
     if (hallTime === null) hallTime = defaultHallTime();
     const t = hallTime;
     const items = hallDayBookings(hallDate);
-    const zone = HALL_ZONES[0];
+    hallLastWidth = body.clientWidth; // перерисовка по resize — только если ширина реально поменялась
+    const zone = layoutZone(HALL_ZONES[0], body.clientWidth - 14);
 
     const states = {};
     for (const tb of zone.tables) states[tb.key] = tableStateAt(tb.key, items, t);
@@ -2629,7 +2742,7 @@
 
     const modes = segControl([['guest', 'Гость'], ['day', 'Брони дня'], ['time', 'Время']], hallMode, 'setHallMode', 'seg-sm hz-modes');
 
-    let svg = `<svg viewBox="0 0 ${zone.width} ${zone.height}" class="hz-svg" xmlns="http://www.w3.org/2000/svg">${zone.decor.join('')}`;
+    let svg = `<svg viewBox="0 0 ${zone.width} ${zone.height}" class="hz-svg" data-w="${zone.width}" xmlns="http://www.w3.org/2000/svg">${zone.decor.join('')}`;
     for (const tb of zone.tables) {
       const st = states[tb.key];
       const cls = ['hz-t', st.state, hallSelectedTable === tb.key ? 'sel' : ''].join(' ');
@@ -2661,6 +2774,19 @@
     const sel = document.querySelector('#hzTimes .hz-time.selected');
     if (sel) sel.parentElement.scrollLeft = Math.max(0, sel.offsetLeft - sel.parentElement.clientWidth / 2 + sel.clientWidth / 2);
   }
+
+  let hallResizeTimer = null;
+  let hallLastWidth = 0;
+  window.addEventListener('resize', () => {
+    clearTimeout(hallResizeTimer);
+    hallResizeTimer = setTimeout(() => {
+      const body = document.getElementById('bookingsViewBody');
+      const active = document.getElementById('screen-bookings')?.classList.contains('active');
+      if (!body || !active || bookingsView !== 'plan' || body.clientWidth === hallLastWidth) return;
+      hallLastWidth = body.clientWidth;
+      renderHallPlan();
+    }, 200);
+  });
 
   function selectHallTable(key) {
     hallSelectedTable = hallSelectedTable === key ? null : key;
