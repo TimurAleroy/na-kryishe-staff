@@ -525,6 +525,84 @@
     .chlog-item { font-size: 12.5px; line-height: 1.45; color: var(--text-sub); padding: 9px 0; border-top: 1px solid var(--border); }
     .chlog-item:first-child { border-top: none; }
     .chlog-when { font-size: 10.5px; color: var(--text-muted); margin-bottom: 2px; }
+    /* СХЕМА ЗАЛА И ГРАФИК СТОЛОВ */
+    .bk-views { margin: 14px 0 4px; }
+    .bk-views .chip { padding: 8px 16px; font-size: 12.5px; }
+    .hz-datebar { display: flex; align-items: center; gap: 10px; margin: 12px 0 4px; }
+    .hz-nav { width: 34px; height: 34px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border); color: var(--text); font-size: 18px; line-height: 1; cursor: pointer; flex-shrink: 0; }
+    .hz-nav:disabled { opacity: 0.3; cursor: default; }
+    .hz-date { flex: 1; text-align: center; font-size: 14px; color: var(--text); }
+    .hz-summary { font-size: 12px; color: var(--text-muted); text-align: center; margin-bottom: 10px; line-height: 1.5; }
+    .hz-times { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 6px; scrollbar-width: none; }
+    .hz-times::-webkit-scrollbar { display: none; }
+    .hz-time { flex-shrink: 0; font-size: 11.5px; padding: 6px 9px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); cursor: pointer; }
+    .hz-time.hour { color: var(--text-sub); }
+    .hz-time.selected { background: var(--accent-dim); border-color: rgba(184,115,51,0.6); color: var(--accent); }
+    .hz-time.now { color: #f87171; border-color: rgba(239,68,68,0.4); }
+    .hz-zonehead { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin: 14px 2px 8px; font-size: 13px; color: var(--text); }
+    .hz-wrap { background: #170C03; border: 1px solid var(--border); border-radius: 16px; padding: 6px; max-width: 640px; margin: 0 auto; }
+    .hz-svg { display: block; width: 100%; height: auto; font-family: 'Inter', sans-serif; user-select: none; -webkit-user-select: none; }
+    .hz-wall { fill: none; stroke: rgba(240,223,192,0.12); stroke-width: 1.5; }
+    .hz-window { stroke: rgba(125,180,230,0.55); stroke-width: 3; stroke-linecap: round; }
+    .hz-note { fill: rgba(240,223,192,0.32); font-size: 8px; letter-spacing: 1px; }
+    .hz-counter { fill: rgba(184,115,51,0.16); stroke: rgba(184,115,51,0.4); }
+    .hz-sofa { fill: rgba(240,223,192,0.06); stroke: rgba(240,223,192,0.15); }
+    .hz-sofa-line { stroke: rgba(240,223,192,0.15); }
+    .hz-pillar { fill: rgba(240,223,192,0.2); }
+    .hz-seat { fill: rgba(240,223,192,0.18); }
+    .hz-t { cursor: pointer; }
+    .hz-shape { fill: #2A1C12; stroke: rgba(240,223,192,0.24); stroke-width: 1.2; }
+    .hz-barpill { fill: rgba(240,223,192,0.03); }
+    .hz-stool { fill: rgba(240,223,192,0.12); stroke: rgba(240,223,192,0.28); }
+    .hz-num { fill: var(--text); font-size: 15px; font-weight: 500; font-family: 'Jost', sans-serif; }
+    .hz-seats { fill: var(--text-muted); font-size: 8px; }
+    .hz-t.busy .hz-shape { fill: rgba(74,222,128,0.26); stroke: #4ade80; }
+    .hz-t.busy .hz-stool { fill: rgba(74,222,128,0.45); stroke: #4ade80; }
+    .hz-t.pending .hz-shape { fill: rgba(245,158,11,0.24); stroke: #f59e0b; }
+    .hz-t.pending .hz-stool { fill: rgba(245,158,11,0.45); stroke: #f59e0b; }
+    .hz-t.soon .hz-shape { stroke: #f59e0b; stroke-dasharray: 4 3; }
+    .hz-t.conflict .hz-shape { fill: rgba(239,68,68,0.22); stroke: #ef4444; stroke-width: 2; }
+    .hz-t.conflict .hz-stool { fill: rgba(239,68,68,0.4); stroke: #ef4444; }
+    .hz-t.busy .hz-seats, .hz-t.pending .hz-seats, .hz-t.conflict .hz-seats { fill: var(--text-sub); }
+    .hz-t.sel .hz-shape { stroke: var(--accent); stroke-width: 2.8; stroke-dasharray: none; }
+    .hz-label rect { fill: rgba(20,11,0,0.92); stroke: rgba(240,223,192,0.14); }
+    .hz-label text { fill: var(--text); font-size: 10.5px; }
+    .hz-l-dim { fill: var(--text-muted); }
+    .hz-l-good { fill: #4ade80; }
+    .hz-l-warn { fill: #f59e0b; }
+    .hz-l-danger { fill: #f87171; }
+    .hz-l-vip { fill: var(--accent); }
+    .hz-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 11px; color: var(--text-sub); margin: 10px 2px 0; }
+    .hz-legend .lg { display: inline-block; width: 12px; height: 12px; border-radius: 4px; margin-right: 5px; vertical-align: -2px; border: 1.5px solid; }
+    .lg.confirmed { background: rgba(74,222,128,0.26); border-color: #4ade80; }
+    .lg.pending { background: rgba(245,158,11,0.24); border-color: #f59e0b; }
+    .lg.soon { border-color: #f59e0b; border-style: dashed; }
+    .lg.conflict { background: rgba(239,68,68,0.22); border-color: #ef4444; }
+    .hz-item { display: flex; align-items: center; justify-content: space-between; gap: 6px 10px; flex-wrap: wrap; padding: 9px 0; border-top: 1px solid var(--border); font-size: 13px; color: var(--text); cursor: pointer; }
+    .hz-item .bk-flags { margin-top: 0; }
+    .hz-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 7px; vertical-align: 1px; }
+    .tl-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 14px; background: #170C03; -webkit-overflow-scrolling: touch; }
+    .tl-grid { position: relative; }
+    .tl-head { display: flex; height: 26px; }
+    .tl-corner { width: 64px; flex-shrink: 0; position: sticky; left: 0; background: #170C03; z-index: 3; border-right: 1px solid var(--border); }
+    .tl-hours { position: relative; height: 26px; flex-shrink: 0; }
+    .tl-hour { position: absolute; top: 7px; padding-left: 4px; font-size: 10.5px; color: var(--text-muted); border-left: 1px solid rgba(240,223,192,0.12); height: 19px; }
+    .tl-row { display: flex; border-top: 1px solid var(--border); }
+    .tl-rowlabel { width: 64px; flex-shrink: 0; position: sticky; left: 0; z-index: 2; background: #170C03; padding: 4px 8px; border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+    .tl-rowtitle { font-family: 'Jost', sans-serif; font-size: 15px; color: var(--text); line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tl-rowlabel.small .tl-rowtitle { font-family: 'Inter', sans-serif; font-size: 10.5px; white-space: normal; }
+    .tl-rowsub { font-size: 9.5px; color: var(--text-muted); }
+    .tl-row.conflict .tl-rowtitle { color: #f87171; }
+    .tl-track { position: relative; flex-shrink: 0; background-image: linear-gradient(to right, rgba(240,223,192,0.06) 1px, transparent 1px); }
+    .tl-bar { position: absolute; height: 24px; border-radius: 7px; padding: 0 7px; font-size: 11.5px; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; border: 1px solid; color: var(--text); box-sizing: border-box; }
+    .tl-bar.confirmed { background: rgba(74,222,128,0.2); border-color: rgba(74,222,128,0.6); }
+    .tl-bar.pending { background: rgba(245,158,11,0.2); border-color: rgba(245,158,11,0.7); }
+    .tl-bar.conflict { border-color: #ef4444; box-shadow: inset 0 0 0 1px #ef4444; }
+    .tl-bar.past { opacity: 0.45; }
+    .tl-bar b { font-weight: 600; margin-right: 2px; }
+    .tl-flag.danger { color: #f87171; }
+    .tl-flag.vip { color: var(--accent); }
+    .tl-now { position: absolute; top: 26px; bottom: 0; width: 2px; margin-left: -1px; background: #ef4444; z-index: 1; pointer-events: none; }
     .desktop-only { display: none; }
 
     /* ДЕСКТОП: Telegram Mini App всегда открывается в узком вьюпорте (как на
@@ -1886,10 +1964,12 @@
 
   // Временная схема столов (до подключения iiko — тогда номера должны совпасть
   // с теми, что заведены там, чтобы это был один и тот же стол в обеих системах).
+  // Общий зал — по плану (схема HALL_ZONES ниже): столы 1–13 и «Бар».
+  // Терраса и VIP — пока просто номера, схема террасы добавится позже.
   const TABLE_GROUPS = [
-    { label: 'Общий зал', count: 10 },
-    { label: 'Терраса', count: 7 },
-    { label: 'VIP', count: 3 }
+    { label: 'Общий зал', tables: [...Array.from({ length: 13 }, (_, i) => `Общий зал ${i + 1}`), 'Бар'] },
+    { label: 'Терраса', tables: Array.from({ length: 7 }, (_, i) => `Терраса ${i + 1}`) },
+    { label: 'VIP', tables: Array.from({ length: 3 }, (_, i) => `VIP ${i + 1}`) }
   ];
   // Кто ещё занял стол в этот же день — считаем прямо по уже загруженному
   // списку броней (bookingsListData), без похода на сервер. Для лаунжа не
@@ -1915,7 +1995,7 @@
   function tableOptionsHtml(selected, occupied) {
     lastOccupiedTables = occupied || {};
     return TABLE_GROUPS.map(g => {
-      const opts = Array.from({ length: g.count }, (_, i) => `${g.label} ${i + 1}`)
+      const opts = g.tables
         .map(v => {
           const occ = lastOccupiedTables[v];
           const label = occ ? `${v} — занято (${occ.name}${occ.time ? ', ' + occ.time : ''})` : v;
@@ -1952,7 +2032,7 @@
       const res = await fetch(`${PROXY_BASE}/api/staff/bookings?pin=${getPin()}`);
       if (res.status === 401) { showScreen('pin'); return; }
       bookingsListData = await res.json();
-      renderBookingsList();
+      renderBookingsView();
     } catch {
       el.innerHTML = '<div class="empty-state">Не удалось загрузить брони</div>';
     }
@@ -1984,8 +2064,8 @@
     return `<div class="bk-flags">${shown.map(f => `<span class="bk-flag ${f.cls}">${escHtml(f.text)}</span>`).join('')}${more}</div>`;
   }
 
-  function renderBookingsList() {
-    const el = document.getElementById('bookingsContent');
+  function renderBookingsList(target) {
+    const el = target || document.getElementById('bookingsContent');
     if (!bookingsListData.length) {
       el.innerHTML = '<div class="empty-state">Броней пока нет</div>';
       return;
@@ -2012,18 +2092,552 @@
     }).join('') + '</div>';
   }
 
+  // ─── СХЕМА ЗАЛА И ГРАФИК СТОЛОВ ─────────────────
+  // Три вида броней: «Список» (как было), «График» (столы × время) и «Схема» (зал сверху).
+  // У брони нет времени окончания — на графике и схеме считаем, что она длится
+  // BOOKING_DEFAULT_MIN, но не дольше закрытия. Заведение работает с 13:00 до 01:00,
+  // поэтому брони с 00:00 до 06:00 относятся к вечеру предыдущего дня.
+  const VENUE_OPEN_MIN = 13 * 60;
+  const VENUE_CLOSE_MIN = 25 * 60;     // 01:00 следующего дня
+  const BOOKING_DEFAULT_MIN = 120;
+  const DAY_SPLIT_HOUR = 6;
+  const SOON_MIN = 60;                 // «скоро бронь» — в ближайший час
+
+  // Общий зал — по плану (не в масштабе: столы крупнее, чтобы попадать пальцем).
+  // Номера: 1–3 у окон (слева направо), 4–6 у банкетки вдоль стены (снизу вверх),
+  // 7–9 диваны у дальней стены (справа налево), 10–13 центр, «Бар» — 6 мест у стойки.
+  // Места — оценка по плану (диван 2,55 м — 3 человека). Терраса добавится отдельной зоной.
+  // label: где подпись режима — [x, y, выравнивание]
+  const HALL_ZONES = [{
+    id: 'main',
+    title: 'Общий зал',
+    width: 400,
+    height: 394,
+    decor: [
+      '<rect x="2" y="2" width="396" height="388" rx="10" class="hz-wall"/>',
+      '<line x1="70" y1="390" x2="396" y2="390" class="hz-window"/>',
+      '<text x="233" y="386" text-anchor="middle" class="hz-note">окна</text>',
+      // барная стойка
+      '<path d="M10 118 H30 V302 H10 Z" class="hz-counter"/>',
+      '<text x="20" y="214" text-anchor="middle" class="hz-note" transform="rotate(-90 20 214)">стойка</text>',
+      // диваны кабинок у дальней стены
+      ...[131, 235, 339].flatMap(c => [
+        `<rect x="${c - 47}" y="10" width="22" height="60" rx="6" class="hz-sofa"/>`,
+        `<rect x="${c + 25}" y="10" width="22" height="60" rx="6" class="hz-sofa"/>`
+      ]),
+      // колонна и двусторонний диван между овальными столами
+      '<rect x="152" y="178" width="14" height="56" rx="2" class="hz-pillar"/>',
+      '<rect x="182" y="171" width="52" height="70" rx="8" class="hz-sofa"/>',
+      '<line x1="182" y1="206" x2="234" y2="206" class="hz-sofa-line"/>',
+      // банкетка вдоль правой стены
+      '<rect x="374" y="118" width="18" height="192" rx="6" class="hz-sofa"/>'
+    ],
+    tables: [
+      { key: 'Общий зал 1', short: '1', seats: 2, shape: 'round', x: 100, y: 356, r: 18, ticks: 'lr', label: [100, 330, 'middle'], labelMax: 100 },
+      { key: 'Общий зал 2', short: '2', seats: 2, shape: 'round', x: 205, y: 356, r: 18, ticks: 'lr', label: [205, 330, 'middle'], labelMax: 100 },
+      { key: 'Общий зал 3', short: '3', seats: 2, shape: 'round', x: 310, y: 356, r: 18, ticks: 'lr', label: [310, 330, 'middle'], labelMax: 100 },
+      { key: 'Общий зал 4', short: '4', seats: 4, shape: 'rect', x: 352, y: 278, w: 36, h: 50, ticks: 'l2', label: [319, 282, 'end'], labelMax: 80 },
+      { key: 'Общий зал 5', short: '5', seats: 3, shape: 'rect', x: 352, y: 214, w: 36, h: 46, ticks: 'l1', label: [319, 218, 'end'], labelMax: 80 },
+      { key: 'Общий зал 6', short: '6', seats: 4, shape: 'rect', x: 352, y: 150, w: 36, h: 50, ticks: 'l2', label: [319, 154, 'end'], labelMax: 80 },
+      { key: 'Общий зал 7', short: '7', seats: 6, shape: 'rect', x: 339, y: 40, w: 40, h: 52, ticks: '', label: [339, 84, 'middle'], labelMax: 100 },
+      { key: 'Общий зал 8', short: '8', seats: 6, shape: 'rect', x: 235, y: 40, w: 40, h: 52, ticks: '', label: [235, 84, 'middle'], labelMax: 100 },
+      { key: 'Общий зал 9', short: '9', seats: 6, shape: 'rect', x: 131, y: 40, w: 40, h: 52, ticks: '', label: [131, 84, 'middle'], labelMax: 100 },
+      { key: 'Общий зал 10', short: '10', seats: 2, shape: 'round', x: 118, y: 150, r: 18, ticks: 'tb', label: [118, 116, 'middle'], labelMax: 90 },
+      { key: 'Общий зал 11', short: '11', seats: 4, shape: 'oval', x: 208, y: 150, w: 52, h: 28, ticks: 't2', label: [208, 116, 'middle'], labelMax: 80 },
+      { key: 'Общий зал 12', short: '12', seats: 4, shape: 'oval', x: 208, y: 262, w: 52, h: 28, ticks: 'b2', label: [208, 304, 'middle'], labelMax: 80 },
+      { key: 'Общий зал 13', short: '13', seats: 2, shape: 'round', x: 118, y: 262, r: 18, ticks: 'tb', label: [118, 304, 'middle'], labelMax: 90 },
+      { key: 'Бар', short: 'Бар', seats: 6, shape: 'bar', x: 36, y: 120, w: 18, h: 180, ticks: '', label: [60, 214, 'start'], labelMax: 88 }
+    ]
+  }];
+  const HALL_TABLES = HALL_ZONES.flatMap(z => z.tables.map(t => ({ ...t, zone: z.id })));
+
+  // Стол в брони записан текстом («Общий зал 7»). Сравниваем без учёта регистра,
+  // слова «стол» и «№»; просто «7» считаем столом общего зала.
+  function normTableLabel(s) {
+    return String(s || '').toLowerCase().replace(/ё/g, 'е').replace(/№/g, ' ')
+      .replace(/(^|\s)стол(\s|$)/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+  const HALL_TABLE_BY_NORM = {};
+  for (const t of HALL_TABLES) {
+    HALL_TABLE_BY_NORM[normTableLabel(t.key)] = t;
+    if (t.zone === 'main' && /^\d+$/.test(t.short)) HALL_TABLE_BY_NORM[t.short] = t;
+  }
+  function hallTableFor(label) {
+    return label ? HALL_TABLE_BY_NORM[normTableLabel(label)] || null : null;
+  }
+
+  function venueNow() {
+    const d = new Date();
+    let min = d.getHours() * 60 + d.getMinutes();
+    let day = localDateStr(d);
+    if (d.getHours() < DAY_SPLIT_HOUR) { day = shiftDateStr(day, -1); min += 24 * 60; }
+    return { day, min };
+  }
+  function hhmm(min) {
+    const m = ((min % 1440) + 1440) % 1440;
+    return `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+  }
+  function durShort(min) {
+    if (min < 60) return `${min} мин`;
+    const h = Math.floor(min / 60), m = min % 60;
+    return m ? `${h} ч ${m}` : `${h} ч`;
+  }
+
+  // Когда бронь (день заведения, начало и конец в минутах от полуночи этого дня)
+  function bookingSlot(b) {
+    const m = /^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})/.exec(b.iso || '');
+    if (!m) return null;
+    const hh = Number(m[2]), mm = Number(m[3]);
+    // у мероприятий время может быть не указано (записано как 00:00)
+    if (b.kind === 'Мероприятие' && hh === 0 && mm === 0) return null;
+    let day = m[1], start = hh * 60 + mm;
+    if (hh < DAY_SPLIT_HOUR) { day = shiftDateStr(day, -1); start += 24 * 60; }
+    let end = start + BOOKING_DEFAULT_MIN;
+    if (start < VENUE_CLOSE_MIN) end = Math.min(end, VENUE_CLOSE_MIN);
+    return { day, start, end };
+  }
+
+  // Брони выбранного дня: { b, idx, start, end, table (стол схемы или null) }
+  function hallDayBookings(day) {
+    const out = [];
+    bookingsListData.forEach((b, idx) => {
+      const slot = bookingSlot(b);
+      if (!slot || slot.day !== day) return;
+      out.push({ b, idx, start: slot.start, end: slot.end, table: hallTableFor(b.table) });
+    });
+    return out.sort((a, c) => a.start - c.start);
+  }
+  // Брони без времени (мероприятия) на выбранный день
+  function hallDayUntimed(day) {
+    const out = [];
+    bookingsListData.forEach((b, idx) => {
+      if (!bookingSlot(b) && (b.iso || '').slice(0, 10) === day) out.push({ b, idx });
+    });
+    return out;
+  }
+
+  // ── состояние экрана броней ──
+  let bookingsView = 'list';       // list | timeline | plan
+  let hallMode = 'guest';          // guest | day | time
+  let hallDate = null;             // день заведения, YYYY-MM-DD
+  let hallTime = null;             // выбранное время на схеме, минуты от полуночи дня
+  let hallSelectedTable = null;    // key стола
+  try {
+    const v = localStorage.getItem('bookings_view');
+    if (['list', 'timeline', 'plan'].includes(v)) bookingsView = v;
+    const m = localStorage.getItem('hall_mode');
+    if (['guest', 'day', 'time'].includes(m)) hallMode = m;
+  } catch {}
+
+  function setBookingsView(v) {
+    bookingsView = v;
+    try { localStorage.setItem('bookings_view', v); } catch {}
+    renderBookingsView();
+  }
+  function setHallMode(m) {
+    hallMode = m;
+    try { localStorage.setItem('hall_mode', m); } catch {}
+    renderHallPlan();
+  }
+  function shiftHallDate(delta) {
+    const minDay = venueNow().day;
+    const next = shiftDateStr(hallDate, delta);
+    if (next < minDay) return;
+    hallDate = next;
+    hallTime = null;
+    hallSelectedTable = null;
+    renderBookingsView();
+  }
+  function setHallTime(min) {
+    hallTime = min;
+    renderHallPlan();
+  }
+
+  function defaultHallTime() {
+    const now = venueNow();
+    if (hallDate === now.day && now.min >= VENUE_OPEN_MIN && now.min < VENUE_CLOSE_MIN) {
+      return Math.floor(now.min / 15) * 15;
+    }
+    return 20 * 60;
+  }
+
+  function hallDateLabel(day) {
+    const today = venueNow().day;
+    const d = new Date(day + 'T12:00:00');
+    const text = d.toLocaleDateString('ru-RU', { weekday: 'short', day: 'numeric', month: 'long' });
+    if (day === today) return `Сегодня, ${text}`;
+    if (day === shiftDateStr(today, 1)) return `Завтра, ${text}`;
+    return text.charAt(0).toUpperCase() + text.slice(1);
+  }
+
+  function renderBookingsView() {
+    const el = document.getElementById('bookingsContent');
+    if (!el) return;
+    if (!hallDate) hallDate = venueNow().day;
+    const tabs = `<div class="chip-row bk-views">${[['list', 'Список'], ['timeline', 'График'], ['plan', 'Схема']]
+      .map(([v, label]) => `<div class="chip${bookingsView === v ? ' selected' : ''}" onclick="setBookingsView('${v}')">${label}</div>`).join('')}</div>`;
+    if (bookingsView === 'list') {
+      el.innerHTML = tabs + '<div id="bookingsViewBody"></div>';
+      renderBookingsList(document.getElementById('bookingsViewBody'));
+      return;
+    }
+    const minDay = venueNow().day;
+    const day = hallDayBookings(hallDate);
+    const guests = day.reduce((a, x) => a + (Number(x.b.guests) || 0), 0);
+    const noTable = day.filter(x => !x.b.table).length;
+    const pending = day.filter(x => x.b.status === 'pending').length;
+    el.innerHTML = `${tabs}
+      <div class="hz-datebar">
+        <button class="hz-nav" ${hallDate <= minDay ? 'disabled' : ''} onclick="shiftHallDate(-1)">‹</button>
+        <div class="hz-date">${escHtml(hallDateLabel(hallDate))}</div>
+        <button class="hz-nav" onclick="shiftHallDate(1)">›</button>
+      </div>
+      <div class="hz-summary">Броней: ${day.length} · гостей: ${guests}${pending ? ` · <span style="color:#f59e0b">ждут подтверждения: ${pending}</span>` : ''}${noTable ? ` · без стола: ${noTable}` : ''}</div>
+      <div id="bookingsViewBody"></div>`;
+    if (bookingsView === 'timeline') renderTimeline();
+    else renderHallPlan();
+  }
+
+  // ─── ГРАФИК: столы × время ─────────────────────
+  const TL_PX_PER_HOUR = 64;
+  const TL_LABEL_W = 64;
+  const TL_LANE_H = 30;
+
+  function renderTimeline() {
+    const body = document.getElementById('bookingsViewBody');
+    const items = hallDayBookings(hallDate);
+    let axisStart = VENUE_OPEN_MIN, axisEnd = VENUE_CLOSE_MIN;
+    for (const it of items) {
+      axisStart = Math.min(axisStart, Math.floor(it.start / 60) * 60);
+      axisEnd = Math.max(axisEnd, Math.ceil(it.end / 60) * 60);
+    }
+    const hours = (axisEnd - axisStart) / 60;
+    const W = hours * TL_PX_PER_HOUR;
+    const px = min => ((min - axisStart) / 60) * TL_PX_PER_HOUR;
+
+    // строки: столы схемы → другие столы (терраса, VIP…) → без стола
+    const rows = HALL_TABLES.map(t => ({ key: t.key, title: t.short, sub: `${t.seats} чел`, items: [] }));
+    const byKey = Object.fromEntries(rows.map(r => [r.key, r]));
+    const others = {};
+    const noTable = { key: '', title: 'Без стола', sub: '', items: [], noTable: true };
+    for (const it of items) {
+      if (it.table) byKey[it.table.key].items.push(it);
+      else if (it.b.table) (others[it.b.table] = others[it.b.table] || { key: it.b.table, title: it.b.table, sub: '', items: [], other: true }).items.push(it);
+      else noTable.items.push(it);
+    }
+    const allRows = [...rows, ...Object.values(others).sort((a, c) => a.title.localeCompare(c.title, 'ru')), noTable];
+
+    const now = venueNow();
+    const nowX = hallDate === now.day && now.min >= axisStart && now.min <= axisEnd ? px(now.min) : null;
+
+    let head = `<div class="tl-head" style="width:${TL_LABEL_W + W}px"><div class="tl-corner"></div><div class="tl-hours" style="width:${W}px">`;
+    for (let h = 0; h < hours; h++) head += `<div class="tl-hour" style="left:${h * TL_PX_PER_HOUR}px">${hhmm(axisStart + h * 60).slice(0, 2)}</div>`;
+    head += '</div></div>';
+
+    let rowsHtml = '';
+    allRows.forEach((row, ri) => {
+      // раскладка по дорожкам: пересекающиеся брони одного стола — друг под другом
+      const lanes = [];
+      for (const it of row.items) {
+        let lane = lanes.findIndex(endAt => endAt <= it.start);
+        if (lane === -1) { lane = lanes.length; lanes.push(0); }
+        lanes[lane] = it.end;
+        it.lane = lane;
+      }
+      const conflict = !row.noTable && lanes.length > 1;
+      const h = Math.max(1, lanes.length) * TL_LANE_H + 6;
+      const bars = row.items.map(it => {
+        const b = it.b;
+        const past = hallDate === now.day && it.end <= now.min;
+        const cls = ['tl-bar', b.status === 'pending' ? 'pending' : 'confirmed', past ? 'past' : '', conflict ? 'conflict' : ''].join(' ');
+        const flags = bookingGuestFlags(b, true);
+        const flagIcons = flags.some(f => f.cls === 'danger') ? '<span class="tl-flag danger">⚠</span>' : '';
+        const vip = flags.some(f => f.text === 'VIP') ? '<span class="tl-flag vip">★</span>' : '';
+        const bd = flags.some(f => f.text === 'ДР') ? '<span class="tl-flag">🎂</span>' : '';
+        const extra = row.noTable && b.kind && b.kind !== 'Стол' ? ` · ${escHtml(b.kind)}` : '';
+        return `<div class="${cls}" style="left:${px(it.start) + 1}px;width:${Math.max(18, px(it.end) - px(it.start) - 2)}px;top:${3 + it.lane * TL_LANE_H}px"
+          onclick="event.stopPropagation();openBookingDetail(${it.idx})" title="${escHtml(`${hhmm(it.start)} ${b.name}`)}">
+          <b>${b.guests ? escHtml(String(b.guests)) : '·'}</b> ${escHtml(b.name)}${extra} ${flagIcons}${vip}${bd}
+        </div>`;
+      }).join('');
+      const label = `<div class="tl-rowlabel${row.other || row.noTable ? ' small' : ''}"><div class="tl-rowtitle">${escHtml(row.title)}</div>${row.sub ? `<div class="tl-rowsub">${escHtml(row.sub)}</div>` : ''}</div>`;
+      rowsHtml += `<div class="tl-row${conflict ? ' conflict' : ''}" style="height:${h}px;width:${TL_LABEL_W + W}px">${label}
+        <div class="tl-track" style="width:${W}px;background-size:${TL_PX_PER_HOUR / 2}px 100%" onclick="tlTrackClick(event, ${ri})">${bars}</div></div>`;
+    });
+
+    body.innerHTML = `
+      <div class="tl-scroll" id="tlScroll">
+        <div class="tl-grid" style="width:${TL_LABEL_W + W}px">
+          ${head}${rowsHtml}
+          ${nowX !== null ? `<div class="tl-now" style="left:${TL_LABEL_W + nowX}px"></div>` : ''}
+        </div>
+      </div>
+      <div class="hz-legend">
+        <span><i class="lg confirmed"></i>подтверждена</span>
+        <span><i class="lg pending"></i>ждёт подтверждения</span>
+        <span><i class="lg conflict"></i>брони пересекаются</span>
+      </div>
+      <div class="note" style="margin-top:6px">Нажмите на бронь, чтобы открыть её, или на пустое место, чтобы записать новую на этот стол и время. Длительность брони — ${BOOKING_DEFAULT_MIN / 60} ч, но не позже закрытия.</div>
+      ${renderUntimedList()}`;
+    tlRowsCache = allRows;
+    tlAxisStart = axisStart;
+    // прокрутить к текущему времени (или к вечеру)
+    const scroller = document.getElementById('tlScroll');
+    const focusMin = nowX !== null ? now.min - 60 : 18 * 60;
+    scroller.scrollLeft = Math.max(0, px(focusMin));
+  }
+
+  let tlRowsCache = [];
+  let tlAxisStart = VENUE_OPEN_MIN;
+  function tlTrackClick(event, rowIndex) {
+    const row = tlRowsCache[rowIndex];
+    if (!row || row.noTable) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const min = tlAxisStart + Math.floor(((event.clientX - rect.left) / TL_PX_PER_HOUR) * 4) * 15;
+    openAddBookingAt(hallDate, min, row.key);
+  }
+
+  // Новая бронь на выбранные стол и время (время после полуночи — на следующую дату)
+  function openAddBookingAt(day, min, tableKey) {
+    const date = min >= 24 * 60 ? shiftDateStr(day, 1) : day;
+    openAddBooking({ date, time: hhmm(min), table: tableKey || '' });
+  }
+
+  function renderUntimedList() {
+    const untimed = hallDayUntimed(hallDate);
+    if (!untimed.length) return '';
+    return `<div class="sec">Без времени</div>` + untimed.map(({ b, idx }) =>
+      `<div class="hz-item" onclick="openBookingDetail(${idx})"><span>${escHtml(b.name)}${b.guests ? ` · ${escHtml(String(b.guests))}` : ''}</span><span class="note">${escHtml(b.eventName || b.kind || '')}</span></div>`).join('');
+  }
+
+  // ─── СХЕМА ЗАЛА ────────────────────────────────
+
+  function tableStateAt(tableKey, items, t) {
+    const mine = items.filter(it => it.table && it.table.key === tableKey);
+    const cur = mine.filter(it => it.start <= t && t < it.end);
+    const next = mine.find(it => it.start > t);
+    let state = 'free';
+    if (cur.length > 1) state = 'conflict';
+    else if (cur.length === 1) state = cur[0].b.status === 'pending' ? 'pending' : 'busy';
+    else if (next && next.start - t <= SOON_MIN) state = 'soon';
+    return { mine, cur: cur[0] || null, next: next || null, state, conflict: cur.length > 1 };
+  }
+
+  // Подпись у стола в выбранном режиме: [{ text, cls }] — одна строка.
+  // Берём самый подробный вариант, который помещается в ширину (labelMax) у этого стола.
+  function fitLabel(variants, maxW) {
+    for (const parts of variants) {
+      const text = parts.map(p => p.text).join('');
+      if (labelTextWidth(text) + 10 <= maxW) return parts;
+    }
+    return variants[variants.length - 1] || [];
+  }
+  function cutName(name, n) {
+    return name.length > n ? name.slice(0, n - 1) + '…' : name;
+  }
+  function tableLabelParts(st, t, maxW) {
+    if (hallMode === 'guest') {
+      const it = st.cur || (st.state === 'soon' ? st.next : null);
+      if (!it) return [];
+      const b = it.b;
+      const first = String(b.name || 'Гость').trim().split(/\s+/)[0];
+      const flags = bookingGuestFlags(b, true);
+      const icons = [];
+      if (flags.some(f => f.cls === 'danger')) icons.push({ text: ' ⚠', cls: 'danger' });
+      if (flags.some(f => f.text === 'VIP')) icons.push({ text: ' ★', cls: 'vip' });
+      if (flags.some(f => f.text === 'ДР')) icons.push({ text: ' 🎂', cls: '' });
+      const pre = st.cur ? [] : [{ text: `${hhmm(it.start)} `, cls: 'dim' }];
+      const g = b.guests ? ` · ${b.guests}` : '';
+      const variants = [];
+      for (const n of [12, 8, 6, 4]) {
+        variants.push([...pre, { text: cutName(first, n) + g, cls: '' }, ...icons]);
+        variants.push([...pre, { text: cutName(first, n) + g, cls: '' }, ...icons.slice(0, 1)]);
+      }
+      variants.push([...pre, { text: cutName(first, 4), cls: '' }, ...icons.slice(0, 1)]);
+      variants.push([...pre, { text: cutName(first, 3), cls: '' }]);
+      return fitLabel(variants, maxW);
+    }
+    if (hallMode === 'day') {
+      if (!st.mine.length) return [];
+      const timePart = (it, i) => ({
+        text: (i ? ' ' : '') + hhmm(it.start),
+        cls: it.end <= t ? 'dim' : (it.start <= t ? 'good' : (it.b.status === 'pending' ? 'warn' : ''))
+      });
+      // если всё не помещается — сначала прячем уже прошедшие брони
+      const active = st.mine.filter(it => it.end > t);
+      const variants = [st.mine.slice(0, 3), active.slice(0, 3), active.slice(0, 2), active.slice(0, 1), st.mine.slice(-1)]
+        .filter(list => list.length)
+        .map(list => {
+          const parts = list.map(timePart);
+          if (st.mine.length > list.length) parts.push({ text: ` +${st.mine.length - list.length}`, cls: 'dim' });
+          return parts;
+        });
+      return fitLabel(variants, maxW);
+    }
+    // время: сколько осталось / через сколько придут
+    if (st.cur) {
+      const left = st.cur.end - t;
+      return [{ text: `ещё ${durShort(left)}`, cls: left <= 15 ? 'danger' : 'good' }];
+    }
+    if (st.next && st.next.start - t <= 180) return [{ text: `через ${durShort(st.next.start - t)}`, cls: st.next.start - t <= SOON_MIN ? 'warn' : '' }];
+    return [];
+  }
+
+  function tableTicksSvg(t) {
+    const out = [];
+    const tick = (x, y, w, h) => out.push(`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2" class="hz-seat"/>`);
+    const halfW = t.shape === 'round' ? t.r : t.w / 2;
+    const halfH = t.shape === 'round' ? t.r : t.h / 2;
+    if (t.ticks === 'lr') { tick(t.x - halfW - 8, t.y - 7, 5, 14); tick(t.x + halfW + 3, t.y - 7, 5, 14); }
+    if (t.ticks === 'tb') { tick(t.x - 7, t.y - halfH - 8, 14, 5); tick(t.x - 7, t.y + halfH + 3, 14, 5); }
+    if (t.ticks === 't2') { tick(t.x - 17, t.y - halfH - 8, 14, 5); tick(t.x + 3, t.y - halfH - 8, 14, 5); }
+    if (t.ticks === 'b2') { tick(t.x - 17, t.y + halfH + 3, 14, 5); tick(t.x + 3, t.y + halfH + 3, 14, 5); }
+    if (t.ticks === 'l2') { tick(t.x - halfW - 8, t.y - 17, 5, 14); tick(t.x - halfW - 8, t.y + 3, 5, 14); }
+    if (t.ticks === 'l1') { tick(t.x - halfW - 8, t.y - 7, 5, 14); }
+    return out.join('');
+  }
+
+  function tableShapeSvg(t) {
+    if (t.shape === 'round') return `<circle cx="${t.x}" cy="${t.y}" r="${t.r}" class="hz-shape"/>`;
+    if (t.shape === 'oval') return `<rect x="${t.x - t.w / 2}" y="${t.y - t.h / 2}" width="${t.w}" height="${t.h}" rx="${t.h / 2}" class="hz-shape"/>`;
+    if (t.shape === 'bar') {
+      const stools = Array.from({ length: t.seats }, (_, i) => {
+        const cy = t.y + 12 + i * ((t.h - 24) / (t.seats - 1));
+        return `<circle cx="${t.x + t.w / 2}" cy="${cy}" r="7" class="hz-stool"/>`;
+      }).join('');
+      return `<rect x="${t.x}" y="${t.y}" width="${t.w}" height="${t.h}" rx="${t.w / 2}" class="hz-shape hz-barpill"/>${stools}`;
+    }
+    return `<rect x="${t.x - t.w / 2}" y="${t.y - t.h / 2}" width="${t.w}" height="${t.h}" rx="6" class="hz-shape"/>`;
+  }
+
+  function tableTextSvg(t) {
+    if (t.shape === 'bar') return '';
+    const oval = t.shape === 'oval';
+    return `<text x="${t.x}" y="${t.y + (oval ? 1 : 2)}" text-anchor="middle" class="hz-num">${escHtml(t.short)}</text>
+      <text x="${t.x}" y="${t.y + (oval ? 11 : 14)}" text-anchor="middle" class="hz-seats">${t.seats} чел</text>`;
+  }
+
+  let labelMeasureCtx = null;
+  function labelTextWidth(text) {
+    try {
+      if (!labelMeasureCtx) {
+        labelMeasureCtx = document.createElement('canvas').getContext('2d');
+        labelMeasureCtx.font = "10.5px Inter, sans-serif";
+      }
+      return labelMeasureCtx.measureText(text).width;
+    } catch { return text.length * 6.2; }
+  }
+  function labelSvg(t, parts) {
+    if (!parts.length) return '';
+    const text = parts.map(p => p.text).join('');
+    const w = Math.ceil(labelTextWidth(text)) + 10;
+    const [lx, ly, anchor] = t.label;
+    const x0 = anchor === 'middle' ? lx - w / 2 : anchor === 'end' ? lx - w : lx;
+    const tspans = parts.map(p => `<tspan class="${p.cls ? 'hz-l-' + p.cls : ''}">${escHtml(p.text)}</tspan>`).join('');
+    return `<g class="hz-label" pointer-events="none"><rect x="${x0}" y="${ly - 11}" width="${w}" height="16" rx="4"/>
+      <text x="${x0 + 5}" y="${ly + 1}">${tspans}</text></g>`;
+  }
+
+  function renderHallPlan() {
+    const body = document.getElementById('bookingsViewBody');
+    if (!body || bookingsView !== 'plan') return;
+    if (hallTime === null) hallTime = defaultHallTime();
+    const t = hallTime;
+    const items = hallDayBookings(hallDate);
+    const zone = HALL_ZONES[0];
+
+    const states = {};
+    for (const tb of zone.tables) states[tb.key] = tableStateAt(tb.key, items, t);
+    const busyCount = zone.tables.filter(tb => ['busy', 'pending', 'conflict'].includes(states[tb.key].state)).length;
+
+    const times = [];
+    for (let m = VENUE_OPEN_MIN; m < VENUE_CLOSE_MIN; m += 15) times.push(m);
+    const now = venueNow();
+    const timesHtml = `<div class="hz-times" id="hzTimes">${hallDate === now.day ? `<div class="hz-time now" onclick="setHallTime(${Math.floor(now.min / 15) * 15})">Сейчас</div>` : ''}${times.map(m =>
+      `<div class="hz-time${m === t ? ' selected' : ''}${m % 60 === 0 ? ' hour' : ''}" data-min="${m}" onclick="setHallTime(${m})">${hhmm(m)}</div>`).join('')}</div>`;
+
+    const modes = `<div class="chip-row an-chips" style="margin-top:10px">${[['guest', 'Гость'], ['day', 'Брони дня'], ['time', 'Время']]
+      .map(([v, label]) => `<div class="chip${hallMode === v ? ' selected' : ''}" onclick="setHallMode('${v}')">${label}</div>`).join('')}</div>`;
+
+    let svg = `<svg viewBox="0 0 ${zone.width} ${zone.height}" class="hz-svg" xmlns="http://www.w3.org/2000/svg">${zone.decor.join('')}`;
+    for (const tb of zone.tables) {
+      const st = states[tb.key];
+      const cls = ['hz-t', st.state, hallSelectedTable === tb.key ? 'sel' : ''].join(' ');
+      svg += `<g class="${cls}" data-table="${escHtml(tb.key)}" onclick="selectHallTable('${escJs(tb.key)}')">${tableTicksSvg(tb)}${tableShapeSvg(tb)}${tableTextSvg(tb)}</g>`;
+    }
+    for (const tb of zone.tables) svg += labelSvg(tb, tableLabelParts(states[tb.key], t, tb.labelMax || 100));
+    svg += '</svg>';
+
+    const offPlan = items.filter(it => !it.table);
+    body.innerHTML = `
+      ${timesHtml}
+      ${modes}
+      <div class="hz-zonehead"><span>${escHtml(zone.title)}</span><span class="note">в ${hhmm(t)} занято ${busyCount} из ${zone.tables.length}</span></div>
+      <div class="hz-wrap">${svg}</div>
+      <div class="hz-legend">
+        <span><i class="lg confirmed"></i>идёт бронь</span>
+        <span><i class="lg pending"></i>ждёт подтверждения</span>
+        <span><i class="lg soon"></i>бронь в ближайший час</span>
+        <span><i class="lg conflict"></i>две брони на одно время</span>
+      </div>
+      <div id="hzTablePanel">${renderHallTablePanel(items, t)}</div>
+      ${offPlan.length ? `<div class="sec">Не на схеме</div>${offPlan.map(it => `
+        <div class="hz-item" onclick="openBookingDetail(${it.idx})">
+          <span><b style="font-weight:500">${hhmm(it.start)}</b> ${escHtml(it.b.name)}${it.b.guests ? ` · ${escHtml(String(it.b.guests))}` : ''}</span>
+          <span class="note">${it.b.table ? escHtml(it.b.table) : 'стол не назначен'}</span>
+        </div>`).join('')}` : ''}
+      ${renderUntimedList()}`;
+
+    const sel = document.querySelector('#hzTimes .hz-time.selected');
+    if (sel) sel.parentElement.scrollLeft = Math.max(0, sel.offsetLeft - sel.parentElement.clientWidth / 2 + sel.clientWidth / 2);
+  }
+
+  function selectHallTable(key) {
+    hallSelectedTable = hallSelectedTable === key ? null : key;
+    renderHallPlan();
+    if (hallSelectedTable) document.getElementById('hzTablePanel')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function renderHallTablePanel(items, t) {
+    const tb = HALL_TABLES.find(x => x.key === hallSelectedTable);
+    if (!tb) return '<div class="note" style="margin-top:10px">Нажмите на стол — появятся его брони на этот день и кнопка новой брони.</div>';
+    const mine = items.filter(it => it.table && it.table.key === tb.key);
+    const title = tb.shape === 'bar' ? `Бар · ${tb.seats} мест` : `Стол ${tb.short} · ${tb.seats} чел`;
+    const rows = mine.length ? mine.map(it => {
+      const b = it.b;
+      const color = b.status === 'pending' ? '#f59e0b' : '#4ade80';
+      const nowTag = it.start <= t && t < it.end ? ' <span class="pill good">сейчас</span>' : '';
+      return `<div class="hz-item" onclick="openBookingDetail(${it.idx})">
+        <span><span class="hz-dot" style="background:${color}"></span><b style="font-weight:500">${hhmm(it.start)}–${hhmm(it.end)}</b> ${escHtml(b.name)}${b.guests ? ` · ${escHtml(String(b.guests))}` : ''}${nowTag}</span>
+        ${bookingFlagsHtml(b, 2)}
+      </div>`;
+    }).join('') : '<div class="autotag-empty">На этот день броней нет</div>';
+    return `<div class="hint-box" style="margin-top:12px">
+      <div class="hint-title">${escHtml(title)}</div>
+      ${rows}
+      <button class="btn-primary btn-full" onclick="openAddBookingAt(hallDate, ${t}, '${escJs(tb.key)}')">+ Бронь на этот стол в ${hhmm(t)}</button>
+    </div>`;
+  }
+
   // Внести бронь вручную (гость позвонил и договорился по телефону) — сразу
   // считается подтверждённой, отдельно подтверждать в приложении не нужно.
-  function openAddBooking() {
+  // prefill — со схемы/графика: { date, time, table }
+  function openAddBooking(prefill) {
+    const pre = prefill || {};
     document.getElementById('abName').value = '';
     document.getElementById('abPhone').value = '+7';
     const nowLocal = new Date();
-    document.getElementById('abDate').value = `${nowLocal.getFullYear()}-${String(nowLocal.getMonth() + 1).padStart(2, '0')}-${String(nowLocal.getDate()).padStart(2, '0')}`;
-    document.getElementById('abTime').value = '20:00';
+    document.getElementById('abDate').value = pre.date || `${nowLocal.getFullYear()}-${String(nowLocal.getMonth() + 1).padStart(2, '0')}-${String(nowLocal.getDate()).padStart(2, '0')}`;
+    document.getElementById('abTime').value = pre.time || '20:00';
     document.getElementById('abGuests').value = '';
     document.getElementById('abComment').value = '';
     document.getElementById('tableConflictWarningHolder').innerHTML = tableConflictWarningHtml('abTableConflictWarning');
+    document.getElementById('abTable').value = '';
     refreshAddBookingTableOptions();
+    if (pre.table) {
+      document.getElementById('abTable').value = pre.table;
+      onTableSelectChange('abTable', 'abTableConflictWarning');
+    }
     showScreen('add-booking');
   }
 
@@ -2266,7 +2880,6 @@
       bookingsListData.splice(currentBookingIndex, 1);
       refreshBookingsDot();
       showScreen('bookings');
-      renderBookingsList();
       if (!data.notified) alert('Бронь отменена, но гостя уведомить не удалось — свяжитесь сами.');
     } catch {
       alert('Не удалось отменить');
@@ -3985,6 +4598,7 @@
     // Боковые панели десктопа обновляем при каждом возврате на главный —
     // так они не протухают за весь день без перезахода в приложение.
     if (name === 'home') loadDeskPanels();
+    if (name === 'bookings') renderBookingsView();
   }
 
   // ─── SEARCH ────────────────────────────────────
