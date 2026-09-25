@@ -263,6 +263,17 @@
     .alert-badge.risk { background: rgba(245,158,11,0.14); color: #f59e0b; border: 1px solid rgba(245,158,11,0.35); }
     .alert-badge.negative { background: rgba(239,68,68,0.14); color: #ef4444; border: 1px solid rgba(239,68,68,0.35); }
     .alert-badge.allergy { background: rgba(239,68,68,0.16); color: #f87171; border: 1px solid rgba(239,68,68,0.4); }
+    .alert-badge.nongrata { background: rgba(239,68,68,0.22); color: #fca5a5; border: 1px solid rgba(239,68,68,0.55); font-weight: 600; }
+    .alert-badge.birthday { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.35); }
+
+    /* Блок «Что делать» — подсказки по тегам гостя */
+    .hint-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 18px; }
+    .hint-title { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+    .hint-item { font-size: 12.5px; line-height: 1.45; color: var(--text); padding: 5px 0 5px 12px; position: relative; }
+    .hint-item::before { content: ''; position: absolute; left: 0; top: 11px; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+    .hint-item.danger { color: #fca5a5; }
+    .hint-item.danger::before { background: #ef4444; }
+    .hint-item.good::before { background: #4ade80; }
 
     .autotag-card {
       background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
@@ -276,6 +287,8 @@
     }
     .autotag-card.risk .autotag-icon { background: rgba(245,158,11,0.18); color: #f59e0b; }
     .autotag-card.negative .autotag-icon { background: rgba(239,68,68,0.18); color: #ef4444; }
+    .autotag-card.birthday { border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.05); }
+    .autotag-card.birthday .autotag-icon { background: rgba(34,197,94,0.16); color: #4ade80; }
     .autotag-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
     .autotag-detail { font-size: 12px; color: var(--text-sub); line-height: 1.5; }
     .autotag-empty { font-size: 12px; color: var(--text-muted); padding: 2px 2px 4px; }
@@ -289,6 +302,13 @@
       border-radius: 100px; padding: 8px 8px 8px 14px; font-size: 12.5px;
     }
     .tag-chip.allergy { background: rgba(239,68,68,0.14); border-color: rgba(239,68,68,0.4); color: #f87171; }
+    /* Пометки о госте в бронях */
+    .bk-flags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+    .bk-flag { font-size: 10.5px; line-height: 1.3; padding: 2px 7px; border-radius: 100px; border: 1px solid rgba(184,115,51,0.35); color: var(--accent); background: var(--accent-dim); }
+    .bk-flag.danger { color: #fca5a5; border-color: rgba(239,68,68,0.45); background: rgba(239,68,68,0.12); }
+    .bk-flag.vip { color: #fbbf24; border-color: rgba(251,191,36,0.45); background: rgba(251,191,36,0.1); }
+    .bk-flag.good { color: #4ade80; border-color: rgba(34,197,94,0.4); background: rgba(34,197,94,0.1); }
+    .tag-chip.dislike { background: rgba(240,223,192,0.05); border-color: rgba(240,223,192,0.16); color: var(--text-sub); }
     .tag-chip-remove {
       width: 16px; height: 16px; border-radius: 50%; background: rgba(0,0,0,0.18);
       display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
@@ -448,6 +468,63 @@
 
     /* Элементы, которые существуют только в десктопной версии — на мобильном
        и в Telegram их вообще нет в раскладке, просто спрятаны */
+    /* РАССЫЛКИ / АНАЛИТИКА / ОБРАТНАЯ СВЯЗЬ / ИСТОРИЯ */
+    .note { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+    .link-btn { background: none; border: none; color: var(--accent); font-family: 'Inter', sans-serif; font-size: 12px; cursor: pointer; padding: 8px 0 2px; }
+    .pill { display: inline-block; font-size: 10px; letter-spacing: 0.3px; padding: 3px 9px; border-radius: 100px; border: 1px solid var(--border); color: var(--text-sub); white-space: nowrap; }
+    .pill.good { color: #4ade80; border-color: rgba(34,197,94,0.35); background: rgba(34,197,94,0.08); }
+    .pill.warn { color: #f59e0b; border-color: rgba(245,158,11,0.35); background: rgba(245,158,11,0.08); }
+    .pill.bad { color: #f87171; border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.08); }
+    .seg-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .seg-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 13px; cursor: pointer; min-width: 0; }
+    .seg-item.selected { border-color: rgba(184,115,51,0.6); background: var(--accent-dim); }
+    .seg-title { font-size: 13px; color: var(--text); margin-bottom: 3px; }
+    .seg-desc { font-size: 11px; color: var(--text-muted); line-height: 1.35; margin-bottom: 7px; }
+    .seg-count { font-size: 11.5px; color: var(--text-sub); }
+    .seg-count b { color: var(--accent); font-weight: 500; }
+    .mk-guests { max-height: 280px; overflow-y: auto; margin-top: 6px; }
+    .mk-guest { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; border-top: 1px solid var(--border); cursor: pointer; }
+    .mk-guest-name { font-size: 13px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .log-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; }
+    .log-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 11px; color: var(--text-muted); margin-bottom: 7px; }
+    .log-text { font-size: 12.5px; color: var(--text-sub); line-height: 1.45; white-space: pre-line; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+    .log-stats { font-size: 12px; color: var(--text); margin-top: 7px; }
+    .an-chips .chip { padding: 8px 12px; font-size: 12px; }
+    .an-summary { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin: 18px 0 10px; }
+    .an-total { font-family: 'Jost', sans-serif; font-size: 32px; color: var(--text); margin: 2px 0 4px; }
+    .an-compare { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+    .an-delta { font-size: 13px; margin-top: 8px; }
+    .an-delta.up { color: #4ade80; }
+    .an-delta.down { color: #f87171; }
+    .an-delta.flat { color: var(--text-muted); }
+    .an-chart { overflow-x: auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 10px 6px 4px; }
+    .an-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 11px; color: var(--text-sub); margin: 8px 2px 4px; }
+    .an-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+    .an-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-top: 10px; }
+    .an-table th { text-align: left; font-weight: 400; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); padding: 6px 4px; }
+    .an-table td { padding: 7px 4px; border-top: 1px solid var(--border); color: var(--text-sub); }
+    .an-table .num { text-align: right; }
+    .an-table td.num { color: var(--text); }
+    .fb-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 14px 0 8px; }
+    .fb-stat { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 10px; text-align: center; }
+    .fb-stat-num { font-family: 'Jost', sans-serif; font-size: 24px; color: var(--text); }
+    .fb-stat-label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-top: 2px; }
+    .fb-bars .row { display: flex; align-items: center; gap: 10px; font-size: 12px; margin-bottom: 7px; }
+    .fb-bars .bar { flex: 1; height: 6px; border-radius: 3px; background: rgba(240,223,192,0.08); overflow: hidden; }
+    .fb-bars .bar > span { display: block; height: 100%; background: var(--accent); border-radius: 3px; }
+    .fb-review { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; }
+    .fb-review.negative { border-color: rgba(239,68,68,0.35); background: rgba(239,68,68,0.04); }
+    .fb-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px; }
+    .fb-who { font-size: 13px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .fb-who.link { color: var(--accent); cursor: pointer; }
+    .fb-date { font-size: 11px; color: var(--text-muted); flex-shrink: 0; }
+    .fb-scores { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 11.5px; color: var(--text-sub); }
+    .fb-scores .low { color: #f87171; }
+    .fb-comment { font-size: 13px; color: var(--text); line-height: 1.5; margin-top: 8px; white-space: pre-line; }
+    .chlog-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 4px 14px; }
+    .chlog-item { font-size: 12.5px; line-height: 1.45; color: var(--text-sub); padding: 9px 0; border-top: 1px solid var(--border); }
+    .chlog-item:first-child { border-top: none; }
+    .chlog-when { font-size: 10.5px; color: var(--text-muted); margin-bottom: 2px; }
     .desktop-only { display: none; }
 
     /* ДЕСКТОП: Telegram Mini App всегда открывается в узком вьюпорте (как на
@@ -917,6 +994,42 @@
   <div style="padding:0 16px" id="statsDesktopDashboard" class="desktop-only"></div>
 </div>
 
+<!-- ADMIN: РАССЫЛКИ -->
+<div class="screen" id="screen-marketing">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('home')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Рассылки</h1><p>Сегменты · гостевой бот</p></div>
+  </div>
+  <div style="padding:0 16px" id="marketingContent"><div class="loading">Загружаю...</div></div>
+</div>
+
+<!-- ADMIN: АНАЛИТИКА — СРАВНЕНИЕ ПЕРИОДОВ -->
+<div class="screen" id="screen-analytics">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('home')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Аналитика</h1><p>Сравнение периодов</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div id="analyticsControls"></div>
+    <div id="analyticsResult"></div>
+  </div>
+</div>
+
+<!-- ADMIN: ОБРАТНАЯ СВЯЗЬ -->
+<div class="screen" id="screen-feedback">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('home')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Обратная связь</h1><p>Отзывы гостей</p></div>
+  </div>
+  <div style="padding:0 16px" id="feedbackContent"><div class="loading">Загружаю...</div></div>
+</div>
+
 <!-- ГОСТИ: ЕДИНАЯ ТАБЛИЦА (только десктоп) -->
 <div class="screen" id="screen-guests-table">
   <div class="header">
@@ -1274,7 +1387,10 @@
       checklist: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>',
       schedule: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>',
       stoplist: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="9"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
-      bookings: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><path d="M8 14l2 2 4-4"/></svg>'
+      bookings: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><path d="M8 14l2 2 4-4"/></svg>',
+      marketing: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M3 10v4h4l6 5V5L7 10H3z"/><path d="M16.5 8.5a5 5 0 010 7"/><path d="M19 6a8.5 8.5 0 010 12"/></svg>',
+      analytics: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>',
+      feedback: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M21 12a8 8 0 01-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1121 12z"/></svg>'
     };
 
     // Группы отсортированы по тому, как часто ими реально пользуются за смену:
@@ -1298,6 +1414,7 @@
     guestsCards += qcard(icons.recent, 'Недавние', 'Просмотренные', "openRecentGuests()");
 
     let analyticsCards = '';
+    let marketingCards = '';
 
     const nameLabel = currentEmployeeName ? `${currentEmployeeName} · ${currentJobRole}` : (currentRole === 'admin' ? 'Администратор · Гости' : 'Персонал · Гости');
     roleLabel.textContent = nameLabel;
@@ -1320,12 +1437,16 @@
       analyticsCards += qcard(icons.guestsTable, 'Гости', 'Таблица', "openGuestsTable()", { extraClass: 'desktop-only' });
       analyticsCards += qcard(icons.events, 'Афиша', 'Мероприятия', "openEvents()");
       analyticsCards += qcard(icons.stats, 'Статистика', 'CSI · NPS · eNPS', "openStats()");
+      analyticsCards += qcard(icons.analytics, 'Аналитика', 'Сравнение периодов', "openAnalytics()");
+      analyticsCards += qcard(icons.feedback, 'Обратная связь', 'Отзывы гостей', "openFeedback()");
+      marketingCards += qcard(icons.marketing, 'Рассылки', 'Сегменты · бот', "openMarketing()");
     }
 
     let html = '';
     if (attentionCards) html += qgroup('Внимание') + attentionCards;
     html += qgroup('Смена') + shiftCards;
     html += qgroup('Гости') + guestsCards;
+    if (marketingCards) html += qgroup('Маркетинг') + marketingCards;
     if (analyticsCards) html += qgroup('Аналитика') + analyticsCards;
 
     grid.innerHTML = html;
@@ -1837,6 +1958,32 @@
     }
   }
 
+  // Короткие пометки о госте для брони (из его карточки): что важно знать хостес
+  // и официанту ещё до прихода — нон-грата, аллергии, VIP, ДР, особые пометки.
+  function bookingGuestFlags(b, short) {
+    const g = b.guestCard;
+    if (!g) return [];
+    const flags = [];
+    if ((g.tagsSpecial || []).includes('Нон-грата')) flags.push({ cls: 'danger', text: 'Нон-грата' });
+    if ((g.tagsAllergy || []).length) flags.push({ cls: 'danger', text: short ? 'Аллергия' : `Аллергия: ${g.tagsAllergy.join(', ')}` });
+    if (g.status === 'VIP') flags.push({ cls: 'vip', text: 'VIP' });
+    const bd = g.birthday;
+    if (bd) flags.push({ cls: 'good', text: short ? 'ДР' : bd.when === 'today' ? 'ДР в этот день' : bd.when === 'soon' ? `ДР через ${bd.days} дн.` : `ДР был ${bd.days} дн. назад` });
+    for (const t of (g.tagsSpecial || [])) {
+      if (t === 'Нон-грата') continue;
+      flags.push({ cls: '', text: t });
+    }
+    return flags;
+  }
+
+  function bookingFlagsHtml(b, limit) {
+    const flags = bookingGuestFlags(b, !!limit); // в списке — короткие пометки, подробности в самой брони
+    if (!flags.length) return '';
+    const shown = limit ? flags.slice(0, limit) : flags;
+    const more = limit && flags.length > limit ? `<span class="bk-flag">+${flags.length - limit}</span>` : '';
+    return `<div class="bk-flags">${shown.map(f => `<span class="bk-flag ${f.cls}">${escHtml(f.text)}</span>`).join('')}${more}</div>`;
+  }
+
   function renderBookingsList() {
     const el = document.getElementById('bookingsContent');
     if (!bookingsListData.length) {
@@ -1859,6 +2006,7 @@
           <div class="booking-chip-time">${escHtml(shortDate)}</div>
           <div class="booking-chip-name">${nameHtml}</div>
           <div class="booking-chip-meta">${metaParts.join(' · ')}</div>
+          ${bookingFlagsHtml(b, 3)}
         </div>
       `;
     }).join('') + '</div>';
@@ -1944,6 +2092,26 @@
     renderBookingDetail();
   }
 
+  // Блок «О госте» в брони: теги, вкусы, подсказки и кнопка открыть карточку.
+  // Если по телефону брони карточки нет — ничего не показываем.
+  function renderBookingGuestBlock(b) {
+    const g = b.guestCard;
+    if (!g) return '';
+    const guestLike = { ...g, autoTags: { birthday: g.birthday } };
+    const hints = guestHints(guestLike);
+    const lines = [];
+    if (g.status) lines.push(`<div class="visit-detail">Статус: <strong style="color:var(--text)">${escHtml(g.status)}</strong></div>`);
+    if (g.important) lines.push(`<div class="visit-detail">Важно: ${escHtml(g.important)}</div>`);
+    return `
+      <div class="visit-item" style="margin-top:14px;">
+        <div class="visit-date">О госте</div>
+        ${lines.join('')}
+        ${hints.length ? `<div style="margin-top:8px;">${hints.map(h => `<div class="hint-item ${h.level}">${escHtml(h.text)}</div>`).join('')}</div>` : ''}
+        <button class="btn-primary" style="margin-top:10px;padding:7px 14px;font-size:12.5px;" onclick="openGuestCard('${escJs(g.cardId)}')">Открыть карточку</button>
+      </div>
+    `;
+  }
+
   function renderBookingDetail() {
     const b = bookingsListData[currentBookingIndex];
     const el = document.getElementById('bookingDetailContent');
@@ -2006,6 +2174,8 @@
         ${b.comment ? `<div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>${b.comment}</div>` : ''}
         <div class="visit-detail"><a href="tel:${b.phone}" style="color:var(--text-sub);text-decoration:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="18" x2="14" y2="18"/></svg>${b.phone || 'Телефон не указан'}</a></div>
       </div>
+
+      ${renderBookingGuestBlock(b)}
 
       ${tableBlockHtml}
 
@@ -3222,9 +3392,592 @@
     }
   }
 
+  // ─── ОБЩЕЕ ДЛЯ РАССЫЛОК / АНАЛИТИКИ / ОБРАТНОЙ СВЯЗИ ──
+
+  function ruPlural(n, one, few, many) {
+    const n10 = n % 10, n100 = n % 100;
+    if (n10 === 1 && n100 !== 11) return one;
+    if (n10 >= 2 && n10 <= 4 && (n100 < 12 || n100 > 14)) return few;
+    return many;
+  }
+  function fmtDM(iso) {
+    if (!iso) return '';
+    return `${iso.slice(8, 10)}.${iso.slice(5, 7)}`;
+  }
+  function fmtDMY(iso) {
+    if (!iso) return '';
+    return `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}`;
+  }
+  function fmtDateTime(iso) {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d)) return fmtDMY(iso);
+    return d.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(',', '');
+  }
+  function localDateStr(d) {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+  function shiftDateStr(iso, days) {
+    const d = new Date(iso + 'T12:00:00');
+    d.setDate(d.getDate() + days);
+    return localDateStr(d);
+  }
+  function signed(n) {
+    return n > 0 ? '+' + n : String(n);
+  }
+
+  // ─── АДМИН: РАССЫЛКИ ───────────────────────────
+  // Сегменты гостей + сообщение от гостевого бота. Сервер сам проверяет окно
+  // отправки (днём), отписки и «Нон-грата»; здесь — выбор, текст и журнал.
+
+  let mkData = null;
+  let mkSelected = { key: null, tag: null };
+  let mkText = '';
+  let mkGuestsOpen = false;
+
+  const MK_REASON = {
+    no_phone: 'нет телефона',
+    no_telegram: 'нет Telegram',
+    opted_out: 'отписался',
+    duplicate: 'тот же Telegram'
+  };
+
+  async function openMarketing() {
+    showScreen('marketing');
+    const el = document.getElementById('marketingContent');
+    el.innerHTML = '<div class="loading">Считаю сегменты...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/marketing/segments?pin=${getPin()}`);
+      if (res.status === 401 || res.status === 403) { showScreen('pin'); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить сегменты'));
+      mkData = await res.json();
+      mkGuestsOpen = false;
+      renderMarketing();
+      loadMarketingLog();
+    } catch (e) {
+      el.innerHTML = `<div class="empty-state">${escHtml(e.message || 'Не удалось загрузить сегменты')}</div>`;
+    }
+  }
+
+  function mkCurrent() {
+    if (!mkData || !mkSelected.key) return null;
+    if (mkSelected.key === 'tag') {
+      const t = mkData.tags.find(x => x.key === mkSelected.tag);
+      return t ? { title: t.label, total: t.total, reachable: t.reachable } : null;
+    }
+    return mkData.segments.find(s => s.key === mkSelected.key) || null;
+  }
+
+  function renderMarketing() {
+    const el = document.getElementById('marketingContent');
+    const d = mkData;
+    let html = `<div class="note">Сообщение придёт гостю от гостевого бота «На Крыше». Написать можно тем, кто хоть раз открывал гостевое приложение и не отписался. Гостей с тегом «Нон-грата» в рассылки не берём.</div>`;
+    if (d.running) {
+      html += `<div class="hint-box" style="margin:12px 0 0"><div class="hint-title">Идёт рассылка</div><div class="hint-item">«${escHtml(d.running.segment)}»: доставлено ${d.running.sent} из ${d.running.total}</div></div>`;
+    }
+
+    html += '<div class="sec">Кому</div><div class="seg-list">';
+    html += d.segments.map(s => `
+      <div class="seg-item${mkSelected.key === s.key ? ' selected' : ''}" data-key="${s.key}" onclick="mkSelect('${s.key}')">
+        <div class="seg-title">${escHtml(s.title)}</div>
+        <div class="seg-desc">${escHtml(s.description)}</div>
+        <div class="seg-count"><b>${s.reachable}</b> в Telegram · ${s.total} всего</div>
+      </div>`).join('');
+    html += '</div>';
+
+    if (d.tags && d.tags.length) {
+      html += `<div class="sec">Или по тегу</div>
+        <select class="form-input" id="mkTagSelect" onchange="mkSelectTag(this.value)">
+          <option value="">Выберите тег…</option>
+          ${d.tags.map(t => `<option value="${escHtml(t.key)}" ${mkSelected.key === 'tag' && mkSelected.tag === t.key ? 'selected' : ''}>${escHtml(t.label)} — ${t.reachable} из ${t.total}</option>`).join('')}
+        </select>`;
+    }
+
+    html += '<div class="sec">Сообщение</div>';
+    html += `<textarea class="form-input" id="mkText" style="height:150px" maxlength="3500" placeholder="Например: {имя}, в эту пятницу на Крыше — живой диджей-сет. Забронировать стол можно в приложении." oninput="mkOnText(this.value)">${escHtml(mkText)}</textarea>`;
+    html += `<div class="note" style="margin:6px 2px 14px;display:flex;justify-content:space-between;gap:10px;"><span>{имя} заменится на имя гостя</span><span id="mkCount">${mkText.length}/3500</span></div>`;
+    html += '<div id="mkTarget"></div>';
+    html += '<div class="sec">Журнал рассылок</div><div id="mkLog"><div class="loading">Загружаю...</div></div>';
+    el.innerHTML = html;
+    renderMkTarget();
+  }
+
+  function renderMkTarget() {
+    const box = document.getElementById('mkTarget');
+    if (!box) return;
+    const cur = mkCurrent();
+    const d = mkData;
+    let html = '';
+    if (!cur) {
+      html += '<div class="note" style="margin-bottom:10px">Выберите сегмент — кому отправить.</div>';
+    } else {
+      html += `<div class="hint-box" style="margin-bottom:10px">
+        <div class="hint-title">Получатели</div>
+        <div style="font-size:13px;line-height:1.5">${escHtml(cur.title)}: написать можно <b style="color:var(--accent);font-weight:500">${cur.reachable}</b> из ${cur.total}</div>
+        <button class="link-btn" onclick="mkToggleGuests()">${mkGuestsOpen ? 'Скрыть список' : 'Показать список'}</button>
+        <div id="mkGuests"></div>
+      </div>`;
+    }
+    const hasText = !!mkText.trim();
+    const canSend = !!cur && cur.reachable > 0 && hasText;
+    html += `<button class="btn-primary btn-full" ${hasText ? '' : 'disabled style="opacity:.5"'} onclick="mkSend(true)">Отправить себе для проверки</button>`;
+    html += `<button class="btn-primary btn-full" id="mkSendBtn" ${canSend ? 'style="background:var(--accent);color:var(--bg);"' : 'disabled style="opacity:.5"'} onclick="mkSend(false)">${cur ? `Отправить ${cur.reachable} ${ruPlural(cur.reachable, 'гостю', 'гостям', 'гостям')}` : 'Отправить'}</button>`;
+    if (!d.canSendNow) {
+      html += `<div class="note" style="margin-top:8px;text-align:center">Сейчас рассылка не уйдёт: отправляем с ${d.hours.from}:00 до ${d.hours.to}:00. Проверку себе можно отправить в любое время.</div>`;
+    }
+    box.innerHTML = html;
+    if (mkGuestsOpen && cur) mkLoadGuests();
+  }
+
+  function mkSelect(key) {
+    mkSelected = { key, tag: null };
+    mkGuestsOpen = false;
+    document.querySelectorAll('.seg-item').forEach(x => x.classList.toggle('selected', x.dataset.key === key));
+    const sel = document.getElementById('mkTagSelect');
+    if (sel) sel.value = '';
+    renderMkTarget();
+  }
+  function mkSelectTag(tagKey) {
+    mkSelected = tagKey ? { key: 'tag', tag: tagKey } : { key: null, tag: null };
+    mkGuestsOpen = false;
+    document.querySelectorAll('.seg-item').forEach(x => x.classList.remove('selected'));
+    renderMkTarget();
+  }
+  function mkOnText(v) {
+    const hadText = !!mkText.trim();
+    mkText = v;
+    const c = document.getElementById('mkCount');
+    if (c) c.textContent = `${v.length}/3500`;
+    if (hadText !== !!v.trim()) renderMkTarget();
+  }
+  function mkToggleGuests() {
+    mkGuestsOpen = !mkGuestsOpen;
+    renderMkTarget();
+  }
+
+  async function mkLoadGuests() {
+    const box = document.getElementById('mkGuests');
+    if (!box) return;
+    box.innerHTML = '<div class="loading" style="padding:10px">Загружаю...</div>';
+    try {
+      const q = `key=${encodeURIComponent(mkSelected.key)}${mkSelected.tag ? '&tag=' + encodeURIComponent(mkSelected.tag) : ''}`;
+      const res = await fetch(`${PROXY_BASE}/api/admin/marketing/segment?${q}&pin=${getPin()}`);
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить список'));
+      const seg = await res.json();
+      if (!seg.guests.length) { box.innerHTML = '<div class="autotag-empty">В сегменте никого нет</div>'; return; }
+      box.innerHTML = `<div class="mk-guests">${seg.guests.map(g => `
+        <div class="mk-guest" onclick="openGuestCard('${escJs(g.id)}')">
+          <span class="mk-guest-name">${escHtml(g.name || 'Без имени')}</span>
+          <span class="mk-guest-meta">${g.reachable ? '<span class="pill good">в Telegram</span>' : `<span class="pill">${escHtml(MK_REASON[g.reason] || '')}</span>`}</span>
+        </div>`).join('')}</div>
+        ${seg.total > seg.guests.length ? `<div class="note" style="margin-top:6px">Показаны первые ${seg.guests.length} из ${seg.total}</div>` : ''}`;
+    } catch (e) {
+      box.innerHTML = `<div class="autotag-empty">${escHtml(e.message)}</div>`;
+    }
+  }
+
+  async function mkSend(test) {
+    const text = (document.getElementById('mkText')?.value || '').trim();
+    if (!text) { alert('Напишите текст сообщения'); return; }
+    const cur = mkCurrent();
+    if (!test) {
+      if (!cur) { alert('Выберите, кому отправить'); return; }
+      const who = `${cur.reachable} ${ruPlural(cur.reachable, 'гостю', 'гостям', 'гостям')}`;
+      if (!confirm(`Отправить сообщение ${who} (сегмент «${cur.title}»)?\n\nОтменить отправку после запуска нельзя.`)) return;
+    }
+    document.querySelectorAll('#mkTarget button').forEach(b => { b.disabled = true; });
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/marketing/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), key: mkSelected.key, tag: mkSelected.tag, text, test: !!test })
+      });
+      if (!res.ok) { alert(await responseError(res, 'Не удалось отправить')); return; }
+      if (test) {
+        alert('Проверка отправлена — посмотрите сообщение от гостевого бота в Telegram');
+      } else {
+        alert('Рассылка запущена. Итог придёт в Telegram и появится в журнале.');
+        mkText = '';
+        const ta = document.getElementById('mkText');
+        if (ta) ta.value = '';
+        const c = document.getElementById('mkCount');
+        if (c) c.textContent = '0/3500';
+        loadMarketingLog();
+        setTimeout(loadMarketingLog, 5000);
+      }
+    } catch {
+      alert('Ошибка соединения — проверьте интернет');
+    } finally {
+      renderMkTarget();
+    }
+  }
+
+  async function loadMarketingLog() {
+    const box = document.getElementById('mkLog');
+    if (!box) return;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/marketing/log?pin=${getPin()}`);
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить журнал'));
+      const data = await res.json();
+      const list = data.broadcasts || [];
+      let html = '';
+      if (!list.length) html += '<div class="autotag-empty">Рассылок ещё не было</div>';
+      html += list.map(b => {
+        const pill = b.status === 'Отправлена' ? 'good' : b.status === 'Прервана' ? 'bad' : 'warn';
+        return `<div class="log-item">
+          <div class="log-head"><span>${escHtml(fmtDateTime(b.createdAt))} · ${escHtml(b.segment || '')}</span><span class="pill ${pill}">${escHtml(b.status || '')}</span></div>
+          <div class="log-text">${escHtml(b.text || '')}</div>
+          <div class="log-stats">Доставлено ${b.sent} из ${b.total}${b.failed ? ` · не доставлено ${b.failed}${b.blocked ? ` (заблокировали бота: ${b.blocked})` : ''}` : ''}</div>
+          ${b.author ? `<div class="note" style="margin-top:4px">${escHtml(b.author)}</div>` : ''}
+        </div>`;
+      }).join('');
+      if (!data.storedInNotion) {
+        html += '<div class="note" style="margin-top:6px">Журнал сейчас хранится только в памяти сервера. Чтобы он сохранялся в Notion (база «Рассылки»), у интеграции должен быть доступ к странице, где лежит «Карточка Гостя».</div>';
+      }
+      box.innerHTML = html;
+    } catch (e) {
+      box.innerHTML = `<div class="autotag-empty">${escHtml(e.message)}</div>`;
+    }
+  }
+
+  // ─── АДМИН: АНАЛИТИКА (СРАВНЕНИЕ ПЕРИОДОВ) ─────
+
+  const AN_METRICS = [
+    ['visits', 'Визиты'],
+    ['guests', 'Гости (уникальные)'],
+    ['newGuests', 'Новые гости'],
+    ['returning', 'Вернувшиеся гости'],
+    ['bookings', 'Брони'],
+    ['cancellations', 'Отмены броней'],
+    ['csi', 'CSI — средняя оценка'],
+    ['nps', 'NPS гостей'],
+    ['enps', 'eNPS команды']
+  ];
+  const AN_VISIT_METRICS = ['visits', 'guests', 'newGuests', 'returning'];
+  const AN_PERIODS = [['7', '7 дней'], ['30', '30 дней'], ['90', '90 дней'], ['month', 'Этот месяц'], ['year', 'Этот год'], ['custom', 'Свои даты']];
+  const AN_GROUPS = [['day', 'По дням'], ['week', 'По неделям'], ['month', 'По месяцам']];
+  const AN_COMPARE = [['prev', 'С прошлым периодом'], ['year', 'С прошлым годом'], ['none', 'Без сравнения']];
+  const AN_DOW = [['', 'Все дни'], ['1', 'Понедельники'], ['2', 'Вторники'], ['3', 'Среды'], ['4', 'Четверги'], ['5', 'Пятницы'], ['6', 'Субботы'], ['7', 'Воскресенья']];
+  const AN_STATUS = [['', 'Все гости'], ['VIP', 'VIP'], ['Постоянный', 'Постоянные'], ['Редкий', 'Редкие']];
+
+  let anState = { metric: 'visits', period: '30', group: 'day', compare: 'prev', dow: '', status: '', from: '', to: '' };
+  let anRequestSeq = 0;
+
+  function openAnalytics() {
+    showScreen('analytics');
+    renderAnalyticsControls();
+    loadAnalytics();
+  }
+
+  function anRange() {
+    const today = localDateStr(new Date());
+    switch (anState.period) {
+      case '7': return { from: shiftDateStr(today, -6), to: today };
+      case '90': return { from: shiftDateStr(today, -89), to: today };
+      case 'month': return { from: today.slice(0, 8) + '01', to: today };
+      case 'year': return { from: today.slice(0, 5) + '01-01', to: today };
+      case 'custom': return { from: anState.from || shiftDateStr(today, -29), to: anState.to || today };
+      default: return { from: shiftDateStr(today, -29), to: today };
+    }
+  }
+
+  function anChips(list, current, setter) {
+    return `<div class="chip-row an-chips">${list.map(([v, label]) => `<div class="chip${current === v ? ' selected' : ''}" onclick="${setter}('${v}')">${label}</div>`).join('')}</div>`;
+  }
+
+  function renderAnalyticsControls() {
+    const el = document.getElementById('analyticsControls');
+    const r = anRange();
+    const statusDisabled = !AN_VISIT_METRICS.includes(anState.metric);
+    el.innerHTML = `
+      <select class="form-input" onchange="anSet('metric', this.value)">
+        ${AN_METRICS.map(([v, label]) => `<option value="${v}" ${anState.metric === v ? 'selected' : ''}>${label}</option>`).join('')}
+      </select>
+      <div class="sec">Период</div>
+      ${anChips(AN_PERIODS, anState.period, 'anSetPeriod')}
+      ${anState.period === 'custom' ? `
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <input type="date" class="form-input" value="${r.from}" onchange="anSetDate('from', this.value)">
+          <input type="date" class="form-input" value="${r.to}" onchange="anSetDate('to', this.value)">
+        </div>` : ''}
+      <div class="sec">Группировка</div>
+      ${anChips(AN_GROUPS, anState.group, 'anSetGroup')}
+      <div class="sec">Сравнить</div>
+      ${anChips(AN_COMPARE, anState.compare, 'anSetCompare')}
+      <div class="sec">Фильтры</div>
+      <div style="display:flex;gap:8px;">
+        <select class="form-input" onchange="anSet('dow', this.value)">
+          ${AN_DOW.map(([v, label]) => `<option value="${v}" ${anState.dow === v ? 'selected' : ''}>${label}</option>`).join('')}
+        </select>
+        <select class="form-input" ${statusDisabled ? 'disabled style="opacity:.5" title="Только для показателей по визитам"' : ''} onchange="anSet('status', this.value)">
+          ${AN_STATUS.map(([v, label]) => `<option value="${v}" ${anState.status === v ? 'selected' : ''}>${label}</option>`).join('')}
+        </select>
+      </div>`;
+  }
+
+  function anSet(key, value) {
+    anState[key] = value;
+    renderAnalyticsControls();
+    loadAnalytics();
+  }
+  function anSetPeriod(p) {
+    anState.period = p;
+    // Группировка по умолчанию под длину периода — её всё равно можно поменять
+    if (p === '7' || p === '30' || p === 'month') anState.group = 'day';
+    else if (p === '90') anState.group = 'week';
+    else if (p === 'year') anState.group = 'month';
+    if (p === 'custom' && !anState.from) { const r = anRange(); anState.from = r.from; anState.to = r.to; }
+    renderAnalyticsControls();
+    loadAnalytics();
+  }
+  function anSetGroup(g) { anSet('group', g); }
+  function anSetCompare(c) { anSet('compare', c); }
+  function anSetDate(which, value) {
+    if (!value) return;
+    anState[which] = value;
+    loadAnalytics();
+  }
+
+  async function loadAnalytics() {
+    const out = document.getElementById('analyticsResult');
+    out.innerHTML = '<div class="loading">Считаю...</div>';
+    const r = anRange();
+    const q = new URLSearchParams({ metric: anState.metric, group: anState.group, compare: anState.compare, from: r.from, to: r.to });
+    if (anState.dow) q.set('dow', anState.dow);
+    if (anState.status && AN_VISIT_METRICS.includes(anState.metric)) q.set('status', anState.status);
+    const seq = ++anRequestSeq;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/analytics?${q.toString()}&pin=${getPin()}`);
+      if (res.status === 401 || res.status === 403) { showScreen('pin'); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось посчитать'));
+      const data = await res.json();
+      if (seq !== anRequestSeq) return; // пока считали, фильтры уже поменяли
+      out.innerHTML = renderAnalyticsResult(data);
+    } catch (e) {
+      if (seq !== anRequestSeq) return;
+      out.innerHTML = `<div class="empty-state">${escHtml(e.message || 'Не удалось посчитать')}</div>`;
+    }
+  }
+
+  function anFormat(v, kind) {
+    if (v === null || v === undefined) return '—';
+    if (kind === 'avg') return String(v).replace('.', ',');
+    if (kind === 'score') return signed(v);
+    return String(v);
+  }
+
+  function renderAnalyticsResult(d) {
+    const hasCmp = d.compare !== 'none' && d.compareFrom;
+    const unit = d.kind === 'avg' ? ' / 10' : '';
+    let deltaHtml = '';
+    if (hasCmp && d.delta !== null) {
+      // Для отмен рост — плохо, для всего остального — хорошо
+      const good = d.metric === 'cancellations' ? d.delta < 0 : d.delta > 0;
+      const cls = d.delta === 0 ? 'flat' : good ? 'up' : 'down';
+      const arrow = d.delta === 0 ? '→' : d.delta > 0 ? '↑' : '↓';
+      const deltaText = d.kind === 'score' ? `${signed(d.delta)} п.` : d.kind === 'avg' ? signed(d.delta).replace('.', ',') : signed(d.delta);
+      deltaHtml = `<div class="an-delta ${cls}">${arrow} ${deltaText}${d.deltaPct !== null ? ` (${signed(d.deltaPct)}%)` : ''} ${d.compare === 'year' ? 'к прошлому году' : 'к прошлому периоду'}</div>`;
+    }
+    const filters = [];
+    if (d.dow) filters.push(AN_DOW.find(x => x[0] === String(d.dow))?.[1]);
+    if (d.status) filters.push(AN_STATUS.find(x => x[0] === d.status)?.[1]);
+
+    let html = `<div class="an-summary">
+      <div class="info-row-label">${escHtml(d.title)}${filters.length ? ' · ' + escHtml(filters.join(', ')) : ''}</div>
+      <div class="an-total">${anFormat(d.total, d.kind)}<span style="font-size:14px;color:var(--text-muted)">${d.total !== null ? unit : ''}</span></div>
+      <div class="an-compare">${fmtDMY(d.from)} — ${fmtDMY(d.to)}</div>
+      ${hasCmp ? `<div class="an-compare">Было: ${anFormat(d.compareTotal, d.kind)}${d.compareTotal !== null ? unit : ''} · ${fmtDMY(d.compareFrom)} — ${fmtDMY(d.compareTo)}</div>` : ''}
+      ${deltaHtml}
+    </div>`;
+
+    html += `<div class="an-chart">${anChartSvg(d, hasCmp)}</div>`;
+    html += `<div class="an-legend"><span><i style="background:var(--accent)"></i>${fmtDM(d.from)}–${fmtDM(d.to)}</span>${hasCmp ? `<span><i style="background:rgba(240,223,192,0.28)"></i>${fmtDM(d.compareFrom)}–${fmtDM(d.compareTo)}</span>` : ''}</div>`;
+
+    html += `<table class="an-table"><thead><tr><th>Период</th><th class="num">Значение</th>${hasCmp ? '<th class="num">Было</th><th class="num">Разница</th>' : ''}</tr></thead><tbody>`;
+    html += d.buckets.map(b => {
+      let diff = '';
+      if (hasCmp) {
+        if (b.value !== null && b.compareValue !== null) {
+          const delta = Math.round((b.value - b.compareValue) * 10) / 10;
+          diff = d.kind === 'avg' ? signed(delta).replace('.', ',') : signed(delta);
+        } else diff = '—';
+      }
+      return `<tr><td>${escHtml(b.label)}</td><td class="num">${anFormat(b.value, d.kind)}</td>${hasCmp ? `<td class="num" style="color:var(--text-muted)">${anFormat(b.compareValue, d.kind)}</td><td class="num">${diff}</td>` : ''}</tr>`;
+    }).join('');
+    html += '</tbody></table>';
+    return html;
+  }
+
+  // Столбики: текущий период (медь) и сравнение (светлые) рядом
+  function anChartSvg(d, hasCmp) {
+    const b = d.buckets;
+    const vals = [];
+    b.forEach(x => { if (x.value !== null) vals.push(x.value); if (hasCmp && x.compareValue !== null) vals.push(x.compareValue); });
+    if (!vals.length) return '<div class="empty-state" style="padding:24px 10px">Нет данных за этот период</div>';
+    let minV = 0, maxV = Math.max(1, ...vals);
+    if (d.kind === 'avg') maxV = 10;
+    if (d.kind === 'score') { minV = Math.min(0, ...vals); maxV = Math.max(0, ...vals); if (minV === maxV) maxV = minV + 1; }
+    // До ~40 точек график помещается в ширину экрана целиком (удобнее сравнивать),
+    // больше — прокручивается вбок.
+    const left = 8, top = 18, bottom = 24, H = 190, FIT_W = 340;
+    const per = (FIT_W - left * 2) / b.length;
+    let barW, slot, gap, W;
+    if (per >= 8) {
+      gap = Math.min(10, per * 0.3);
+      slot = per - gap;
+      barW = hasCmp ? Math.min(14, (slot - 1) / 2) : Math.min(22, slot);
+      if (hasCmp) slot = 2 * barW + 1; else slot = barW;
+      gap = per - slot;
+      W = FIT_W;
+    } else {
+      barW = hasCmp ? 6 : 9;
+      slot = hasCmp ? 2 * barW + 1 : barW;
+      gap = 4;
+      W = left * 2 + b.length * (slot + gap);
+    }
+    const plotH = H - top - bottom;
+    const y = v => top + ((maxV - v) / (maxV - minV)) * plotH;
+    const zeroY = y(0);
+    const labelEvery = Math.max(1, Math.ceil(b.length / 10));
+    const showValues = b.length <= 16;
+    const fits = W === FIT_W;
+    let svg = `<svg ${fits ? 'width="100%"' : `width="${W}"`} height="${H}" viewBox="0 0 ${W} ${H}" ${fits ? 'preserveAspectRatio="xMidYMid meet"' : ''} style="display:block" xmlns="http://www.w3.org/2000/svg">`;
+    svg += `<line x1="0" x2="${W}" y1="${zeroY}" y2="${zeroY}" stroke="rgba(240,223,192,0.15)" stroke-width="1"/>`;
+    b.forEach((x, i) => {
+      const x0 = left + i * (slot + gap) + gap / 2;
+      const bar = (v, xx, fill) => {
+        if (v === null) return '';
+        const yv = y(v);
+        const h = Math.max(1.5, Math.abs(zeroY - yv));
+        const yTop = v >= 0 ? zeroY - h : zeroY;
+        return `<rect x="${xx}" y="${yTop}" width="${barW}" height="${h}" rx="${Math.min(2.5, barW / 3)}" fill="${fill}"><title>${escHtml(x.label)}: ${anFormat(v, d.kind)}</title></rect>`;
+      };
+      if (hasCmp) svg += bar(x.compareValue, x0 + barW + 1, 'rgba(240,223,192,0.28)');
+      svg += bar(x.value, x0, '#B87333');
+      if (showValues && x.value !== null) {
+        const ty = x.value >= 0 ? y(x.value) - 4 : y(x.value) + 11;
+        svg += `<text x="${x0 + barW / 2}" y="${ty}" text-anchor="middle" font-size="9" fill="#C9A880">${anFormat(x.value, d.kind)}</text>`;
+      }
+      if (i % labelEvery === 0) {
+        const lbl = d.group === 'week' ? fmtDM(x.start) : x.label;
+        svg += `<text x="${x0 + slot / 2}" y="${H - 8}" text-anchor="middle" font-size="9" fill="#8A6A52">${escHtml(lbl)}</text>`;
+      }
+    });
+    svg += '</svg>';
+    return svg;
+  }
+
+  // ─── АДМИН: ОБРАТНАЯ СВЯЗЬ ─────────────────────
+  // Все отзывы гостей в одном месте: сводка, оценки по категориям, кто оставил
+  // (с переходом в карточку), сколько гостей бот попросил оценить визит.
+
+  let fbState = { days: 30, filter: 'all' };
+  let fbData = null;
+  const FB_CATEGORIES = ['Вечер', 'Кальян', 'Напитки', 'Еда', 'Команда'];
+
+  function openFeedback() {
+    showScreen('feedback');
+    loadFeedback();
+  }
+
+  async function loadFeedback() {
+    const el = document.getElementById('feedbackContent');
+    el.innerHTML = '<div class="loading">Загружаю отзывы...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/feedback?days=${fbState.days}&pin=${getPin()}`);
+      if (res.status === 401 || res.status === 403) { showScreen('pin'); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить отзывы'));
+      fbData = await res.json();
+      renderFeedback();
+    } catch (e) {
+      el.innerHTML = `<div class="empty-state">${escHtml(e.message || 'Не удалось загрузить отзывы')}</div>`;
+    }
+  }
+
+  function fbSetDays(d) { fbState.days = Number(d); loadFeedback(); }
+  function fbSetFilter(f) { fbState.filter = f; renderFeedback(); }
+
+  function fbWho(r) {
+    if (r.guest) return `<span class="fb-who link" onclick="openGuestCard('${escJs(r.guest.id)}')">${escHtml(r.guest.name || 'Гость')}${r.guest.status ? ` · ${escHtml(r.guest.status)}` : ''}</span>`;
+    if (r.telegramUsername) return `<span class="fb-who">@${escHtml(r.telegramUsername.replace(/^@/, ''))}</span>`;
+    if (r.phone) return `<span class="fb-who">${escHtml(r.phone)}</span>`;
+    return '<span class="fb-who" style="color:var(--text-muted)">Аноним</span>';
+  }
+
+  function renderFeedback() {
+    const el = document.getElementById('feedbackContent');
+    const d = fbData;
+    const s = d.summary;
+    let html = anChips([['7', '7 дней'], ['30', '30 дней'], ['90', '90 дней']], String(fbState.days), 'fbSetDays');
+
+    html += `<div class="fb-stats">
+      <div class="fb-stat"><div class="fb-stat-num">${s.count}</div><div class="fb-stat-label">${ruPlural(s.count, 'отзыв', 'отзыва', 'отзывов')}</div></div>
+      <div class="fb-stat"><div class="fb-stat-num">${s.csi !== null ? String(s.csi).replace('.', ',') : '—'}</div><div class="fb-stat-label">CSI из 10</div></div>
+      <div class="fb-stat"><div class="fb-stat-num">${s.nps !== null ? signed(s.nps) : '—'}</div><div class="fb-stat-label">NPS</div></div>
+    </div>`;
+
+    if (s.count) {
+      html += `<div class="note" style="margin:4px 2px 12px">Порекомендуют: ${s.promoters} · нейтральны: ${s.passives} · критики: ${s.detractors}</div>`;
+      html += '<div class="fb-bars">' + FB_CATEGORIES.map(c => {
+        const v = s.categories[c];
+        return `<div class="row"><span style="width:70px;color:var(--text-sub)">${c}</span><span class="bar"><span style="width:${v !== null ? v * 10 : 0}%${v !== null && v <= 6 ? ';background:#ef4444' : ''}"></span></span><span style="width:30px;text-align:right">${v !== null ? String(v).replace('.', ',') : '—'}</span></div>`;
+      }).join('') + '</div>';
+    }
+
+    const rq = d.requests;
+    html += `<div class="hint-box" style="margin-top:14px">
+      <div class="hint-title">Работа с отзывами</div>
+      <div class="hint-item">Бот попросил оценить визит: ${rq.sent} ${ruPlural(rq.sent, 'гостя', 'гостей', 'гостей')}${rq.noTelegram ? ` · не смог написать (нет Telegram): ${rq.noTelegram}` : ''}${rq.optedOut ? ` · отписались: ${rq.optedOut}` : ''}</div>
+      <div class="hint-item ${s.negative ? 'danger' : 'good'}">Негативных отзывов: ${s.negative}</div>
+      <div class="hint-item ${d.openProblems.overdue ? 'danger' : ''}">Открытых проблем: ${d.openProblems.total}${d.openProblems.overdue ? ` (просрочено: ${d.openProblems.overdue})` : ''}</div>
+      ${d.openProblems.total ? '<button class="link-btn" onclick="openProblems()">Открыть проблемы →</button>' : ''}
+    </div>`;
+
+    html += '<div class="sec">Отзывы</div>';
+    html += anChips([['all', 'Все'], ['negative', 'Негативные'], ['comment', 'С комментарием']], fbState.filter, 'fbSetFilter');
+    let list = d.reviews;
+    if (fbState.filter === 'negative') list = list.filter(r => r.negative);
+    if (fbState.filter === 'comment') list = list.filter(r => (r.comment || '').trim());
+    html += '<div style="margin-top:10px">';
+    if (!list.length) html += '<div class="empty-state" style="padding:24px 10px">Отзывов нет</div>';
+    html += list.map(r => {
+      const scores = FB_CATEGORIES.map(c => {
+        const v = r.scores[c];
+        return `<span${v !== null && v <= 3 ? ' class="low"' : ''}>${c} ${v !== null ? v : '—'}</span>`;
+      }).join('');
+      return `<div class="fb-review${r.negative ? ' negative' : ''}">
+        <div class="fb-head">${fbWho(r)}<span class="fb-date">${escHtml(fmtDMY(r.date))}</span></div>
+        <div class="fb-scores">${scores}<span${r.nps !== null && r.nps <= 6 ? ' class="low"' : ''}>NPS ${r.nps !== null ? r.nps : '—'}</span></div>
+        ${r.comment ? `<div class="fb-comment">${escHtml(r.comment)}</div>` : ''}
+      </div>`;
+    }).join('');
+    html += '</div>';
+    el.innerHTML = html;
+  }
+
+  // ─── КАРТОЧКА: ИСТОРИЯ ИЗМЕНЕНИЙ ───────────────
+
+  let historyExpanded = false;
+
+  function renderHistory(guest) {
+    const lines = guest.history || [];
+    if (!lines.length) return '<div class="autotag-empty">Изменений пока не было</div>';
+    const shown = historyExpanded ? lines : lines.slice(0, 5);
+    const items = shown.map(line => {
+      // "25.09.2026 14:03 · Ира (Официант): добавлен тег «Холодок» (не любит)"
+      const m = line.match(/^(.+?) · (.+?): (.*)$/);
+      if (!m) return `<div class="chlog-item">${escHtml(line)}</div>`;
+      return `<div class="chlog-item"><div class="chlog-when">${escHtml(m[1])} · ${escHtml(m[2])}</div>${escHtml(m[3])}</div>`;
+    }).join('');
+    const more = lines.length > 5
+      ? `<button class="link-btn" onclick="historyExpanded=!historyExpanded;renderGuestCard(currentGuest)">${historyExpanded ? 'Свернуть' : `Показать все (${lines.length})`}</button>`
+      : '';
+    return `<div class="chlog-box">${items}</div>${more}`;
+  }
+
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'stats', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table'];
+  const screens = ['pin', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'stats', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback'];
   function showScreen(name) {
     screens.forEach(s => document.getElementById('screen-' + s)?.classList.remove('active'));
     document.getElementById('screen-' + name)?.classList.add('active');
@@ -3418,6 +4171,7 @@
   async function openGuestCard(id) {
     showScreen('card');
     tagAddGroup = null;
+    historyExpanded = false;
     currentGuestPhotoUrl = null;
     const el = document.getElementById('cardContent');
     el.innerHTML = '<div class="loading">Загружаю...</div>';
@@ -3492,9 +4246,44 @@
   const TAG_PRESETS = {
     // VIP сюда намеренно не входит — это уже отдельный статус гостя
     // (Частота визитов), дублировать его тегом не нужно.
-    special: ['Знаменитость', 'Молодожёны', 'День рождения', 'Постоянный столик', 'Не любит шум', 'Требует внимания'],
-    allergy: ['Орехи', 'Морепродукты', 'Глютен', 'Лактоза', 'Мёд', 'Цитрусовые']
+    special: ['Не беспокоить', 'Не любит шум', 'Постоянный столик', 'Требует внимания', 'Молодожёны', 'День рождения', 'Знаменитость', 'Нон-грата'],
+    allergy: ['Орехи', 'Морепродукты', 'Глютен', 'Лактоза', 'Мёд', 'Цитрусовые'],
+    // «Табак / вкусы» — одни и те же варианты для «любит» и «не любит»
+    tasteLike: ['Сладкие', 'Кислые', 'Фруктовые', 'Ягодные', 'Цитрусовые', 'Холодок', 'Десертные', 'Пряные', 'Крепкий табак', 'Лёгкий табак'],
+    tasteDislike: ['Сладкие', 'Кислые', 'Фруктовые', 'Ягодные', 'Цитрусовые', 'Холодок', 'Десертные', 'Пряные', 'Крепкий табак', 'Лёгкий табак']
   };
+
+  // В каком поле карточки лежат теги каждой группы
+  const TAG_GROUP_FIELD = { special: 'tagsSpecial', allergy: 'tagsAllergy', tasteLike: 'tastesLike', tasteDislike: 'tastesDislike' };
+
+  // Подсказка «что делать» — показывается в карточке в блоке «Что делать».
+  // Для тегов, вписанных вручную (не из списка), подсказки нет.
+  const TAG_HINTS = {
+    'Нон-грата': 'Не обслуживать — сразу позвать администратора',
+    'Знаменитость': 'Не афишировать визит и не просить фото, предупредить администратора',
+    'Не беспокоить': 'Подходить только когда гость сам позовёт',
+    'Не любит шум': 'Посадить в тихую зону, подальше от колонок',
+    'Постоянный столик': 'Предложить его обычный стол',
+    'Требует внимания': 'Подходить чаще, держать в курсе администратора',
+    'Молодожёны': 'Поздравить, предложить комплимент',
+    'День рождения': 'Поздравить, предложить комплимент'
+  };
+
+  // Теги-статусы: ставит и снимает только Администратор/Основатель (как статус VIP).
+  // Тот же список — на сервере (staff-proxy-na-kryishe, ADMIN_ONLY_TAGS), держать одинаковыми.
+  const ADMIN_ONLY_TAGS = ['VIP', 'Знаменитость', 'Нон-грата'];
+  function isAdminOnlyTag(name) {
+    const n = String(name || '').trim().toLowerCase();
+    return ADMIN_ONLY_TAGS.some(t => t.toLowerCase() === n);
+  }
+  function canEditTag(group, name) {
+    return currentRole === 'admin' || group !== 'special' || !isAdminOnlyTag(name);
+  }
+
+  // Сервер присылает понятный текст ошибки (например, «только администратор») — показываем его
+  async function responseError(res, fallback) {
+    try { const data = await res.json(); return data.error || fallback; } catch { return fallback; }
+  }
 
   let tagAddGroup = null; // 'special' | 'allergy' | null — какая группа сейчас в режиме добавления тега
 
@@ -3521,16 +4310,20 @@
   async function addManualTag(group, tagName) {
     const name = (tagName || '').trim();
     if (!name) return;
+    if (!canEditTag(group, name)) {
+      alert(`Тег «${name}» может ставить только администратор`);
+      return;
+    }
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/guest/${currentGuest.id}/tag?pin=${getPin()}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pin: getPin(), group, tag: name, action: 'add' })
       });
-      if (!res.ok) throw new Error();
+      if (!res.ok) { alert(await responseError(res, 'Не удалось добавить тег')); return; }
       const data = await res.json();
-      if (group === 'special') currentGuest.tagsSpecial = data.tags;
-      else currentGuest.tagsAllergy = data.tags;
+      currentGuest[TAG_GROUP_FIELD[group]] = data.tags;
+      if (data.history) currentGuest.history = data.history;
       tagAddGroup = null;
       renderGuestCard(currentGuest);
     } catch {
@@ -3539,30 +4332,43 @@
   }
 
   async function removeManualTag(group, tagName) {
+    if (!canEditTag(group, tagName)) {
+      alert(`Тег «${tagName}» может снять только администратор`);
+      return;
+    }
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/guest/${currentGuest.id}/tag?pin=${getPin()}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pin: getPin(), group, tag: tagName, action: 'remove' })
       });
-      if (!res.ok) throw new Error();
+      if (!res.ok) { alert(await responseError(res, 'Не удалось удалить тег')); return; }
       const data = await res.json();
-      if (group === 'special') currentGuest.tagsSpecial = data.tags;
-      else currentGuest.tagsAllergy = data.tags;
+      currentGuest[TAG_GROUP_FIELD[group]] = data.tags;
+      if (data.history) currentGuest.history = data.history;
       renderGuestCard(currentGuest);
     } catch {
       alert('Не удалось удалить тег');
     }
   }
 
+  const TAG_INPUT_PLACEHOLDER = {
+    special: 'Например, не любит шум',
+    allergy: 'Например, орехи',
+    tasteLike: 'Например, дыня с мятой',
+    tasteDislike: 'Например, слишком сладкие'
+  };
+
   function renderTagGroup(group, tags, label) {
-    const isAllergy = group === 'allergy';
+    const chipClass = group === 'allergy' ? ' allergy' : group === 'tasteDislike' ? ' dislike' : '';
+    // Теги-статусы (Знаменитость, Нон-грата) не-администратор видит, но без крестика
     const chips = (tags || []).map(t => `
-      <div class="tag-chip${isAllergy ? ' allergy' : ''}">
+      <div class="tag-chip${chipClass}">
         <span>${escHtml(t)}</span>
+        ${canEditTag(group, t) ? `
         <div class="tag-chip-remove" onclick="removeManualTag('${group}','${escJs(t)}')">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>
-        </div>
+        </div>` : ''}
       </div>
     `).join('');
 
@@ -3570,11 +4376,11 @@
 
     const addRow = tagAddGroup === group ? `
       <div class="tag-add-row">
-        <input id="tagAddInput" type="text" placeholder="${isAllergy ? 'Например, орехи' : 'Например, VIP'}" onkeydown="if(event.key==='Enter') submitTagAddInput('${group}')">
+        <input id="tagAddInput" type="text" placeholder="${TAG_INPUT_PLACEHOLDER[group] || ''}" onkeydown="if(event.key==='Enter') submitTagAddInput('${group}')">
         <button onclick="submitTagAddInput('${group}')">ОК</button>
       </div>
       <div class="tag-presets">
-        ${TAG_PRESETS[group].filter(p => !(tags || []).includes(p)).map(p => `<div class="tag-preset-chip" onclick="addManualTag('${group}','${escJs(p)}')">${escHtml(p)}</div>`).join('')}
+        ${(TAG_PRESETS[group] || []).filter(p => !(tags || []).includes(p) && canEditTag(group, p)).map(p => `<div class="tag-preset-chip" onclick="addManualTag('${group}','${escJs(p)}')">${escHtml(p)}</div>`).join('')}
       </div>
     ` : '';
 
@@ -3582,6 +4388,46 @@
       <div class="tag-group-label">${label}</div>
       <div class="tag-chip-row">${chips}${addChip}</div>
       ${addRow}
+    `;
+  }
+
+  // ─── ЧТО ДЕЛАТЬ: подсказки по тегам гостя ──
+  // Собирает в одном месте, как вести себя с этим гостем, — чтобы официант
+  // или кальянный мастер не разбирал теги по одному.
+  function birthdayHint(bd) {
+    if (!bd) return null;
+    if (bd.when === 'today') return 'Сегодня день рождения — поздравить, предложить комплимент';
+    if (bd.when === 'soon') return `День рождения через ${bd.days} дн. — можно поздравить заранее`;
+    if (bd.when === 'recent') return `День рождения был ${bd.days} дн. назад — поздравить с прошедшим`;
+    return null;
+  }
+
+  function guestHints(guest) {
+    const hints = [];
+    const special = guest.tagsSpecial || [];
+    // Самое важное — первым
+    if (special.includes('Нон-грата')) hints.push({ level: 'danger', text: TAG_HINTS['Нон-грата'] });
+    if ((guest.tagsAllergy || []).length) hints.push({ level: 'danger', text: `Аллергия: ${guest.tagsAllergy.join(', ')} — предупредить кухню и бар` });
+    for (const t of special) {
+      if (t === 'Нон-грата') continue;
+      if (t === 'День рождения' && guest.autoTags?.birthday) continue; // про ДР скажет автотег
+      if (TAG_HINTS[t]) hints.push({ level: 'normal', text: `${t} — ${TAG_HINTS[t].charAt(0).toLowerCase()}${TAG_HINTS[t].slice(1)}` });
+    }
+    const bdHint = birthdayHint(guest.autoTags?.birthday);
+    if (bdHint) hints.push({ level: 'good', text: bdHint });
+    if ((guest.tastesDislike || []).length) hints.push({ level: 'normal', text: `Не предлагать: ${guest.tastesDislike.join(', ')}` });
+    if ((guest.tastesLike || []).length) hints.push({ level: 'good', text: `Любит: ${guest.tastesLike.join(', ')} — предлагать в первую очередь` });
+    return hints;
+  }
+
+  function renderHints(guest) {
+    const hints = guestHints(guest);
+    if (!hints.length) return '';
+    return `
+      <div class="hint-box">
+        <div class="hint-title">Что делать</div>
+        ${hints.map(h => `<div class="hint-item ${h.level}">${escHtml(h.text)}</div>`).join('')}
+      </div>
     `;
   }
 
@@ -3607,7 +4453,19 @@
       cards.push(`
         <div class="autotag-card negative">
           <div class="autotag-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 15s1.5-2 4-2 4 2 4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
-          <div><div class="autotag-title">Негативный отзыв</div><div class="autotag-detail">Низкая оценка «${escHtml(nr.category || '')}»: ${nr.score}/5${dateStr ? ' от ' + dateStr : ''}</div></div>
+          <div><div class="autotag-title">Негативный отзыв</div><div class="autotag-detail">Низкая оценка «${escHtml(nr.category || '')}»: ${nr.score}/10${dateStr ? ' от ' + dateStr : ''}</div></div>
+        </div>
+      `);
+    }
+    if (at.birthday) {
+      const bd = at.birthday;
+      const title = bd.when === 'today' ? 'День рождения сегодня' : bd.when === 'soon' ? 'Скоро день рождения' : 'Недавно был день рождения';
+      const detail = bd.when === 'today' ? 'Поздравить, предложить комплимент'
+        : bd.when === 'soon' ? `Через ${bd.days} дн.` : `${bd.days} дн. назад`;
+      cards.push(`
+        <div class="autotag-card birthday">
+          <div class="autotag-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 21h16v-8H4z"/><path d="M4 16c2 0 2-1.5 4-1.5S10 16 12 16s2-1.5 4-1.5 2 1.5 4 1.5"/><line x1="12" y1="13" x2="12" y2="9"/><path d="M12 9c-1 0-1.5-.8-1.5-1.6 0-1 1.5-2.4 1.5-2.4s1.5 1.4 1.5 2.4c0 .8-.5 1.6-1.5 1.6z"/></svg></div>
+          <div><div class="autotag-title">${title}</div><div class="autotag-detail">${detail}</div></div>
         </div>
       `);
     }
@@ -3632,6 +4490,13 @@
 
   function renderAlertStrip(guest) {
     const badges = [];
+    if ((guest.tagsSpecial || []).includes('Нон-грата')) {
+      badges.push(`<div class="alert-badge nongrata"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4"/></svg>Нон-грата</div>`);
+    }
+    const bd = guest.autoTags?.birthday;
+    if (bd && (bd.when === 'today' || bd.when === 'soon')) {
+      badges.push(`<div class="alert-badge birthday"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21h16v-8H4z"/><line x1="12" y1="13" x2="12" y2="9"/></svg>${bd.when === 'today' ? 'ДР сегодня' : `ДР через ${bd.days} дн.`}</div>`);
+    }
     if ((guest.tagsAllergy || []).length) {
       badges.push(`<div class="alert-badge allergy"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 21h20L12 2z"/><line x1="12" y1="9" x2="12" y2="14"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Аллергия: ${escHtml(guest.tagsAllergy.join(', '))}</div>`);
     }
@@ -3672,6 +4537,7 @@
       </div>
 
       ${renderAlertStrip(guest)}
+      ${renderHints(guest)}
 
       <div class="info-row" onclick="openEditField('status','Статус гостя')">
         <div class="info-row-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2l7 4v6c0 5-3 8-7 10-4-2-7-5-7-10V6l7-4z"/></svg></div>
@@ -3704,6 +4570,10 @@
       ${renderTagGroup('special', guest.tagsSpecial, 'Особые')}
       ${renderTagGroup('allergy', guest.tagsAllergy, 'Аллергии')}
 
+      <div class="sec">Табак / вкусы</div>
+      ${renderTagGroup('tasteLike', guest.tastesLike, 'Любит')}
+      ${renderTagGroup('tasteDislike', guest.tastesDislike, 'Не любит')}
+
       <div class="sec">Любимые позиции</div>
       ${renderFavorites(guest)}
 
@@ -3711,6 +4581,9 @@
 
       <div class="sec">Последние визиты</div>
       ${visitsHtml}
+
+      <div class="sec">История изменений</div>
+      ${renderHistory(guest)}
     `;
   }
 
@@ -3722,11 +4595,24 @@
     editingField = field;
     document.getElementById('editOverlayTitle').textContent = title;
     const body = document.getElementById('editOverlayBody');
+    const saveBtn = document.getElementById('editOverlaySave');
+    if (saveBtn) saveBtn.style.display = '';
 
     if (field === 'status') {
-      body.innerHTML = `<div class="chip-row" id="editStatusChips">
-        ${['Редкий','Постоянный','VIP'].map(s => `<div class="chip ${currentGuest.status===s?'selected':''}" data-value="${s}" onclick="selectChip(this,'editStatusChips')">${s}</div>`).join('')}
-      </div>`;
+      // VIP ставит и снимает только администратор — остальным VIP не предлагаем,
+      // а если гость уже VIP, просто объясняем, кто может поменять.
+      const isAdmin = currentRole === 'admin';
+      if (!isAdmin && currentGuest.status === 'VIP') {
+        body.innerHTML = `<div style="font-size:14px;line-height:1.5;color:var(--text-sub,#b9a58f);">Статус VIP может поменять только администратор.</div>`;
+        editingField = null; // сохранять нечего
+        if (saveBtn) saveBtn.style.display = 'none';
+      } else {
+        const options = isAdmin ? ['Редкий','Постоянный','VIP'] : ['Редкий','Постоянный'];
+        body.innerHTML = `<div class="chip-row" id="editStatusChips">
+          ${options.map(s => `<div class="chip ${currentGuest.status===s?'selected':''}" data-value="${s}" onclick="selectChip(this,'editStatusChips')">${s}</div>`).join('')}
+        </div>
+        ${isAdmin ? '' : '<div style="font-size:12px;margin-top:10px;color:var(--text-sub,#b9a58f);">VIP ставит администратор.</div>'}`;
+      }
     } else if (field === 'birthday') {
       const parts = currentGuest.birthday ? currentGuest.birthday.split('-') : ['', '', ''];
       const [by, bm, bd] = parts;
@@ -3765,6 +4651,7 @@
   }
 
   async function saveEditField() {
+    if (!editingField) { closeEditOverlay(); return; }
     let value;
     if (editingField === 'status') {
       const sel = document.querySelector('#editStatusChips .chip.selected');
@@ -3780,11 +4667,12 @@
     }
 
     try {
-      await fetch(`${PROXY_BASE}/api/staff/guest/${currentGuest.id}?pin=${getPin()}`, {
+      const res = await fetch(`${PROXY_BASE}/api/staff/guest/${currentGuest.id}?pin=${getPin()}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pin: getPin(), field: editingField, value })
       });
+      if (!res.ok) { alert(await responseError(res, 'Не удалось сохранить')); return; }
       closeEditOverlay();
       openGuestCard(currentGuest.id);
     } catch {
