@@ -526,8 +526,34 @@
     .chlog-item:first-child { border-top: none; }
     .chlog-when { font-size: 10.5px; color: var(--text-muted); margin-bottom: 2px; }
     /* СХЕМА ЗАЛА И ГРАФИК СТОЛОВ */
+    /* Сегментированный переключатель: Список / График / Схема и режимы схемы */
+    .seg {
+      display: flex; gap: 3px; padding: 3px;
+      background: linear-gradient(180deg, rgba(240,223,192,0.035), rgba(240,223,192,0.015));
+      border: 1px solid var(--border); border-radius: 15px;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.35);
+    }
+    .seg-btn {
+      flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 7px;
+      height: 38px; padding: 0 10px; border: 1px solid transparent; border-radius: 12px;
+      background: transparent; color: var(--text-muted);
+      font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 500; letter-spacing: 0.2px;
+      cursor: pointer; white-space: nowrap; transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s;
+    }
+    .seg-btn svg { flex-shrink: 0; opacity: 0.75; }
+    .seg-btn:active { transform: scale(0.98); }
+    .seg-btn.active {
+      color: var(--text);
+      background: linear-gradient(180deg, rgba(184,115,51,0.32), rgba(184,115,51,0.14));
+      border-color: rgba(184,115,51,0.55);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.35), inset 0 1px 0 rgba(240,223,192,0.08);
+    }
+    .seg-btn.active svg { opacity: 1; color: var(--accent); }
+    @media (hover: hover) { .seg-btn:not(.active):hover { color: var(--text-sub); background: rgba(240,223,192,0.04); } }
+    .seg.seg-sm { border-radius: 13px; }
+    .seg.seg-sm .seg-btn { height: 32px; font-size: 12px; border-radius: 10px; gap: 6px; }
     .bk-views { margin: 14px 0 4px; }
-    .bk-views .chip { padding: 8px 16px; font-size: 12.5px; }
+    .hz-modes { margin-top: 12px; }
     .hz-datebar { display: flex; align-items: center; gap: 10px; margin: 12px 0 4px; }
     .hz-nav { width: 34px; height: 34px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border); color: var(--text); font-size: 18px; line-height: 1; cursor: pointer; flex-shrink: 0; }
     .hz-nav:disabled { opacity: 0.3; cursor: default; }
@@ -539,6 +565,18 @@
     .hz-time.hour { color: var(--text-sub); }
     .hz-time.selected { background: var(--accent-dim); border-color: rgba(184,115,51,0.6); color: var(--accent); }
     .hz-time.now { color: #f87171; border-color: rgba(239,68,68,0.4); }
+    .hz-time { position: relative; }
+    .hz-time.busy { background: rgba(74,222,128,0.08); border-color: rgba(74,222,128,0.2); color: var(--text-sub); }
+    .hz-time.has-start { color: var(--text); border-color: rgba(74,222,128,0.6); }
+    .hz-time.has-start::after { content: ''; position: absolute; top: 3px; right: 3px; width: 5px; height: 5px; border-radius: 50%; background: #4ade80; }
+    .hz-time.has-start.pending { border-color: rgba(245,158,11,0.65); }
+    .hz-time.has-start.pending::after { background: #f59e0b; }
+    .hz-times .hz-time.selected { background: var(--accent-dim); border-color: rgba(184,115,51,0.7); color: var(--accent); }
+    .hz-timehint { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; font-size: 10.5px; color: var(--text-muted); margin: 2px 2px 0; }
+    .hz-tdot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #4ade80; margin: 0 2px 0 8px; }
+    .hz-tdot:first-child { margin-left: 0; }
+    .hz-tdot.pending { background: #f59e0b; }
+    .hz-tbusy { display: inline-block; width: 14px; height: 8px; border-radius: 3px; background: rgba(74,222,128,0.18); border: 1px solid rgba(74,222,128,0.3); margin: 0 2px 0 8px; }
     .hz-zonehead { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin: 14px 2px 8px; font-size: 13px; color: var(--text); }
     .hz-wrap { background: #170C03; border: 1px solid var(--border); border-radius: 16px; padding: 6px; max-width: 640px; margin: 0 auto; }
     .hz-svg { display: block; width: 100%; height: auto; font-family: 'Inter', sans-serif; user-select: none; -webkit-user-select: none; }
@@ -2106,7 +2144,7 @@
   // Общий зал — по плану (не в масштабе: столы крупнее, чтобы попадать пальцем).
   // Номера: 1–3 у окон (слева направо), 4–6 у банкетки вдоль стены (снизу вверх),
   // 7–9 диваны у дальней стены (справа налево), 10–13 центр, «Бар» — 6 мест у стойки.
-  // Места — оценка по плану (диван 2,55 м — 3 человека). Терраса добавится отдельной зоной.
+  // Места: 1–3, 10, 13 — по 2; 5 — 3; 4, 6, 7–9, 11, 12 — по 4; бар — 6. Терраса добавится отдельной зоной.
   // label: где подпись режима — [x, y, выравнивание]
   const HALL_ZONES = [{
     id: 'main',
@@ -2139,9 +2177,9 @@
       { key: 'Общий зал 4', short: '4', seats: 4, shape: 'rect', x: 352, y: 278, w: 36, h: 50, ticks: 'l2', label: [319, 282, 'end'], labelMax: 80 },
       { key: 'Общий зал 5', short: '5', seats: 3, shape: 'rect', x: 352, y: 214, w: 36, h: 46, ticks: 'l1', label: [319, 218, 'end'], labelMax: 80 },
       { key: 'Общий зал 6', short: '6', seats: 4, shape: 'rect', x: 352, y: 150, w: 36, h: 50, ticks: 'l2', label: [319, 154, 'end'], labelMax: 80 },
-      { key: 'Общий зал 7', short: '7', seats: 6, shape: 'rect', x: 339, y: 40, w: 40, h: 52, ticks: '', label: [339, 84, 'middle'], labelMax: 100 },
-      { key: 'Общий зал 8', short: '8', seats: 6, shape: 'rect', x: 235, y: 40, w: 40, h: 52, ticks: '', label: [235, 84, 'middle'], labelMax: 100 },
-      { key: 'Общий зал 9', short: '9', seats: 6, shape: 'rect', x: 131, y: 40, w: 40, h: 52, ticks: '', label: [131, 84, 'middle'], labelMax: 100 },
+      { key: 'Общий зал 7', short: '7', seats: 4, shape: 'rect', x: 339, y: 40, w: 40, h: 52, ticks: '', label: [339, 84, 'middle'], labelMax: 100 },
+      { key: 'Общий зал 8', short: '8', seats: 4, shape: 'rect', x: 235, y: 40, w: 40, h: 52, ticks: '', label: [235, 84, 'middle'], labelMax: 100 },
+      { key: 'Общий зал 9', short: '9', seats: 4, shape: 'rect', x: 131, y: 40, w: 40, h: 52, ticks: '', label: [131, 84, 'middle'], labelMax: 100 },
       { key: 'Общий зал 10', short: '10', seats: 2, shape: 'round', x: 118, y: 150, r: 18, ticks: 'tb', label: [118, 116, 'middle'], labelMax: 90 },
       { key: 'Общий зал 11', short: '11', seats: 4, shape: 'oval', x: 208, y: 150, w: 52, h: 28, ticks: 't2', label: [208, 116, 'middle'], labelMax: 80 },
       { key: 'Общий зал 12', short: '12', seats: 4, shape: 'oval', x: 208, y: 262, w: 52, h: 28, ticks: 'b2', label: [208, 304, 'middle'], labelMax: 80 },
@@ -2270,12 +2308,25 @@
     return text.charAt(0).toUpperCase() + text.slice(1);
   }
 
+  // Иконки переключателей (14px, цвет — от текста кнопки)
+  const SEG_ICONS = {
+    list: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></svg>',
+    timeline: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="3" y1="6" x2="13" y2="6"/><line x1="8" y1="12" x2="20" y2="12"/><line x1="5" y1="18" x2="15" y2="18"/></svg>',
+    plan: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="3"/><rect x="7" y="7" width="4" height="4" rx="1"/><circle cx="16" cy="9" r="2"/><rect x="7" y="14" width="10" height="3.5" rx="1.5"/></svg>',
+    guest: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.2-4 4.3-6 8-6s6.8 2 8 6"/></svg>',
+    day: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2.5"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg>',
+    time: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>'
+  };
+  function segControl(items, current, handler, extraClass) {
+    return `<div class="seg ${extraClass || ''}">${items.map(([v, label]) =>
+      `<button type="button" class="seg-btn${current === v ? ' active' : ''}" data-v="${v}" onclick="${handler}('${v}')">${SEG_ICONS[v] || ''}<span>${label}</span></button>`).join('')}</div>`;
+  }
+
   function renderBookingsView() {
     const el = document.getElementById('bookingsContent');
     if (!el) return;
     if (!hallDate) hallDate = venueNow().day;
-    const tabs = `<div class="chip-row bk-views">${[['list', 'Список'], ['timeline', 'График'], ['plan', 'Схема']]
-      .map(([v, label]) => `<div class="chip${bookingsView === v ? ' selected' : ''}" onclick="setBookingsView('${v}')">${label}</div>`).join('')}</div>`;
+    const tabs = segControl([['list', 'Список'], ['timeline', 'График'], ['plan', 'Схема']], bookingsView, 'setBookingsView', 'bk-views');
     if (bookingsView === 'list') {
       el.innerHTML = tabs + '<div id="bookingsViewBody"></div>';
       renderBookingsList(document.getElementById('bookingsViewBody'));
@@ -2553,11 +2604,29 @@
     const times = [];
     for (let m = VENUE_OPEN_MIN; m < VENUE_CLOSE_MIN; m += 15) times.push(m);
     const now = venueNow();
-    const timesHtml = `<div class="hz-times" id="hzTimes">${hallDate === now.day ? `<div class="hz-time now" onclick="setHallTime(${Math.floor(now.min / 15) * 15})">Сейчас</div>` : ''}${times.map(m =>
-      `<div class="hz-time${m === t ? ' selected' : ''}${m % 60 === 0 ? ' hour' : ''}" data-min="${m}" onclick="setHallTime(${m})">${hhmm(m)}</div>`).join('')}</div>`;
+    // Подсветка на шкале: точка — в это время начинается бронь (жёлтая — если какая-то
+    // из них ждёт подтверждения), фон — в это время идут брони (любой стол, и не на схеме тоже)
+    const slotStarts = {}, slotPending = {}, slotBusy = {};
+    for (const it of items) {
+      const s0 = Math.floor(it.start / 15) * 15;
+      slotStarts[s0] = (slotStarts[s0] || 0) + 1;
+      if (it.b.status === 'pending') slotPending[s0] = true;
+      for (let m = s0; m < it.end; m += 15) slotBusy[m] = (slotBusy[m] || 0) + 1;
+    }
+    const slotTitle = m => {
+      const parts = [];
+      if (slotStarts[m]) parts.push(`начало: ${slotStarts[m]} ${ruPlural(slotStarts[m], 'бронь', 'брони', 'броней')}`);
+      if (slotBusy[m]) parts.push(`идёт: ${slotBusy[m]}`);
+      return parts.length ? ` title="${hhmm(m)} — ${parts.join(', ')}"` : '';
+    };
+    const timesHtml = `<div class="hz-times" id="hzTimes">${hallDate === now.day ? `<div class="hz-time now" onclick="setHallTime(${Math.floor(now.min / 15) * 15})">Сейчас</div>` : ''}${times.map(m => {
+      const cls = ['hz-time', m === t ? 'selected' : '', m % 60 === 0 ? 'hour' : '', slotBusy[m] ? 'busy' : '',
+        slotStarts[m] ? 'has-start' : '', slotPending[m] ? 'pending' : ''].filter(Boolean).join(' ');
+      return `<div class="${cls}" data-min="${m}" onclick="setHallTime(${m})"${slotTitle(m)}>${hhmm(m)}</div>`;
+    }).join('')}</div>
+      <div class="hz-timehint"><span class="hz-tdot"></span>начало брони<span class="hz-tdot pending"></span>ждёт подтверждения<span class="hz-tbusy"></span>идут брони</div>`;
 
-    const modes = `<div class="chip-row an-chips" style="margin-top:10px">${[['guest', 'Гость'], ['day', 'Брони дня'], ['time', 'Время']]
-      .map(([v, label]) => `<div class="chip${hallMode === v ? ' selected' : ''}" onclick="setHallMode('${v}')">${label}</div>`).join('')}</div>`;
+    const modes = segControl([['guest', 'Гость'], ['day', 'Брони дня'], ['time', 'Время']], hallMode, 'setHallMode', 'seg-sm hz-modes');
 
     let svg = `<svg viewBox="0 0 ${zone.width} ${zone.height}" class="hz-svg" xmlns="http://www.w3.org/2000/svg">${zone.decor.join('')}`;
     for (const tb of zone.tables) {
