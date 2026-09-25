@@ -405,6 +405,37 @@
       display: flex; align-items: center; justify-content: center;
     }
     .cal-status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; flex-shrink: 0; }
+    /* Мои смены — сам бокс дня подсвечен, чтобы сотрудник сразу видел, когда он работает */
+    .cal-day.mine-work {
+      background: linear-gradient(160deg, rgba(214,140,70,0.62), rgba(184,115,51,0.30));
+      border-color: rgba(230,160,95,0.85);
+      box-shadow: 0 4px 14px rgba(184,115,51,0.28), inset 0 1px 0 rgba(255,235,210,0.18);
+    }
+    .cal-day.mine-work .cal-day-num { color: #fff; font-weight: 600; }
+    .cal-day.mine-work .cal-day-badge { background: rgba(20,11,0,0.55); color: #F0DFC0; }
+    .cal-day.mine-work.outside { opacity: 0.45; }
+    .cal-day.mine-vacation { background: rgba(125,180,230,0.14); border-color: rgba(125,180,230,0.45); }
+    .cal-day.mine-sick { background: rgba(139,74,61,0.35); border-color: rgba(200,110,90,0.55); }
+    .cal-day.mine-off { background: repeating-linear-gradient(135deg, rgba(240,223,192,0.04) 0 5px, transparent 5px 10px), var(--bg-card); border-color: rgba(240,223,192,0.14); }
+    .cal-day.today .cal-day-num { text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+    .cal-day.mine-work.today .cal-day-num { text-decoration-color: #fff; }
+    .cal-day-time { font-size: 10px; line-height: 1; color: rgba(255,240,225,0.9); font-weight: 500; font-variant-numeric: tabular-nums; }
+    .cal-day-tag { font-size: 9px; line-height: 1; color: var(--text-sub); letter-spacing: 0.3px; }
+    .cal-day.selected { box-shadow: 0 0 0 2px var(--accent); }
+    .cal-day.mine-work.selected { box-shadow: 0 0 0 2px #F0DFC0, 0 4px 14px rgba(184,115,51,0.28); }
+    .sch-mine { display: flex; gap: 8px; margin: 0 0 12px; }
+    .sch-mine-card { flex: 1; min-width: 0; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 10px 12px; }
+    .sch-mine-card.accent { background: linear-gradient(160deg, rgba(184,115,51,0.22), rgba(184,115,51,0.08)); border-color: rgba(184,115,51,0.45); }
+    .sch-mine-label { font-size: 9.5px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; }
+    .sch-mine-value { font-size: 14px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sch-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 11px; color: var(--text-sub); margin-top: 12px; }
+    .sch-legend i { display: inline-block; width: 14px; height: 14px; border-radius: 4px; margin-right: 6px; vertical-align: -3px; border: 1px solid; }
+    .sch-legend i.work { background: linear-gradient(160deg, rgba(214,140,70,0.62), rgba(184,115,51,0.30)); border-color: rgba(230,160,95,0.85); }
+    .sch-legend i.off { background: repeating-linear-gradient(135deg, rgba(240,223,192,0.08) 0 3px, transparent 3px 6px), var(--bg-card); border-color: rgba(240,223,192,0.2); }
+    .sch-legend i.vac { background: rgba(125,180,230,0.14); border-color: rgba(125,180,230,0.45); }
+    .sch-legend i.sick { background: rgba(139,74,61,0.35); border-color: rgba(200,110,90,0.55); }
+    .sch-legend i.team { background: var(--accent); border-color: var(--accent); border-radius: 50%; width: 10px; height: 10px; vertical-align: -1px; }
+    .history-item.mine .history-text { color: var(--accent); }
 
     /* СТОП-ЛИСТ: переключатель "в наличии" */
     .avail-toggle {
@@ -1064,11 +1095,13 @@
       </button>
     </div>
 
+    <div id="scheduleMine"></div>
     <div class="cal-weekdays">
       <div class="cal-weekday">Пн</div><div class="cal-weekday">Вт</div><div class="cal-weekday">Ср</div>
       <div class="cal-weekday">Чт</div><div class="cal-weekday">Пт</div><div class="cal-weekday">Сб</div><div class="cal-weekday">Вс</div>
     </div>
     <div id="calGrid" class="cal-grid"><div class="loading">Загружаю...</div></div>
+    <div id="scheduleLegend"></div>
 
     <div id="scheduleDayPanel" style="margin-top:18px;"></div>
   </div>
@@ -3468,28 +3501,45 @@
         scheduleShiftsByDate[s.date].push(s);
       });
 
+      // Кто я в списке сотрудников — по имени (и должности) из входа по PIN
+      const me = employees.find(e => e.name === currentEmployeeName && (!currentJobRole || e.role === currentJobRole))
+        || employees.find(e => e.name === currentEmployeeName) || null;
+      myScheduleEmployeeId = me ? me.id : null;
+
       const today = todayISO();
       gridEl.innerHTML = cells.map(c => {
         const dayShifts = scheduleShiftsByDate[c.iso] || [];
+        const mine = myScheduleEmployeeId ? dayShifts.find(s => s.employeeId === myScheduleEmployeeId) : null;
         const classes = ['cal-day'];
         if (!c.inMonth) classes.push('outside');
         if (c.iso === today) classes.push('today');
         if (c.iso === selectedScheduleDate) classes.push('selected');
+        if (mine) classes.push(MY_SHIFT_CLASS[mine.status] || 'mine-work');
 
-        // Один человек в этот день — видно сразу его статус цветом.
-        // Несколько — точный список только по тапу, в ячейке просто счётчик.
+        // Моя смена — сам бокс подсвечен, внутри время смены (или «вых», «отпуск»…).
+        // Смены коллег: один человек — точка его статуса, несколько — счётчик.
+        let inner = '';
+        if (mine && mine.status === 'Работает') {
+          const start = (mine.time || '').split(/[–—-]/)[0].trim();
+          inner = `<div class="cal-day-time">${start ? escHtml(start) : 'смена'}</div>`;
+        } else if (mine) {
+          inner = `<div class="cal-day-tag">${escHtml(MY_SHIFT_TAG[mine.status] || mine.status)}</div>`;
+        }
+        const others = mine ? dayShifts.filter(s => s !== mine) : dayShifts;
         let indicator = '';
-        if (dayShifts.length === 1) {
-          indicator = `<div class="cal-day-dot" style="background:${SHIFT_STATUS_COLOR[dayShifts[0].status] || 'var(--accent)'}"></div>`;
-        } else if (dayShifts.length > 1) {
-          indicator = `<div class="cal-day-badge">${dayShifts.length}</div>`;
+        if (!mine && others.length === 1) {
+          indicator = `<div class="cal-day-dot" style="background:${SHIFT_STATUS_COLOR[others[0].status] || 'var(--accent)'}"></div>`;
+        } else if (!mine && others.length > 1) {
+          indicator = `<div class="cal-day-badge">${others.length}</div>`;
         }
 
-        return `<div class="${classes.join(' ')}" onclick="selectScheduleDay('${c.iso}')">
+        return `<div class="${classes.join(' ')}" onclick="selectScheduleDay('${c.iso}')"${mine ? ` title="Ваша смена${mine.time ? ': ' + escHtml(mine.time) : ''}"` : ''}>
           <div class="cal-day-num">${c.dayNum}</div>
-          ${indicator}
+          ${inner}${indicator}
         </div>`;
       }).join('');
+
+      renderMyScheduleSummary(cells, month, today);
 
       scheduleEmployeesById = employeeById;
       renderDayPanel();
@@ -3499,6 +3549,46 @@
   }
 
   let scheduleEmployeesById = {};
+  let myScheduleEmployeeId = null;
+  const MY_SHIFT_CLASS = { 'Работает': 'mine-work', 'Выходной': 'mine-off', 'Отпуск': 'mine-vacation', 'Больничный': 'mine-sick' };
+  const MY_SHIFT_TAG = { 'Выходной': 'вых', 'Отпуск': 'отпуск', 'Больничный': 'болен' };
+  const MONTHS_PREP = ['январе', 'феврале', 'марте', 'апреле', 'мае', 'июне', 'июле', 'августе', 'сентябре', 'октябре', 'ноябре', 'декабре'];
+
+  // Сводка над календарём: сколько моих смен в месяце и когда ближайшая
+  function renderMyScheduleSummary(cells, month, today) {
+    const box = document.getElementById('scheduleMine');
+    const legend = document.getElementById('scheduleLegend');
+    if (!box) return;
+    if (!myScheduleEmployeeId) {
+      box.innerHTML = '';
+      if (legend) legend.innerHTML = '';
+      return;
+    }
+    const myWork = [];
+    for (const [date, list] of Object.entries(scheduleShiftsByDate)) {
+      for (const sh of list) if (sh.employeeId === myScheduleEmployeeId && sh.status === 'Работает') myWork.push(sh);
+    }
+    const inMonth = new Set(cells.filter(c => c.inMonth).map(c => c.iso));
+    const monthCount = myWork.filter(sh => inMonth.has(sh.date)).length;
+    const next = myWork.filter(sh => sh.date >= today).sort((a, b) => a.date.localeCompare(b.date))[0];
+    let nextText = 'нет в этом месяце';
+    if (next) {
+      const [y, m, d] = next.date.split('-').map(Number);
+      const wd = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'][new Date(y, m - 1, d).getDay()];
+      nextText = next.date === today ? `сегодня${next.time ? ', ' + next.time : ''}` : `${wd}, ${d} ${MONTHS_GEN[m - 1]}${next.time ? ', ' + next.time : ''}`;
+    }
+    box.innerHTML = `<div class="sch-mine">
+      <div class="sch-mine-card accent"><div class="sch-mine-label">Моя ближайшая смена</div><div class="sch-mine-value">${escHtml(nextText)}</div></div>
+      <div class="sch-mine-card" style="flex:0 0 auto;"><div class="sch-mine-label">Смен в ${MONTHS_PREP[month]}</div><div class="sch-mine-value">${monthCount}</div></div>
+    </div>`;
+    if (legend) legend.innerHTML = `<div class="sch-legend">
+      <span><i class="work"></i>моя смена</span>
+      <span><i class="off"></i>мой выходной</span>
+      <span><i class="vac"></i>отпуск</span>
+      <span><i class="sick"></i>больничный</span>
+      <span><i class="team"></i>смены коллег</span>
+    </div>`;
+  }
 
   function selectScheduleDay(iso) {
     selectedScheduleDate = iso;
@@ -3528,9 +3618,10 @@
           const empName = emp ? emp.name : 'Сотрудник';
           const isOff = s.status !== 'Работает';
           const clickAttr = isAdmin ? `onclick="openAddShift('${selectedScheduleDate}','${s.id}')" style="cursor:pointer;"` : '';
-          return `<div class="history-item" ${clickAttr}>
+          const isMe = myScheduleEmployeeId && s.employeeId === myScheduleEmployeeId;
+          return `<div class="history-item${isMe ? ' mine' : ''}" ${clickAttr}>
             <div>
-              <div class="history-text"><span class="cal-status-dot" style="background:${SHIFT_STATUS_COLOR[s.status]}"></span>${empName}</div>
+              <div class="history-text"><span class="cal-status-dot" style="background:${SHIFT_STATUS_COLOR[s.status]}"></span>${empName}${isMe ? ' · вы' : ''}</div>
               <div class="history-date">${isOff ? s.status : `${emp?.role || 'Сотрудник'}${s.time ? ' · ' + s.time : ''}`}</div>
             </div>
           </div>`;
