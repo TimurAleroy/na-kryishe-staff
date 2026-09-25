@@ -2132,17 +2132,17 @@
 
   // ─── СХЕМА ЗАЛА И ГРАФИК СТОЛОВ ─────────────────
   // Три вида броней: «Список» (как было), «График» (столы × время) и «Схема» (зал сверху).
-  // У брони нет времени окончания — на графике и схеме считаем, что она длится
-  // BOOKING_DEFAULT_MIN, но не дольше закрытия. Заведение работает с 13:00 до 01:00,
-  // поэтому брони с 00:00 до 06:00 относятся к вечеру предыдущего дня.
+  // Время за столом не ограничено: бронь держит стол с начала и до закрытия.
+  // Поэтому две брони на один стол в один вечер — пересечение (красным), как и при
+  // выборе стола в форме брони. Заведение работает с 13:00 до 01:00, брони
+  // с 00:00 до 06:00 относятся к вечеру предыдущего дня.
   const VENUE_OPEN_MIN = 13 * 60;
   const VENUE_CLOSE_MIN = 25 * 60;     // 01:00 следующего дня
-  const BOOKING_DEFAULT_MIN = 120;
   const DAY_SPLIT_HOUR = 6;
   const SOON_MIN = 60;                 // «скоро бронь» — в ближайший час
 
   // Общий зал — по плану (не в масштабе: столы крупнее, чтобы попадать пальцем).
-  // Номера: 1–3 у окон (слева направо), 4–6 у банкетки вдоль стены (снизу вверх),
+  // Номера: 1–3 в нижнем ряду слева направо (1 — у стены, 2 и 3 — у окна), 4–6 у банкетки вдоль стены (снизу вверх),
   // 7–9 диваны у дальней стены (справа налево), 10–13 центр, «Бар» — 6 мест у стойки.
   // Места: 1–3, 10, 13 — по 2; 5 — 3; 4, 6, 7–9, 11, 12 — по 4; бар — 6. Терраса добавится отдельной зоной.
   // label: где подпись режима — [x, y, выравнивание]
@@ -2153,8 +2153,9 @@
     height: 394,
     decor: [
       '<rect x="2" y="2" width="396" height="388" rx="10" class="hz-wall"/>',
-      '<line x1="70" y1="390" x2="396" y2="390" class="hz-window"/>',
-      '<text x="233" y="386" text-anchor="middle" class="hz-note">окна</text>',
+      // окно — только вдоль столов 2 и 3, под столом 1 глухая стена
+      '<line x1="168" y1="390" x2="396" y2="390" class="hz-window"/>',
+      '<text x="282" y="386" text-anchor="middle" class="hz-note">окна</text>',
       // барная стойка
       '<path d="M10 118 H30 V302 H10 Z" class="hz-counter"/>',
       '<text x="20" y="214" text-anchor="middle" class="hz-note" transform="rotate(-90 20 214)">стойка</text>',
@@ -2230,8 +2231,8 @@
     if (b.kind === 'Мероприятие' && hh === 0 && mm === 0) return null;
     let day = m[1], start = hh * 60 + mm;
     if (hh < DAY_SPLIT_HOUR) { day = shiftDateStr(day, -1); start += 24 * 60; }
-    let end = start + BOOKING_DEFAULT_MIN;
-    if (start < VENUE_CLOSE_MIN) end = Math.min(end, VENUE_CLOSE_MIN);
+    // до закрытия; бронь уже после закрытия (редкость) — просто короткая полоса
+    const end = Math.max(VENUE_CLOSE_MIN, start + 30);
     return { day, start, end };
   }
 
@@ -2426,9 +2427,9 @@
       <div class="hz-legend">
         <span><i class="lg confirmed"></i>подтверждена</span>
         <span><i class="lg pending"></i>ждёт подтверждения</span>
-        <span><i class="lg conflict"></i>брони пересекаются</span>
+        <span><i class="lg conflict"></i>две брони на один стол</span>
       </div>
-      <div class="note" style="margin-top:6px">Нажмите на бронь, чтобы открыть её, или на пустое место, чтобы записать новую на этот стол и время. Длительность брони — ${BOOKING_DEFAULT_MIN / 60} ч, но не позже закрытия.</div>
+      <div class="note" style="margin-top:6px">Нажмите на бронь, чтобы открыть её, или на пустое место, чтобы записать новую на этот стол и время. Время за столом не ограничено — бронь занимает стол до закрытия.</div>
       ${renderUntimedList()}`;
     tlRowsCache = allRows;
     tlAxisStart = axisStart;
@@ -2525,10 +2526,10 @@
         });
       return fitLabel(variants, maxW);
     }
-    // время: сколько осталось / через сколько придут
+    // время: сколько гости уже за столом / через сколько придут
     if (st.cur) {
-      const left = st.cur.end - t;
-      return [{ text: `ещё ${durShort(left)}`, cls: left <= 15 ? 'danger' : 'good' }];
+      const sat = t - st.cur.start;
+      return [{ text: sat > 0 ? `уже ${durShort(sat)}` : 'только пришли', cls: 'good' }];
     }
     if (st.next && st.next.start - t <= 180) return [{ text: `через ${durShort(st.next.start - t)}`, cls: st.next.start - t <= SOON_MIN ? 'warn' : '' }];
     return [];
@@ -2647,7 +2648,7 @@
         <span><i class="lg confirmed"></i>идёт бронь</span>
         <span><i class="lg pending"></i>ждёт подтверждения</span>
         <span><i class="lg soon"></i>бронь в ближайший час</span>
-        <span><i class="lg conflict"></i>две брони на одно время</span>
+        <span><i class="lg conflict"></i>две брони на один стол</span>
       </div>
       <div id="hzTablePanel">${renderHallTablePanel(items, t)}</div>
       ${offPlan.length ? `<div class="sec">Не на схеме</div>${offPlan.map(it => `
@@ -2677,7 +2678,7 @@
       const color = b.status === 'pending' ? '#f59e0b' : '#4ade80';
       const nowTag = it.start <= t && t < it.end ? ' <span class="pill good">сейчас</span>' : '';
       return `<div class="hz-item" onclick="openBookingDetail(${it.idx})">
-        <span><span class="hz-dot" style="background:${color}"></span><b style="font-weight:500">${hhmm(it.start)}–${hhmm(it.end)}</b> ${escHtml(b.name)}${b.guests ? ` · ${escHtml(String(b.guests))}` : ''}${nowTag}</span>
+        <span><span class="hz-dot" style="background:${color}"></span><b style="font-weight:500">с ${hhmm(it.start)}</b> ${escHtml(b.name)}${b.guests ? ` · ${escHtml(String(b.guests))}` : ''}${nowTag}</span>
         ${bookingFlagsHtml(b, 2)}
       </div>`;
     }).join('') : '<div class="autotag-empty">На этот день броней нет</div>';
