@@ -624,8 +624,11 @@
     .tl-head { display: flex; height: 32px; border-bottom: 1px solid rgba(240,223,192,0.1); background: linear-gradient(180deg, rgba(240,223,192,0.035), transparent); }
     .tl-corner { width: 64px; flex-shrink: 0; position: sticky; left: 0; background: #150B03; z-index: 4; border-right: 1px solid var(--border); }
     .tl-hours { position: relative; height: 32px; flex-shrink: 0; }
-    .tl-hour { position: absolute; top: 0; height: 32px; padding: 9px 0 0 6px; font-size: 11px; font-weight: 500; color: var(--text-sub); border-left: 1px solid rgba(240,223,192,0.14); font-variant-numeric: tabular-nums; }
+    .tl-hour { position: absolute; top: 0; height: 32px; padding-top: 8px; transform: translateX(-50%); font-size: 11px; font-weight: 500; color: var(--text-sub); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .tl-hour.first { transform: none; padding-left: 6px; }
+    .tl-hourtick { position: absolute; bottom: 0; width: 1px; height: 9px; background: rgba(240,223,192,0.22); }
     .tl-hour.past { color: var(--text-muted); opacity: 0.7; }
+    .tl-hour.end { transform: translateX(-100%); padding-right: 6px; }
     .tl-halftick { position: absolute; bottom: 0; width: 1px; height: 6px; background: rgba(240,223,192,0.14); }
     .tl-nowbadge { position: absolute; top: 5px; transform: translateX(-50%); background: #ef4444; color: #fff; font-size: 10.5px; font-weight: 600; padding: 3px 7px; border-radius: 7px; z-index: 3; box-shadow: 0 2px 8px rgba(239,68,68,0.45); font-variant-numeric: tabular-nums; }
     .tl-section { position: relative; height: 24px; display: flex; align-items: center; border-top: 1px solid rgba(240,223,192,0.08); background: rgba(240,223,192,0.03); }
@@ -2446,9 +2449,13 @@
     let head = `<div class="tl-head" style="width:${TL_LABEL_W + W}px"><div class="tl-corner"></div><div class="tl-hours" style="width:${W}px">`;
     for (let h = 0; h < hours; h++) {
       const m = axisStart + h * 60;
-      head += `<div class="tl-hour${isToday && m + 60 <= now.min ? ' past' : ''}" style="left:${h * PX}px">${hhmm(m)}</div>`;
+      // подписи часов — по центру своей линии (первая — от левого края)
+      head += `<div class="tl-hour${h === 0 ? ' first' : ''}${isToday && m < now.min ? ' past' : ''}" style="left:${h * PX}px">${hhmm(m)}</div>`;
+      if (h > 0) head += `<div class="tl-hourtick" style="left:${h * PX}px"></div>`;
       head += `<div class="tl-halftick" style="left:${h * PX + PX / 2}px"></div>`;
     }
+    // правый край — закрытие (01:00): подпись у самой границы
+    head += `<div class="tl-hour end" style="left:${W}px" title="закрытие">${hhmm(axisEnd)}</div>`;
     if (nowX !== null) head += `<div class="tl-nowbadge" style="left:${nowX}px">${hhmm(now.min)}</div>`;
     head += '</div></div>';
 
