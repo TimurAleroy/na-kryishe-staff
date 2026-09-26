@@ -552,6 +552,109 @@
     .fb-scores { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 11.5px; color: var(--text-sub); }
     .fb-scores .low { color: #f87171; }
     .fb-comment { font-size: 13px; color: var(--text); line-height: 1.5; margin-top: 8px; white-space: pre-line; }
+
+    /* СЕГМЕНТЫ ГОСТЕЙ (Чемпионы … Потерянные) — цвет сегмента в переменных,
+       те же цвета, что у колонки «Сегмент» в Notion */
+    .rfm-champions { --seg: #E8A45C; --seg-bg: rgba(232,164,92,0.14); --seg-bd: rgba(232,164,92,0.42); }
+    .rfm-loyalPlus { --seg: #4ade80; --seg-bg: rgba(74,222,128,0.12); --seg-bd: rgba(74,222,128,0.38); }
+    .rfm-loyal { --seg: #60a5fa; --seg-bg: rgba(96,165,250,0.13); --seg-bd: rgba(96,165,250,0.4); }
+    .rfm-active { --seg: #c084fc; --seg-bg: rgba(192,132,252,0.13); --seg-bd: rgba(192,132,252,0.4); }
+    .rfm-sleeping { --seg: #f59e0b; --seg-bg: rgba(245,158,11,0.13); --seg-bd: rgba(245,158,11,0.4); }
+    .rfm-lost { --seg: #9ca3af; --seg-bg: rgba(156,163,175,0.12); --seg-bd: rgba(156,163,175,0.35); }
+    .rfm-none { --seg: #8A6A52; --seg-bg: rgba(138,106,82,0.1); --seg-bd: rgba(138,106,82,0.3); }
+    .rfm-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; padding: 4px 11px; border-radius: 100px; color: var(--seg); background: var(--seg-bg); border: 1px solid var(--seg-bd); white-space: nowrap; }
+    .rfm-pill.sm { font-size: 9.5px; letter-spacing: 0.6px; padding: 3px 8px; }
+    .rfm-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--seg); flex-shrink: 0; }
+    .card-pills { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .card-pills .status-pill { margin-bottom: 0; }
+    .card-pills .rfm-pill { cursor: pointer; }
+    .seg-value { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+    .seg-value .muted { font-size: 12px; color: var(--text-muted); }
+    .vip-star { color: var(--accent); font-size: 11px; margin-left: 4px; }
+    .seg-item[class*="rfm-"] { border-left: 3px solid var(--seg); }
+    .seg-item[class*="rfm-"] .seg-title { color: var(--seg); }
+    .sg-guide-item { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-top: 1px solid var(--border); }
+    .sg-guide-item:first-child { border-top: none; }
+    .sg-guide-item .rfm-dot { margin-top: 5px; }
+    .sg-guide-item.current { background: var(--seg-bg); border-radius: 10px; padding: 8px; margin: 2px -8px; border-top-color: transparent; }
+    .sg-guide-name { font-size: 13px; color: var(--text); }
+    .sg-guide-desc { font-size: 11.5px; color: var(--text-muted); line-height: 1.4; margin-top: 1px; }
+    .sg-period { font-size: 12px; color: var(--text-muted); margin: 8px 2px 0; }
+    .sg-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 14px 0 4px; }
+    .sg-stat { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 8px; text-align: center; }
+    .sg-stat-num { font-family: 'Jost', sans-serif; font-size: 24px; color: var(--text); }
+    .sg-stat.up .sg-stat-num { color: #4ade80; }
+    .sg-stat.down .sg-stat-num { color: #f59e0b; }
+    .sg-stat.new .sg-stat-num { color: #c084fc; }
+    .sg-stat-label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-top: 2px; }
+    .sg-row { background: var(--bg-card); border: 1px solid var(--border); border-left: 3px solid var(--seg); border-radius: 14px; padding: 12px 14px 11px; margin-bottom: 8px; cursor: pointer; transition: background 0.15s; }
+    .sg-row:hover, .sg-row:active { background: var(--bg-card-hover); }
+    .sg-head { display: flex; align-items: center; gap: 8px; }
+    .sg-name { font-size: 14px; color: var(--text); flex: 1; min-width: 0; }
+    .sg-count { font-family: 'Jost', sans-serif; font-size: 20px; color: var(--seg); line-height: 1; }
+    .sg-delta { font-size: 11px; min-width: 34px; text-align: right; color: var(--text-muted); }
+    .sg-delta.up { color: #4ade80; }
+    .sg-delta.down { color: #f87171; }
+    .sg-bar { height: 5px; border-radius: 3px; background: rgba(240,223,192,0.06); margin: 9px 0 7px; overflow: hidden; }
+    .sg-bar > span { display: block; height: 100%; border-radius: 3px; background: var(--seg); opacity: 0.85; }
+    .sg-desc { font-size: 11.5px; color: var(--text-muted); line-height: 1.4; }
+    .sg-was { font-size: 11px; color: var(--text-muted); margin-left: 4px; }
+    .sg-flow { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 10px 12px; margin-bottom: 6px; cursor: pointer; }
+    .sg-flow-head { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+    .sg-flow-arrow { color: var(--text-muted); font-size: 12px; }
+    .sg-flow-count { margin-left: auto; font-family: 'Jost', sans-serif; font-size: 17px; color: var(--text); }
+    .sg-flow-guests { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .sg-flow-guest { font-size: 12px; color: var(--accent); background: var(--accent-dim); border-radius: 100px; padding: 4px 10px; cursor: pointer; }
+    .sg-flow-more { font-size: 11px; color: var(--text-muted); padding: 4px 2px; }
+    .sg-group-title { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-sub); margin: 14px 2px 8px; }
+    .gl-meta { font-size: 11px; color: var(--text-muted); margin-top: 3px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+    /* ПРИШЁЛ / НЕ ПРИШЁЛ У БРОНИ, СВЕРКА ПРОШЛЫХ БРОНЕЙ */
+    .bk-flag.arrived { color: #4ade80; border-color: rgba(74,222,128,0.4); background: rgba(74,222,128,0.1); }
+    .bk-flag.noshow { color: #f87171; border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.1); }
+    .booking-chip.noshow { opacity: 0.55; }
+    .arr-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-top: 14px; }
+    .arr-title { font-size: 11px; color: var(--accent); letter-spacing: 0.5px; margin-bottom: 8px; }
+    .arr-state { font-size: 13px; line-height: 1.5; margin-bottom: 10px; }
+    .arr-state.arrived { color: #4ade80; }
+    .arr-state.noshow { color: #f87171; }
+    .arr-state .note { display: block; margin-top: 2px; }
+    .arr-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    .arr-btn { flex: 1; min-width: 110px; padding: 10px 12px; border-radius: 100px; font-size: 12.5px; font-family: 'Inter', sans-serif; cursor: pointer; border: 1px solid var(--border); background: none; color: var(--text-sub); }
+    .arr-btn.yes { color: #4ade80; border-color: rgba(74,222,128,0.4); background: rgba(74,222,128,0.08); }
+    .arr-btn.no { color: #f87171; border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.08); }
+    .arr-btn:disabled { opacity: 0.5; cursor: default; }
+    .rc-box { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.3); border-radius: 14px; margin: 12px 0 4px; overflow: hidden; }
+    .rc-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 14px; cursor: pointer; font-size: 13px; color: #f59e0b; }
+    .rc-head small { display: block; font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .rc-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; border-top: 1px solid rgba(245,158,11,0.18); }
+    .rc-info { font-size: 12.5px; color: var(--text); line-height: 1.4; min-width: 0; cursor: pointer; }
+    .rc-info .when { color: var(--text-sub); }
+    .rc-info .meta { color: var(--text-muted); font-size: 11px; }
+    .rc-btns { display: flex; gap: 6px; flex-shrink: 0; }
+    .rc-btns .arr-btn { min-width: 0; flex: none; padding: 7px 11px; font-size: 12px; }
+    /* ДУБЛИ КАРТОЧЕК */
+    .dup-group { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 12px; margin-bottom: 12px; }
+    .dup-head { font-size: 12px; color: var(--text-sub); margin: 2px 2px 10px; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+    .dup-card { display: flex; gap: 10px; align-items: flex-start; padding: 10px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px; cursor: pointer; }
+    .dup-card.main { border-color: rgba(184,115,51,0.6); background: var(--accent-dim); }
+    .dup-card input { margin-top: 3px; accent-color: var(--accent); flex-shrink: 0; }
+    .dup-card.shared { cursor: default; opacity: 0.6; border-style: dashed; }
+    .dup-card.shared .dup-role { color: var(--text-muted); }
+    .dup-card-body { flex: 1; min-width: 0; }
+    .dup-name { font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .dup-meta { font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin-top: 3px; }
+    .dup-meta .danger { color: #fca5a5; }
+    .dup-role { font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--accent); }
+    .dup-open { font-size: 11.5px; color: var(--accent); background: none; border: none; padding: 4px 0 0; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .dup-conflict { margin: 4px 2px 10px; }
+    .dup-conflict .form-label { margin-bottom: 6px; }
+    .dup-conflict .chip { font-size: 12px; padding: 7px 11px; }
+    .dup-list-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 12px; margin-bottom: 8px; }
+    .dup-found { border: 1px solid rgba(245,158,11,0.35); background: rgba(245,158,11,0.06); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; }
+    .app-toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(20px); max-width: min(440px, calc(100vw - 32px)); background: #2A160F; color: var(--text); border: 1px solid rgba(184,115,51,0.45); border-radius: 14px; padding: 11px 16px; font-size: 13px; line-height: 1.45; box-shadow: 0 10px 30px rgba(0,0,0,0.45); opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 400; }
+    .app-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .app-toast.bad { border-color: rgba(239,68,68,0.5); }
     .chlog-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 4px 14px; }
     .chlog-item { font-size: 12.5px; line-height: 1.45; color: var(--text-sub); padding: 9px 0; border-top: 1px solid var(--border); }
     .chlog-item:first-child { border-top: none; }
@@ -1205,6 +1308,28 @@
   <div style="padding:0 16px" id="feedbackContent"><div class="loading">Загружаю...</div></div>
 </div>
 
+<!-- ADMIN: ДУБЛИ КАРТОЧЕК -->
+<div class="screen" id="screen-duplicates">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('home')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Дубли карточек</h1><p>Один гость — одна карточка</p></div>
+  </div>
+  <div style="padding:0 16px" id="duplicatesContent"><div class="loading">Ищу...</div></div>
+</div>
+
+<!-- ADMIN: СЕГМЕНТЫ ГОСТЕЙ ПО ВИЗИТАМ -->
+<div class="screen" id="screen-segments">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('home')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Сегменты гостей</h1><p>По давности и частоте визитов</p></div>
+  </div>
+  <div style="padding:0 16px" id="segmentsContent"><div class="loading">Считаю...</div></div>
+</div>
+
 <!-- ГОСТИ: ЕДИНАЯ ТАБЛИЦА (только десктоп) -->
 <div class="screen" id="screen-guests-table">
   <div class="header">
@@ -1216,11 +1341,16 @@
   <div style="padding:0 16px">
     <div class="gt-toolbar">
       <input type="text" class="form-input" id="gtSearch" placeholder="Поиск по имени" oninput="gtUpdateFilter('search', this.value)">
-      <select class="form-input" id="gtStatus" style="max-width:160px;" onchange="gtUpdateFilter('status', this.value)">
-        <option value="Все">Все статусы</option>
-        <option value="VIP">VIP</option>
-        <option value="Постоянный">Постоянный</option>
-        <option value="Редкий">Редкий</option>
+      <select class="form-input" id="gtStatus" style="max-width:180px;" onchange="gtUpdateFilter('segment', this.value)">
+        <option value="">Все сегменты</option>
+        <option value="vip">VIP</option>
+        <option value="champions">Чемпионы</option>
+        <option value="loyalPlus">Лояльные+</option>
+        <option value="loyal">Лояльные</option>
+        <option value="active">Активные</option>
+        <option value="sleeping">Спящие</option>
+        <option value="lost">Потерянные</option>
+        <option value="none">Без визитов</option>
       </select>
       <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-sub);cursor:pointer;white-space:nowrap;">
         <input type="checkbox" id="gtAtRisk" onchange="gtUpdateFilter('onlyAtRisk', this.checked)"> Только риск оттока
@@ -1242,13 +1372,13 @@
   <div style="padding:0 16px" id="recentGuestsContent"></div>
 </div>
 
-<!-- GUESTS BY STATUS (VIP list etc) -->
+<!-- СПИСОК ГОСТЕЙ: VIP или сегмент (Чемпионы … Потерянные) -->
 <div class="screen" id="screen-guests-by-status">
   <div class="header">
-    <div class="back-btn" onclick="showScreen('home')">
+    <div class="back-btn" onclick="guestListGoBack()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
-    <div><h1 style="font-size:14px;letter-spacing:1px;" id="statusListTitle">Гости</h1></div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;" id="statusListTitle">Гости</h1><p id="statusListSub"></p></div>
   </div>
   <div style="padding:0 16px" id="statusListContent"><div class="loading">Загружаю...</div></div>
 </div>
@@ -1375,20 +1505,13 @@
       <input class="form-input" id="ngName" type="text" placeholder="Имя">
     </div>
     <div class="form-group">
-      <label class="form-label">Статус</label>
-      <div class="chip-row" id="ngStatusChips">
-        <div class="chip selected" data-value="Редкий" onclick="selectChip(this,'ngStatusChips')">Редкий</div>
-        <div class="chip" data-value="Постоянный" onclick="selectChip(this,'ngStatusChips')">Постоянный</div>
-        <div class="chip" data-value="VIP" onclick="selectChip(this,'ngStatusChips')">VIP</div>
-      </div>
-    </div>
-    <div class="form-group">
       <label class="form-label">День рождения (необязательно)</label>
       <input class="form-input" id="ngBirthday" type="date">
     </div>
     <div class="form-group">
-      <label class="form-label">Телефон (необязательно)</label>
+      <label class="form-label">Телефон</label>
       <input class="form-input" id="ngPhone" type="tel" value="+7" oninput="formatRuPhone(this)">
+      <div class="note" style="margin-top:6px">Обязательно: по номеру связываются брони, бот и отзывы.</div>
     </div>
     <div class="form-group">
       <label class="form-label">Что важно для гостя</label>
@@ -1410,8 +1533,17 @@
   </div>
   <div style="padding:0 16px">
     <div class="form-group">
-      <label class="form-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M8 3v7a2 2 0 002 2v9M8 3v7"/><path d="M17 3c-1.5 0-2.5 1.5-2.5 4s1 4 2.5 4v10"/></svg>Что заказал по кальяну</label>
+      <label class="form-label">Когда был</label>
+      <div class="chip-row" id="visitDateChips">
+        <div class="chip selected" data-value="0" onclick="selectChip(this,'visitDateChips')">Сегодня</div>
+        <div class="chip" data-value="-1" onclick="selectChip(this,'visitDateChips')">Вчера</div>
+        <div class="chip" data-value="-2" onclick="selectChip(this,'visitDateChips')">Позавчера</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M8 3v7a2 2 0 002 2v9M8 3v7"/><path d="M17 3c-1.5 0-2.5 1.5-2.5 4s1 4 2.5 4v10"/></svg>Кальян — если заказывал</label>
       <input class="form-input" id="visitHookah" type="text" placeholder="Например: Персик со льдом">
+      <div class="note" style="margin:6px 2px 0">Гость был без кальяна — оставьте пустым, визит всё равно запишется.</div>
     </div>
     <div class="form-group">
       <label class="form-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Заметки</label>
@@ -1427,7 +1559,7 @@
     <div class="overlay-title" id="editOverlayTitle">Изменить</div>
     <div style="margin-bottom:18px;text-align:left;" id="editOverlayBody"></div>
     <div class="overlay-buttons">
-      <button class="overlay-btn" onclick="closeEditOverlay()">Отмена</button>
+      <button class="overlay-btn" id="editOverlayCancel" onclick="closeEditOverlay()">Отмена</button>
       <button class="overlay-btn primary" id="editOverlaySave" onclick="saveEditField()">Сохранить</button>
     </div>
   </div>
@@ -1565,7 +1697,9 @@
       bookings: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><path d="M8 14l2 2 4-4"/></svg>',
       marketing: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M3 10v4h4l6 5V5L7 10H3z"/><path d="M16.5 8.5a5 5 0 010 7"/><path d="M19 6a8.5 8.5 0 010 12"/></svg>',
       analytics: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>',
-      feedback: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M21 12a8 8 0 01-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1121 12z"/></svg>'
+      feedback: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M21 12a8 8 0 01-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1121 12z"/></svg>',
+      segments: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/><path d="M3 17.5l9 5 9-5" opacity="0.55"/></svg>',
+      duplicates: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2"/></svg>'
     };
 
     // Группы отсортированы по тому, как часто ими реально пользуются за смену:
@@ -1585,7 +1719,7 @@
 
     let guestsCards = '';
     guestsCards += qcard(icons.birthday, 'Именинники', 'Сегодня', "openBirthdays()");
-    guestsCards += qcard(icons.vip, 'VIP-гости', 'Список', "openGuestsByStatus('VIP')");
+    guestsCards += qcard(icons.vip, 'VIP-гости', 'Список', "openGuestList('vip')");
     guestsCards += qcard(icons.recent, 'Недавние', 'Просмотренные', "openRecentGuests()");
 
     let analyticsCards = '';
@@ -1609,9 +1743,11 @@
 
     if (currentRole === 'admin') {
       guestsCards += qcard(icons.inactive, 'Давно не было', '30+ дней', "openInactiveGuests()");
+      guestsCards += qcard(icons.duplicates, 'Дубли', 'Одна карточка на гостя', "openDuplicates()");
       analyticsCards += qcard(icons.guestsTable, 'Гости', 'Таблица', "openGuestsTable()", { extraClass: 'desktop-only' });
       analyticsCards += qcard(icons.events, 'Афиша', 'Мероприятия', "openEvents()");
       analyticsCards += qcard(icons.stats, 'Статистика', 'CSI · NPS · eNPS', "openStats()");
+      analyticsCards += qcard(icons.segments, 'Сегменты', 'Чемпионы → потерянные', "openSegments()");
       analyticsCards += qcard(icons.analytics, 'Аналитика', 'Сравнение периодов', "openAnalytics()");
       analyticsCards += qcard(icons.feedback, 'Обратная связь', 'Отзывы гостей', "openFeedback()");
       marketingCards += qcard(icons.marketing, 'Рассылки', 'Сегменты · бот', "openMarketing()");
@@ -1641,11 +1777,11 @@
 
     if (currentRole === 'admin') {
       try {
-        const res = await fetch(`${PROXY_BASE}/api/staff/bookings?pin=${getPin()}`);
+        const res = await fetch(`${PROXY_BASE}/api/staff/bookings?past=${BOOKINGS_PAST_DAYS}&pin=${getPin()}`);
         if (res.ok) {
           const list = await res.json();
-          const hasPending = Array.isArray(list) && list.some(b => b.status === 'pending');
-          setQuickActionDot('qdotBookings', hasPending);
+          const needsAttention = Array.isArray(list) && list.some(b => b.past ? (b.uid && !b.arrival) : b.status === 'pending');
+          setQuickActionDot('qdotBookings', needsAttention);
         }
       } catch {}
 
@@ -1707,7 +1843,7 @@
         el.innerHTML = working.map(s => {
           const emp = Array.isArray(employees) ? employees.find(e => e.id === s.employeeId) : null;
           const name = emp ? emp.name : 'Сотрудник';
-          return `<div class="dp-row" onclick="openSchedule()">${name}${emp?.role ? `<div class="dp-sub">${emp.role}</div>` : ''}</div>`;
+          return `<div class="dp-row" onclick="openSchedule()">${escHtml(name)}${emp?.role ? `<div class="dp-sub">${escHtml(emp.role)}</div>` : ''}</div>`;
         }).join('');
       } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
     })();
@@ -1718,7 +1854,7 @@
         const res = await fetch(`${PROXY_BASE}/api/staff/birthdays?pin=${pin}`);
         const list = res.ok ? await res.json() : [];
         if (!Array.isArray(list) || !list.length) { el.innerHTML = '<div class="dp-empty">Сегодня никого нет</div>'; return; }
-        el.innerHTML = list.map(g => `<div class="dp-row" onclick="openGuestCard('${g.id}')">${g.name}</div>`).join('');
+        el.innerHTML = list.map(g => `<div class="dp-row" onclick="openGuestCard('${escJs(g.id)}')">${escHtml(g.name || '')}</div>`).join('');
       } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
     })();
 
@@ -1737,7 +1873,7 @@
         if (!Array.isArray(list) || !list.length) { el.innerHTML = '<div class="dp-empty">Ближайших нет</div>'; return; }
         el.innerHTML = list.slice(0, 5).map(e => {
           const d = new Date(e.date);
-          return `<div class="dp-row" onclick="openEvents()">${e.name || 'Мероприятие'}<div class="dp-sub">${d.getDate()} ${MONTHS[d.getMonth()]} · ${e.format || ''}</div></div>`;
+          return `<div class="dp-row" onclick="openEvents()">${escHtml(e.name || 'Мероприятие')}<div class="dp-sub">${d.getDate()} ${MONTHS[d.getMonth()]} · ${escHtml(e.format || '')}</div></div>`;
         }).join('');
       } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
     })();
@@ -1750,7 +1886,7 @@
         const list = res.ok ? await res.json() : [];
         if (countEl) countEl.textContent = Array.isArray(list) && list.length ? String(list.length) : '';
         if (!Array.isArray(list) || !list.length) { el.innerHTML = '<div class="dp-empty">Открытых нет</div>'; return; }
-        el.innerHTML = list.slice(0, 5).map(p => `<div class="dp-row" onclick="openProblems()">${p.category || 'Проблема'}${p.responsible ? `<div class="dp-sub">${p.responsible}</div>` : ''}</div>`).join('');
+        el.innerHTML = list.slice(0, 5).map(p => `<div class="dp-row" onclick="openProblems()">${escHtml(p.category || 'Проблема')}${p.responsible ? `<div class="dp-sub">${escHtml(p.responsible)}</div>` : ''}</div>`).join('');
       } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
     })();
 
@@ -1763,7 +1899,8 @@
         const pending = Array.isArray(list) ? list.filter(b => b.status === 'pending') : [];
         if (countEl) countEl.textContent = pending.length ? String(pending.length) : '';
         if (!pending.length) { el.innerHTML = '<div class="dp-empty">Все подтверждены</div>'; return; }
-        el.innerHTML = pending.slice(0, 5).map(b => `<div class="dp-row" onclick="openBookings()">${b.name || 'Гость'}<div class="dp-sub">${b.display || ''}</div></div>`).join('');
+        // имя брони вводит сам гость в гостевом приложении — экранируем
+        el.innerHTML = pending.slice(0, 5).map(b => `<div class="dp-row" onclick="openBookings()">${escHtml(b.name || 'Гость')}<div class="dp-sub">${escHtml(b.display || '')}</div></div>`).join('');
       } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
     })();
 
@@ -1783,7 +1920,7 @@
         const list = res.ok ? await res.json() : [];
         if (countEl) countEl.textContent = Array.isArray(list) && list.length ? String(list.length) : '';
         if (!Array.isArray(list) || !list.length) { el.innerHTML = '<div class="dp-empty">Задач нет</div>'; return; }
-        el.innerHTML = list.slice(0, 5).map(t => `<div class="dp-row" onclick="openFounderTasks()">${t.text || 'Задача'}${t.deadline ? `<div class="dp-sub">до ${t.deadline}</div>` : ''}</div>`).join('');
+        el.innerHTML = list.slice(0, 5).map(t => `<div class="dp-row" onclick="openFounderTasks()">${escHtml(t.text || 'Задача')}${t.deadline ? `<div class="dp-sub">до ${escHtml(t.deadline)}</div>` : ''}</div>`).join('');
       } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
     })();
 
@@ -2005,8 +2142,9 @@
   // без похода на сервер. Вызывается сразу после подтверждения/отмены/правки
   // брони, чтобы точка на главном экране обновилась в тот же момент, а не
   // только после перезахода в приложение.
+  // Красная точка на «Бронях»: есть неподтверждённые или прошлые брони без отметки «пришёл / не пришёл»
   function refreshBookingsDot() {
-    setQuickActionDot('qdotBookings', bookingsListData.some(b => b.status === 'pending'));
+    setQuickActionDot('qdotBookings', bookingsListData.some(b => b.status === 'pending') || bookingsPastData.some(b => b.uid && !b.arrival));
   }
 
   // ─── ИМЕНИННИКИ ────────────────────────────────
@@ -2018,17 +2156,18 @@
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/birthdays?pin=${getPin()}`);
       if (res.status === 401) { showScreen('pin'); return; }
+      if (!res.ok) throw new Error();
       const list = await res.json();
-      if (!list.length) {
+      if (!Array.isArray(list) || !list.length) {
         el.innerHTML = '<div class="empty-state">Сегодня именинников нет</div>';
         return;
       }
       el.innerHTML = list.map(g => `
-        <div class="result-item" onclick="openGuestCard('${g.id}')" style="cursor:pointer">
-          <div class="result-avatar">${(g.name||'?').charAt(0).toUpperCase()}</div>
+        <div class="result-item" onclick="openGuestCard('${escJs(g.id)}')" style="cursor:pointer">
+          <div class="result-avatar">${escHtml((g.name||'?').charAt(0).toUpperCase())}</div>
           <div>
-            <div style="font-size:14px;color:var(--text);">${g.name}</div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">${g.status || ''}${g.phone ? ' · ' + g.phone : ''}</div>
+            <div style="font-size:14px;color:var(--text);">${escHtml(g.name || '')}</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">${[g.vip ? 'VIP' : '', g.segment || 'Без визитов', g.phone || ''].filter(Boolean).map(escHtml).join(' · ')}</div>
           </div>
         </div>
       `).join('');
@@ -2042,7 +2181,11 @@
   // ─── БРОНИ (бот + сайт — читаем единый список, редактируем через Telegram) ──
 
   let bookingsListData = [];
+  // Прошедшие брони за неделю (для сверки «пришёл / не пришёл»), в общий список не входят
+  let bookingsPastData = [];
+  let reconOpen = true;
   let currentBookingIndex = null;
+  const BOOKINGS_PAST_DAYS = 7;
   // Пока одно действие над бронью (подтвердить/назначить стол/отменить/сохранить
   // правку) выполняется — не даём запустить второе поверх него. Раньше можно было,
   // например, тапнуть "Сохранить" у стола и сразу же "Подтвердить" не дожидаясь
@@ -2077,6 +2220,7 @@
     if (!dateStr) return occupied;
     for (const b of bookingsListData) {
       if (!b.table || !b.iso) continue;
+      if (b.arrival?.status === 'noshow') continue; // не пришёл — стол свободен
       if (excludeEntry && b.entry === excludeEntry) continue;
       if (b.iso.slice(0, 10) !== dateStr) continue;
       occupied[b.table] = { name: b.name, time: b.iso.slice(11, 16) || '' };
@@ -2126,9 +2270,14 @@
     const el = document.getElementById('bookingsContent');
     el.innerHTML = '<div class="loading">Загружаю...</div>';
     try {
-      const res = await fetch(`${PROXY_BASE}/api/staff/bookings?pin=${getPin()}`);
+      const res = await fetch(`${PROXY_BASE}/api/staff/bookings?past=${BOOKINGS_PAST_DAYS}&pin=${getPin()}`);
       if (res.status === 401) { showScreen('pin'); return; }
-      bookingsListData = await res.json();
+      if (!res.ok) throw new Error();
+      const all = await res.json();
+      if (!Array.isArray(all)) throw new Error();
+      bookingsListData = all.filter(b => !b.past);
+      bookingsPastData = all.filter(b => b.past).sort((a, b) => (b.iso || '').localeCompare(a.iso || ''));
+      refreshBookingsDot();
       renderBookingsView();
     } catch {
       el.innerHTML = '<div class="empty-state">Не удалось загрузить брони</div>';
@@ -2143,11 +2292,12 @@
     const flags = [];
     if ((g.tagsSpecial || []).includes('Нон-грата')) flags.push({ cls: 'danger', text: 'Нон-грата' });
     if ((g.tagsAllergy || []).length) flags.push({ cls: 'danger', text: short ? 'Аллергия' : `Аллергия: ${g.tagsAllergy.join(', ')}` });
-    if (g.status === 'VIP') flags.push({ cls: 'vip', text: 'VIP' });
+    const vip = g.vip || isVipTagList(g.tagsSpecial);
+    if (vip) flags.push({ cls: 'vip', text: 'VIP' });
     const bd = g.birthday;
     if (bd) flags.push({ cls: 'good', text: short ? 'ДР' : bd.when === 'today' ? 'ДР в этот день' : bd.when === 'soon' ? `ДР через ${bd.days} дн.` : `ДР был ${bd.days} дн. назад` });
     for (const t of (g.tagsSpecial || [])) {
-      if (t === 'Нон-грата') continue;
+      if (t === 'Нон-грата' || isVipTagList([t])) continue; // VIP уже выше, отдельной пометкой
       flags.push({ cls: '', text: t });
     }
     return flags;
@@ -2164,7 +2314,7 @@
   function renderBookingsList(target) {
     const el = target || document.getElementById('bookingsContent');
     if (!bookingsListData.length) {
-      el.innerHTML = '<div class="empty-state">Броней пока нет</div>';
+      el.innerHTML = '<div class="empty-state">Ближайших броней пока нет</div>';
       return;
     }
 
@@ -2178,11 +2328,14 @@
       const metaParts = [];
       if (kindLine) metaParts.push(escHtml(kindLine));
       if (b.table) metaParts.push(`<span class="table-tag">${escHtml(b.table)}</span>`);
+      const arr = b.arrival?.status;
+      const arrHtml = arr ? `<div class="bk-flags"><span class="bk-flag ${arr}">${arr === 'arrived' ? '✓ пришёл' : '✗ не пришёл'}</span></div>` : '';
       return `
-        <div class="booking-chip" style="border-left-color:${st.color}" onclick="openBookingDetail(${idx})" title="${escHtml(st.label)}">
+        <div class="booking-chip${arr === 'noshow' ? ' noshow' : ''}" style="border-left-color:${st.color}" onclick="openBookingDetail(${idx})" title="${escHtml(st.label)}">
           <div class="booking-chip-time">${escHtml(shortDate)}</div>
           <div class="booking-chip-name">${nameHtml}</div>
           <div class="booking-chip-meta">${metaParts.join(' · ')}</div>
+          ${arrHtml}
           ${bookingFlagsHtml(b, 3)}
         </div>
       `;
@@ -2326,6 +2479,7 @@
   function hallDayBookings(day) {
     const out = [];
     bookingsListData.forEach((b, idx) => {
+      if (b.arrival?.status === 'noshow') return; // не пришёл — стол на схеме и графике свободен
       const slot = bookingSlot(b);
       if (!slot || slot.day !== day) return;
       out.push({ b, idx, start: slot.start, end: slot.end, table: hallTableFor(b.table) });
@@ -2409,11 +2563,43 @@
       `<button type="button" class="seg-btn${current === v ? ' active' : ''}" data-v="${v}" onclick="${handler}('${v}')">${SEG_ICONS[v] || ''}<span>${label}</span></button>`).join('')}</div>`;
   }
 
+  // ─── СВЕРКА: прошлые брони без отметки «пришёл / не пришёл» ──
+  // «Пришёл» записывает визит в карточку гостя (нет карточки — создаёт), чтобы гость
+  // попал в сегменты. «Не пришёл» — неявка в аналитике.
+  function bookingWhenLabel(b) {
+    const day = (b.iso || '').slice(0, 10);
+    const time = (b.iso || '').slice(11, 16);
+    const y = venueCalendarDay(-1);
+    const dayLabel = day === y ? 'Вчера' : day ? new Date(day + 'T12:00:00').toLocaleDateString('ru-RU', { weekday: 'short', day: 'numeric', month: 'short' }) : '';
+    return `${dayLabel}${time && time !== '00:00' ? ', ' + time : ''}`;
+  }
+  function reconHtml() {
+    const list = bookingsPastData.map((b, i) => ({ b, i })).filter(x => x.b.uid && !x.b.arrival);
+    if (!list.length) return '';
+    const rows = reconOpen ? list.map(({ b, i }) => `
+      <div class="rc-row">
+        <div class="rc-info" onclick="openPastBookingDetail(${i})">
+          <div><span class="when">${escHtml(bookingWhenLabel(b))}</span> · ${escHtml(b.name)}</div>
+          <div class="meta">${[b.guests ? `${b.guests} гост.` : '', b.table || '', b.status === 'pending' ? 'не подтверждали' : ''].filter(Boolean).map(escHtml).join(' · ')}</div>
+        </div>
+        <div class="rc-btns">
+          <button class="arr-btn yes" onclick="markArrival('past', ${i}, 'arrived')">Пришёл</button>
+          <button class="arr-btn no" onclick="markArrival('past', ${i}, 'noshow')">Нет</button>
+        </div>
+      </div>`).join('') : '';
+    return `<div class="rc-box">
+      <div class="rc-head" onclick="reconOpen=!reconOpen;renderBookingsView();">
+        <div>Отметьте прошлые брони: ${list.length}<small>Пришёл — визит запишется в карточку гостя</small></div>
+        <span>${reconOpen ? '▴' : '▾'}</span>
+      </div>${rows}
+    </div>`;
+  }
+
   function renderBookingsView() {
     const el = document.getElementById('bookingsContent');
     if (!el) return;
     if (!hallDate) hallDate = venueNow().day;
-    const tabs = segControl([['list', 'Список'], ['timeline', 'График'], ['plan', 'Схема']], bookingsView, 'setBookingsView', 'bk-views');
+    const tabs = reconHtml() + segControl([['list', 'Список'], ['timeline', 'График'], ['plan', 'Схема']], bookingsView, 'setBookingsView', 'bk-views');
     if (bookingsView === 'list') {
       el.innerHTML = tabs + '<div id="bookingsViewBody"></div>';
       renderBookingsList(document.getElementById('bookingsViewBody'));
@@ -2516,6 +2702,7 @@
         const cls = ['tl-bar', b.status === 'pending' ? 'pending' : 'confirmed', conflict ? 'conflict' : ''].join(' ');
         const flags = bookingGuestFlags(b, true);
         const icons = [
+          b.arrival?.status === 'arrived' ? '<span class="tl-ic" title="Пришёл">✓</span>' : '',
           flags.some(f => f.cls === 'danger') ? '<span class="tl-ic danger">⚠</span>' : '',
           flags.some(f => f.text === 'VIP') ? '<span class="tl-ic vip">★</span>' : '',
           flags.some(f => f.text === 'ДР') ? '<span class="tl-ic">🎂</span>' : ''
@@ -2933,13 +3120,91 @@
     }
   }
 
-  function openBookingDetail(idx) {
+  // Бронь открыта из общего списка ('cur') или из сверки прошлых ('past')
+  let currentBookingSource = 'cur';
+  function bookingBySource(source, idx) {
+    return (source === 'past' ? bookingsPastData : bookingsListData)[idx];
+  }
+  function openBookingDetail(idx, source) {
+    currentBookingSource = source === 'past' ? 'past' : 'cur';
     currentBookingIndex = idx;
     bookingEditMode = false;
     bookingTableEditMode = false;
     bookingActionNotice = null;
     showScreen('booking-detail');
     renderBookingDetail();
+  }
+  function openPastBookingDetail(idx) {
+    openBookingDetail(idx, 'past');
+  }
+
+  // «Пришёл / Не пришёл» — в день брони и позже (за последние 2 недели)
+  function renderArrivalBlock(b) {
+    const day = bookingVenueDay(b.iso);
+    if (!b.uid || !day || day > venueDayStr()) return '';
+    // «Не пришёл» — только когда время брони уже наступило (чтобы случайно не освободить стол заранее)
+    const hasTime = /T\d{2}:\d{2}/.test(b.iso || '') && !/T00:00/.test(b.iso || '');
+    const timeCame = !hasTime || String(b.iso).slice(0, 16) <= moscowNowIso();
+    const src = currentBookingSource;
+    const idx = currentBookingIndex;
+    const a = b.arrival;
+    const whoWhen = a ? [a.by ? a.by.replace(/ \(.+\)$/, '') : '', a.at ? new Date(a.at).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : ''].filter(Boolean).join(', ') : '';
+    let state = '';
+    let btns = '';
+    const noBtn = label => timeCame ? `<button class="arr-btn no" onclick="markArrival('${src}', ${idx}, 'noshow')">${label}</button>` : '';
+    if (!a) {
+      btns = `<button class="arr-btn yes" onclick="markArrival('${src}', ${idx}, 'arrived')">✓ Пришёл</button>${noBtn('✗ Не пришёл')}`;
+    } else if (a.status === 'arrived') {
+      state = `<div class="arr-state arrived">✓ Пришёл${whoWhen ? ` <span class="note">отметил(а) ${escHtml(whoWhen)}</span>` : ''}</div>`;
+      btns = `${noBtn('Не пришёл')}<button class="arr-btn" onclick="markArrival('${src}', ${idx}, 'clear')">Снять отметку</button>`;
+    } else {
+      state = `<div class="arr-state noshow">✗ Не пришёл${whoWhen ? ` <span class="note">отметил(а) ${escHtml(whoWhen)}</span>` : ''}</div>`;
+      btns = `<button class="arr-btn yes" onclick="markArrival('${src}', ${idx}, 'arrived')">Пришёл</button><button class="arr-btn" onclick="markArrival('${src}', ${idx}, 'clear')">Снять отметку</button>`;
+    }
+    return `<div class="arr-box">
+      <div class="arr-title">Гость пришёл?</div>
+      ${state}
+      <div class="arr-btns">${btns}</div>
+      ${!a ? `<div class="note" style="margin-top:8px">«Пришёл» запишет визит в карточку гостя — так он попадёт в сегменты. Нет карточки — она создастся по брони.${timeCame ? '' : ' «Не пришёл» появится, когда наступит время брони.'}</div>` : ''}
+    </div>`;
+  }
+
+  let arrivalBusy = false;
+  async function markArrival(source, idx, status) {
+    if (arrivalBusy) return;
+    const b = bookingBySource(source, idx);
+    if (!b || !b.uid) return;
+    arrivalBusy = true;
+    document.querySelectorAll('.arr-btn').forEach(x => { x.disabled = true; });
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/bookings/arrival?pin=${getPin()}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), phone: b.phone, uid: b.uid, status, prev: b.arrival?.status || 'none' })
+      });
+      if (res.status === 401) { showScreen('pin'); return; }
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        if (data.stale) b.arrival = data.arrival || null; // кто-то уже поменял отметку — показываем актуальную
+        showToast(data.error || 'Отметка не сохранилась — попробуйте ещё раз', true);
+        return;
+      }
+      b.arrival = data.arrival || null;
+      let msg = status === 'arrived' ? `${b.name}: пришёл` : status === 'noshow' ? `${b.name}: не пришёл` : 'Отметка снята';
+      if (data.cardCreated) msg += ' — создана карточка гостя, визит записан';
+      else if (data.visitCreated) msg += ' — визит записан в карточку';
+      else if (status === 'arrived') msg += ' — визит за этот день уже был в карточке';
+      if (data.visitRemoved) msg += ' — визит из карточки убран';
+      if (data.visitKept) msg += ' — в визите уже записан кальян, визит оставлен';
+      showToast(msg);
+      refreshBookingsDot();
+    } catch {
+      showToast('Нет связи — отметка не сохранилась', true);
+    } finally {
+      arrivalBusy = false;
+      if (document.getElementById('screen-booking-detail')?.classList.contains('active')) renderBookingDetail();
+      else renderBookingsView();
+    }
   }
 
   // Блок «О госте» в брони: теги, вкусы, подсказки и кнопка открыть карточку.
@@ -2950,7 +3215,7 @@
     const guestLike = { ...g, autoTags: { birthday: g.birthday } };
     const hints = guestHints(guestLike);
     const lines = [];
-    if (g.status) lines.push(`<div class="visit-detail">Статус: <strong style="color:var(--text)">${escHtml(g.status)}</strong></div>`);
+    lines.push(`<div class="visit-detail">Сегмент: <strong style="color:var(--text)">${escHtml(g.segment || 'визитов пока нет')}</strong>${(g.vip || isVipTagList(g.tagsSpecial)) ? ' · <strong style="color:var(--accent)">VIP</strong>' : ''}</div>`);
     if (g.important) lines.push(`<div class="visit-detail">Важно: ${escHtml(g.important)}</div>`);
     return `
       <div class="visit-item" style="margin-top:14px;">
@@ -2963,7 +3228,7 @@
   }
 
   function renderBookingDetail() {
-    const b = bookingsListData[currentBookingIndex];
+    const b = bookingBySource(currentBookingSource, currentBookingIndex);
     const el = document.getElementById('bookingDetailContent');
     if (!b) { el.innerHTML = '<div class="empty-state">Бронь не найдена</div>'; return; }
 
@@ -2979,11 +3244,11 @@
       const currentTime = (dtParts[1] || '').slice(0, 5);
       el.innerHTML = `
         ${noticeHtml}
-        <div class="guest-name">${b.name}</div>
-        <div class="form-group" style="margin-top:14px;"><label class="form-label">Дата</label><input class="form-input" type="date" id="bkEditDate" value="${currentDate}"></div>
-        <div class="form-group"><label class="form-label">Время</label><input class="form-input" type="time" id="bkEditTime" value="${currentTime}"></div>
-        <div class="form-group"><label class="form-label">Гостей</label><input class="form-input" type="number" min="1" id="bkEditGuests" value="${b.guests || ''}"></div>
-        <div class="form-group"><label class="form-label">Комментарий</label><textarea class="form-input" id="bkEditComment">${b.comment || ''}</textarea></div>
+        <div class="guest-name">${escHtml(b.name || '')}</div>
+        <div class="form-group" style="margin-top:14px;"><label class="form-label">Дата</label><input class="form-input" type="date" id="bkEditDate" value="${escHtml(currentDate)}"></div>
+        <div class="form-group"><label class="form-label">Время</label><input class="form-input" type="time" id="bkEditTime" value="${escHtml(currentTime)}"></div>
+        <div class="form-group"><label class="form-label">Гостей</label><input class="form-input" type="number" min="1" id="bkEditGuests" value="${escHtml(String(b.guests || ''))}"></div>
+        <div class="form-group"><label class="form-label">Комментарий</label><textarea class="form-input" id="bkEditComment">${escHtml(b.comment || '')}</textarea></div>
         <button class="btn-primary btn-full" onclick="saveBookingEdit()">Сохранить</button>
         <button class="btn-primary btn-full" style="margin-top:8px;background:transparent;" onclick="bookingEditMode=false;renderBookingDetail();">Отмена</button>
       `;
@@ -3012,26 +3277,29 @@
       </div>
     `;
 
+    // имя, комментарий и т.п. вводит сам гость в гостевом приложении — экранируем
     el.innerHTML = `
       ${noticeHtml}
-      <div class="guest-name">${b.name}</div>
+      <div class="guest-name">${escHtml(b.name || '')}</div>
       <div class="status-pill" style="background:${st.color}22;color:${st.color};border:1px solid ${st.color}55;">${st.label}</div>
 
       <div class="visit-item" style="margin-top:14px;">
-        <div class="visit-date">${b.display}</div>
-        <div class="visit-detail">${kindLine}</div>
-        ${b.guests ? `<div class="visit-detail">Гостей: ${b.guests}</div>` : ''}
-        ${b.comment ? `<div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>${b.comment}</div>` : ''}
-        <div class="visit-detail"><a href="tel:${b.phone}" style="color:var(--text-sub);text-decoration:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="18" x2="14" y2="18"/></svg>${b.phone || 'Телефон не указан'}</a></div>
+        <div class="visit-date">${escHtml(b.display || '')}</div>
+        <div class="visit-detail">${escHtml(kindLine || '')}</div>
+        ${b.guests ? `<div class="visit-detail">Гостей: ${escHtml(String(b.guests))}</div>` : ''}
+        ${b.comment ? `<div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>${escHtml(b.comment)}</div>` : ''}
+        <div class="visit-detail"><a href="tel:${escHtml((b.phone || '').replace(/[^\d+]/g, ''))}" style="color:var(--text-sub);text-decoration:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="18" x2="14" y2="18"/></svg>${escHtml(b.phone || 'Телефон не указан')}</a></div>
       </div>
+
+      ${renderArrivalBlock(b)}
 
       ${renderBookingGuestBlock(b)}
 
-      ${tableBlockHtml}
+      ${b.past ? '<div class="note" style="margin-top:14px">Бронь уже прошла — подтверждать, переносить и отменять её не нужно.</div>' : tableBlockHtml}
 
-      ${b.status === 'pending' ? `<button class="btn-primary btn-full" id="bkConfirmBtn" onclick="confirmBookingAction()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><path d="M4 12l5 5L20 6"/></svg>Подтвердить</button>` : ''}
+${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary btn-full" id="bkConfirmBtn" onclick="confirmBookingAction()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><path d="M4 12l5 5L20 6"/></svg>Подтвердить</button>` : ''}
       <button class="btn-primary btn-full" style="margin-top:8px;" onclick="openBookingEdit()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:6px;display:inline-block"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Изменить</button>
-      <button class="btn-primary btn-full" style="margin-top:8px;background:rgba(239,68,68,0.12);color:#ef4444;border-color:rgba(239,68,68,0.35);" onclick="cancelBookingAction()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg>Отменить бронь</button>
+      <button class="btn-primary btn-full" style="margin-top:8px;background:rgba(239,68,68,0.12);color:#ef4444;border-color:rgba(239,68,68,0.35);" onclick="cancelBookingAction()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg>Отменить бронь</button>`}
     `;
   }
 
@@ -3043,7 +3311,7 @@
   async function confirmBookingAction() {
     if (bookingActionBusy) return;
     bookingActionBusy = true;
-    const b = bookingsListData[currentBookingIndex];
+    const b = bookingBySource(currentBookingSource, currentBookingIndex);
     const btn = document.getElementById('bkConfirmBtn');
     if (btn) { btn.disabled = true; btn.textContent = 'Подтверждаем...'; }
     try {
@@ -3070,7 +3338,7 @@
   // внутренняя рабочая пометка для персонала).
   async function saveTableAssign() {
     if (bookingActionBusy) return;
-    const b = bookingsListData[currentBookingIndex];
+    const b = bookingBySource(currentBookingSource, currentBookingIndex);
     const table = document.getElementById('bkTableSelect').value;
 
     if (table) {
@@ -3104,7 +3372,7 @@
     if (bookingActionBusy) return;
     if (!confirm('Отменить эту бронь?')) return;
     bookingActionBusy = true;
-    const b = bookingsListData[currentBookingIndex];
+    const b = bookingBySource(currentBookingSource, currentBookingIndex);
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/bookings/cancel?pin=${getPin()}`, {
         method: 'POST',
@@ -3113,7 +3381,7 @@
       });
       const data = await res.json();
       if (!res.ok) { alert(data.error || 'Не удалось отменить'); return; }
-      bookingsListData.splice(currentBookingIndex, 1);
+      (currentBookingSource === 'past' ? bookingsPastData : bookingsListData).splice(currentBookingIndex, 1);
       refreshBookingsDot();
       showScreen('bookings');
       if (!data.notified) alert('Бронь отменена, но гостя уведомить не удалось — свяжитесь сами.');
@@ -3126,7 +3394,7 @@
 
   async function saveBookingEdit() {
     if (bookingActionBusy) return;
-    const b = bookingsListData[currentBookingIndex];
+    const b = bookingBySource(currentBookingSource, currentBookingIndex);
     const dateVal = document.getElementById('bkEditDate').value;
     const timeVal = document.getElementById('bkEditTime').value;
     const guestsVal = document.getElementById('bkEditGuests').value;
@@ -3974,7 +4242,7 @@
   // ─── ДЕСКТОП: ЕДИНАЯ ТАБЛИЦА ГОСТЕЙ ──────────────────
 
   let guestsTableData = [];
-  let guestsTableFilter = { search: '', status: 'Все', onlyAtRisk: false };
+  let guestsTableFilter = { search: '', segment: '', onlyAtRisk: false };
 
   async function openGuestsTable() {
     showScreen('guests-table');
@@ -4001,9 +4269,10 @@
       const q = guestsTableFilter.search.toLowerCase();
       rows = rows.filter(g => g.name.toLowerCase().includes(q));
     }
-    if (guestsTableFilter.status !== 'Все') {
-      rows = rows.filter(g => g.status === guestsTableFilter.status);
-    }
+    const sf = guestsTableFilter.segment;
+    if (sf === 'vip') rows = rows.filter(g => g.vip);
+    else if (sf === 'none') rows = rows.filter(g => !g.segmentKey);
+    else if (sf) rows = rows.filter(g => g.segmentKey === sf);
     if (guestsTableFilter.onlyAtRisk) {
       rows = rows.filter(g => g.atRisk);
     }
@@ -4020,18 +4289,18 @@
     }
 
     const header = `<div class="gt-row gt-head">
-      <div>Имя</div><div>Статус</div><div>Последний визит</div><div>Метка</div>
+      <div>Имя</div><div>Сегмент</div><div>Последний визит</div><div>Метка</div>
     </div>`;
 
     const body = rows.map(g => {
       const lastVisitLabel = g.lastVisit
-        ? `${formatWeekShort(g.lastVisit)}${g.daysSince !== null ? ' · ' + g.daysSince + ' дн. назад' : ''}`
+        ? `${formatWeekShort(g.lastVisit)}${g.daysSince !== null ? ' · ' + daysAgoText(g.daysSince) : ''}`
         : 'Визитов не было';
-      return `<div class="gt-row" onclick="openGuestCard('${g.id}')">
-        <div>${g.name}</div>
-        <div>${g.status || '—'}</div>
-        <div>${lastVisitLabel}</div>
-        <div>${g.atRisk ? '<span style="color:#8B4A3D;">Риск оттока</span>' : ''}</div>
+      return `<div class="gt-row" onclick="openGuestCard('${escJs(g.id)}')">
+        <div>${escHtml(g.name)}${g.vip ? '<span class="vip-star">★ VIP</span>' : ''}</div>
+        <div class="seg-value">${segmentPillHtml(g.segmentKey, g.segment, true)}</div>
+        <div>${lastVisitLabel}${g.visitsYear ? `<div class="gl-meta">${g.visitsYear} ${ruPlural(g.visitsYear, 'визит', 'визита', 'визитов')} за год</div>` : ''}</div>
+        <div>${g.atRisk ? '<span style="color:#f59e0b;">Риск оттока</span>' : ''}</div>
       </div>`;
     }).join('');
 
@@ -4060,7 +4329,9 @@
       const rows = gtFilteredRows().map(g => ({
         'Имя': g.name,
         'Телефон': g.phone,
-        'Статус': g.status,
+        'Сегмент': g.segment || 'Без визитов',
+        'VIP': g.vip ? 'Да' : '',
+        'Визитов за год': g.visitsYear || 0,
         'Последний визит': g.lastVisit || '',
         'Дней с визита': g.daysSince !== null ? g.daysSince : '',
         'Риск оттока': g.atRisk ? 'Да' : ''
@@ -4075,32 +4346,67 @@
     }
   }
 
-  // ─── ГОСТИ ПО СТАТУСУ (VIP-список и т.п.) ─────────
+  // ─── СПИСОК ГОСТЕЙ: VIP ИЛИ СЕГМЕНТ ───────────────
+  // filter: 'vip' | ключ сегмента ('champions' …) | 'none' (без визитов).
+  // opts.asOf — сегмент на дату (с экрана «Сегменты» за прошлый месяц),
+  // opts.back — куда вернуться кнопкой «назад».
 
-  async function openGuestsByStatus(status) {
+  let guestListBack = 'home';
+  let guestListSeq = 0;
+  function guestListGoBack() { showScreen(guestListBack); }
+
+  function guestListMeta(g, filter) {
+    const parts = [];
+    if (filter === 'vip') parts.push(segmentPillHtml(g.segmentKey, g.segment, true));
+    if (g.daysSince === null || g.daysSince === undefined) parts.push('<span>визитов не было</span>');
+    else parts.push(`<span>${g.daysSince === 0 ? 'был сегодня' : `был ${g.daysSince} дн. назад`} · ${g.visitsYear} ${ruPlural(g.visitsYear, 'визит', 'визита', 'визитов')} за год</span>`);
+    return parts.join('');
+  }
+
+  async function openGuestList(filter, opts = {}) {
+    guestListBack = opts.back || 'home';
     showScreen('guests-by-status');
-    document.getElementById('statusListTitle').textContent = status + ' гости';
+    const titleEl = document.getElementById('statusListTitle');
+    const subEl = document.getElementById('statusListSub');
+    const seg = SEGMENTS_UI.find(x => x.key === filter);
+    titleEl.textContent = filter === 'vip' ? 'VIP-гости' : filter === 'none' ? 'Без визитов' : (seg ? seg.name : 'Гости');
+    subEl.textContent = '';
     const el = document.getElementById('statusListContent');
     el.innerHTML = '<div class="loading">Загружаю...</div>';
+    const seq = ++guestListSeq;
 
     try {
-      const res = await fetch(`${PROXY_BASE}/api/staff/guests-by-status?status=${encodeURIComponent(status)}&pin=${getPin()}`);
+      const q = new URLSearchParams({ filter, pin: getPin() });
+      if (opts.asOf) q.set('asOf', opts.asOf);
+      const res = await fetch(`${PROXY_BASE}/api/staff/guest-list?${q.toString()}`);
+      if (seq !== guestListSeq) return; // уже открыли другой список
       if (res.status === 401) { showScreen('pin'); return; }
-      const list = await res.json();
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить список'));
+      const data = await res.json();
+      if (seq !== guestListSeq) return;
+      const list = data.guests || [];
+      const onDate = opts.asOf && data.asOf !== localDateStr(new Date()) ? `на ${fmtDMY(data.asOf)}` : '';
+      subEl.textContent = [`${list.length} ${ruPlural(list.length, 'гость', 'гостя', 'гостей')}`, onDate].filter(Boolean).join(' · ');
 
+      let html = '';
+      if (seg) html += `<div class="note" style="margin:4px 2px 12px">${escHtml(seg.description)}</div>`;
       if (!list.length) {
-        el.innerHTML = `<div class="empty-state">Гостей со статусом «${status}» пока нет</div>`;
+        el.innerHTML = html + `<div class="empty-state">${filter === 'vip' ? 'Гостей с тегом VIP пока нет. Администратор ставит VIP в карточке, в «Особых» тегах.' : 'В этом сегменте сейчас никого нет'}</div>`;
         return;
       }
-
-      el.innerHTML = list.map(g => `
-        <div class="result-item" onclick="openGuestCard('${g.id}')">
-          <div class="result-avatar">${(g.name||'?').charAt(0).toUpperCase()}</div>
-          <div style="flex:1;">${g.name}</div>
+      html += list.map(g => `
+        <div class="result-item" onclick="openGuestCard('${escJs(g.id)}')">
+          <div class="result-avatar">${escHtml((g.name || '?').charAt(0).toUpperCase())}</div>
+          <div style="flex:1;min-width:0;">
+            <div>${escHtml(g.name || 'Без имени')}${g.vip && filter !== 'vip' ? '<span class="vip-star">★ VIP</span>' : ''}</div>
+            <div class="gl-meta">${guestListMeta(g, filter)}</div>
+          </div>
         </div>
       `).join('');
-    } catch {
-      el.innerHTML = '<div class="empty-state">Не удалось загрузить список</div>';
+      el.innerHTML = html;
+    } catch (e) {
+      if (seq !== guestListSeq) return;
+      el.innerHTML = `<div class="empty-state">${escHtml(e.message || 'Не удалось загрузить список')}</div>`;
     }
   }
 
@@ -4117,7 +4423,7 @@
       const list = await res.json();
 
       if (!list.length) {
-        el.innerHTML = '<div class="empty-state">Все VIP и постоянные гости заходили недавно</div>';
+        el.innerHTML = '<div class="empty-state">Все, кто ходит регулярно, и VIP-гости заходили за последние 30 дней</div>';
         return;
       }
 
@@ -4125,8 +4431,8 @@
         <div class="result-item" onclick="openGuestCard('${g.id}')">
           <div class="result-avatar">${(g.name||'?').charAt(0).toUpperCase()}</div>
           <div style="flex:1;">
-            <div>${g.name}</div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">${g.status} · ${g.daysSince !== null ? 'не было ' + g.daysSince + ' дн.' : 'визитов не записано'}</div>
+            <div>${escHtml(g.name)}${g.vip ? '<span class="vip-star">★ VIP</span>' : ''}</div>
+            <div class="gl-meta">${segmentPillHtml(g.segmentKey, g.segment, true)}<span>${g.daysSince !== null ? 'не было ' + g.daysSince + ' дн.' : 'визитов не записано'}${g.visitsYear ? ` · ${g.visitsYear} ${ruPlural(g.visitsYear, 'визит', 'визита', 'визитов')} за год` : ''}</span></div>
           </div>
         </div>
       `).join('');
@@ -4383,14 +4689,16 @@
       html += `<div class="hint-box" style="margin:12px 0 0"><div class="hint-title">Идёт рассылка</div><div class="hint-item">«${escHtml(d.running.segment)}»: доставлено ${d.running.sent} из ${d.running.total}</div></div>`;
     }
 
-    html += '<div class="sec">Кому</div><div class="seg-list">';
-    html += d.segments.map(s => `
-      <div class="seg-item${mkSelected.key === s.key ? ' selected' : ''}" data-key="${s.key}" onclick="mkSelect('${s.key}')">
+    const segItem = s => `
+      <div class="seg-item${s.group === 'rfm' ? ' rfm-' + s.key : ''}${mkSelected.key === s.key ? ' selected' : ''}" data-key="${s.key}" onclick="mkSelect('${s.key}')">
         <div class="seg-title">${escHtml(s.title)}</div>
         <div class="seg-desc">${escHtml(s.description)}</div>
         <div class="seg-count"><b>${s.reachable}</b> в Telegram · ${s.total} всего</div>
-      </div>`).join('');
-    html += '</div>';
+      </div>`;
+    const rfm = d.segments.filter(s => s.group === 'rfm');
+    const other = d.segments.filter(s => s.group !== 'rfm');
+    html += '<div class="sec">Кому · сегменты по визитам</div><div class="seg-list">' + rfm.map(segItem).join('') + '</div>';
+    html += '<div class="sec">Или подборка</div><div class="seg-list">' + other.map(segItem).join('') + '</div>';
 
     if (d.tags && d.tags.length) {
       html += `<div class="sec">Или по тегу</div>
@@ -4556,6 +4864,8 @@
     ['returning', 'Вернувшиеся гости'],
     ['bookings', 'Брони'],
     ['cancellations', 'Отмены броней'],
+    ['arrivals', 'Пришли по брони'],
+    ['noShows', 'Неявки по броням'],
     ['csi', 'CSI — средняя оценка'],
     ['nps', 'NPS гостей'],
     ['enps', 'eNPS команды']
@@ -4565,9 +4875,10 @@
   const AN_GROUPS = [['day', 'По дням'], ['week', 'По неделям'], ['month', 'По месяцам']];
   const AN_COMPARE = [['prev', 'С прошлым периодом'], ['year', 'С прошлым годом'], ['none', 'Без сравнения']];
   const AN_DOW = [['', 'Все дни'], ['1', 'Понедельники'], ['2', 'Вторники'], ['3', 'Среды'], ['4', 'Четверги'], ['5', 'Пятницы'], ['6', 'Субботы'], ['7', 'Воскресенья']];
-  const AN_STATUS = [['', 'Все гости'], ['VIP', 'VIP'], ['Постоянный', 'Постоянные'], ['Редкий', 'Редкие']];
+  // Сегмент гостя — сегодняшний (кто сейчас «Чемпион», чьи визиты за период считаем)
+  const AN_SEGMENT = [['', 'Все гости'], ['vip', 'VIP'], ['champions', 'Чемпионы'], ['loyalPlus', 'Лояльные+'], ['loyal', 'Лояльные'], ['active', 'Активные'], ['sleeping', 'Спящие'], ['lost', 'Потерянные']];
 
-  let anState = { metric: 'visits', period: '30', group: 'day', compare: 'prev', dow: '', status: '', from: '', to: '' };
+  let anState = { metric: 'visits', period: '30', group: 'day', compare: 'prev', dow: '', segment: '', from: '', to: '' };
   let anRequestSeq = 0;
 
   function openAnalytics() {
@@ -4595,7 +4906,7 @@
   function renderAnalyticsControls() {
     const el = document.getElementById('analyticsControls');
     const r = anRange();
-    const statusDisabled = !AN_VISIT_METRICS.includes(anState.metric);
+    const segmentDisabled = !AN_VISIT_METRICS.includes(anState.metric);
     el.innerHTML = `
       <select class="form-input" onchange="anSet('metric', this.value)">
         ${AN_METRICS.map(([v, label]) => `<option value="${v}" ${anState.metric === v ? 'selected' : ''}>${label}</option>`).join('')}
@@ -4616,10 +4927,11 @@
         <select class="form-input" onchange="anSet('dow', this.value)">
           ${AN_DOW.map(([v, label]) => `<option value="${v}" ${anState.dow === v ? 'selected' : ''}>${label}</option>`).join('')}
         </select>
-        <select class="form-input" ${statusDisabled ? 'disabled style="opacity:.5" title="Только для показателей по визитам"' : ''} onchange="anSet('status', this.value)">
-          ${AN_STATUS.map(([v, label]) => `<option value="${v}" ${anState.status === v ? 'selected' : ''}>${label}</option>`).join('')}
+        <select class="form-input" ${segmentDisabled ? 'disabled style="opacity:.5" title="Только для показателей по визитам"' : 'title="Сегмент гостя на сегодня"'} onchange="anSet('segment', this.value)">
+          ${AN_SEGMENT.map(([v, label]) => `<option value="${v}" ${anState.segment === v ? 'selected' : ''}>${label}</option>`).join('')}
         </select>
-      </div>`;
+      </div>
+      ${anState.segment && !segmentDisabled ? '<div class="note" style="margin:6px 2px 0">Визиты гостей, которые в этом сегменте сейчас</div>' : ''}`;
   }
 
   function anSet(key, value) {
@@ -4651,7 +4963,7 @@
     const r = anRange();
     const q = new URLSearchParams({ metric: anState.metric, group: anState.group, compare: anState.compare, from: r.from, to: r.to });
     if (anState.dow) q.set('dow', anState.dow);
-    if (anState.status && AN_VISIT_METRICS.includes(anState.metric)) q.set('status', anState.status);
+    if (anState.segment && AN_VISIT_METRICS.includes(anState.metric)) q.set('segment', anState.segment);
     const seq = ++anRequestSeq;
     try {
       const res = await fetch(`${PROXY_BASE}/api/admin/analytics?${q.toString()}&pin=${getPin()}`);
@@ -4678,8 +4990,8 @@
     const unit = d.kind === 'avg' ? ' / 10' : '';
     let deltaHtml = '';
     if (hasCmp && d.delta !== null) {
-      // Для отмен рост — плохо, для всего остального — хорошо
-      const good = d.metric === 'cancellations' ? d.delta < 0 : d.delta > 0;
+      // Для отмен и неявок рост — плохо, для всего остального — хорошо
+      const good = d.metric === 'cancellations' || d.metric === 'noShows' ? d.delta < 0 : d.delta > 0;
       const cls = d.delta === 0 ? 'flat' : good ? 'up' : 'down';
       const arrow = d.delta === 0 ? '→' : d.delta > 0 ? '↑' : '↓';
       const deltaText = d.kind === 'score' ? `${signed(d.delta)} п.` : d.kind === 'avg' ? signed(d.delta).replace('.', ',') : signed(d.delta);
@@ -4687,7 +4999,7 @@
     }
     const filters = [];
     if (d.dow) filters.push(AN_DOW.find(x => x[0] === String(d.dow))?.[1]);
-    if (d.status) filters.push(AN_STATUS.find(x => x[0] === d.status)?.[1]);
+    if (d.segment) filters.push(AN_SEGMENT.find(x => x[0] === d.segment)?.[1]);
 
     let html = `<div class="an-summary">
       <div class="info-row-label">${escHtml(d.title)}${filters.length ? ' · ' + escHtml(filters.join(', ')) : ''}</div>
@@ -4774,6 +5086,341 @@
     return svg;
   }
 
+  // ─── АДМИН: СЕГМЕНТЫ ГОСТЕЙ ───────────────────
+  // Сколько гостей в каждом сегменте сейчас и на начало месяца, кто куда перешёл
+  // («Лояльные → Спящие: 5»). Нажатие на сегмент — список его гостей,
+  // на переход — имена, по имени открывается карточка.
+
+  let sgState = { month: '', openFlow: null };
+  let sgData = null;
+  let sgRequestSeq = 0;
+
+  function openSegments() {
+    showScreen('segments');
+    loadSegments();
+  }
+  function sgSetMonth(m) { sgState.month = m; sgState.openFlow = null; loadSegments(); }
+  function sgToggleFlow(i) { sgState.openFlow = sgState.openFlow === i ? null : i; renderSegments(); }
+
+  async function loadSegments() {
+    const el = document.getElementById('segmentsContent');
+    el.innerHTML = '<div class="loading">Считаю...</div>';
+    const seq = ++sgRequestSeq;
+    try {
+      const q = new URLSearchParams({ pin: getPin() });
+      if (sgState.month) q.set('month', sgState.month);
+      const res = await fetch(`${PROXY_BASE}/api/admin/segments?${q.toString()}`);
+      if (res.status === 401 || res.status === 403) { showScreen('pin'); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось посчитать сегменты'));
+      const data = await res.json();
+      if (seq !== sgRequestSeq) return; // пока считали, месяц уже переключили
+      sgData = data;
+      renderSegments();
+    } catch (e) {
+      if (seq !== sgRequestSeq) return;
+      el.innerHTML = `<div class="empty-state">${escHtml(e.message || 'Не удалось посчитать сегменты')}</div>`;
+    }
+  }
+
+  function fmtDayMonth(iso) {
+    if (!iso) return '';
+    return new Date(iso + 'T12:00:00').toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+  }
+
+  function renderSegments() {
+    const el = document.getElementById('segmentsContent');
+    const d = sgData;
+    if (!d) return;
+    let html = `<select class="form-input" style="margin-top:4px" onchange="sgSetMonth(this.value)">
+      ${d.months.map((m, i) => `<option value="${m.value}" ${m.value === d.month ? 'selected' : ''}>${escHtml(m.label)}${i === 0 ? ' — по сегодня' : ''}</option>`).join('')}
+    </select>`;
+    html += `<div class="sg-period">Было на ${escHtml(fmtDayMonth(d.startAsOf))} → ${d.isCurrent ? 'сейчас' : 'стало на ' + escHtml(fmtDayMonth(d.endAsOf))}</div>`;
+
+    const sm = d.summary;
+    html += `<div class="sg-stats">
+      <div class="sg-stat up"><div class="sg-stat-num">${sm.up}</div><div class="sg-stat-label">Выросли</div></div>
+      <div class="sg-stat down"><div class="sg-stat-num">${sm.down}</div><div class="sg-stat-label">Опустились</div></div>
+      <div class="sg-stat new"><div class="sg-stat-num">${sm.newcomers}</div><div class="sg-stat-label">Новые</div></div>
+    </div>`;
+
+    html += '<div class="sec">Сегменты</div>';
+    const max = Math.max(1, ...d.segments.map(x => x.end));
+    html += d.segments.map(x => {
+      // рост «Спящих» и «Потерянных» — плохо, остальных — хорошо
+      const good = x.rank >= 3 ? x.delta > 0 : x.delta < 0;
+      const deltaCls = x.delta === 0 ? '' : good ? 'up' : 'down';
+      const deltaText = x.delta === 0 ? '±0' : x.delta > 0 ? `+${x.delta}` : `−${-x.delta}`;
+      return `<div class="sg-row rfm-${x.key}" onclick="openGuestList('${x.key}', { asOf: '${d.endAsOf}', back: 'segments' })">
+        <div class="sg-head"><span class="rfm-dot"></span><span class="sg-name">${escHtml(x.name)}</span><span class="sg-count">${x.end}</span><span class="sg-delta ${deltaCls}" title="Было ${x.start}">${deltaText}</span></div>
+        <div class="sg-bar"><span style="width:${Math.round((x.end / max) * 100)}%"></span></div>
+        <div class="sg-desc">${escHtml(x.description)}<span class="sg-was">· было ${x.start}</span></div>
+      </div>`;
+    }).join('');
+    if (d.none.end) {
+      html += `<button class="link-btn" onclick="openGuestList('none', { asOf: '${d.endAsOf}', back: 'segments' })">Карточек без визитов: ${d.none.end} →</button>`;
+    }
+
+    html += '<div class="sec">Переходы за месяц</div>';
+    if (!d.flows.length) {
+      html += '<div class="autotag-empty">За этот период никто не сменил сегмент</div>';
+    } else {
+      const groups = [['down', 'Опустились', '↓'], ['up', 'Выросли', '↑'], ['new', 'Новые гости', '+']];
+      for (const [dir, title, icon] of groups) {
+        const items = d.flows.map((f, i) => ({ f, i })).filter(x => x.f.direction === dir);
+        if (!items.length) continue;
+        const total = items.reduce((a, x) => a + x.f.count, 0);
+        html += `<div class="sg-group-title">${icon} ${title} · ${total}</div>`;
+        html += items.map(({ f, i }) => {
+          const nameOf = k => SEGMENTS_UI.find(x => x.key === k)?.name || '';
+          const from = f.from === 'none' ? '<span class="rfm-pill sm rfm-none">Первый визит</span>' : segmentPillHtml(f.from, nameOf(f.from), true);
+          const open = sgState.openFlow === i;
+          const more = f.count - f.guests.length;
+          return `<div class="sg-flow" onclick="sgToggleFlow(${i})">
+            <div class="sg-flow-head">${from}<span class="sg-flow-arrow">→</span>${segmentPillHtml(f.to, nameOf(f.to), true)}<span class="sg-flow-count">${f.count}</span></div>
+            ${open ? `<div class="sg-flow-guests">${f.guests.map(g => `<span class="sg-flow-guest" onclick="event.stopPropagation();openGuestCard('${escJs(g.id)}')">${escHtml(g.name || 'Без имени')}${g.vip ? ' ★' : ''}</span>`).join('')}${more > 0 ? `<span class="sg-flow-more">и ещё ${more}</span>` : ''}</div>` : ''}
+          </div>`;
+        }).join('');
+      }
+    }
+
+    const r = d.rules;
+    html += `<div class="hint-box" style="margin-top:18px">
+      <div class="hint-title">Как считается</div>
+      <div class="hint-item">Давность — сколько дней с последнего визита. Частота — сколько визитов за последние ${r.windowDays} дней (несколько записей за один день — один визит).</div>
+      <div class="hint-item">Считается сам по визитам, которые записали в карточке («Добавить визит»). Визит не записали — для сегмента гостя не было.</div>
+      <div class="hint-item">Сумма чека, как у CosmosResto, добавится после подключения iiko.</div>
+      <div class="hint-item">VIP — отдельный ручной тег, на сегмент не влияет.</div>
+    </div>`;
+    el.innerHTML = html;
+  }
+
+  // ─── АДМИН: ДУБЛИ КАРТОЧЕК ────────────────────
+  // Карточки с одним номером — группами: выбрать главную, при расхождениях выбрать,
+  // что оставить (имя, ДР, «Что важно»), и объединить. Визиты переезжают в главную,
+  // теги объединяются, вторая карточка уходит в корзину Notion.
+  let dupData = null;
+  let dupMain = {};     // ключ группы → id главной карточки
+  let dupFields = {};   // ключ группы → { name, birthday, important } выбранные значения
+  let dupBusy = false;
+
+  function openDuplicates() {
+    showScreen('duplicates');
+    loadDuplicates();
+  }
+  async function loadDuplicates() {
+    const el = document.getElementById('duplicatesContent');
+    el.innerHTML = '<div class="loading">Ищу дубли...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/guests/duplicates?pin=${getPin()}`);
+      if (res.status === 401 || res.status === 403) { showScreen('pin'); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось найти дубли'));
+      dupData = await res.json();
+      dupMain = {};
+      dupFields = {};
+      renderDuplicates();
+    } catch (e) {
+      el.innerHTML = `<div class="empty-state">${escHtml(e.message || 'Не удалось найти дубли')}</div>`;
+    }
+  }
+  function dupSetMain(key, id) { dupMain[key] = id; dupFields[key] = {}; renderDuplicates(); }
+  function dupSetField(key, field, idx) {
+    const opts = dupFieldOptions(key, field);
+    dupFields[key] = { ...(dupFields[key] || {}), [field]: opts[idx]?.value };
+    renderDuplicates();
+  }
+  function dupGroupByKey(key) {
+    return dupData.groups[Number(key.slice(1))];
+  }
+  // Карточки с отметкой «Общий номер» — другие люди: их не объединяем и главной не выбираем
+  function dupActiveCards(g) {
+    return g.cards.filter(c => !c.sharedPhone);
+  }
+  function dupMainOf(key) {
+    const active = dupActiveCards(dupGroupByKey(key));
+    return active.find(c => c.id === dupMain[key]) || active[0];
+  }
+  function dupFieldValue(c, field) {
+    return String((field === 'name' ? c.name : field === 'birthday' ? c.birthday : c.important) || '').trim();
+  }
+  // Варианты значения поля, если в объединяемых карточках оно разное (значение главной — первым)
+  function dupFieldOptions(key, field) {
+    const main = dupMainOf(key);
+    const cards = [main, ...dupActiveCards(dupGroupByKey(key)).filter(c => c.id !== main.id)];
+    const vals = [];
+    for (const c of cards) {
+      const v = dupFieldValue(c, field);
+      if (v && !vals.some(x => x.value === v)) vals.push({ value: v, label: field === 'birthday' ? fmtDMY(v) : v });
+    }
+    if (field === 'important' && vals.length > 1) vals.push({ value: vals.map(x => x.value).join(' / '), label: 'Оставить всё' });
+    return vals;
+  }
+  // Что сейчас выбрано в поле: выбор администратора, иначе — «Оставить всё» для «Что важно»
+  // (так же по умолчанию делает сервер) и значение главной карточки для имени и ДР
+  function dupCurrentValue(key, field) {
+    const opts = dupFieldOptions(key, field);
+    if (opts.length < 2) return undefined;
+    const chosen = (dupFields[key] || {})[field];
+    if (chosen !== undefined && opts.some(o => o.value === chosen)) return chosen;
+    if (field === 'important') return opts[opts.length - 1].value;
+    return dupFieldValue(dupMainOf(key), field) || opts[0].value;
+  }
+  function dupCardHtml(c, opts = {}) {
+    const tags = [...(c.tagsSpecial || []), ...(c.tastesLike || []).map(t => `любит: ${t}`)];
+    return `
+      <div class="dup-name">${escHtml(c.name || 'Без имени')}${c.vip ? '<span class="vip-star">★ VIP</span>' : ''} ${segmentPillHtml(c.segmentKey, c.segment, true)}${opts.role ? `<span class="dup-role">${escHtml(opts.role)}</span>` : ''}</div>
+      <div class="dup-meta">${escHtml(c.phone || 'без телефона')} · ${escHtml(dupSummaryLine(c))}${c.sharedPhone ? ' · общий номер' : ''}</div>
+      ${c.birthday ? `<div class="dup-meta">ДР: ${escHtml(fmtDMY(c.birthday))}</div>` : ''}
+      ${c.important ? `<div class="dup-meta">Важно: ${escHtml(c.important)}</div>` : ''}
+      ${(c.tagsAllergy || []).length ? `<div class="dup-meta"><span class="danger">Аллергия: ${escHtml(c.tagsAllergy.join(', '))}</span></div>` : ''}
+      ${tags.length ? `<div class="dup-meta">Теги: ${escHtml(tags.join(', '))}</div>` : ''}
+      <button class="dup-open" onclick="event.preventDefault();event.stopPropagation();openGuestCard('${escJs(c.id)}')">Открыть карточку →</button>`;
+  }
+
+  function renderDuplicates() {
+    const el = document.getElementById('duplicatesContent');
+    const d = dupData;
+    if (!d) return;
+    let html = '';
+    if (!d.groups.length && !d.noPhone.length) {
+      el.innerHTML = '<div class="empty-state">Дублей нет — у каждого гостя одна карточка</div>';
+      return;
+    }
+    if (d.groups.length) {
+      html += `<div class="sec">Одинаковый номер · ${d.groups.length}</div>`;
+      html += `<div class="note" style="margin:-4px 2px 10px">Выберите главную карточку (по умолчанию — где больше визитов). Визиты и теги остальных переедут в неё, остальные карточки уйдут в корзину Notion.</div>`;
+      d.groups.forEach((g, gi) => {
+        const key = 'g' + gi;
+        const main = dupMainOf(key);
+        const active = dupActiveCards(g);
+        html += `<div class="dup-group"><div class="dup-head"><span>${escHtml(main.phone || g.phone)}</span><span>${g.cards.length} ${ruPlural(g.cards.length, 'карточка', 'карточки', 'карточек')}</span></div>`;
+        html += active.map(c => `
+          <label class="dup-card${c.id === main.id ? ' main' : ''}">
+            <input type="radio" name="dupmain-${key}" ${c.id === main.id ? 'checked' : ''} onchange="dupSetMain('${key}', '${escJs(c.id)}')">
+            <div class="dup-card-body">${dupCardHtml(c, { role: c.id === main.id ? 'главная' : '' })}</div>
+          </label>`).join('');
+        // уже отмеченные «другой человек с тем же номером» — показываем для понимания, но не трогаем
+        html += g.cards.filter(c => c.sharedPhone).map(c => `
+          <div class="dup-card shared">
+            <div class="dup-card-body">${dupCardHtml(c, { role: 'другой человек — не объединяется' })}</div>
+          </div>`).join('');
+        for (const [field, label] of [['name', 'Имя'], ['birthday', 'День рождения'], ['important', 'Что важно для гостя']]) {
+          const opts = dupFieldOptions(key, field);
+          if (opts.length < 2) continue;
+          const current = dupCurrentValue(key, field);
+          html += `<div class="dup-conflict"><div class="form-label">${label} — в карточках по-разному</div><div class="chip-row">${opts.map((o, i) =>
+            `<div class="chip${o.value === current ? ' selected' : ''}" onclick="dupSetField('${key}', '${field}', ${i})">${escHtml(o.label)}</div>`).join('')}</div></div>`;
+        }
+        html += `<button class="btn-primary btn-full" ${dupBusy ? 'disabled' : ''} onclick="dupMergeGroup('${key}')">Объединить в «${escHtml(main.name || 'главную')}»</button>
+          <button class="btn-primary btn-full" style="margin-top:8px;background:transparent;" ${dupBusy ? 'disabled' : ''} onclick="dupNotDuplicates('${key}')">Это разные люди с одним номером</button></div>`;
+      });
+    }
+    if (d.noPhone.length) {
+      html += `<div class="sec">Без полного телефона · ${d.noPhone.length}</div>`;
+      html += `<div class="note" style="margin:-4px 2px 10px">Новую карточку без номера уже не создать, но старые остались — без телефона или с неполным номером. Откройте и впишите номер — или объедините с карточкой того же гостя.</div>`;
+      d.noPhone.forEach((item, i) => {
+        html += `<div class="dup-list-card">${dupCardHtml(item.card)}`;
+        html += item.sameName.map((c, j) => `
+          <div class="dup-found" style="margin-top:10px">
+            <div class="dup-meta" style="margin:0 0 6px">Такое же имя, с телефоном:</div>
+            ${dupCardHtml(c)}
+            <button class="btn-primary" style="margin-top:8px;padding:7px 14px;font-size:12.5px;" ${dupBusy ? 'disabled' : ''} onclick="dupMergeNoPhone(${i}, ${j})">Это один гость — объединить</button>
+          </div>`).join('');
+        html += '</div>';
+      });
+    }
+    el.innerHTML = html;
+  }
+
+  async function dupPostMerge(mainId, otherId, fields) {
+    const res = await fetch(`${PROXY_BASE}/api/admin/guests/merge?pin=${getPin()}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pin: getPin(), mainId, otherId, fields })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'Не удалось объединить');
+    return data;
+  }
+
+  async function dupMergeGroup(key) {
+    if (dupBusy) return;
+    const g = dupGroupByKey(key);
+    const main = dupMainOf(key);
+    const others = dupActiveCards(g).filter(c => c.id !== main.id);
+    if (!others.length) return;
+    // отправляем ровно то, что видно на экране, — сервер сам ничего не додумывает
+    const fields = {};
+    for (const f of ['name', 'birthday', 'important']) {
+      const v = dupCurrentValue(key, f);
+      if (v !== undefined) fields[f] = v;
+    }
+    const visits = others.reduce((a, c) => a + (c.visitsTotal || 0), 0);
+    if (!confirm(`Объединить ${others.length + 1} ${ruPlural(others.length + 1, 'карточку', 'карточки', 'карточек')} в «${main.name}»?\n\nВ неё переедут визиты (${visits}), теги, аллергии и вкусы. ${others.length === 1 ? 'Вторая карточка уйдёт' : 'Остальные карточки уйдут'} в корзину Notion.\n\nОтменить это потом можно только вручную.`)) return;
+    dupBusy = true;
+    renderDuplicates();
+    let done = 0;
+    try {
+      for (const o of others) {
+        await dupPostMerge(main.id, o.id, fields);
+        done++;
+      }
+      showToast(`Объединено в «${fields.name || main.name}»`);
+    } catch (e) {
+      showToast(`${e.message}${done ? ` (объединено ${done} из ${others.length})` : ''}`, true);
+    } finally {
+      dupBusy = false;
+      loadDuplicates();
+    }
+  }
+
+  // Муж и жена, бронирует за друга — не дубль: помечаем остальные карточки «Общий номер»,
+  // группа больше не показывается
+  async function dupNotDuplicates(key) {
+    if (dupBusy) return;
+    const g = dupGroupByKey(key);
+    const main = dupMainOf(key);
+    const ids = g.cards.filter(c => c.id !== main.id && !c.sharedPhone).map(c => c.id);
+    if (!ids.length) return;
+    if (!confirm(`Это разные люди с одним номером?\n\nКарточки останутся отдельными, в дублях эта группа больше не покажется.`)) return;
+    dupBusy = true;
+    renderDuplicates();
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/guests/not-duplicates?pin=${getPin()}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), ids })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Не удалось сохранить');
+      showToast('Отмечено: разные люди с одним номером');
+    } catch (e) {
+      showToast(e.message, true);
+    } finally {
+      dupBusy = false;
+      loadDuplicates();
+    }
+  }
+
+  async function dupMergeNoPhone(i, j) {
+    if (dupBusy) return;
+    const item = dupData.noPhone[i];
+    const main = item.sameName[j];
+    if (!confirm(`Объединить карточку «${item.card.name}» (без телефона) с «${main.name}» (${main.phone})?\n\nВизиты и теги переедут в карточку с телефоном, карточка без телефона уйдёт в корзину Notion.`)) return;
+    dupBusy = true;
+    renderDuplicates();
+    try {
+      // у карточки с номером может стоять «Общий номер» (другой человек с тем же номером, что у кого-то ещё) —
+      // гость без телефона сравнивается по имени, эта отметка тут не мешает
+      await dupPostMerge(main.id, item.card.id, { includeShared: true });
+      showToast(`Объединено в «${main.name}»`);
+    } catch (e) {
+      showToast(e.message, true);
+    } finally {
+      dupBusy = false;
+      loadDuplicates();
+    }
+  }
+
   // ─── АДМИН: ОБРАТНАЯ СВЯЗЬ ─────────────────────
   // Все отзывы гостей в одном месте: сводка, оценки по категориям, кто оставил
   // (с переходом в карточку), сколько гостей бот попросил оценить визит.
@@ -4805,7 +5452,7 @@
   function fbSetFilter(f) { fbState.filter = f; renderFeedback(); }
 
   function fbWho(r) {
-    if (r.guest) return `<span class="fb-who link" onclick="openGuestCard('${escJs(r.guest.id)}')">${escHtml(r.guest.name || 'Гость')}${r.guest.status ? ` · ${escHtml(r.guest.status)}` : ''}</span>`;
+    if (r.guest) return `<span class="fb-who link" onclick="openGuestCard('${escJs(r.guest.id)}')">${escHtml(r.guest.name || 'Гость')}${r.guest.vip ? ' · VIP' : ''}${r.guest.segment ? ` · ${escHtml(r.guest.segment)}` : ''}</span>`;
     if (r.telegramUsername) return `<span class="fb-who">@${escHtml(r.telegramUsername.replace(/^@/, ''))}</span>`;
     if (r.phone) return `<span class="fb-who">${escHtml(r.phone)}</span>`;
     return '<span class="fb-who" style="color:var(--text-muted)">Аноним</span>';
@@ -4884,7 +5531,7 @@
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'stats', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback'];
+  const screens = ['pin', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'stats', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates'];
   function showScreen(name) {
     screens.forEach(s => document.getElementById('screen-' + s)?.classList.remove('active'));
     document.getElementById('screen-' + name)?.classList.add('active');
@@ -4901,8 +5548,9 @@
   // Единый вид карточки-подсказки "гость есть в общей базе, но карточки нет"
   // Если бронировал 3+ раза — подсвечиваем: явный сигнал что пора завести карточку
   function renderGeneralGuestCard(g) {
-    const nameEsc = g.name.replace(/'/g, "\\'");
-    const phoneEsc = (g.phone || '').replace(/'/g, "\\'");
+    // имя приходит из гостевого приложения (его вводит сам гость) — экранируем и для JS, и для HTML
+    const nameEsc = escHtml(escJs(g.name || ''));
+    const phoneEsc = escHtml(escJs(g.phone || ''));
     const isFrequent = (g.bookingsCount || 0) >= 3;
 
     const borderColor = isFrequent ? 'rgba(184,115,51,0.7)' : 'rgba(184,115,51,0.35)';
@@ -4918,9 +5566,9 @@
     return `
       <div style="background:var(--accent-dim);border:1px solid ${borderColor};${glow}border-radius:14px;padding:16px;margin-bottom:8px;">
         ${badge}
-        <div style="font-size:14px;color:var(--text);margin-bottom:4px;">${g.name}</div>
+        <div style="font-size:14px;color:var(--text);margin-bottom:4px;">${escHtml(g.name || '')}</div>
         <div style="font-size:12px;color:var(--text-sub);margin-bottom:12px;">
-          Бронировал${g.bookingsCount ? ' · ' + g.bookingsCount + ' раз' : ''} через приложение${g.phone ? ' · ' + g.phone : ''}.<br>В карточке гостей его пока нет.
+          Бронировал${g.bookingsCount ? ' · ' + g.bookingsCount + ' раз' : ''} через приложение${g.phone ? ' · ' + escHtml(g.phone) : ''}.<br>В карточке гостей его пока нет.
         </div>
         <button class="btn-primary" style="width:100%;" onclick="openNewGuest('${nameEsc}','${phoneEsc}')">Создать карточку</button>
       </div>`;
@@ -5010,9 +5658,9 @@
       resultsEl.innerHTML = matches.map(g => {
         if (g.source === 'card') {
           return `
-          <div class="result-item" onclick="openGuestCard('${g.id}')">
-            <div class="result-avatar">${(g.name||'?').charAt(0).toUpperCase()}</div>
-            <div style="flex:1;">${g.name}</div>
+          <div class="result-item" onclick="openGuestCard('${escJs(g.id)}')">
+            <div class="result-avatar">${escHtml((g.name||'?').charAt(0).toUpperCase())}</div>
+            <div style="flex:1;">${escHtml(g.name || '')}</div>
             <div style="flex-shrink:0;background:var(--accent-dim);border:1px solid rgba(184,115,51,0.35);color:var(--accent);font-family:'Jost',sans-serif;font-size:13px;letter-spacing:1px;border-radius:100px;padding:6px 12px;">···${digits}</div>
           </div>`;
         }
@@ -5059,9 +5707,9 @@
         const digits = (g.phone || '').replace(/\D/g, '');
         const last4 = digits.length >= 4 ? digits.slice(-4) : '';
         return `
-        <div class="result-item" onclick="openGuestCard('${g.id}')">
-          <div class="result-avatar">${(g.name || '?').charAt(0).toUpperCase()}</div>
-          <div style="flex:1;">${g.name}</div>
+        <div class="result-item" onclick="openGuestCard('${escJs(g.id)}')">
+          <div class="result-avatar">${escHtml((g.name || '?').charAt(0).toUpperCase())}</div>
+          <div style="flex:1;">${escHtml(g.name || '')}</div>
           ${last4 ? `<div style="flex-shrink:0;background:var(--accent-dim);border:1px solid rgba(184,115,51,0.35);color:var(--accent);font-family:'Jost',sans-serif;font-size:13px;letter-spacing:1px;border-radius:100px;padding:6px 12px;">···${last4}</div>` : ''}
         </div>
       `;
@@ -5076,7 +5724,7 @@
   let currentGuest = null;
   let currentGuestPhotoUrl = null; // фото из Telegram для открытой карточки, если нашлось
 
-  async function openGuestCard(id) {
+  async function openGuestCard(id, hops = 0) {
     showScreen('card');
     tagAddGroup = null;
     historyExpanded = false;
@@ -5087,6 +5735,22 @@
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/guest/${id}?pin=${getPin()}`);
       if (res.status === 401) { showScreen('pin'); return; }
+      // карточку объединили с другой — открываем главную, старую убираем из недавних
+      if (res.status === 410) {
+        const data = await res.json().catch(() => ({}));
+        forgetRecentGuest(id);
+        if (data.redirectId && data.redirectId !== id && hops < 3) {
+          showToast('Эту карточку объединили с другой — открыта основная');
+          openGuestCard(data.redirectId, hops + 1);
+          return;
+        }
+        el.innerHTML = `<div class="empty-state">${escHtml(data.error || 'Карточка удалена')}<br>Найдите гостя через поиск.</div>`;
+        return;
+      }
+      if (!res.ok) {
+        el.innerHTML = `<div class="empty-state">${escHtml(await responseError(res, 'Не удалось загрузить карточку'))}</div>`;
+        return;
+      }
       const guest = await res.json();
       currentGuest = guest;
       renderGuestCard(guest);
@@ -5123,6 +5787,12 @@
       localStorage.setItem('recent_guests', JSON.stringify(recent));
     } catch {}
   }
+  function forgetRecentGuest(id) {
+    try {
+      const recent = JSON.parse(localStorage.getItem('recent_guests') || '[]').filter(g => g.id !== id);
+      localStorage.setItem('recent_guests', JSON.stringify(recent));
+    } catch {}
+  }
 
   function openRecentGuests() {
     showScreen('recent-guests');
@@ -5136,25 +5806,80 @@
     }
 
     el.innerHTML = recent.map(g => `
-      <div class="result-item" onclick="openGuestCard('${g.id}')">
-        <div class="result-avatar">${(g.name||'?').charAt(0).toUpperCase()}</div>
-        <div>${g.name}</div>
+      <div class="result-item" onclick="openGuestCard('${escJs(g.id)}')">
+        <div class="result-avatar">${escHtml((g.name||'?').charAt(0).toUpperCase())}</div>
+        <div>${escHtml(g.name || '')}</div>
       </div>
     `).join('');
   }
 
-  function statusClass(status) {
-    if (status === 'VIP') return 'vip';
-    if (status === 'Постоянный') return 'postoyanny';
-    return 'redkiy';
+  // ─── СЕГМЕНТЫ ГОСТЕЙ ПО ВИЗИТАМ ────────────────
+  // Считает сервер (staff-proxy, SEGMENTS): давность последнего визита + сколько
+  // визитов за год. Здесь — только названия, порядок и описания для экранов,
+  // где ответа сервера ещё нет (фильтры). Держать одинаковыми с сервером.
+  const SEGMENTS_UI = [
+    { key: 'champions', name: 'Чемпионы', description: 'От 6 визитов за год, последний — за 30 дней' },
+    { key: 'loyalPlus', name: 'Лояльные+', description: 'От 6 визитов за год, последний — 31–90 дней назад' },
+    { key: 'loyal', name: 'Лояльные', description: '2–5 визитов за год, последний — за 90 дней' },
+    { key: 'active', name: 'Активные', description: '1 визит за год, был за последние 90 дней' },
+    { key: 'sleeping', name: 'Спящие', description: 'От 2 визитов за год, но не был больше 90 дней' },
+    { key: 'lost', name: 'Потерянные', description: 'Не был больше 90 дней, за год — не больше 1 визита' }
+  ];
+  function segmentPillHtml(key, name, small) {
+    const k = SEGMENTS_UI.some(x => x.key === key) ? key : 'none';
+    return `<span class="rfm-pill${small ? ' sm' : ''} rfm-${k}">${escHtml(name || 'Без визитов')}</span>`;
+  }
+  function isVipTagList(tags) {
+    return (tags || []).some(t => String(t).trim().toLowerCase() === 'vip');
+  }
+  // Поставили/сняли тег VIP — сразу обновить плашку VIP и «Риск оттока» в карточке
+  // (та же формула, что на сервере: VIP не был 30+ дней, или ходил 2+ раз за год и не был 30+ дней)
+  function refreshVipFlags(guest) {
+    guest.vip = isVipTagList(guest.tagsSpecial);
+    const sg = guest.segment;
+    if (!sg || !guest.autoTags) return;
+    const away = sg.daysSince === null || sg.daysSince === undefined || sg.daysSince > 30;
+    guest.autoTags.atRisk = guest.vip ? away : (sg.daysSince !== null && sg.daysSince !== undefined && sg.daysSince > 30 && sg.visitsYear >= 2);
+  }
+  function daysAgoText(n) {
+    if (n === 0) return 'сегодня';
+    if (n === 1) return 'вчера';
+    return `${n} ${ruPlural(n, 'день', 'дня', 'дней')} назад`;
+  }
+
+  // Справка «Сегмент гостя»: почему гость в этом сегменте и что значат остальные
+  function openSegmentInfo() {
+    const g = currentGuest;
+    if (!g || !g.segment) return;
+    const sg = g.segment;
+    editingField = null;
+    document.getElementById('editOverlayTitle').textContent = 'Сегмент гостя';
+    const saveBtn = document.getElementById('editOverlaySave');
+    if (saveBtn) saveBtn.style.display = 'none';
+    const cancelBtn = document.getElementById('editOverlayCancel');
+    if (cancelBtn) cancelBtn.textContent = 'Закрыть';
+    const why = sg.key
+      ? `У гостя ${sg.visitsYear} ${ruPlural(sg.visitsYear, 'визит', 'визита', 'визитов')} за последний год, последний — ${daysAgoText(sg.daysSince)}.`
+      : 'Визитов пока не записано — сегмент появится после первого визита.';
+    const guide = (g.segmentGuide && g.segmentGuide.length ? g.segmentGuide : SEGMENTS_UI).map(x => `
+      <div class="sg-guide-item rfm-${x.key}${x.key === sg.key ? ' current' : ''}">
+        <span class="rfm-dot"></span>
+        <div><div class="sg-guide-name">${escHtml(x.name)}</div><div class="sg-guide-desc">${escHtml(x.description)}</div></div>
+      </div>`).join('');
+    document.getElementById('editOverlayBody').innerHTML = `
+      <div style="margin-bottom:10px">${segmentPillHtml(sg.key, sg.name)}</div>
+      <div style="font-size:13px;line-height:1.5;color:var(--text);margin-bottom:6px">${escHtml(why)}</div>
+      <div class="note" style="margin-bottom:12px">Считается сам по записанным визитам, вручную не меняется. VIP — отдельный тег в «Особых».</div>
+      <div>${guide}</div>`;
+    document.getElementById('editOverlay').classList.add('show');
   }
 
   // ─── РУЧНЫЕ ТЕГИ: пресеты, состояние формы добавления ──
 
   const TAG_PRESETS = {
-    // VIP сюда намеренно не входит — это уже отдельный статус гостя
-    // (Частота визитов), дублировать его тегом не нужно.
-    special: ['Не беспокоить', 'Не любит шум', 'Постоянный столик', 'Требует внимания', 'Молодожёны', 'День рождения', 'Знаменитость', 'Нон-грата'],
+    // VIP, «Знаменитость» и «Нон-грата» — теги-статусы: их видят все, а ставит
+    // и снимает только администрация (остальным эти пресеты не показываются).
+    special: ['VIP', 'Знаменитость', 'Не беспокоить', 'Не любит шум', 'Постоянный столик', 'Требует внимания', 'Молодожёны', 'День рождения', 'Нон-грата'],
     allergy: ['Орехи', 'Морепродукты', 'Глютен', 'Лактоза', 'Мёд', 'Цитрусовые'],
     // «Табак / вкусы» — одни и те же варианты для «любит» и «не любит»
     tasteLike: ['Сладкие', 'Кислые', 'Фруктовые', 'Ягодные', 'Цитрусовые', 'Холодок', 'Десертные', 'Пряные', 'Крепкий табак', 'Лёгкий табак'],
@@ -5168,6 +5893,7 @@
   // Для тегов, вписанных вручную (не из списка), подсказки нет.
   const TAG_HINTS = {
     'Нон-грата': 'Не обслуживать — сразу позвать администратора',
+    'VIP': 'Встретить по имени, сразу сообщить администратору',
     'Знаменитость': 'Не афишировать визит и не просить фото, предупредить администратора',
     'Не беспокоить': 'Подходить только когда гость сам позовёт',
     'Не любит шум': 'Посадить в тихую зону, подальше от колонок',
@@ -5177,7 +5903,7 @@
     'День рождения': 'Поздравить, предложить комплимент'
   };
 
-  // Теги-статусы: ставит и снимает только Администратор/Основатель (как статус VIP).
+  // Теги-статусы: ставит и снимает только Администратор/Основатель.
   // Тот же список — на сервере (staff-proxy-na-kryishe, ADMIN_ONLY_TAGS), держать одинаковыми.
   const ADMIN_ONLY_TAGS = ['VIP', 'Знаменитость', 'Нон-грата'];
   function isAdminOnlyTag(name) {
@@ -5232,6 +5958,7 @@
       const data = await res.json();
       currentGuest[TAG_GROUP_FIELD[group]] = data.tags;
       if (data.history) currentGuest.history = data.history;
+      refreshVipFlags(currentGuest);
       tagAddGroup = null;
       renderGuestCard(currentGuest);
     } catch {
@@ -5254,6 +5981,7 @@
       const data = await res.json();
       currentGuest[TAG_GROUP_FIELD[group]] = data.tags;
       if (data.history) currentGuest.history = data.history;
+      refreshVipFlags(currentGuest);
       renderGuestCard(currentGuest);
     } catch {
       alert('Не удалось удалить тег');
@@ -5269,7 +5997,7 @@
 
   function renderTagGroup(group, tags, label) {
     const chipClass = group === 'allergy' ? ' allergy' : group === 'tasteDislike' ? ' dislike' : '';
-    // Теги-статусы (Знаменитость, Нон-грата) не-администратор видит, но без крестика
+    // Теги-статусы (VIP, Знаменитость, Нон-грата) не-администратор видит, но без крестика
     const chips = (tags || []).map(t => `
       <div class="tag-chip${chipClass}">
         <span>${escHtml(t)}</span>
@@ -5288,7 +6016,7 @@
         <button onclick="submitTagAddInput('${group}')">ОК</button>
       </div>
       <div class="tag-presets">
-        ${(TAG_PRESETS[group] || []).filter(p => !(tags || []).includes(p) && canEditTag(group, p)).map(p => `<div class="tag-preset-chip" onclick="addManualTag('${group}','${escJs(p)}')">${escHtml(p)}</div>`).join('')}
+        ${(TAG_PRESETS[group] || []).filter(p => !(tags || []).some(t => String(t).trim().toLowerCase() === p.toLowerCase()) && canEditTag(group, p)).map(p => `<div class="tag-preset-chip" onclick="addManualTag('${group}','${escJs(p)}')">${escHtml(p)}</div>`).join('')}
       </div>
     ` : '';
 
@@ -5417,6 +6145,12 @@
     return badges.length ? `<div class="alert-strip">${badges.join('')}</div>` : '';
   }
 
+  function guestSegmentLine(guest) {
+    const sg = guest.segment;
+    if (!sg || !sg.key) return '<span class="rfm-none" style="color:var(--text-muted)">Визитов пока нет</span>';
+    return `<span class="rfm-dot rfm-${escHtml(sg.key)}"></span><span>${escHtml(sg.name)}</span><span class="muted">${sg.visitsYear} ${ruPlural(sg.visitsYear, 'визит', 'визита', 'визитов')} за год · ${daysAgoText(sg.daysSince)}</span>`;
+  }
+
   function renderGuestCard(guest) {
     const el = document.getElementById('cardContent');
     const editIcon = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
@@ -5428,9 +6162,9 @@
     const visitsHtml = guest.visits.length
       ? guest.visits.map(v => `
           <div class="visit-item">
-            <div class="visit-date"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>${v.date || '—'}</div>
-            <div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M8 3v7a2 2 0 002 2v9M8 3v7"/><path d="M17 3c-1.5 0-2.5 1.5-2.5 4s1 4 2.5 4v10"/></svg>${v.hookah || '—'}</div>
-            ${v.notes ? `<div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>${v.notes}</div>` : ''}
+            <div class="visit-date"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>${escHtml(v.date || '—')}</div>
+            <div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M8 3v7a2 2 0 002 2v9M8 3v7"/><path d="M17 3c-1.5 0-2.5 1.5-2.5 4s1 4 2.5 4v10"/></svg>${v.hookah ? escHtml(v.hookah) : 'Без кальяна'}</div>
+            ${v.notes ? `<div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>${escHtml(v.notes)}</div>` : ''}
           </div>
         `).join('')
       : '<div class="empty-state">Визитов пока нет</div>';
@@ -5440,17 +6174,20 @@
         <div class="card-avatar" id="cardAvatar">${currentGuestPhotoUrl ? `<img src="${currentGuestPhotoUrl}" alt="">` : (guest.name || '?').charAt(0).toUpperCase()}</div>
         <div class="card-header-text">
           <div class="guest-name">${escHtml(guest.name)}</div>
-          <div class="status-pill ${statusClass(guest.status)}">${guest.status || 'Не указан'}</div>
+          <div class="card-pills">
+            ${guest.vip ? '<div class="status-pill vip">★ VIP</div>' : ''}
+            <span onclick="openSegmentInfo()">${segmentPillHtml(guest.segment?.key, guest.segment?.name || 'Без визитов')}</span>
+          </div>
         </div>
       </div>
 
       ${renderAlertStrip(guest)}
       ${renderHints(guest)}
 
-      <div class="info-row" onclick="openEditField('status','Статус гостя')">
-        <div class="info-row-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2l7 4v6c0 5-3 8-7 10-4-2-7-5-7-10V6l7-4z"/></svg></div>
-        <div><div class="info-row-label">Статус</div><div class="info-row-value">${guest.status || 'Не указан'}</div></div>
-        <div class="info-row-edit">${editIcon}</div>
+      <div class="info-row" onclick="openSegmentInfo()">
+        <div class="info-row-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></svg></div>
+        <div style="min-width:0"><div class="info-row-label">Сегмент · по визитам</div><div class="info-row-value seg-value">${guestSegmentLine(guest)}</div></div>
+        <div class="info-row-edit"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
       </div>
 
       <div class="info-row" onclick="openEditField('birthday','Дата рождения')">
@@ -5505,23 +6242,10 @@
     const body = document.getElementById('editOverlayBody');
     const saveBtn = document.getElementById('editOverlaySave');
     if (saveBtn) saveBtn.style.display = '';
+    const cancelBtn = document.getElementById('editOverlayCancel');
+    if (cancelBtn) cancelBtn.textContent = 'Отмена';
 
-    if (field === 'status') {
-      // VIP ставит и снимает только администратор — остальным VIP не предлагаем,
-      // а если гость уже VIP, просто объясняем, кто может поменять.
-      const isAdmin = currentRole === 'admin';
-      if (!isAdmin && currentGuest.status === 'VIP') {
-        body.innerHTML = `<div style="font-size:14px;line-height:1.5;color:var(--text-sub,#b9a58f);">Статус VIP может поменять только администратор.</div>`;
-        editingField = null; // сохранять нечего
-        if (saveBtn) saveBtn.style.display = 'none';
-      } else {
-        const options = isAdmin ? ['Редкий','Постоянный','VIP'] : ['Редкий','Постоянный'];
-        body.innerHTML = `<div class="chip-row" id="editStatusChips">
-          ${options.map(s => `<div class="chip ${currentGuest.status===s?'selected':''}" data-value="${s}" onclick="selectChip(this,'editStatusChips')">${s}</div>`).join('')}
-        </div>
-        ${isAdmin ? '' : '<div style="font-size:12px;margin-top:10px;color:var(--text-sub,#b9a58f);">VIP ставит администратор.</div>'}`;
-      }
-    } else if (field === 'birthday') {
+    if (field === 'birthday') {
       const parts = currentGuest.birthday ? currentGuest.birthday.split('-') : ['', '', ''];
       const [by, bm, bd] = parts;
       const months = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
@@ -5541,9 +6265,9 @@
         <div class="form-group"><select class="form-input" id="editBirthYear">${yearOpts}</select></div>
       `;
     } else if (field === 'phone') {
-      body.innerHTML = `<input class="form-input" id="editInput" type="tel" value="${currentGuest.phone || '+7'}" oninput="formatRuPhone(this)">`;
+      body.innerHTML = `<input class="form-input" id="editInput" type="tel" value="${escHtml(currentGuest.phone || '+7')}" oninput="formatRuPhone(this)">`;
     } else if (field === 'important') {
-      body.innerHTML = `<textarea class="form-input" id="editInput">${currentGuest.important || ''}</textarea>`;
+      body.innerHTML = `<textarea class="form-input" id="editInput">${escHtml(currentGuest.important || '')}</textarea>`;
     }
 
     document.getElementById('editOverlay').classList.add('show');
@@ -5561,10 +6285,7 @@
   async function saveEditField() {
     if (!editingField) { closeEditOverlay(); return; }
     let value;
-    if (editingField === 'status') {
-      const sel = document.querySelector('#editStatusChips .chip.selected');
-      value = sel ? sel.dataset.value : currentGuest.status;
-    } else if (editingField === 'birthday') {
+    if (editingField === 'birthday') {
       const d = document.getElementById('editBirthDay').value;
       const m = document.getElementById('editBirthMonth').value;
       const y = document.getElementById('editBirthYear').value;
@@ -5574,12 +6295,22 @@
       value = document.getElementById('editInput').value.trim();
     }
 
+    if (editingField === 'phone' && !isPhoneComplete(value)) { alert('Укажите телефон полностью — карточка без телефона не остаётся'); return; }
+    await sendGuestFieldUpdate(editingField, value, false);
+  }
+
+  async function sendGuestFieldUpdate(field, value, force) {
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/guest/${currentGuest.id}?pin=${getPin()}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: getPin(), field: editingField, value })
+        body: JSON.stringify({ pin: getPin(), field, value, force: !!force })
       });
+      if (res.status === 409) {
+        const data = await res.json().catch(() => ({}));
+        showDuplicateNotice(data, 'Этот номер уже у другой карточки', data.canForce ? { label: 'Всё равно сменить номер', run: () => sendGuestFieldUpdate(field, value, true) } : null);
+        return;
+      }
       if (!res.ok) { alert(await responseError(res, 'Не удалось сохранить')); return; }
       closeEditOverlay();
       openGuestCard(currentGuest.id);
@@ -5588,26 +6319,66 @@
     }
   }
 
+  // ─── ТАКОЙ НОМЕР УЖЕ ЕСТЬ ─────────────────────
+  // Показываем, чья это карточка, и предлагаем открыть её. Создать/сменить всё равно
+  // (один номер у двоих) — только администрации (force).
+  let duplicateForceAction = null;
+  function dupSummaryLine(c) {
+    const parts = [];
+    parts.push(c.segment || 'визитов пока нет');
+    if (c.lastVisit) parts.push(`был ${daysAgoText(Math.round((Date.parse(venueCalendarDay()) - Date.parse(c.lastVisit)) / 86400000))}`);
+    if (c.visitsTotal) parts.push(`${c.visitsTotal} ${ruPlural(c.visitsTotal, 'визит', 'визита', 'визитов')}`);
+    if (c.created) parts.push(`создана ${fmtDMY(c.created)}`);
+    return parts.join(' · ');
+  }
+  function showDuplicateNotice(data, title, force) {
+    duplicateForceAction = force ? force.run : null;
+    editingField = null;
+    document.getElementById('editOverlayTitle').textContent = title;
+    const saveBtn = document.getElementById('editOverlaySave');
+    if (saveBtn) saveBtn.style.display = 'none';
+    const cancelBtn = document.getElementById('editOverlayCancel');
+    if (cancelBtn) cancelBtn.textContent = 'Закрыть';
+    const list = (data.duplicates || []).map(c => `
+      <div class="dup-found">
+        <div class="dup-name">${escHtml(c.name || 'Без имени')}${c.vip ? '<span class="vip-star">★ VIP</span>' : ''}</div>
+        <div class="dup-meta">${escHtml(c.phone || '')} · ${escHtml(dupSummaryLine(c))}${(c.tagsAllergy || []).length ? ` · <span class="danger">аллергия: ${escHtml(c.tagsAllergy.join(', '))}</span>` : ''}</div>
+        <button class="btn-primary" style="margin-top:8px;padding:7px 14px;font-size:12.5px;" onclick="closeEditOverlay();openGuestCard('${escJs(c.id)}')">Открыть карточку</button>
+      </div>`).join('');
+    document.getElementById('editOverlayBody').innerHTML = `
+      <div class="note" style="margin-bottom:10px">Один гость — одна карточка. Скорее всего, это тот же человек — откройте его карточку.</div>
+      ${list}
+      ${force ? `<button class="btn-primary btn-full" style="margin-top:6px;background:transparent;" onclick="runDuplicateForce()">${escHtml(force.label)}</button>
+        <div class="note" style="margin-top:6px">Только если это другой человек с тем же номером (например, бронирует за супругу).</div>` : ''}`;
+    document.getElementById('editOverlay').classList.add('show');
+  }
+  function runDuplicateForce() {
+    const run = duplicateForceAction;
+    duplicateForceAction = null;
+    closeEditOverlay();
+    if (run) run();
+  }
+
   // ─── NEW GUEST ─────────────────────────────────
 
   function openNewGuest(prefillName, prefillPhone) {
     document.getElementById('ngName').value = prefillName || '';
     document.getElementById('ngBirthday').value = '';
-    document.getElementById('ngPhone').value = prefillPhone || '+7';
+    const phoneInput = document.getElementById('ngPhone');
+    phoneInput.value = prefillPhone || '+7';
+    if (prefillPhone) formatRuPhone(phoneInput); // из общей базы номер приходит без пробелов
     document.getElementById('ngImportant').value = '';
-    document.querySelectorAll('#ngStatusChips .chip').forEach((c, i) => c.classList.toggle('selected', i === 0));
     showScreen('new-guest');
   }
 
-  async function submitNewGuest() {
+  async function submitNewGuest(force) {
     const name = document.getElementById('ngName').value.trim();
     if (!name) { alert('Укажите имя гостя'); return; }
 
-    const statusChip = document.querySelector('#ngStatusChips .chip.selected');
-    const status = statusChip ? statusChip.dataset.value : 'Редкий';
     const birthday = document.getElementById('ngBirthday').value;
-    let phone = document.getElementById('ngPhone').value.trim();
-    if (phone === '+7') phone = ''; // цифры не вводили — считаем что телефон не указан
+    const phone = document.getElementById('ngPhone').value.trim();
+    // без телефона карточку не создаём: по нему связываются брони, бот, отзывы и ловятся дубли
+    if (!isPhoneComplete(phone)) { alert('Укажите телефон гостя полностью — без телефона карточку не создаём'); return; }
     const important = document.getElementById('ngImportant').value.trim();
 
     const btn = document.getElementById('ngSubmitBtn');
@@ -5618,23 +6389,22 @@
       const res = await fetch(`${PROXY_BASE}/api/staff/guest?pin=${getPin()}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: getPin(), name, status, birthday, phone, important })
+        body: JSON.stringify({ pin: getPin(), name, birthday, phone, important, force: !!force })
       });
-      const data = await res.json();
-
-      btn.disabled = false;
-      btn.textContent = 'Создать карточку';
-
-      if (data.ok) {
-        showSuccess('Карточка создана', name);
-        openGuestCard(data.id);
-      } else {
-        alert('Не удалось создать карточку');
+      if (res.status === 401) { showScreen('pin'); return; }
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 409) {
+        showDuplicateNotice(data, 'Гость с таким номером уже есть', data.canForce ? { label: 'Всё равно создать отдельную карточку', run: () => submitNewGuest(true) } : null);
+        return;
       }
+      if (!res.ok || !data.ok) { alert(data.error || 'Не удалось создать карточку'); return; }
+      showSuccess('Карточка создана', name);
+      openGuestCard(data.id);
     } catch {
+      alert('Нет связи — карточка не создана');
+    } finally {
       btn.disabled = false;
       btn.textContent = 'Создать карточку';
-      alert('Не удалось создать карточку');
     }
   }
 
@@ -5643,33 +6413,80 @@
   function openAddVisit() {
     document.getElementById('visitHookah').value = '';
     document.getElementById('visitNotes').value = '';
+    document.querySelectorAll('#visitDateChips .chip').forEach((c, i) => c.classList.toggle('selected', i === 0));
     document.getElementById('visitGuestNameHeader').textContent = currentGuest.name;
     showScreen('visit');
   }
 
+  // Календарная дата заведения (Владикавказ = Москва), со сдвигом в днях
+  function venueCalendarDay(offsetDays = 0) {
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Moscow', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+    return offsetDays ? shiftDateStr(today, offsetDays) : today;
+  }
+  // «День заведения»: до 06:00 — ещё вчерашний вечер (так же считает сервер для визитов и броней)
+  function venueDayStr(offsetDays = 0) {
+    const day = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Moscow', year: 'numeric', month: '2-digit', day: '2-digit' })
+      .format(new Date(Date.now() - DAY_SPLIT_HOUR * 60 * 60 * 1000));
+    return offsetDays ? shiftDateStr(day, offsetDays) : day;
+  }
+  // Сейчас по Москве как 'YYYY-MM-DDTHH:MM' — сравнивать со временем брони
+  function moscowNowIso() {
+    const p = Object.fromEntries(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Moscow', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })
+      .formatToParts(new Date()).map(x => [x.type, x.value]));
+    return `${p.year}-${p.month}-${p.day}T${String(Number(p.hour) % 24).padStart(2, '0')}:${p.minute}`;
+  }
+  // День заведения брони: 00:30 — вечер предыдущего дня; 00:00 — «без времени», не сдвигаем
+  function bookingVenueDay(iso) {
+    const day = String(iso || '').slice(0, 10);
+    const m = /T(\d{2}):(\d{2})/.exec(String(iso || ''));
+    if (!m || (m[1] === '00' && m[2] === '00')) return day;
+    return Number(m[1]) < DAY_SPLIT_HOUR ? shiftDateStr(day, -1) : day;
+  }
+
+  let toastTimer = null;
+  function showToast(text, bad) {
+    let el = document.getElementById('appToast');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'appToast';
+      el.className = 'app-toast';
+      document.body.appendChild(el);
+    }
+    el.textContent = text;
+    el.classList.toggle('bad', !!bad);
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
+  }
+
+  // Кальян не обязателен: визит — это «гость был». Если сервер не подтвердил запись —
+  // говорим об этом и оставляем форму заполненной (раньше всегда показывали «Визит сохранён»).
   async function submitVisit() {
     const hookah = document.getElementById('visitHookah').value.trim();
-    if (!hookah) { alert('Укажите что заказал гость'); return; }
     const notes = document.getElementById('visitNotes').value.trim();
+    const offset = Number(document.querySelector('#visitDateChips .chip.selected')?.dataset.value || 0);
+    const date = offset ? venueDayStr(offset) : undefined;
 
     const btn = document.getElementById('visitSubmitBtn');
     btn.disabled = true;
     btn.textContent = 'Сохраняем...';
 
     try {
-      await fetch(`${PROXY_BASE}/api/staff/visit?pin=${getPin()}`, {
+      const res = await fetch(`${PROXY_BASE}/api/staff/visit?pin=${getPin()}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: getPin(), guestId: currentGuest.id, guestName: currentGuest.name, hookah, notes })
+        body: JSON.stringify({ pin: getPin(), guestId: currentGuest.id, guestName: currentGuest.name, hookah, notes, date })
       });
-      btn.disabled = false;
-      btn.textContent = 'Сохранить визит';
-      showSuccess('Визит сохранён', currentGuest.name);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (!res.ok) { alert(await responseError(res, 'Визит не сохранился — попробуйте ещё раз')); return; }
+      const whenLabel = offset === -1 ? ' · вчера' : offset === -2 ? ' · позавчера' : '';
+      showSuccess('Визит сохранён', currentGuest.name + whenLabel);
       openGuestCard(currentGuest.id);
     } catch {
+      alert('Нет связи — визит не сохранился. Проверьте интернет и попробуйте ещё раз.');
+    } finally {
       btn.disabled = false;
       btn.textContent = 'Сохранить визит';
-      alert('Не удалось сохранить визит');
     }
   }
 
@@ -5681,6 +6498,11 @@
     const overlay = document.getElementById('successOverlay');
     overlay.classList.add('show');
     setTimeout(() => overlay.classList.remove('show'), 2500);
+  }
+
+  // Телефон записан полностью: только российские номера — 11 цифр (так же проверяет сервер, isFullPhone)
+  function isPhoneComplete(value) {
+    return String(value || '').replace(/\D/g, '').length === 11;
   }
 
   function formatRuPhone(input) {
