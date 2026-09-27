@@ -1731,8 +1731,13 @@
     if (currentRole === 'admin') {
       guestsCards += qcard(icons.inactive, 'Давно не было', '30+ дней', "openInactiveGuests()");
       guestsCards += qcard(icons.duplicates, 'Дубли', 'Одна карточка на гостя', "openDuplicates()");
+      guestsCards += qcard(icons.events, 'Афиша', 'Мероприятия', "openEvents()");
+    }
+
+    // Аналитика и маркетинг — решение Тимура 27.09: сузили доступ, у обычного
+    // администратора эти разделы больше не открываются, видит только «Основатель».
+    if (currentJobRole === 'Основатель') {
       analyticsCards += qcard(icons.guestsTable, 'Гости', 'Таблица', "openGuestsTable()", { extraClass: 'desktop-only' });
-      analyticsCards += qcard(icons.events, 'Афиша', 'Мероприятия', "openEvents()");
       analyticsCards += qcard(icons.segments, 'Сегменты', 'Чемпионы → потерянные', "openSegments()");
       analyticsCards += qcard(icons.analytics, 'Аналитика', 'Сравнение периодов', "openAnalytics()");
       analyticsCards += qcard(icons.feedback, 'Обратная связь', 'Отзывы гостей · eNPS', "openFeedback()");
