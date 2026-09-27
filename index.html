@@ -1260,18 +1260,6 @@
   <div style="padding:0 16px" id="stoplistContent"><div class="loading">Загружаю...</div></div>
 </div>
 
-<!-- ADMIN: STATS -->
-<div class="screen" id="screen-stats">
-  <div class="header">
-    <div class="back-btn" onclick="showScreen('home')">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
-    </div>
-    <div><h1 style="font-size:14px;letter-spacing:1px;">Статистика</h1></div>
-  </div>
-  <div style="padding:0 16px" id="statsContent"><div class="loading">Загружаю...</div></div>
-  <div style="padding:0 16px" id="statsDesktopDashboard" class="desktop-only"></div>
-</div>
-
 <!-- ADMIN: РАССЫЛКИ -->
 <div class="screen" id="screen-marketing">
   <div class="header">
@@ -1303,7 +1291,7 @@
     <div class="back-btn" onclick="showScreen('home')">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
-    <div><h1 style="font-size:14px;letter-spacing:1px;">Обратная связь</h1><p>Отзывы гостей</p></div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Обратная связь</h1><p>Отзывы гостей · eNPS</p></div>
   </div>
   <div style="padding:0 16px" id="feedbackContent"><div class="loading">Загружаю...</div></div>
 </div>
@@ -1689,7 +1677,6 @@
       inactive: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M13 3a9 9 0 100 18 9 9 0 000-18z"/><path d="M13 7v6l4 2"/><line x1="4" y1="4" x2="7" y2="7"/></svg>',
       problem: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2L2 20h20L12 2z"/><line x1="12" y1="10" x2="12" y2="14"/><line x1="12" y1="17" x2="12" y2="17"/></svg>',
       events: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M12 3l1.3 5.7L19 10l-5.7 1.3L12 17l-1.3-5.7L5 10l5.7-1.3L12 3z"/></svg>',
-      stats: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="6" y1="20" x2="6" y2="12"/><line x1="12" y1="20" x2="12" y2="6"/><line x1="18" y1="20" x2="18" y2="14"/></svg>',
       guestsTable: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="10" x2="9" y2="20"/></svg>',
       checklist: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>',
       schedule: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>',
@@ -1746,10 +1733,9 @@
       guestsCards += qcard(icons.duplicates, 'Дубли', 'Одна карточка на гостя', "openDuplicates()");
       analyticsCards += qcard(icons.guestsTable, 'Гости', 'Таблица', "openGuestsTable()", { extraClass: 'desktop-only' });
       analyticsCards += qcard(icons.events, 'Афиша', 'Мероприятия', "openEvents()");
-      analyticsCards += qcard(icons.stats, 'Статистика', 'CSI · NPS · eNPS', "openStats()");
       analyticsCards += qcard(icons.segments, 'Сегменты', 'Чемпионы → потерянные', "openSegments()");
       analyticsCards += qcard(icons.analytics, 'Аналитика', 'Сравнение периодов', "openAnalytics()");
-      analyticsCards += qcard(icons.feedback, 'Обратная связь', 'Отзывы гостей', "openFeedback()");
+      analyticsCards += qcard(icons.feedback, 'Обратная связь', 'Отзывы гостей · eNPS', "openFeedback()");
       marketingCards += qcard(icons.marketing, 'Рассылки', 'Сегменты · бот', "openMarketing()");
     }
 
@@ -4100,7 +4086,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
     }
   }
 
-  // ─── АДМИН: СТАТИСТИКА ─────────────────────────
+  // ─── Общий хелпер для строк-показателей (Обратная связь, Аналитика) ──
 
   function statRow(label, value, unit) {
     return `<div class="info-row" style="cursor:default;">
@@ -4108,135 +4094,9 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
     </div>`;
   }
 
-  async function openStats() {
-    showScreen('stats');
-    const el = document.getElementById('statsContent');
-    el.innerHTML = '<div class="loading">Считаю статистику...</div>';
-
-    try {
-      const res = await fetch(`${PROXY_BASE}/api/admin/stats?pin=${getPin()}`);
-      if (res.status === 401 || res.status === 403) { showScreen('pin'); return; }
-      const s = await res.json();
-
-      let html = `<div class="sec" style="margin-top:0">${s.month}</div>`;
-
-      html += '<div class="sec">Визиты</div>';
-      if (s.visits) {
-        html += statRow('Всего визитов', s.visits.total);
-        html += statRow('Уникальных гостей', s.visits.uniqueGuests);
-        html += statRow('Популярный кальян', s.visits.topHookah || 'Недостаточно данных');
-        if (s.visits.weekTopHookahs && s.visits.weekTopHookahs.length) {
-          html += '<div class="sec">Топ кальянов за неделю</div>';
-          s.visits.weekTopHookahs.forEach((h, i) => {
-            html += statRow(`${i + 1}. ${h.flavor}`, h.count, 'раз');
-          });
-        }
-      } else {
-        html += '<div class="empty-state">Нет данных за этот месяц</div>';
-      }
-
-      html += '<div class="sec">CSI / NPS гостей</div>';
-      if (s.csi) {
-        html += statRow('Отзывов за месяц', s.csi.count);
-        html += statRow('Вечер в целом', s.csi.vecher, '/ 10');
-        html += statRow('Кальян', s.csi.kalyan, '/ 10');
-        html += statRow('Напитки', s.csi.napitki, '/ 10');
-        html += statRow('Еда', s.csi.eda, '/ 10');
-        html += statRow('Команда', s.csi.komanda, '/ 10');
-        html += statRow('NPS', s.csi.nps !== null ? (s.csi.nps > 0 ? '+' + s.csi.nps : s.csi.nps) : null);
-      } else {
-        html += '<div class="empty-state">Нет отзывов за этот месяц</div>';
-      }
-
-      html += '<div class="sec">eNPS сотрудников</div>';
-      if (s.enps) {
-        html += statRow('Опросов за месяц', s.enps.count);
-        html += statRow('eNPS', s.enps.score !== null ? (s.enps.score > 0 ? '+' + s.enps.score : s.enps.score) : null);
-        html += statRow('Промоутеры', s.enps.promoters);
-        html += statRow('Нейтралы', s.enps.passives);
-        html += statRow('Критики', s.enps.detractors);
-      } else {
-        html += '<div class="empty-state">Нет опросов за этот месяц</div>';
-      }
-
-      el.innerHTML = html;
-
-      // Десктопная динамика — отдельный запрос, чтобы мобильный не тратил на него трафик впустую
-      if (window.innerWidth >= 700) loadStatsDesktopDashboard();
-    } catch {
-      el.innerHTML = '<div class="empty-state">Не удалось загрузить статистику</div>';
-    }
-  }
-
-  // ─── ДЕСКТОП: НЕДЕЛЬНАЯ ДИНАМИКА ────────────────────
-
   function formatWeekShort(iso) {
     const [, m, d] = iso.split('-');
     return `${d}.${m}`;
-  }
-
-  function miniBarChart(series, key, opts) {
-    opts = opts || {};
-    const vals = series.map(w => w[key]);
-    if (!vals.some(v => v !== null)) return '<div class="empty-state" style="padding:8px 0;font-size:12px;">Недостаточно данных</div>';
-    const validVals = vals.filter(v => v !== null);
-    const max = opts.max !== undefined ? opts.max : Math.max(...validVals);
-    const min = opts.min !== undefined ? opts.min : Math.min(0, Math.min(...validVals));
-    const range = (max - min) || 1;
-
-    const bars = series.map(w => {
-      const v = w[key];
-      const pct = v === null ? 0 : Math.max(3, ((v - min) / range) * 100);
-      return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
-        <div style="font-size:10px;color:var(--text-sub);">${v !== null ? v : '—'}</div>
-        <div style="width:100%;max-width:26px;height:60px;display:flex;align-items:flex-end;">
-          <div style="width:100%;height:${pct}%;background:var(--accent);border-radius:4px 4px 0 0;opacity:${v === null ? 0.15 : 1};"></div>
-        </div>
-        <div style="font-size:9px;color:var(--text-muted);">${formatWeekShort(w.week)}</div>
-      </div>`;
-    }).join('');
-
-    return `<div style="display:flex;align-items:flex-end;gap:4px;">${bars}</div>`;
-  }
-
-  function weekComparison(series, key, unit) {
-    if (series.length < 2) return '';
-    const last = series[series.length - 1][key];
-    const prev = series[series.length - 2][key];
-    if (last === null || prev === null) return '';
-    const diff = Math.round((last - prev) * 10) / 10;
-    if (diff === 0) return `<div style="font-size:11px;color:var(--text-muted);margin-top:4px;">→ без изменений к прошлой неделе</div>`;
-    const arrow = diff > 0 ? '↑' : '↓';
-    const color = diff > 0 ? 'var(--accent)' : '#8B4A3D';
-    return `<div style="font-size:11px;color:${color};margin-top:4px;">${arrow} ${diff > 0 ? '+' : ''}${diff}${unit || ''} к прошлой неделе</div>`;
-  }
-
-  async function loadStatsDesktopDashboard() {
-    const wrap = document.getElementById('statsDesktopDashboard');
-    wrap.innerHTML = '<div class="loading">Считаю динамику...</div>';
-    try {
-      const res = await fetch(`${PROXY_BASE}/api/admin/stats-weekly?pin=${getPin()}`);
-      const data = await res.json();
-      const series = data.weeks || [];
-      if (!series.length) { wrap.innerHTML = ''; return; }
-
-      const block = (title, key, opts, unit) => `
-        <div style="margin-bottom:16px;">
-          <div style="font-size:11px;letter-spacing:0.5px;color:var(--text-sub);margin-bottom:6px;">${title}</div>
-          ${miniBarChart(series, key, opts)}
-          ${weekComparison(series, key, unit)}
-        </div>`;
-
-      let html = '<div class="sec">Динамика · последние недели</div>';
-      html += block('CSI (0–10)', 'csi', { min: 0, max: 10 }, '');
-      html += block('NPS гостей', 'nps', { min: -100, max: 100 }, '');
-      html += block('eNPS команды', 'enps', { min: -100, max: 100 }, '');
-      html += block('Визиты', 'visits', { min: 0 }, '');
-
-      wrap.innerHTML = html;
-    } catch {
-      wrap.innerHTML = '';
-    }
   }
 
   // ─── ДЕСКТОП: ЕДИНАЯ ТАБЛИЦА ГОСТЕЙ ──────────────────
@@ -5024,6 +4884,14 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
       return `<tr><td>${escHtml(b.label)}</td><td class="num">${anFormat(b.value, d.kind)}</td>${hasCmp ? `<td class="num" style="color:var(--text-muted)">${anFormat(b.compareValue, d.kind)}</td><td class="num">${diff}</td>` : ''}</tr>`;
     }).join('');
     html += '</tbody></table>';
+
+    // Топ кальянов за тот же период, что выбран для графика — независимо от того,
+    // какой показатель (визиты/CSI/...) сейчас выбран сверху.
+    if (d.topHookahs && d.topHookahs.length) {
+      html += '<div class="sec">Топ кальянов за период</div>';
+      html += d.topHookahs.map((h, i) => statRow(`${i + 1}. ${h.flavor}`, h.count, 'раз')).join('');
+    }
+
     return html;
   }
 
@@ -5487,6 +5355,22 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
       ${d.openProblems.total ? '<button class="link-btn" onclick="openProblems()">Открыть проблемы →</button>' : ''}
     </div>`;
 
+    // eNPS персонала — отдельно от периода отзывов гостей (7/30/90 дней): опросы
+    // проводятся примерно раз в месяц, поэтому это всегда текущий календарный месяц.
+    const en = d.enps;
+    if (en) {
+      html += `<div class="sec">eNPS команды · ${escHtml(en.month)}</div>`;
+      if (en.count) {
+        html += statRow('Опросов за месяц', en.count);
+        html += statRow('eNPS', en.score !== null ? signed(en.score) : null);
+        html += statRow('Промоутеры', en.promoters);
+        html += statRow('Нейтралы', en.passives);
+        html += statRow('Критики', en.detractors);
+      } else {
+        html += '<div class="empty-state">Нет опросов за этот месяц</div>';
+      }
+    }
+
     html += '<div class="sec">Отзывы</div>';
     html += anChips([['all', 'Все'], ['negative', 'Негативные'], ['comment', 'С комментарием']], fbState.filter, 'fbSetFilter');
     let list = d.reviews;
@@ -5531,7 +5415,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'stats', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates'];
+  const screens = ['pin', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates'];
   function showScreen(name) {
     screens.forEach(s => document.getElementById('screen-' + s)?.classList.remove('active'));
     document.getElementById('screen-' + name)?.classList.add('active');
@@ -6130,8 +6014,9 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
       badges.push(`<div class="alert-badge nongrata"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4"/></svg>Нон-грата</div>`);
     }
     const bd = guest.autoTags?.birthday;
-    if (bd && (bd.when === 'today' || bd.when === 'soon')) {
-      badges.push(`<div class="alert-badge birthday"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21h16v-8H4z"/><line x1="12" y1="13" x2="12" y2="9"/></svg>${bd.when === 'today' ? 'ДР сегодня' : `ДР через ${bd.days} дн.`}</div>`);
+    if (bd) {
+      const bdText = bd.when === 'today' ? 'ДР сегодня' : bd.when === 'soon' ? `ДР через ${bd.days} дн.` : `ДР был ${bd.days} дн. назад`;
+      badges.push(`<div class="alert-badge birthday"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21h16v-8H4z"/><line x1="12" y1="13" x2="12" y2="9"/></svg>${bdText}</div>`);
     }
     if ((guest.tagsAllergy || []).length) {
       badges.push(`<div class="alert-badge allergy"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 21h20L12 2z"/><line x1="12" y1="9" x2="12" y2="14"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Аллергия: ${escHtml(guest.tagsAllergy.join(', '))}</div>`);
