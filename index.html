@@ -807,6 +807,13 @@
     .hz-seatbar button { flex-shrink: 0; font: inherit; font-size: 12px; padding: 7px 12px; border-radius: 10px; background: transparent; color: var(--text-sub); border: 1px solid var(--border); cursor: pointer; }
     .hz-seating .hz-t:not(.seat-ok) { opacity: 0.45; }
     .hz-t.seat-ok .hz-shape { stroke: #4ade80; stroke-width: 2; animation: hzSeatPulse 1.6s ease-in-out infinite; }
+    .hz-seating .hz-t.seat-pick { opacity: 1; }
+    .hz-t.seat-pick .hz-shape { fill: rgba(184,115,51,0.35); stroke: var(--accent); stroke-width: 3; animation: none; }
+    .hz-seatpanel { margin-top: 12px; padding: 14px; border: 1px solid rgba(184,115,51,0.45); border-radius: 14px; background: var(--bg-card); }
+    .hz-seatpanel .pick { font-size: 13px; color: var(--text); margin-bottom: 10px; line-height: 1.45; }
+    .hz-seatpanel .pick small { display: block; font-size: 11.5px; color: var(--text-muted); }
+    .hz-seatpanel .pick b { color: var(--accent); font-weight: 500; }
+    .hz-seatpanel .btn-primary:disabled { opacity: 0.45; cursor: default; }
     @keyframes hzSeatPulse { 0%, 100% { stroke-opacity: 1; } 50% { stroke-opacity: 0.35; } }
     .hz-mini-btn { font: inherit; font-size: 11.5px; padding: 5px 10px; border-radius: 9px; border: 1px solid rgba(74,222,128,0.45); background: rgba(74,222,128,0.1); color: #4ade80; cursor: pointer; }
     .hz-item { display: flex; align-items: center; justify-content: space-between; gap: 6px 10px; flex-wrap: wrap; padding: 9px 0; border-top: 1px solid var(--border); font-size: 13px; color: var(--text); cursor: pointer; }
@@ -1946,11 +1953,7 @@
       try {
         const res = await fetch(`${PROXY_BASE}/api/staff/bookings?pin=${pin}`);
         const list = res.ok ? await res.json() : [];
-        const pending = Array.isArray(list) ? list.filter(b => b.status === 'pending') : [];
-        if (countEl) countEl.textContent = pending.length ? String(pending.length) : '';
-        if (!pending.length) { el.innerHTML = '<div class="dp-empty">Все подтверждены</div>'; return; }
-        // имя брони вводит сам гость в гостевом приложении — экранируем
-        el.innerHTML = pending.slice(0, 5).map(b => `<div class="dp-row" onclick="openBookings()">${escHtml(b.name || 'Гость')}<div class="dp-sub">${escHtml(b.display || '')}</div></div>`).join('');
+        renderDpBookings(list);
       } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
     })();
 
@@ -1976,6 +1979,74 @@
 
     loadDpNotes();
   }
+
+  // Панель «Ждут подтверждения» (десктоп) — по уже загруженному списку броней
+  function renderDpBookings(list) {
+    const el = document.getElementById('dpBookings');
+    const countEl = document.getElementById('dpBookingsCount');
+    if (!el) return;
+    const pending = Array.isArray(list) ? list.filter(b => !b.past && b.status === 'pending') : [];
+    if (countEl) countEl.textContent = pending.length ? String(pending.length) : '';
+    if (!pending.length) { el.innerHTML = '<div class="dp-empty">Все подтверждены</div>'; return; }
+    // имя брони вводит сам гость в гостевом приложении — экранируем
+    el.innerHTML = pending.slice(0, 5).map(b => `<div class="dp-row" onclick="openBookings()">${escHtml(b.name || 'Гость')}<div class="dp-sub">${escHtml(b.display || '')}</div></div>`).join('');
+  }
+
+  // ─── АВТООБНОВЛЕНИЕ БРОНЕЙ ─────────────────────
+  // Раньше брони грузились только при открытии раздела — новая бронь не была видна,
+  // пока не обновишь страницу. Теперь проверяем раз в 30 секунд, пока приложение
+  // открыто, и сразу при возврате в него (переключились из Telegram обратно).
+  // Если в этот момент сотрудник что-то делает с бронью (выбирает стол на схеме,
+  // открыта карточка брони или форма, идёт сохранение) — данные под руками не
+  // подменяем, обновим на следующей проверке. Точка «Брони» и панель «Ждут
+  // подтверждения» обновляются всегда.
+  const BOOKINGS_POLL_MS = 30000;
+  let bookingsPollBusy = false;
+  let bookingsLoadedOnce = false;
+  function bookingsSig(list) {
+    return JSON.stringify((list || []).map(b => [b.entry, b.status, b.table || '', b.arrival?.status || '', b.guests || '', b.iso || '', b.name || '']));
+  }
+  function bookingsUiBusy() {
+    const active = id => document.getElementById('screen-' + id)?.classList.contains('active');
+    if (hallSeatIdx !== null || seatingBusy || bookingActionBusy) return true;
+    if (active('booking-detail') || active('add-booking')) return true;
+    const f = document.activeElement;
+    if (f && /^(INPUT|SELECT|TEXTAREA)$/.test(f.tagName) && document.getElementById('screen-bookings')?.contains(f)) return true;
+    return false;
+  }
+  async function pollBookings() {
+    if (bookingsPollBusy || document.hidden || currentRole !== 'admin' || !getPin()) return;
+    if (document.getElementById('screen-pin')?.classList.contains('active')) return;
+    bookingsPollBusy = true;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/bookings?past=${BOOKINGS_PAST_DAYS}&pin=${getPin()}`);
+      if (!res.ok) return;
+      const all = await res.json();
+      if (!Array.isArray(all)) return;
+      const cur = all.filter(b => !b.past);
+      const past = all.filter(b => b.past).sort((a, b) => (b.iso || '').localeCompare(a.iso || ''));
+      setQuickActionDot('qdotBookings', cur.some(b => b.status === 'pending') || past.some(b => b.uid && !b.arrival));
+      renderDpBookings(cur);
+      if (!bookingsLoadedOnce) return; // раздел броней ещё не открывали — там нечего обновлять
+      if (bookingsSig(cur) === bookingsSig(bookingsListData) && bookingsSig(past) === bookingsSig(bookingsPastData)) return;
+      if (bookingsUiBusy()) return;    // сотрудник что-то делает — обновим в следующий раз
+      bookingsListData = cur;
+      bookingsPastData = past;
+      if (document.getElementById('screen-bookings')?.classList.contains('active')) {
+        const y = window.scrollY;
+        renderBookingsView();
+        window.scrollTo(0, y);
+      }
+    } catch {
+      // нет связи — просто попробуем через 30 секунд
+    } finally {
+      bookingsPollBusy = false;
+    }
+  }
+  setInterval(pollBookings, BOOKINGS_POLL_MS);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) pollBookings(); });
+  window.addEventListener('focus', () => pollBookings());
+  try { tg?.onEvent?.('activated', () => pollBookings()); } catch {}
 
   // ─── ЗАМЕТКИ — единственный блок в панелях, что живёт целиком внутри
   // самой панели, без перехода на отдельный экран (записать — только текст,
@@ -2327,6 +2398,7 @@
       if (!Array.isArray(all)) throw new Error();
       bookingsListData = all.filter(b => !b.past);
       bookingsPastData = all.filter(b => b.past).sort((a, b) => (b.iso || '').localeCompare(a.iso || ''));
+      bookingsLoadedOnce = true;
       refreshBookingsDot();
       renderBookingsView();
     } catch {
@@ -3050,7 +3122,7 @@
     let svg = `<svg viewBox="0 0 ${zone.width} ${zone.height}" class="hz-svg${seating ? ' hz-seating' : ''}" data-w="${zone.width}" xmlns="http://www.w3.org/2000/svg">${zone.decor.join('')}`;
     for (const tb of zone.tables) {
       const st = states[tb.key];
-      const cls = ['hz-t', st.state, hallSelectedTable === tb.key ? 'sel' : '', seating && !st.mine.length ? 'seat-ok' : ''].join(' ');
+      const cls = ['hz-t', st.state, hallSelectedTable === tb.key ? 'sel' : '', seating && !st.mine.length ? 'seat-ok' : '', seating && hallSeatPick === tb.key ? 'seat-pick' : ''].join(' ');
       svg += `<g class="${cls}" data-table="${escHtml(tb.key)}" onclick="hallTableClick('${escJs(tb.key)}')">${tableTicksSvg(tb)}${tableShapeSvg(tb)}${tableTextSvg(tb)}</g>`;
     }
     for (const tb of zone.tables) svg += labelSvg(tb, tableLabelParts(states[tb.key], t, tb.labelMax || 100));
@@ -3060,7 +3132,7 @@
     const waiting = items.filter(it => !it.b.table);             // брони без стола — посадить со схемы
     const waitHtml = waiting.length ? `
       <div class="hz-wait-box">
-        <div class="hz-wait-title">Ждут стола: ${waiting.length}<small>Нажмите на бронь, потом на стол на схеме — стол сохранится сразу</small></div>
+        <div class="hz-wait-title">Ждут стола: ${waiting.length}<small>Нажмите на бронь, выберите стол на схеме и подтвердите кнопкой под схемой</small></div>
         <div class="hz-wait-list">${waiting.map(it => `
           <button type="button" class="hz-wait${it.b.status === 'pending' ? ' pending' : ''}${it.idx === hallSeatIdx ? ' on' : ''}" onclick="toggleSeating(${it.idx})">
             <b>${hhmm(it.start)}</b> ${escHtml(String(it.b.name || 'Гость').trim().split(/\s+/)[0])}${it.b.guests ? ` · ${escHtml(String(it.b.guests))}` : ''}${it.b.status === 'pending' ? ' <span style="color:#f59e0b">●</span>' : ''}
@@ -3072,7 +3144,7 @@
       const g = Number(sb.guests) || 0;
       return `<div class="hz-seatbar">
         <div class="txt">Посадить: <b style="font-weight:500">${escHtml(sb.name || 'Гость')}</b> · ${escHtml((sb.iso || '').slice(11, 16))}${g ? ` · ${g} ${ruPlural(g, 'гость', 'гостя', 'гостей')}` : ''}
-          <small>Нажмите на стол на схеме — зелёные свободны на весь вечер</small></div>
+          <small>Выберите стол на схеме (зелёные свободны на весь вечер) — можно менять, пока не нажмёте кнопку под схемой</small></div>
         <button type="button" onclick="cancelSeating()">Отмена</button>
       </div>`;
     })() : '';
@@ -3090,7 +3162,7 @@
         <span><i class="lg later"></i>бронь позже в этот день</span>
         <span><i class="lg conflict"></i>две брони на один стол</span>
       </div>
-      <div id="hzTablePanel">${seating ? '' : renderHallTablePanel(items, t)}</div>
+      <div id="hzTablePanel">${seating ? renderSeatPanel(seatB) : renderHallTablePanel(items, t)}</div>
       ${offPlan.length ? `<div class="sec">Не на схеме</div>${offPlan.map(it => `
         <div class="hz-item" onclick="openBookingDetail(${it.idx})">
           <span><b style="font-weight:500">${hhmm(it.start)}</b> ${escHtml(it.b.name)}${it.b.guests ? ` · ${escHtml(String(it.b.guests))}` : ''}</span>
@@ -3485,21 +3557,26 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
 
   // ─── ПОСАДКА СО СХЕМЫ ────────────────────────────
   // Пришла бронь без стола → на схеме она в «Ждут стола»; нажали на неё (или
-  // «Выбрать стол на схеме» в карточке брони) → нажали на стол → стол сохранён.
+  // «Выбрать стол на схеме» в карточке брони) → нажимаем на стол — это только
+  // выбор, его можно менять сколько угодно → «Подтвердить бронь» под схемой
+  // сохраняет стол и подтверждает бронь: гостю уходит ОДНО уведомление.
+  // (Раньше стол сохранялся с первого нажатия и подтверждать надо было отдельно.)
   let hallSeatIdx = null;             // индекс брони в bookingsListData, которую сажаем
+  let hallSeatPick = null;            // выбранный, но ещё не сохранённый стол
   let hallSeatReturnToDetail = false; // пришли из карточки брони — туда и вернуться
 
   function startSeating(idx, fromDetail) {
     const b = bookingsListData[idx];
     if (!b) return;
     hallSeatIdx = idx;
+    hallSeatPick = hallTableFor(b.table)?.key || null; // у брони уже есть стол — он и выбран
     hallSeatReturnToDetail = !!fromDetail;
     hallSelectedTable = null;
     const slot = bookingSlot(b);
     if (slot) { hallDate = slot.day; hallTime = Math.floor(slot.start / 15) * 15; }
   }
   function toggleSeating(idx) {
-    if (hallSeatIdx === idx) { hallSeatIdx = null; renderHallPlan(); return; }
+    if (hallSeatIdx === idx) { hallSeatIdx = null; hallSeatPick = null; renderHallPlan(); return; }
     startSeating(idx, false);
     renderBookingsView();
     document.querySelector('.hz-seatbar')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -3515,36 +3592,84 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
   function cancelSeating() {
     const idx = hallSeatIdx, back = hallSeatReturnToDetail;
     hallSeatIdx = null;
+    hallSeatPick = null;
     hallSeatReturnToDetail = false;
     if (back && idx !== null) openBookingDetail(idx);
     else renderHallPlan();
   }
   function hallTableClick(key) {
-    if (hallSeatIdx !== null) seatAtTable(key);
-    else selectHallTable(key);
+    if (hallSeatIdx !== null) {
+      hallSeatPick = hallSeatPick === key ? null : key; // только выбор, ничего не сохраняем
+      renderHallPlan();
+      document.getElementById('hzTablePanel')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else selectHallTable(key);
   }
+
+  function renderSeatPanel(b) {
+    if (!b) return '';
+    const pending = b.status === 'pending';
+    const tb = HALL_TABLES.find(x => x.key === hallSeatPick);
+    const tableName = tb ? (tb.shape === 'bar' ? 'Бар' : `стол ${tb.short}`) : '';
+    const g = Number(b.guests) || 0;
+    const warnSeats = tb && tb.seats && g > tb.seats ? ` · <span style="color:#f59e0b">мест ${tb.seats}, гостей ${g}</span>` : '';
+    return `<div class="hz-seatpanel">
+      <div class="pick">${tb
+        ? `Выбран <b>${escHtml(tableName)}</b> · ${tb.seats} чел${warnSeats}<small>Можно выбрать другой стол на схеме</small>`
+        : `Стол не выбран<small>Нажмите на стол на схеме</small>`}</div>
+      <button class="btn-primary btn-full" id="seatConfirmBtn" ${tb ? '' : 'disabled'} onclick="confirmSeating()">${pending ? '✓ Подтвердить бронь' : 'Сохранить стол'}</button>
+      <button class="btn-primary btn-full" style="margin-top:8px;background:transparent;" onclick="cancelSeating()">Отмена</button>
+    </div>`;
+  }
+
   let seatingBusy = false;
-  async function seatAtTable(key) {
-    if (seatingBusy) return;
+  async function confirmSeating() {
+    if (seatingBusy || hallSeatIdx === null || !hallSeatPick) return;
     const idx = hallSeatIdx;
+    const key = hallSeatPick;
     const b = bookingsListData[idx];
     const tb = HALL_TABLES.find(x => x.key === key);
     if (!b || !tb) return;
+    const wasPending = b.status === 'pending';
+    const btn = document.getElementById('seatConfirmBtn');
     seatingBusy = true;
-    let ok = false;
+    if (btn) { btn.disabled = true; btn.textContent = wasPending ? 'Подтверждаем…' : 'Сохраняем…'; }
+    let notified = null;
     try {
-      ok = await assignTableToBooking(b, key, { checkSeats: true });
+      // 1) стол (гостю ничего не отправляется)
+      if (hallTableFor(b.table)?.key !== key) {
+        const ok = await assignTableToBooking(b, key, { checkSeats: true });
+        if (!ok) return;
+      }
+      // 2) подтверждение — единственное сообщение гостю
+      if (wasPending) {
+        const res = await fetch(`${PROXY_BASE}/api/staff/bookings/confirm?pin=${getPin()}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pin: getPin(), phone: b.phone, entry: b.entry })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) { alert((data.error || 'Не удалось подтвердить') + '\n\nСтол сохранён — подтвердите бронь ещё раз.'); return; }
+        b.status = 'confirmed';
+        notified = !!data.notified;
+        refreshBookingsDot();
+      }
     } catch {
-      alert('Не удалось сохранить стол');
+      alert('Не удалось сохранить — проверьте связь и попробуйте ещё раз');
+      return;
     } finally {
       seatingBusy = false;
+      const bb = document.getElementById('seatConfirmBtn');
+      if (bb && hallSeatIdx !== null) { bb.disabled = false; bb.textContent = b.status === 'pending' ? '✓ Подтвердить бронь' : 'Сохранить стол'; }
     }
-    if (!ok) return;
     const back = hallSeatReturnToDetail;
     hallSeatIdx = null;
+    hallSeatPick = null;
     hallSeatReturnToDetail = false;
     const first = String(b.name || 'Гость').trim().split(/\s+/)[0];
-    showToast(`${first} — ${tb.shape === 'bar' ? 'бар' : 'стол ' + tb.short}${b.status === 'pending' ? '. Бронь ещё не подтверждена' : ''}`);
+    const where = tb.shape === 'bar' ? 'бар' : 'стол ' + tb.short;
+    if (!wasPending) showToast(`${first} — ${where}`);
+    else if (notified) showToast(`${first} — ${where}. Бронь подтверждена, гость уведомлён`);
+    else showToast(`${first} — ${where}. Подтверждено, но гостя уведомить не удалось — свяжитесь сами`, true);
     if (back) { openBookingDetail(idx); return; }
     hallSelectedTable = key;
     renderBookingsView();
@@ -5644,7 +5769,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
     // Боковые панели десктопа обновляем при каждом возврате на главный —
     // так они не протухают за весь день без перезахода в приложение.
     if (name === 'home') loadDeskPanels();
-    if (name === 'bookings') renderBookingsView();
+    if (name === 'bookings') { renderBookingsView(); setTimeout(pollBookings, 0); }
   }
 
   // ─── SEARCH ────────────────────────────────────
