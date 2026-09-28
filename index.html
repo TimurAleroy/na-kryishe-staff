@@ -387,6 +387,16 @@
     }
     .tag-preset-chip:active { background: var(--bg-card-hover); }
 
+    /* Выход из аккаунта — только на компьютере (в Telegram на телефоне не нужен) */
+    .logout-btn {
+      display: none; margin-left: auto; align-items: center; gap: 7px; flex-shrink: 0;
+      height: 34px; padding: 0 14px; border-radius: 100px;
+      background: var(--bg-card); border: 1px solid var(--border); color: var(--text-sub);
+      font-family: 'Inter', sans-serif; font-size: 12px; cursor: pointer;
+    }
+    .logout-btn:hover { color: var(--accent); border-color: rgba(184,115,51,0.4); }
+    @media (min-width: 700px) { .logout-btn { display: inline-flex; } }
+
     .favorite-card {
       background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
       padding: 14px 16px; display: flex; align-items: center; gap: 12px;
@@ -1070,6 +1080,10 @@
       <h1>На Крыше</h1>
       <p id="roleLabel">Персонал · Гости</p>
     </div>
+    <button type="button" class="logout-btn" onclick="logout()" title="Выйти и войти под другим PIN-кодом">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      <span>Выйти</span>
+    </button>
   </div>
   <div style="padding:0 16px">
     <div class="search-box">
@@ -1755,6 +1769,74 @@
   function getPin() {
     try { return localStorage.getItem('staff_pin') || ''; } catch { return ''; }
   }
+
+  // ─── ВЫХОД (кнопка «Выйти» на главном, только на компьютере) ──
+  // Раньше, чтобы зайти под другим PIN, приходилось обновлять страницу.
+  // Теперь сбрасываем вход и всё, что загрузил прошлый сотрудник, и сразу
+  // показываем экран PIN — без перезагрузки.
+  function logout() {
+    try { localStorage.removeItem('staff_pin'); } catch {}
+    pinValue = '';
+    renderPinDots();
+    const pinErr = document.getElementById('pinError');
+    if (pinErr) pinErr.textContent = '';
+
+    currentRole = 'staff';
+    currentEmployeeName = '';
+    currentJobRole = '';
+
+    // данные прошлого сотрудника — новый загрузит их заново под своим доступом
+    bookingsListData = [];
+    bookingsPastData = [];
+    bookingsLoadedOnce = false;
+    currentBookingIndex = null;
+    hallSeatIdx = null;
+    hallSeatPick = null;
+    hallSeatReturnToDetail = false;
+    currentGuest = null;
+    tagAddGroup = null;
+    scheduleEmployeesCache = null;
+    myScheduleEmployeeId = null;
+    guestsTableData = [];
+    mkData = null;
+    mkSelected = { key: null };
+    mkText = '';
+    sgData = null;
+    fbData = null;
+    dupData = null;
+
+    // главный экран и боковые панели — пустые до следующего входа
+    const grid = document.getElementById('quickActionsGrid');
+    if (grid) grid.innerHTML = '';
+    const roleLabel = document.getElementById('roleLabel');
+    if (roleLabel) roleLabel.textContent = 'Персонал · Гости';
+    ['searchInput', 'phoneSearchInput'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    const results = document.getElementById('searchResults');
+    if (results) results.innerHTML = '';
+    const resultsSection = document.getElementById('resultsSection');
+    if (resultsSection) resultsSection.style.display = 'none';
+    ['deskLeft', 'deskRight'].forEach(id => document.getElementById(id)?.classList.remove('role-ok'));
+    ['dpShift', 'dpBirthdays', 'dpEvents', 'dpProblems', 'dpBookings', 'dpFounderTasks', 'dpNotes'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = '<div class="dp-loading">Загружаю...</div>';
+    });
+    ['dpEventsCount', 'dpProblemsCount', 'dpBookingsCount', 'dpFounderTasksCount', 'dpNotesCount'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = '';
+    });
+    const noteInput = document.getElementById('dpNoteInput');
+    if (noteInput) noteInput.value = '';
+
+    showScreen('pin');
+  }
+
+  // На компьютере PIN можно набрать и с клавиатуры (цифры, Backspace)
+  document.addEventListener('keydown', e => {
+    if (!document.getElementById('screen-pin')?.classList.contains('active')) return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (/^[0-9]$/.test(e.key)) { e.preventDefault(); pinPress(e.key); }
+    else if (e.key === 'Backspace') { e.preventDefault(); pinBackspace(); }
+  });
 
   function applyRoleUI() {
     const roleLabel = document.getElementById('roleLabel');
@@ -5028,7 +5110,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
   // отправки (днём), отписки и «Нон-грата»; здесь — выбор, текст и журнал.
 
   let mkData = null;
-  let mkSelected = { key: null, tag: null };
+  let mkSelected = { key: null };
   let mkText = '';
   let mkGuestsOpen = false;
 
@@ -5058,10 +5140,6 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
 
   function mkCurrent() {
     if (!mkData || !mkSelected.key) return null;
-    if (mkSelected.key === 'tag') {
-      const t = mkData.tags.find(x => x.key === mkSelected.tag);
-      return t ? { title: t.label, total: t.total, reachable: t.reachable } : null;
-    }
     return mkData.segments.find(s => s.key === mkSelected.key) || null;
   }
 
@@ -5083,14 +5161,6 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
     const other = d.segments.filter(s => s.group !== 'rfm');
     html += '<div class="sec">Кому · сегменты по визитам</div><div class="seg-list">' + rfm.map(segItem).join('') + '</div>';
     html += '<div class="sec">Или подборка</div><div class="seg-list">' + other.map(segItem).join('') + '</div>';
-
-    if (d.tags && d.tags.length) {
-      html += `<div class="sec">Или по тегу</div>
-        <select class="form-input" id="mkTagSelect" onchange="mkSelectTag(this.value)">
-          <option value="">Выберите тег…</option>
-          ${d.tags.map(t => `<option value="${escHtml(t.key)}" ${mkSelected.key === 'tag' && mkSelected.tag === t.key ? 'selected' : ''}>${escHtml(t.label)} — ${t.reachable} из ${t.total}</option>`).join('')}
-        </select>`;
-    }
 
     html += '<div class="sec">Сообщение</div>';
     html += `<textarea class="form-input" id="mkText" style="height:150px" maxlength="3500" placeholder="Например: {имя}, в эту пятницу на Крыше — живой диджей-сет. Забронировать стол можно в приложении." oninput="mkOnText(this.value)">${escHtml(mkText)}</textarea>`;
@@ -5129,17 +5199,9 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
   }
 
   function mkSelect(key) {
-    mkSelected = { key, tag: null };
+    mkSelected = { key };
     mkGuestsOpen = false;
     document.querySelectorAll('.seg-item').forEach(x => x.classList.toggle('selected', x.dataset.key === key));
-    const sel = document.getElementById('mkTagSelect');
-    if (sel) sel.value = '';
-    renderMkTarget();
-  }
-  function mkSelectTag(tagKey) {
-    mkSelected = tagKey ? { key: 'tag', tag: tagKey } : { key: null, tag: null };
-    mkGuestsOpen = false;
-    document.querySelectorAll('.seg-item').forEach(x => x.classList.remove('selected'));
     renderMkTarget();
   }
   function mkOnText(v) {
@@ -5159,8 +5221,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
     if (!box) return;
     box.innerHTML = '<div class="loading" style="padding:10px">Загружаю...</div>';
     try {
-      const q = `key=${encodeURIComponent(mkSelected.key)}${mkSelected.tag ? '&tag=' + encodeURIComponent(mkSelected.tag) : ''}`;
-      const res = await fetch(`${PROXY_BASE}/api/admin/marketing/segment?${q}&pin=${getPin()}`);
+      const res = await fetch(`${PROXY_BASE}/api/admin/marketing/segment?key=${encodeURIComponent(mkSelected.key)}&pin=${getPin()}`);
       if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить список'));
       const seg = await res.json();
       if (!seg.guests.length) { box.innerHTML = '<div class="autotag-empty">В сегменте никого нет</div>'; return; }
@@ -5189,7 +5250,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
       const res = await fetch(`${PROXY_BASE}/api/admin/marketing/send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: getPin(), key: mkSelected.key, tag: mkSelected.tag, text, test: !!test })
+        body: JSON.stringify({ pin: getPin(), key: mkSelected.key, text, test: !!test })
       });
       if (!res.ok) { alert(await responseError(res, 'Не удалось отправить')); return; }
       if (test) {
