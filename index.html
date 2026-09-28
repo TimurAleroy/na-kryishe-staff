@@ -236,6 +236,38 @@
     .booking-chip-name { font-size: 12px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
     .booking-chip-meta { font-size: 10px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .booking-chip-meta .table-tag { color: var(--accent); }
+    /* Стол в боксе брони — крупной цифрой справа, зона мелко под ней (раньше было
+       мелким текстом в строке «Стол · Общий зал 12» и легко было ошибиться). */
+    .booking-chip { display: flex; align-items: stretch; gap: 8px; }
+    .bk-chip-main { flex: 1; min-width: 0; }
+    .booking-chip-time small { font-family: 'Inter', sans-serif; font-size: 10.5px; font-weight: 400; color: var(--text-muted); margin-left: 2px; }
+    .bk-chip-table {
+      flex-shrink: 0; min-width: 42px; max-width: 64px; padding-left: 8px; border-left: 1px solid var(--border);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+    }
+    .bk-chip-table .n { font-family: 'Jost', sans-serif; font-size: 26px; font-weight: 500; line-height: 1; color: var(--accent); }
+    .bk-chip-table .n.word { font-size: 15px; }
+    .bk-chip-table .z { font-size: 9px; line-height: 1.15; color: var(--text-muted); margin-top: 4px; }
+    .bk-chip-table.none .n { font-size: 18px; color: var(--text-muted); }
+    /* То же в карточке брони: большой номер слева от выбора стола */
+    .bk-table-row { display: flex; align-items: center; gap: 14px; }
+    .bk-table-big {
+      flex-shrink: 0; width: 64px; height: 64px; border-radius: 14px; border: 1px solid rgba(184,115,51,0.4);
+      background: var(--accent-dim); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+    }
+    .bk-table-big .n { font-family: 'Jost', sans-serif; font-size: 30px; font-weight: 500; line-height: 1; color: var(--accent); }
+    .bk-table-big .n.word { font-size: 16px; }
+    .bk-table-big .z { font-size: 9px; color: var(--text-muted); margin-top: 4px; line-height: 1.1; padding: 0 4px; }
+    .bk-table-big.none { background: transparent; border-style: dashed; border-color: var(--border); }
+    .bk-table-big.none .n { color: var(--text-muted); font-size: 22px; }
+    .bk-table-status { font-size: 11.5px; min-height: 16px; margin-top: 6px; color: var(--text-muted); transition: opacity 0.3s; }
+    .bk-table-status.ok { color: #4ade80; }
+    .copy-btn {
+      font: inherit; font-size: 11.5px; color: var(--text-sub); background: rgba(240,223,192,0.05);
+      border: 1px solid var(--border); border-radius: 9px; padding: 5px 9px; margin-left: 8px; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 5px; vertical-align: middle; flex-shrink: 0;
+    }
+    .copy-btn:active { background: var(--accent-dim); color: var(--accent); }
 
     .sec { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin: 20px 0 10px; }
 
@@ -733,6 +765,8 @@
     .hz-t.pending .hz-shape { fill: rgba(245,158,11,0.24); stroke: #f59e0b; }
     .hz-t.pending .hz-stool { fill: rgba(245,158,11,0.45); stroke: #f59e0b; }
     .hz-t.soon .hz-shape { stroke: #f59e0b; stroke-dasharray: 4 3; }
+    .hz-t.later .hz-shape { fill: rgba(184,115,51,0.13); stroke: rgba(184,115,51,0.75); stroke-dasharray: 2 3; }
+    .hz-t.later .hz-stool { fill: rgba(184,115,51,0.3); stroke: rgba(184,115,51,0.75); }
     .hz-t.conflict .hz-shape { fill: rgba(239,68,68,0.22); stroke: #ef4444; stroke-width: 2; }
     .hz-t.conflict .hz-stool { fill: rgba(239,68,68,0.4); stroke: #ef4444; }
     .hz-t.busy .hz-seats, .hz-t.pending .hz-seats, .hz-t.conflict .hz-seats { fill: var(--text-sub); }
@@ -749,7 +783,32 @@
     .lg.confirmed { background: rgba(74,222,128,0.26); border-color: #4ade80; }
     .lg.pending { background: rgba(245,158,11,0.24); border-color: #f59e0b; }
     .lg.soon { border-color: #f59e0b; border-style: dashed; }
+    .lg.later { background: rgba(184,115,51,0.13); border-color: rgba(184,115,51,0.75); border-style: dotted; }
     .lg.conflict { background: rgba(239,68,68,0.22); border-color: #ef4444; }
+    /* Посадка брони со схемы: список «Ждут стола» и режим выбора стола */
+    .hz-wait-box { margin: 12px 0 4px; padding: 12px; border: 1px solid rgba(245,158,11,0.35); background: rgba(245,158,11,0.06); border-radius: 14px; }
+    .hz-wait-title { font-size: 12px; color: var(--text); margin-bottom: 8px; }
+    .hz-wait-title small { display: block; color: var(--text-muted); font-size: 11px; margin-top: 2px; }
+    .hz-wait-list { display: flex; flex-wrap: wrap; gap: 6px; }
+    .hz-wait {
+      font: inherit; font-size: 12.5px; color: var(--text); background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 999px; padding: 7px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .hz-wait b { font-weight: 500; }
+    .hz-wait.pending { border-color: rgba(245,158,11,0.5); }
+    .hz-wait.on { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+    .hz-seatbar {
+      position: sticky; top: 0; z-index: 5; margin: 10px 0 8px; padding: 11px 12px; border-radius: 14px;
+      background: #2A1706; border: 1px solid var(--accent); display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    }
+    .hz-seatbar .txt { flex: 1; min-width: 0; font-size: 12.5px; color: var(--text); line-height: 1.4; }
+    .hz-seatbar .txt small { display: block; color: var(--text-muted); font-size: 11px; }
+    .hz-seatbar button { flex-shrink: 0; font: inherit; font-size: 12px; padding: 7px 12px; border-radius: 10px; background: transparent; color: var(--text-sub); border: 1px solid var(--border); cursor: pointer; }
+    .hz-seating .hz-t:not(.seat-ok) { opacity: 0.45; }
+    .hz-t.seat-ok .hz-shape { stroke: #4ade80; stroke-width: 2; animation: hzSeatPulse 1.6s ease-in-out infinite; }
+    @keyframes hzSeatPulse { 0%, 100% { stroke-opacity: 1; } 50% { stroke-opacity: 0.35; } }
+    .hz-mini-btn { font: inherit; font-size: 11.5px; padding: 5px 10px; border-radius: 9px; border: 1px solid rgba(74,222,128,0.45); background: rgba(74,222,128,0.1); color: #4ade80; cursor: pointer; }
     .hz-item { display: flex; align-items: center; justify-content: space-between; gap: 6px 10px; flex-wrap: wrap; padding: 9px 0; border-top: 1px solid var(--border); font-size: 13px; color: var(--text); cursor: pointer; }
     .hz-item .bk-flags { margin-top: 0; }
     .hz-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 7px; vertical-align: 1px; }
@@ -2294,6 +2353,22 @@
     return flags;
   }
 
+  // «Общий зал 12» → { num: '12', zone: 'Общий зал' }, «VIP 2» → { num: '2', zone: 'VIP' },
+  // «Бар» → { num: 'Бар', zone: 'Общий зал' }. Нет стола — null.
+  function tableParts(label) {
+    const t = String(label || '').trim();
+    if (!t) return null;
+    const m = /^(.*?)\s*(\d+)$/.exec(t);
+    if (m) return { num: m[2], zone: m[1].trim() || 'Общий зал', word: false };
+    const hall = hallTableFor(t);
+    return { num: t, zone: hall && hall.zone === 'main' ? 'Общий зал' : '', word: true };
+  }
+  function tableBadgeInner(label, noneText) {
+    const p = tableParts(label);
+    if (!p) return `<div class="n">—</div><div class="z">${noneText}</div>`;
+    return `<div class="n${p.word ? ' word' : ''}">${escHtml(p.num)}</div>${p.zone ? `<div class="z">${escHtml(p.zone)}</div>` : ''}`;
+  }
+
   function bookingFlagsHtml(b, limit) {
     const flags = bookingGuestFlags(b, !!limit); // в списке — короткие пометки, подробности в самой брони
     if (!flags.length) return '';
@@ -2314,20 +2389,25 @@
       // В компактном боксе год не нужен — дата и так текущая/близкая,
       // убираем его, чтобы уместить дату, время и имя в одну строку.
       const shortDate = (b.display || '').replace(/\.\d{4}(?=\s)/, '');
+      // время — первым и крупно, дата мелко рядом (справа теперь колонка со столом)
+      const whenM = /^(\S+)\s+(\d{1,2}:\d{2})/.exec(shortDate);
+      const chipWhen = whenM ? `${escHtml(whenM[2])} <small>${escHtml(whenM[1])}</small>` : escHtml(shortDate);
       const kindLine = b.eventName ? `${b.kind} · ${b.eventName}` : b.kind;
       const nameHtml = escHtml(b.name) + (b.guests ? ` · ${escHtml(String(b.guests))} гост.` : '');
       const metaParts = [];
       if (kindLine) metaParts.push(escHtml(kindLine));
-      if (b.table) metaParts.push(`<span class="table-tag">${escHtml(b.table)}</span>`);
       const arr = b.arrival?.status;
       const arrHtml = arr ? `<div class="bk-flags"><span class="bk-flag ${arr}">${arr === 'arrived' ? '✓ пришёл' : '✗ не пришёл'}</span></div>` : '';
       return `
         <div class="booking-chip${arr === 'noshow' ? ' noshow' : ''}" style="border-left-color:${st.color}" onclick="openBookingDetail(${idx})" title="${escHtml(st.label)}">
-          <div class="booking-chip-time">${escHtml(shortDate)}</div>
-          <div class="booking-chip-name">${nameHtml}</div>
-          <div class="booking-chip-meta">${metaParts.join(' · ')}</div>
-          ${arrHtml}
-          ${bookingFlagsHtml(b, 3)}
+          <div class="bk-chip-main">
+            <div class="booking-chip-time">${chipWhen}</div>
+            <div class="booking-chip-name">${nameHtml}</div>
+            <div class="booking-chip-meta">${metaParts.join(' · ')}</div>
+            ${arrHtml}
+            ${bookingFlagsHtml(b, 3)}
+          </div>
+          <div class="bk-chip-table${b.table ? '' : ' none'}">${tableBadgeInner(b.table, 'без стола')}</div>
         </div>
       `;
     }).join('') + '</div>';
@@ -2802,6 +2882,9 @@
     if (cur.length > 1) state = 'conflict';
     else if (cur.length === 1) state = cur[0].b.status === 'pending' ? 'pending' : 'busy';
     else if (next && next.start - t <= SOON_MIN) state = 'soon';
+    // Бронь позже в этот же день — стол помечаем сразу, а не только за час до неё:
+    // иначе вечером легко принять стол за свободный и посадить туда гостя «с улицы».
+    else if (next) state = 'later';
     return { mine, cur: cur[0] || null, next: next || null, state, conflict: cur.length > 1 };
   }
 
@@ -2819,7 +2902,7 @@
   }
   function tableLabelParts(st, t, maxW) {
     if (hallMode === 'guest') {
-      const it = st.cur || (st.state === 'soon' ? st.next : null);
+      const it = st.cur || st.next; // следующая бронь дня — всегда, а не только в ближайший час
       if (!it) return [];
       const b = it.b;
       const first = String(b.name || 'Гость').trim().split(/\s+/)[0];
@@ -2960,28 +3043,54 @@
 
     const modes = segControl([['guest', 'Гость'], ['day', 'Брони дня'], ['time', 'Время']], hallMode, 'setHallMode', 'seg-sm hz-modes');
 
-    let svg = `<svg viewBox="0 0 ${zone.width} ${zone.height}" class="hz-svg" data-w="${zone.width}" xmlns="http://www.w3.org/2000/svg">${zone.decor.join('')}`;
+    // Режим посадки брони: свободные на весь вечер столы мигают зелёным, остальные притушены
+    const seatB = hallSeatIdx !== null ? bookingsListData[hallSeatIdx] : null;
+    if (hallSeatIdx !== null && (!seatB || bookingSlot(seatB)?.day !== hallDate)) hallSeatIdx = null;
+    const seating = hallSeatIdx !== null;
+    let svg = `<svg viewBox="0 0 ${zone.width} ${zone.height}" class="hz-svg${seating ? ' hz-seating' : ''}" data-w="${zone.width}" xmlns="http://www.w3.org/2000/svg">${zone.decor.join('')}`;
     for (const tb of zone.tables) {
       const st = states[tb.key];
-      const cls = ['hz-t', st.state, hallSelectedTable === tb.key ? 'sel' : ''].join(' ');
-      svg += `<g class="${cls}" data-table="${escHtml(tb.key)}" onclick="selectHallTable('${escJs(tb.key)}')">${tableTicksSvg(tb)}${tableShapeSvg(tb)}${tableTextSvg(tb)}</g>`;
+      const cls = ['hz-t', st.state, hallSelectedTable === tb.key ? 'sel' : '', seating && !st.mine.length ? 'seat-ok' : ''].join(' ');
+      svg += `<g class="${cls}" data-table="${escHtml(tb.key)}" onclick="hallTableClick('${escJs(tb.key)}')">${tableTicksSvg(tb)}${tableShapeSvg(tb)}${tableTextSvg(tb)}</g>`;
     }
     for (const tb of zone.tables) svg += labelSvg(tb, tableLabelParts(states[tb.key], t, tb.labelMax || 100));
     svg += '</svg>';
 
-    const offPlan = items.filter(it => !it.table);
+    const offPlan = items.filter(it => !it.table && it.b.table); // стол назначен, но не на этой схеме
+    const waiting = items.filter(it => !it.b.table);             // брони без стола — посадить со схемы
+    const waitHtml = waiting.length ? `
+      <div class="hz-wait-box">
+        <div class="hz-wait-title">Ждут стола: ${waiting.length}<small>Нажмите на бронь, потом на стол на схеме — стол сохранится сразу</small></div>
+        <div class="hz-wait-list">${waiting.map(it => `
+          <button type="button" class="hz-wait${it.b.status === 'pending' ? ' pending' : ''}${it.idx === hallSeatIdx ? ' on' : ''}" onclick="toggleSeating(${it.idx})">
+            <b>${hhmm(it.start)}</b> ${escHtml(String(it.b.name || 'Гость').trim().split(/\s+/)[0])}${it.b.guests ? ` · ${escHtml(String(it.b.guests))}` : ''}${it.b.status === 'pending' ? ' <span style="color:#f59e0b">●</span>' : ''}
+          </button>`).join('')}
+        </div>
+      </div>` : '';
+    const seatBar = seating ? (() => {
+      const sb = seatB;
+      const g = Number(sb.guests) || 0;
+      return `<div class="hz-seatbar">
+        <div class="txt">Посадить: <b style="font-weight:500">${escHtml(sb.name || 'Гость')}</b> · ${escHtml((sb.iso || '').slice(11, 16))}${g ? ` · ${g} ${ruPlural(g, 'гость', 'гостя', 'гостей')}` : ''}
+          <small>Нажмите на стол на схеме — зелёные свободны на весь вечер</small></div>
+        <button type="button" onclick="cancelSeating()">Отмена</button>
+      </div>`;
+    })() : '';
     body.innerHTML = `
       ${timesHtml}
       ${modes}
+      ${waitHtml}
+      ${seatBar}
       <div class="hz-zonehead"><span>${escHtml(zone.title)}</span><span class="note">в ${hhmm(t)} занято ${busyCount} из ${zone.tables.length}</span></div>
       <div class="hz-wrap">${svg}</div>
       <div class="hz-legend">
         <span><i class="lg confirmed"></i>идёт бронь</span>
         <span><i class="lg pending"></i>ждёт подтверждения</span>
         <span><i class="lg soon"></i>бронь в ближайший час</span>
+        <span><i class="lg later"></i>бронь позже в этот день</span>
         <span><i class="lg conflict"></i>две брони на один стол</span>
       </div>
-      <div id="hzTablePanel">${renderHallTablePanel(items, t)}</div>
+      <div id="hzTablePanel">${seating ? '' : renderHallTablePanel(items, t)}</div>
       ${offPlan.length ? `<div class="sec">Не на схеме</div>${offPlan.map(it => `
         <div class="hz-item" onclick="openBookingDetail(${it.idx})">
           <span><b style="font-weight:500">${hhmm(it.start)}</b> ${escHtml(it.b.name)}${it.b.guests ? ` · ${escHtml(String(it.b.guests))}` : ''}</span>
@@ -3024,6 +3133,7 @@
       return `<div class="hz-item" onclick="openBookingDetail(${it.idx})">
         <span><span class="hz-dot" style="background:${color}"></span><b style="font-weight:500">с ${hhmm(it.start)}</b> ${escHtml(b.name)}${b.guests ? ` · ${escHtml(String(b.guests))}` : ''}${nowTag}</span>
         ${bookingFlagsHtml(b, 2)}
+        ${b.status === 'pending' ? `<button type="button" class="hz-mini-btn" onclick="event.stopPropagation();confirmFromPlan(${it.idx}, this)">✓ Подтвердить</button>` : ''}
       </div>`;
     }).join('') : '<div class="autotag-empty">На этот день броней нет</div>';
     return `<div class="hint-box" style="margin-top:12px">
@@ -3246,25 +3356,23 @@
       return;
     }
 
-    const tableBlockHtml = bookingTableEditMode ? `
+    // Стол: выбрал — сразу сохранилось, сменил — пересохранилось (без кнопки «Сохранить»).
+    // Рядом крупный номер стола; «Выбрать на схеме» — посадить бронь, нажав на стол в зале.
+    const tableBlockHtml = `
       <div class="visit-item" style="margin-top:14px;">
-        <label class="form-label">Стол</label>
-        <select class="form-input" id="bkTableSelect" onchange="onTableSelectChange('bkTableSelect','tableConflictWarning')">
-          <option value="">— не выбран —</option>
-          ${tableOptionsHtml(b.table || '', getOccupiedTablesForDate((b.iso || '').slice(0, 10), b.entry))}
-        </select>
+        <div class="bk-table-row">
+          <div class="bk-table-big${b.table ? '' : ' none'}">${tableBadgeInner(b.table, 'нет стола')}</div>
+          <div style="flex:1;min-width:0;">
+            <label class="form-label" style="margin-bottom:6px;">Стол</label>
+            <select class="form-input" id="bkTableSelect" onchange="onTableSelectChange('bkTableSelect','tableConflictWarning'); saveTableAssign();">
+              <option value="">— не выбран —</option>
+              ${tableOptionsHtml(b.table || '', getOccupiedTablesForDate((b.iso || '').slice(0, 10), b.entry))}
+            </select>
+            <div class="bk-table-status" id="bkTableStatus"></div>
+          </div>
+        </div>
         ${tableConflictWarningHtml('tableConflictWarning')}
-        <div style="display:flex;gap:8px;margin-top:10px;">
-          <button class="btn-primary" style="flex:1;" onclick="saveTableAssign()">Сохранить</button>
-          <button class="btn-primary" style="flex:1;background:transparent;" onclick="bookingTableEditMode=false;renderBookingDetail();">Отмена</button>
-        </div>
-      </div>
-    ` : `
-      <div class="visit-item" style="margin-top:14px;">
-        <div class="visit-detail" style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
-          <span>${b.table ? `Стол: <strong style="color:var(--text-main)">${escHtml(b.table)}</strong>` : 'Стол не назначен'}</span>
-          <button class="btn-primary" style="padding:7px 14px;font-size:12.5px;white-space:nowrap;flex-shrink:0;" onclick="bookingTableEditMode=true;renderBookingDetail();">${b.table ? 'Сменить' : 'Назначить'}</button>
-        </div>
+        ${currentBookingSource === 'cur' ? `<button class="btn-primary btn-full" style="margin-top:10px;background:transparent;" onclick="seatFromDetail()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><rect x="3" y="3" width="18" height="18" rx="3"/><rect x="7" y="7" width="4" height="4" rx="1"/><circle cx="16" cy="9" r="2"/><rect x="7" y="14" width="10" height="3.5" rx="1.5"/></svg>Выбрать стол на схеме</button>` : ''}
       </div>
     `;
 
@@ -3279,7 +3387,7 @@
         <div class="visit-detail">${escHtml(kindLine || '')}</div>
         ${b.guests ? `<div class="visit-detail">Гостей: ${escHtml(String(b.guests))}</div>` : ''}
         ${b.comment ? `<div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>${escHtml(b.comment)}</div>` : ''}
-        <div class="visit-detail"><a href="tel:${escHtml((b.phone || '').replace(/[^\d+]/g, ''))}" style="color:var(--text-sub);text-decoration:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="18" x2="14" y2="18"/></svg>${escHtml(b.phone || 'Телефон не указан')}</a></div>
+        <div class="visit-detail"><a href="tel:${escHtml((b.phone || '').replace(/[^\d+]/g, ''))}" style="color:var(--text-sub);text-decoration:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="18" x2="14" y2="18"/></svg>${escHtml(b.phone || 'Телефон не указан')}</a>${b.phone ? ` <button type="button" class="copy-btn" onclick="copyPhone('${escJs(b.phone)}')" title="Скопировать номер">${COPY_ICON}Копировать</button>` : ''}</div>
       </div>
 
       ${renderArrivalBlock(b)}
@@ -3326,36 +3434,144 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
 
   // Назначить/сменить стол — отдельное лёгкое действие, не трогает статус
   // подтверждения и не отправляет гостю никаких уведомлений (это чисто
-  // внутренняя рабочая пометка для персонала).
+  // внутренняя рабочая пометка для персонала). Общее для карточки брони и схемы.
+  async function assignTableToBooking(b, table, opts) {
+    opts = opts || {};
+    if (table) {
+      const occ = getOccupiedTablesForDate((b.iso || '').slice(0, 10), b.entry)[table];
+      if (occ && !confirm(`Стол «${table}» уже назначен брони ${occ.name}${occ.time ? ' на ' + occ.time : ''}.\n\nВсё равно посадить сюда?`)) return false;
+      const hall = hallTableFor(table);
+      const guests = Number(b.guests) || 0;
+      if (opts.checkSeats && hall && hall.seats && guests > hall.seats &&
+          !confirm(`За столом ${hall.short} ${hall.seats} ${ruPlural(hall.seats, 'место', 'места', 'мест')}, а гостей ${guests}.\n\nВсё равно посадить сюда?`)) return false;
+    }
+    const res = await fetch(`${PROXY_BASE}/api/staff/bookings/table?pin=${getPin()}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pin: getPin(), phone: b.phone, entry: b.entry, table })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) { alert(data.error || 'Не удалось сохранить стол'); return false; }
+    b.table = table;
+    if (data.newEntry) b.entry = data.newEntry;
+    return true;
+  }
+
+  // Карточка брони: стол сохраняется сразу при выборе в списке
   async function saveTableAssign() {
     if (bookingActionBusy) return;
     const b = bookingBySource(currentBookingSource, currentBookingIndex);
-    const table = document.getElementById('bkTableSelect').value;
-
-    if (table) {
-      const occ = getOccupiedTablesForDate((b.iso || '').slice(0, 10), b.entry)[table];
-      if (occ && !confirm(`Стол «${table}» уже назначен брони ${occ.name}${occ.time ? ' на ' + occ.time : ''}.\n\nВсё равно сохранить?`)) {
-        return;
-      }
-    }
-
+    const select = document.getElementById('bkTableSelect');
+    const status = document.getElementById('bkTableStatus');
+    const table = select.value;
+    if (table === (b.table || '')) return;
     bookingActionBusy = true;
+    select.disabled = true;
+    if (status) { status.className = 'bk-table-status'; status.textContent = 'Сохраняю…'; }
+    let ok = false;
     try {
-      const res = await fetch(`${PROXY_BASE}/api/staff/bookings/table?pin=${getPin()}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: getPin(), phone: b.phone, entry: b.entry, table })
-      });
-      const data = await res.json();
-      if (!res.ok) { alert(data.error || 'Не удалось сохранить стол'); return; }
-      b.table = table;
-      b.entry = data.newEntry;
-      bookingTableEditMode = false;
+      ok = await assignTableToBooking(b, table);
     } catch {
       alert('Не удалось сохранить стол');
     } finally {
       bookingActionBusy = false;
-      renderBookingDetail();
+    }
+    renderBookingDetail(); // вернёт в список сохранённый стол, если отменили или не вышло
+    if (ok) {
+      const st2 = document.getElementById('bkTableStatus');
+      if (st2) { st2.className = 'bk-table-status ok'; st2.textContent = table ? '✓ Стол сохранён' : '✓ Стол снят'; }
+    }
+  }
+
+  // ─── ПОСАДКА СО СХЕМЫ ────────────────────────────
+  // Пришла бронь без стола → на схеме она в «Ждут стола»; нажали на неё (или
+  // «Выбрать стол на схеме» в карточке брони) → нажали на стол → стол сохранён.
+  let hallSeatIdx = null;             // индекс брони в bookingsListData, которую сажаем
+  let hallSeatReturnToDetail = false; // пришли из карточки брони — туда и вернуться
+
+  function startSeating(idx, fromDetail) {
+    const b = bookingsListData[idx];
+    if (!b) return;
+    hallSeatIdx = idx;
+    hallSeatReturnToDetail = !!fromDetail;
+    hallSelectedTable = null;
+    const slot = bookingSlot(b);
+    if (slot) { hallDate = slot.day; hallTime = Math.floor(slot.start / 15) * 15; }
+  }
+  function toggleSeating(idx) {
+    if (hallSeatIdx === idx) { hallSeatIdx = null; renderHallPlan(); return; }
+    startSeating(idx, false);
+    renderBookingsView();
+    document.querySelector('.hz-seatbar')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  function seatFromDetail() {
+    if (currentBookingSource !== 'cur') return;
+    startSeating(currentBookingIndex, true);
+    bookingsView = 'plan';
+    showScreen('bookings');
+    renderBookingsView();
+    setTimeout(() => document.querySelector('.hz-seatbar')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  }
+  function cancelSeating() {
+    const idx = hallSeatIdx, back = hallSeatReturnToDetail;
+    hallSeatIdx = null;
+    hallSeatReturnToDetail = false;
+    if (back && idx !== null) openBookingDetail(idx);
+    else renderHallPlan();
+  }
+  function hallTableClick(key) {
+    if (hallSeatIdx !== null) seatAtTable(key);
+    else selectHallTable(key);
+  }
+  let seatingBusy = false;
+  async function seatAtTable(key) {
+    if (seatingBusy) return;
+    const idx = hallSeatIdx;
+    const b = bookingsListData[idx];
+    const tb = HALL_TABLES.find(x => x.key === key);
+    if (!b || !tb) return;
+    seatingBusy = true;
+    let ok = false;
+    try {
+      ok = await assignTableToBooking(b, key, { checkSeats: true });
+    } catch {
+      alert('Не удалось сохранить стол');
+    } finally {
+      seatingBusy = false;
+    }
+    if (!ok) return;
+    const back = hallSeatReturnToDetail;
+    hallSeatIdx = null;
+    hallSeatReturnToDetail = false;
+    const first = String(b.name || 'Гость').trim().split(/\s+/)[0];
+    showToast(`${first} — ${tb.shape === 'bar' ? 'бар' : 'стол ' + tb.short}${b.status === 'pending' ? '. Бронь ещё не подтверждена' : ''}`);
+    if (back) { openBookingDetail(idx); return; }
+    hallSelectedTable = key;
+    renderBookingsView();
+  }
+
+  // Подтвердить бронь прямо со схемы (в панели стола)
+  async function confirmFromPlan(idx, btn) {
+    const b = bookingsListData[idx];
+    if (!b || bookingActionBusy) return;
+    bookingActionBusy = true;
+    if (btn) { btn.disabled = true; btn.textContent = '…'; }
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/bookings/confirm?pin=${getPin()}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), phone: b.phone, entry: b.entry })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) { alert(data.error || 'Не удалось подтвердить'); return; }
+      b.status = 'confirmed';
+      refreshBookingsDot();
+      showToast(data.notified ? 'Бронь подтверждена, гость уведомлён' : 'Подтверждено, но гостя уведомить не удалось — свяжитесь сами', !data.notified);
+    } catch {
+      alert('Не удалось подтвердить');
+    } finally {
+      bookingActionBusy = false;
+      renderBookingsView();
     }
   }
 
@@ -6088,7 +6304,8 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
 
       <div class="info-row" onclick="openEditField('phone','Телефон')">
         <div class="info-row-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="18" x2="14" y2="18"/></svg></div>
-        <div><div class="info-row-label">Телефон</div><div class="info-row-value">${guest.phone || 'Не указан'}</div></div>
+        <div style="flex:1;min-width:0;"><div class="info-row-label">Телефон</div><div class="info-row-value">${guest.phone || 'Не указан'}</div></div>
+        ${guest.phone ? `<button type="button" class="copy-btn" onclick="event.stopPropagation();copyPhone('${escJs(guest.phone)}')" title="Скопировать номер">${COPY_ICON}Копировать</button>` : ''}
         <div class="info-row-edit">${editIcon}</div>
       </div>
 
@@ -6333,6 +6550,28 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
     return Number(m[1]) < DAY_SPLIT_HOUR ? shiftDateStr(day, -1) : day;
   }
 
+  // Скопировать номер гостя: в буфер кладём «+79891234567» — так он без ошибок
+  // вставляется и в наши поля телефона, и в WhatsApp/Telegram/звонилку.
+  const COPY_ICON = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 012-2h9"/></svg>';
+  async function copyPhone(phone) {
+    if (window.event) window.event.stopPropagation();
+    const d = ruPhoneNationalDigits(phone);
+    const text = d.length === 10 ? `+7${d}` : String(phone || '').trim();
+    if (!text) return;
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch {}
+    if (!ok) {
+      // запасной путь: Telegram WebView на части телефонов не даёт Clipboard API
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;top:-1000px;opacity:0;';
+      document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, text.length);
+      try { ok = document.execCommand('copy'); } catch {}
+      ta.remove();
+    }
+    showToast(ok ? `Номер скопирован: ${ruPhoneFormat(d.length === 10 ? d : '') === '+7' ? text : ruPhoneFormat(d)}` : 'Не удалось скопировать — зажмите номер и скопируйте вручную', !ok);
+  }
+
   let toastTimer = null;
   function showToast(text, bad) {
     let el = document.getElementById('appToast');
@@ -6395,32 +6634,130 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
     return String(value || '').replace(/\D/g, '').length === 11;
   }
 
-  function formatRuPhone(input) {
-    const cursorPos = input.selectionStart ?? input.value.length;
-    const oldValue = input.value;
-    let digitsBeforeCursor = 0;
-    for (let i = 0; i < cursorPos && i < oldValue.length; i++) {
-      if (/\d/.test(oldValue[i])) digitsBeforeCursor++;
-    }
-    let digits = oldValue.replace(/\D/g, '');
-    if (digits.startsWith('8')) digits = '7' + digits.slice(1);
-    if (!digits.startsWith('7')) digits = '7' + digits;
-    digits = digits.slice(0, 11);
-    const d = digits.slice(1);
-    let formatted = '+7';
-    if (d.length > 0) formatted += ' (' + d.slice(0, 3);
-    if (d.length >= 3) formatted += ')';
-    if (d.length > 3) formatted += ' ' + d.slice(3, 6);
-    if (d.length > 6) formatted += '-' + d.slice(6, 8);
-    if (d.length > 8) formatted += '-' + d.slice(8, 10);
-    input.value = formatted;
-    let count = 0, newPos = formatted.length;
-    for (let i = 0; i < formatted.length; i++) {
-      if (count === digitsBeforeCursor) { newPos = i; break; }
-      if (/\d/.test(formatted[i])) count++;
-    }
-    input.setSelectionRange(newPos, newPos);
+  // ─── Телефон +7 (XXX) XXX-XX-XX ─────────────────────────────
+  // «+7» — неприкосновенный префикс: курсор никогда не встаёт перед ним или внутри
+  // него (раньше на телефоне курсор оказывался перед «+7», набранная цифра
+  // вставалась перед кодом страны и номер перемешивался). Считаем только цифры
+  // самого номера (10 после +7) и возвращаем курсор туда же, где их было столько же.
+  const RU_PHONE_PREFIX = '+7';
+
+  // 10 цифр номера из любого текста: «+7 (989) 123-45-67», «8 989 123 45 67»,
+  // «89891234567», «9891234567», «7989…» — всё приводится к «9891234567».
+  function ruPhoneNationalDigits(text) {
+    let d = String(text || '').replace(/\D/g, '');
+    if (d.length >= 11 && (d[0] === '7' || d[0] === '8')) d = d.slice(1);
+    return d.slice(0, 10);
   }
+
+  function ruPhoneFormat(d) {
+    let out = RU_PHONE_PREFIX;
+    if (d.length > 0) out += ' (' + d.slice(0, 3);
+    if (d.length >= 3) out += ')';
+    if (d.length > 3) out += ' ' + d.slice(3, 6);
+    if (d.length > 6) out += '-' + d.slice(6, 8);
+    if (d.length > 8) out += '-' + d.slice(8, 10);
+    return out;
+  }
+
+  // Позиция в отформатированной строке после n-й цифры номера (не считая «+7»)
+  function ruPhoneCaretAfter(formatted, n) {
+    if (n <= 0) return Math.min(formatted.length, formatted.indexOf('(') >= 0 ? formatted.indexOf('(') + 1 : RU_PHONE_PREFIX.length);
+    let count = 0;
+    for (let i = RU_PHONE_PREFIX.length; i < formatted.length; i++) {
+      if (/\d/.test(formatted[i])) { count++; if (count === n) return i + 1; }
+    }
+    return formatted.length;
+  }
+
+  function formatRuPhone(input, ev) {
+    ev = ev || window.event;
+    const raw = input.value;
+    const cursor = input.selectionStart ?? raw.length;
+
+    // Цифры номера и сколько их стоит слева от курсора. «+7» (где бы он ни оказался)
+    // вырезаем — его «7» не часть номера; цифры, набранные ПЕРЕД ним, тоже считаем
+    // цифрами номера (чтобы ничего не потерять, если курсор всё-таки был в начале).
+    const p = raw.indexOf(RU_PHONE_PREFIX);
+    let body = raw, bodyCursor = cursor;
+    if (p >= 0) {
+      body = raw.slice(0, p) + raw.slice(p + RU_PHONE_PREFIX.length);
+      bodyCursor = cursor <= p ? cursor : Math.max(p, cursor - RU_PHONE_PREFIX.length);
+    }
+    let digits = body.replace(/\D/g, '');
+    let before = body.slice(0, bodyCursor).replace(/\D/g, '').length;
+    // Поле было пустым/стёрто целиком, и вставили полный номер — «8…»/«7…» в начале лишние
+    if (p < 0 && digits.length >= 11 && (digits[0] === '7' || digits[0] === '8')) { digits = digits.slice(1); before = Math.max(0, before - 1); }
+
+    // Стёрли скобку/пробел/дефис — цифры не изменились; тогда стираем цифру перед ними,
+    // иначе форматирование вернёт знак обратно и Backspace «застрянет».
+    const prev = input.dataset.phoneDigits;
+    if (ev && ev.inputType === 'deleteContentBackward' && prev === digits && before > 0) {
+      digits = digits.slice(0, before - 1) + digits.slice(before);
+      before -= 1;
+    }
+
+    digits = digits.slice(0, 10);
+    before = Math.min(before, digits.length);
+    const formatted = ruPhoneFormat(digits);
+    input.value = formatted;
+    input.dataset.phoneDigits = digits;
+    const pos = ruPhoneCaretAfter(formatted, before);
+    try { input.setSelectionRange(pos, pos); } catch {}
+  }
+
+  function isRuPhoneInput(el) {
+    return el && el.tagName === 'INPUT' && /formatRuPhone/.test(el.getAttribute('oninput') || '');
+  }
+  // Курсор не пускаем раньше конца «+7 (» — ни при фокусе, ни при нажатии, ни стрелками
+  function ruPhoneClampCaret(el) {
+    if (!isRuPhoneInput(el)) return;
+    if (!el.value || el.value.indexOf(RU_PHONE_PREFIX) !== 0) formatRuPhone(el, {});
+    const min = el.value.length <= RU_PHONE_PREFIX.length ? el.value.length : RU_PHONE_PREFIX.length + 2;
+    if ((el.selectionStart ?? 0) < min || (el.selectionEnd ?? 0) < min) {
+      const end = el.value.length;
+      try { el.setSelectionRange(end, end); } catch {}
+    }
+  }
+  document.addEventListener('focusin', e => {
+    const el = e.target;
+    if (!isRuPhoneInput(el)) return;
+    el.dataset.phoneDigits = ruPhoneNationalDigits(el.value.indexOf(RU_PHONE_PREFIX) === 0 ? el.value.slice(RU_PHONE_PREFIX.length) : el.value);
+    setTimeout(() => ruPhoneClampCaret(el), 0);
+  });
+  ['click', 'keyup', 'select'].forEach(t => document.addEventListener(t, e => ruPhoneClampCaret(e.target)));
+
+  // Вставка номера: полный номер в любом виде заменяет поле целиком, кусок цифр —
+  // вставляется в место курсора. Раньше «8 989…» или «+7 (989)…» склеивались
+  // с уже стоящим «+7» и номер получался неправильным.
+  document.addEventListener('paste', e => {
+    const el = e.target;
+    if (!isRuPhoneInput(el)) return;
+    const text = (e.clipboardData || window.clipboardData)?.getData('text') || '';
+    const pasted = text.replace(/\D/g, '');
+    if (!pasted) { e.preventDefault(); return; }
+    e.preventDefault();
+    let digits;
+    let caretDigits;
+    if (pasted.length >= 10) {
+      digits = ruPhoneNationalDigits(pasted);
+      caretDigits = digits.length;
+    } else {
+      const cur = ruPhoneNationalDigits(el.value.indexOf(RU_PHONE_PREFIX) === 0 ? el.value.slice(RU_PHONE_PREFIX.length) : el.value);
+      const f = el.value;
+      const s = el.selectionStart ?? f.length, en = el.selectionEnd ?? f.length;
+      const count = str => str.slice(RU_PHONE_PREFIX.length).replace(/\D/g, '').length;
+      const a = count(f.slice(0, Math.max(s, RU_PHONE_PREFIX.length)));
+      const b = count(f.slice(0, Math.max(en, RU_PHONE_PREFIX.length)));
+      digits = (cur.slice(0, a) + pasted + cur.slice(b)).slice(0, 10);
+      caretDigits = Math.min(a + pasted.length, digits.length);
+    }
+    const formatted = ruPhoneFormat(digits);
+    el.value = formatted;
+    el.dataset.phoneDigits = digits;
+    const pos = ruPhoneCaretAfter(formatted, caretDigits);
+    try { el.setSelectionRange(pos, pos); } catch {}
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  });
 
   // ─── INIT ──────────────────────────────────────
 
