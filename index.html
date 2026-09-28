@@ -262,6 +262,24 @@
     .bk-table-big.none .n { color: var(--text-muted); font-size: 22px; }
     .bk-table-status { font-size: 11.5px; min-height: 16px; margin-top: 6px; color: var(--text-muted); transition: opacity 0.3s; }
     .bk-table-status.ok { color: #4ade80; }
+    /* Постер мероприятия в форме */
+    .poster-drop {
+      position: relative; border: 1.5px dashed rgba(184,115,51,0.45); border-radius: 16px; background: rgba(184,115,51,0.05);
+      min-height: 170px; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .poster-drop:hover, .poster-drop.drag { border-color: var(--accent); background: var(--accent-dim); }
+    .poster-drop.has { border-style: solid; border-color: var(--border); background: #140a03; }
+    .poster-img { display: block; width: 100%; max-height: 460px; object-fit: contain; }
+    .poster-empty { text-align: center; padding: 22px 18px; color: var(--accent); }
+    .poster-empty .t { font-size: 14px; color: var(--text); margin: 8px 0 4px; }
+    .poster-empty .s { font-size: 11.5px; color: var(--text-muted); line-height: 1.5; }
+    .poster-actions { display: flex; gap: 8px; margin-top: 8px; }
+    .poster-note { font-size: 11.5px; color: var(--text-muted); margin-top: 6px; min-height: 14px; }
+    .poster-note.warn { color: #f59e0b; }
+    .ev-thumb { position: relative; width: 46px; height: 58px; flex-shrink: 0; border-radius: 10px; overflow: hidden; background: #140a03; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
+    .ev-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .ev-thumb .d { font-family: 'Jost', sans-serif; font-size: 18px; color: var(--accent); }
     .copy-btn {
       font: inherit; font-size: 11.5px; color: var(--text-sub); background: rgba(240,223,192,0.05);
       border: 1px solid var(--border); border-radius: 9px; padding: 5px 9px; margin-left: 8px; cursor: pointer;
@@ -1220,6 +1238,24 @@
     <div><h1 style="font-size:14px;letter-spacing:1px;" id="eventFormTitle">Новое мероприятие</h1></div>
   </div>
   <div style="padding:0 16px">
+    <!-- Постер: его видят гости на сайте и в приложении (поле «Постер» мероприятия в Notion) -->
+    <div class="form-group">
+      <label class="form-label">Постер</label>
+      <div class="poster-drop" id="evPosterDrop" onclick="pickEventPoster()">
+        <img id="evPosterImg" class="poster-img" alt="" style="display:none">
+        <div class="poster-empty" id="evPosterEmpty">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>
+          <div class="t">Добавить постер</div>
+          <div class="s">С телефона — из галереи или камерой.<br>На компьютере — нажмите, перетащите файл сюда или вставьте Ctrl+V.</div>
+        </div>
+      </div>
+      <div class="poster-actions" id="evPosterActions" style="display:none">
+        <button type="button" class="btn-primary" style="flex:1;" onclick="pickEventPoster()">Заменить</button>
+        <button type="button" class="btn-primary" style="flex:1;background:transparent;border-color:rgba(239,68,68,0.45);color:#ef4444;" onclick="removeEventPoster()">Убрать</button>
+      </div>
+      <div class="poster-note" id="evPosterNote"></div>
+      <input type="file" id="evPosterInput" accept="image/*" style="display:none" onchange="onEventPosterFile(this.files[0]); this.value='';">
+    </div>
     <div class="form-group">
       <label class="form-label">Название</label>
       <input class="form-input" id="evName" type="text" placeholder="Например: Dj Set">
@@ -3897,9 +3933,13 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
       el.innerHTML = list.map(e => {
         const d = new Date(e.date);
         return `
-        <div class="visit-item" style="cursor:pointer;" onclick="openEditEvent('${e.id}')">
-          <div class="visit-date">${d.getDate()} ${MONTHS[d.getMonth()]} · ${e.format}</div>
-          <div class="visit-detail" style="font-size:14px;color:var(--text);">${e.name}</div>
+        <div class="visit-item" style="cursor:pointer;display:flex;align-items:center;gap:12px;" onclick="openEditEvent('${escJs(e.id)}')">
+          <div class="ev-thumb">${e.poster ? `<img src="${escHtml(e.poster)}" alt="" loading="lazy" onerror="this.remove()">` : ''}<span class="d">${d.getDate()}</span></div>
+          <div style="min-width:0;flex:1;">
+            <div class="visit-date">${d.getDate()} ${MONTHS[d.getMonth()]} · ${escHtml(e.format || '')}</div>
+            <div class="visit-detail" style="font-size:14px;color:var(--text);">${escHtml(e.name || '')}</div>
+            <div class="visit-detail" style="font-size:11px;color:${e.poster ? 'var(--text-muted)' : '#f59e0b'};">${e.poster ? 'Постер есть' : 'Без постера'}</div>
+          </div>
         </div>`;
       }).join('');
     } catch {
@@ -3916,6 +3956,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
     document.querySelectorAll('#evFormatChips .chip').forEach((c, i) => c.classList.toggle('selected', i === 0));
     document.getElementById('evSubmitBtn').textContent = 'Создать';
     document.getElementById('evDeleteBtn').style.display = 'none';
+    resetEventPoster('');
     showScreen('add-event');
   }
 
@@ -3931,7 +3972,120 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
     document.querySelectorAll('#evFormatChips .chip').forEach(c => c.classList.toggle('selected', c.dataset.value === ev.format));
     document.getElementById('evSubmitBtn').textContent = 'Сохранить';
     document.getElementById('evDeleteBtn').style.display = 'block';
+    resetEventPoster(ev.poster || '');
     showScreen('add-event');
+  }
+
+  // ─── ПОСТЕР МЕРОПРИЯТИЯ ───
+  // Выбранное фото сжимается здесь же (до 1600 px по длинной стороне, JPEG) — так оно
+  // быстро уходит даже по мобильной сети и укладывается в лимит Notion (5 МБ).
+  // Сохраняется вместе с мероприятием кнопкой «Создать/Сохранить».
+  const eventPoster = { url: '', blob: null, preview: '', remove: false };
+
+  function resetEventPoster(url) {
+    if (eventPoster.preview) URL.revokeObjectURL(eventPoster.preview);
+    eventPoster.url = url || '';
+    eventPoster.blob = null;
+    eventPoster.preview = '';
+    eventPoster.remove = false;
+    renderEventPoster('');
+  }
+  function renderEventPoster(note, warn) {
+    const src = eventPoster.preview || (!eventPoster.remove ? eventPoster.url : '');
+    const img = document.getElementById('evPosterImg');
+    const has = !!src;
+    img.style.display = has ? 'block' : 'none';
+    if (has) img.src = src; else img.removeAttribute('src');
+    document.getElementById('evPosterEmpty').style.display = has ? 'none' : 'block';
+    document.getElementById('evPosterActions').style.display = has ? 'flex' : 'none';
+    document.getElementById('evPosterDrop').classList.toggle('has', has);
+    const n = document.getElementById('evPosterNote');
+    n.textContent = note || (eventPoster.blob ? 'Новый постер — сохранится кнопкой ниже' : eventPoster.remove ? 'Постер будет убран после сохранения' : '');
+    n.classList.toggle('warn', !!warn);
+  }
+  function pickEventPoster() {
+    document.getElementById('evPosterInput').click();
+  }
+  function removeEventPoster() {
+    if (window.event) window.event.stopPropagation();
+    if (eventPoster.preview) URL.revokeObjectURL(eventPoster.preview);
+    eventPoster.blob = null;
+    eventPoster.preview = '';
+    eventPoster.remove = !!eventPoster.url;
+    renderEventPoster();
+  }
+
+  async function loadImageForCanvas(file) {
+    if (window.createImageBitmap) {
+      try { return await createImageBitmap(file, { imageOrientation: 'from-image' }); } catch {}
+      try { return await createImageBitmap(file); } catch {}
+    }
+    return await new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const im = new Image();
+      im.onload = () => { URL.revokeObjectURL(url); resolve(im); };
+      im.onerror = () => { URL.revokeObjectURL(url); reject(new Error('decode')); };
+      im.src = url;
+    });
+  }
+  async function compressPoster(file) {
+    const img = await loadImageForCanvas(file);
+    const w0 = img.width, h0 = img.height;
+    const k = Math.min(1, 1600 / Math.max(w0, h0));
+    const w = Math.max(1, Math.round(w0 * k)), h = Math.max(1, Math.round(h0 * k));
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#140a03'; // прозрачный PNG — на фирменный тёмный фон, а не на чёрный
+    ctx.fillRect(0, 0, w, h);
+    ctx.drawImage(img, 0, 0, w, h);
+    if (img.close) img.close();
+    for (const q of [0.86, 0.78, 0.68, 0.58]) {
+      const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', q));
+      if (blob && (blob.size <= 1.8 * 1024 * 1024 || q === 0.58)) return { blob, w, h };
+    }
+    throw new Error('encode');
+  }
+  async function onEventPosterFile(file) {
+    if (!file) return;
+    if (file.type && !file.type.startsWith('image/')) { renderEventPoster('Это не картинка — выберите фото (JPG, PNG)', true); return; }
+    renderEventPoster('Готовлю фото…');
+    try {
+      const { blob, w, h } = await compressPoster(file);
+      if (eventPoster.preview) URL.revokeObjectURL(eventPoster.preview);
+      eventPoster.blob = blob;
+      eventPoster.preview = URL.createObjectURL(blob);
+      eventPoster.remove = false;
+      renderEventPoster(`Новый постер ${w}×${h}, ${(blob.size / 1024 / 1024).toFixed(1)} МБ — сохранится кнопкой ниже`);
+    } catch {
+      renderEventPoster('Не получилось открыть это фото. Сохраните его как JPG или PNG и выберите снова.', true);
+    }
+  }
+  // перетаскивание файла на компьютере и вставка из буфера (Ctrl+V)
+  (function () {
+    const drop = document.getElementById('evPosterDrop');
+    if (!drop) return;
+    ['dragenter', 'dragover'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add('drag'); }));
+    ['dragleave', 'drop'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove('drag'); }));
+    drop.addEventListener('drop', e => { const f = e.dataTransfer?.files?.[0]; if (f) onEventPosterFile(f); });
+    document.addEventListener('paste', e => {
+      if (!document.getElementById('screen-add-event')?.classList.contains('active')) return;
+      const item = [...(e.clipboardData?.items || [])].find(it => it.kind === 'file' && it.type.startsWith('image/'));
+      if (!item) return;
+      e.preventDefault();
+      onEventPosterFile(item.getAsFile());
+    });
+  })();
+
+  async function uploadEventPoster(eventId) {
+    const res = await fetch(`${PROXY_BASE}/api/admin/events/${encodeURIComponent(eventId)}/poster?pin=${getPin()}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'image/jpeg' },
+      body: eventPoster.blob
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'Не удалось загрузить постер');
+    return data.poster || '';
   }
 
   async function submitEvent() {
@@ -3943,30 +4097,54 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
     const description = document.getElementById('evDescription').value.trim();
 
     const btn = document.getElementById('evSubmitBtn');
+    const isEdit = !!editingEventId;
+    const idleText = isEdit ? 'Сохранить' : 'Создать';
     btn.disabled = true;
-    btn.textContent = editingEventId ? 'Сохраняем...' : 'Создаём...';
+    btn.textContent = isEdit ? 'Сохраняем...' : 'Создаём...';
 
+    let eventId = editingEventId;
     try {
-      const url = editingEventId
+      const url = isEdit
         ? `${PROXY_BASE}/api/admin/events/${editingEventId}?pin=${getPin()}`
         : `${PROXY_BASE}/api/admin/events?pin=${getPin()}`;
-      const method = editingEventId ? 'PATCH' : 'POST';
-
-      await fetch(url, {
-        method,
+      const res = await fetch(url, {
+        method: isEdit ? 'PATCH' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pin: getPin(), name, format, date: dateVal, description })
       });
-      btn.disabled = false;
-      btn.textContent = editingEventId ? 'Сохранить' : 'Создать';
-      showSuccess(editingEventId ? 'Мероприятие обновлено' : 'Мероприятие создано', name);
-      editingEventId = null;
-      openEvents();
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'save');
+      if (!isEdit) eventId = data.id || null;
     } catch {
       btn.disabled = false;
-      btn.textContent = editingEventId ? 'Сохранить' : 'Создать';
+      btn.textContent = idleText;
       alert('Не удалось сохранить мероприятие');
+      return;
     }
+
+    // постер — после того как мероприятие сохранено (у нового нужен его id)
+    let posterProblem = '';
+    try {
+      if (eventPoster.blob) {
+        if (!eventId) throw new Error('Мероприятие создано, но постер прикрепить не вышло — откройте его и добавьте постер ещё раз');
+        btn.textContent = 'Загружаем постер...';
+        await uploadEventPoster(eventId);
+      } else if (eventPoster.remove && eventId) {
+        btn.textContent = 'Убираем постер...';
+        const r = await fetch(`${PROXY_BASE}/api/admin/events/${encodeURIComponent(eventId)}/poster?pin=${getPin()}`, { method: 'DELETE' });
+        if (!r.ok) throw new Error('Не удалось убрать постер');
+      }
+    } catch (e) {
+      posterProblem = e.message || 'Не удалось загрузить постер';
+    }
+
+    btn.disabled = false;
+    btn.textContent = idleText;
+    if (posterProblem) alert(`Мероприятие сохранено, но с постером проблема:\n${posterProblem}`);
+    showSuccess(isEdit ? 'Мероприятие обновлено' : 'Мероприятие создано', name);
+    editingEventId = null;
+    resetEventPoster('');
+    openEvents();
   }
 
   async function deleteEvent() {
