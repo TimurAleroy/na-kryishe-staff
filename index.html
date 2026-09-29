@@ -614,6 +614,57 @@
     .mk-guests { max-height: 280px; overflow-y: auto; margin-top: 6px; }
     .mk-guest { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; border-top: 1px solid var(--border); cursor: pointer; }
     .mk-guest-name { font-size: 13px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    /* РАССЫЛКИ */
+    .mk-layout { display: block; }
+    .mk-legend { font-size: 11.5px; color: var(--text-muted); margin: -2px 0 2px; }
+    .mk-seglist { display: flex; flex-direction: column; gap: 6px; }
+    .mk-seg { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 13px; background: var(--bg-card); border: 1px solid var(--border); cursor: pointer; transition: border-color .15s, background .15s; }
+    .mk-seg.selected { border-color: rgba(184,115,51,0.6); background: var(--accent-dim); }
+    .mk-seg.empty .mk-seg-n b { color: var(--text-muted); }
+    .mk-radio { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid rgba(240,223,192,0.25); flex-shrink: 0; position: relative; }
+    .mk-seg.selected .mk-radio { border-color: var(--accent); }
+    .mk-seg.selected .mk-radio::after { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: var(--accent); }
+    .mk-seg-main { flex: 1; min-width: 0; }
+    .mk-seg-title { font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 7px; }
+    .mk-seg-desc { font-size: 11.5px; color: var(--text-muted); line-height: 1.35; margin-top: 2px; }
+    .mk-seg-n { text-align: right; flex-shrink: 0; line-height: 1.1; }
+    .mk-seg-n b { display: block; font-family: 'Jost', sans-serif; font-size: 20px; font-weight: 400; color: var(--accent); }
+    .mk-seg-n span { font-size: 10.5px; color: var(--text-muted); }
+    .mk-who { margin-top: 12px; padding: 12px 14px; border-radius: 14px; background: var(--bg-card); border: 1px solid rgba(184,115,51,0.3); }
+    .mk-who-t { font-size: 13.5px; color: var(--text); line-height: 1.45; }
+    .mk-who-t b { color: var(--accent); font-weight: 500; }
+    .mk-breakdown { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+    .mk-text { height: 150px; }
+    .mk-texttools { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+    .mk-chip { background: var(--accent-dim); border: 1px solid rgba(184,115,51,0.4); color: var(--accent); border-radius: 100px; padding: 6px 12px; font-family: 'Inter', sans-serif; font-size: 12px; cursor: pointer; flex-shrink: 0; }
+    .mk-texthint { font-size: 11.5px; color: var(--text-muted); flex: 1; min-width: 0; }
+    .mk-count { font-size: 11.5px; color: var(--text-muted); flex-shrink: 0; }
+    .mk-preview { background: #17212B; border-radius: 16px; padding: 12px 12px 14px; border: 1px solid rgba(255,255,255,0.05); }
+    .mk-bot { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #e6edf3; margin-bottom: 10px; }
+    .mk-bot em { font-style: normal; color: #7d8b99; font-size: 11px; margin-left: 4px; }
+    .mk-bot-ava { width: 26px; height: 26px; border-radius: 50%; background: #3A1F0C; color: var(--accent); font-family: 'Jost', sans-serif; font-size: 10px; display: inline-flex; align-items: center; justify-content: center; }
+    .mk-bubble { background: #182533; color: #f5f5f5; border-radius: 4px 14px 14px 14px; padding: 9px 12px 7px; font-size: 14px; line-height: 1.45; max-width: 92%; word-break: break-word; font-family: -apple-system, 'Segoe UI', Roboto, 'Inter', sans-serif; }
+    .mk-bubble-meta { font-size: 10.5px; color: #7d8b99; text-align: right; margin-top: 4px; }
+    .mk-preview-empty { color: #7d8b99; font-size: 13px; }
+    .mk-summary { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 13px; color: var(--text-sub); margin-bottom: 4px; }
+    .mk-summary b { color: var(--text); font-weight: 500; }
+    .mk-send:not(:disabled) { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+    .mk-send:disabled, .mk-test:disabled { opacity: .45; cursor: default; }
+    .mk-test { background: transparent; margin-top: 14px; }
+    .mk-reason { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 8px; line-height: 1.4; }
+    .mk-running { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.35); border-radius: 14px; padding: 12px 14px; margin: 4px 0 6px; }
+    .mk-running-t { font-size: 13.5px; color: #f5c46b; }
+    .mk-running-s { font-size: 11.5px; color: var(--text-sub); margin-top: 6px; }
+    .mk-bar { height: 5px; border-radius: 5px; background: rgba(240,223,192,0.08); overflow: hidden; margin-top: 9px; }
+    .mk-bar i { display: block; height: 100%; background: var(--accent); border-radius: 5px; transition: width .3s; }
+    .mk-bar.small { height: 3px; margin: 9px 0 0; }
+    .mk-log { cursor: pointer; }
+    .mk-log.open .log-text { -webkit-line-clamp: unset; display: block; }
+    .log-stats b { font-weight: 500; }
+    .mk-rules { font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin: 18px 2px 4px; }
+    @media (min-width: 700px) {
+      .mk-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+    }
     .log-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; }
     .log-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 11px; color: var(--text-muted); margin-bottom: 7px; }
     .log-text { font-size: 12.5px; color: var(--text-sub); line-height: 1.45; white-space: pre-line; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
@@ -5470,11 +5521,14 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
   // ─── АДМИН: РАССЫЛКИ ───────────────────────────
   // Сегменты гостей + сообщение от гостевого бота. Сервер сам проверяет окно
   // отправки (днём), отписки и «Нон-грата»; здесь — выбор, текст и журнал.
+  // Экран по шагам: 1 кому → 2 текст → 3 как увидит гость → 4 отправка, ниже журнал.
 
   let mkData = null;
   let mkSelected = { key: null };
   let mkText = '';
   let mkGuestsOpen = false;
+  let mkSegGuests = null;      // список гостей выбранного сегмента (для разбивки и превью)
+  let mkSegSeq = 0;
 
   const MK_REASON = {
     no_phone: 'нет телефона',
@@ -5482,6 +5536,13 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
     opted_out: 'отписался',
     duplicate: 'тот же Telegram'
   };
+  const MK_REASON_PLURAL = {
+    no_phone: 'без телефона',
+    no_telegram: 'без Telegram',
+    opted_out: 'отписались',
+    duplicate: 'дубль Telegram'
+  };
+  const MK_PLACEHOLDER = '{имя}, в эту пятницу на Крыше — живой диджей-сет. Забронировать стол можно в приложении.';
 
   async function openMarketing() {
     showScreen('marketing');
@@ -5495,8 +5556,9 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
       mkGuestsOpen = false;
       renderMarketing();
       loadMarketingLog();
+      if (mkSelected.key) mkLoadSegment();
     } catch (e) {
-      el.innerHTML = `<div class="empty-state">${escHtml(e.message || 'Не удалось загрузить сегменты')}</div>`;
+      el.innerHTML = errorStateHtml(e.message || 'Не удалось загрузить сегменты', 'openMarketing()');
     }
   }
 
@@ -5505,32 +5567,118 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
     return mkData.segments.find(s => s.key === mkSelected.key) || null;
   }
 
+  function mkSegRow(s) {
+    const sel = mkSelected.key === s.key;
+    return `<div class="mk-seg${sel ? ' selected' : ''}${s.reachable ? '' : ' empty'}${s.group === 'rfm' ? ' rfm-' + escHtml(s.key) : ''}" data-key="${escHtml(s.key)}" onclick="mkSelect('${escJs(s.key)}')">
+      <span class="mk-radio"></span>
+      <div class="mk-seg-main">
+        <div class="mk-seg-title">${s.group === 'rfm' ? '<span class="rfm-dot"></span>' : ''}${escHtml(s.title)}</div>
+        <div class="mk-seg-desc">${escHtml(s.description || '')}</div>
+      </div>
+      <div class="mk-seg-n"><b>${s.reachable}</b><span>из ${s.total}</span></div>
+    </div>`;
+  }
+
   function renderMarketing() {
     const el = document.getElementById('marketingContent');
     const d = mkData;
-    let html = `<div class="note">Сообщение придёт гостю от гостевого бота «На Крыше». Написать можно тем, кто хоть раз открывал гостевое приложение и не отписался. Гостей с тегом «Нон-грата» в рассылки не берём.</div>`;
-    if (d.running) {
-      html += `<div class="hint-box" style="margin:12px 0 0"><div class="hint-title">Идёт рассылка</div><div class="hint-item">«${escHtml(d.running.segment)}»: доставлено ${d.running.sent} из ${d.running.total}</div></div>`;
-    }
-
-    const segItem = s => `
-      <div class="seg-item${s.group === 'rfm' ? ' rfm-' + s.key : ''}${mkSelected.key === s.key ? ' selected' : ''}" data-key="${s.key}" onclick="mkSelect('${s.key}')">
-        <div class="seg-title">${escHtml(s.title)}</div>
-        <div class="seg-desc">${escHtml(s.description)}</div>
-        <div class="seg-count"><b>${s.reachable}</b> в Telegram · ${s.total} всего</div>
-      </div>`;
     const rfm = d.segments.filter(s => s.group === 'rfm');
     const other = d.segments.filter(s => s.group !== 'rfm');
-    html += '<div class="sec">Кому · сегменты по визитам</div><div class="seg-list">' + rfm.map(segItem).join('') + '</div>';
-    html += '<div class="sec">Или подборка</div><div class="seg-list">' + other.map(segItem).join('') + '</div>';
-
-    html += '<div class="sec">Сообщение</div>';
-    html += `<textarea class="form-input" id="mkText" style="height:150px" maxlength="3500" placeholder="Например: {имя}, в эту пятницу на Крыше — живой диджей-сет. Забронировать стол можно в приложении." oninput="mkOnText(this.value)">${escHtml(mkText)}</textarea>`;
-    html += `<div class="note" style="margin:6px 2px 14px;display:flex;justify-content:space-between;gap:10px;"><span>{имя} заменится на имя гостя</span><span id="mkCount">${mkText.length}/3500</span></div>`;
-    html += '<div id="mkTarget"></div>';
-    html += '<div class="sec">Журнал рассылок</div><div id="mkLog"><div class="loading">Загружаю...</div></div>';
+    let html = '<div id="mkRunning"></div>';
+    html += '<div class="mk-layout"><div class="mk-col">';
+    html += `<div class="an-step"><b>1</b>Кому</div>
+      <div class="mk-legend">Справа — скольким можно написать в Telegram, из скольких в сегменте</div>
+      <div class="an-group">По визитам</div>
+      <div class="mk-seglist">${rfm.map(mkSegRow).join('')}</div>
+      <div class="an-group">Подборки</div>
+      <div class="mk-seglist">${other.map(mkSegRow).join('')}</div>
+      <div id="mkWho"></div>`;
+    html += '</div><div class="mk-col">';
+    html += `<div class="an-step"><b>2</b>Текст</div>
+      <textarea class="form-input mk-text" id="mkText" maxlength="3500" placeholder="${escHtml(MK_PLACEHOLDER)}" oninput="mkOnText(this.value)">${escHtml(mkText)}</textarea>
+      <div class="mk-texttools">
+        <button type="button" class="mk-chip" onclick="mkInsertName()">+ {имя}</button>
+        <span class="mk-texthint">подставится имя гостя</span>
+        <span class="mk-count" id="mkCount">${mkText.length}/3500</span>
+      </div>
+      <div class="an-step"><b>3</b>Как увидит гость</div>
+      <div class="mk-preview">
+        <div class="mk-bot"><span class="mk-bot-ava">НК</span><span>На Крыше <em>бот</em></span></div>
+        <div class="mk-bubble" id="mkPreview"></div>
+      </div>
+      <div class="an-step"><b>4</b>Отправка</div>
+      <div id="mkTarget"></div>`;
+    html += '</div></div>';
+    html += `<div class="sec" style="margin-top:34px">Журнал рассылок</div><div id="mkLog"><div class="loading">Загружаю...</div></div>`;
+    html += `<div class="mk-rules">Сообщение приходит от гостевого бота «На Крыше». Написать можно тем, кто хоть раз открывал гостевое приложение и не отписался (команда /stop). Гостей с тегом «Нон-грата» в рассылки не берём. Отправка — с ${d.hours.from}:00 до ${d.hours.to}:00.</div>`;
     el.innerHTML = html;
+    renderMkRunning();
+    renderMkWho();
+    renderMkPreview();
     renderMkTarget();
+  }
+
+  function renderMkRunning() {
+    const box = document.getElementById('mkRunning');
+    if (!box) return;
+    const r = mkData?.running;
+    box.innerHTML = r ? `<div class="mk-running">
+      <div class="mk-running-t">Идёт рассылка «${escHtml(r.segment)}»</div>
+      <div class="mk-bar"><i style="width:${r.total ? Math.round(r.sent / r.total * 100) : 0}%"></i></div>
+      <div class="mk-running-s">Доставлено ${r.sent} из ${r.total} · следующую можно запустить после окончания</div>
+    </div>` : '';
+  }
+
+  // Под списком сегментов: кого выбрали и почему не всем можно написать
+  function renderMkWho() {
+    const box = document.getElementById('mkWho');
+    if (!box) return;
+    const cur = mkCurrent();
+    if (!cur) { box.innerHTML = ''; return; }
+    let breakdown = '';
+    if (mkSegGuests && mkSegGuests.key === cur.key) {
+      const counts = {};
+      for (const g of mkSegGuests.guests) if (!g.reachable) counts[g.reason] = (counts[g.reason] || 0) + 1;
+      const parts = Object.entries(counts).map(([r, n]) => `<span class="pill">${n} ${escHtml(MK_REASON_PLURAL[r] || r)}</span>`);
+      breakdown = `<div class="mk-breakdown"><span class="pill good">${cur.reachable} в Telegram</span>${parts.join('')}</div>`
+        + (mkSegGuests.partial ? '<div class="note" style="margin-top:4px">Разбивка по первым 300 гостям сегмента</div>' : '');
+    } else if (cur.total) {
+      breakdown = '<div class="note" style="margin-top:6px">Считаю, кому можно написать...</div>';
+    }
+    box.innerHTML = `<div class="mk-who">
+      <div class="mk-who-t">${escHtml(cur.title)}: написать можно <b>${cur.reachable}</b> из ${cur.total}</div>
+      ${breakdown}
+      ${cur.total ? `<button class="link-btn" onclick="mkToggleGuests()">${mkGuestsOpen ? 'Скрыть список' : 'Показать, кто в сегменте'}</button>` : ''}
+      <div id="mkGuests"></div>
+    </div>`;
+    if (mkGuestsOpen) renderMkGuests();
+  }
+
+  function renderMkGuests() {
+    const box = document.getElementById('mkGuests');
+    if (!box) return;
+    if (!mkSegGuests || mkSegGuests.key !== mkSelected.key) { box.innerHTML = '<div class="loading" style="padding:10px">Загружаю...</div>'; return; }
+    if (mkSegGuests.error) { box.innerHTML = `<div class="autotag-empty">${escHtml(mkSegGuests.error)}</div>`; return; }
+    const guests = mkSegGuests.guests;
+    if (!guests.length) { box.innerHTML = '<div class="autotag-empty">В сегменте никого нет</div>'; return; }
+    box.innerHTML = `<div class="mk-guests">${guests.map(g => `
+      <div class="mk-guest" onclick="openGuestCard('${escJs(g.id)}')">
+        <span class="mk-guest-name">${escHtml(g.name || 'Без имени')}</span>
+        <span class="mk-guest-meta">${g.reachable ? '<span class="pill good">в Telegram</span>' : `<span class="pill">${escHtml(MK_REASON[g.reason] || '')}</span>`}</span>
+      </div>`).join('')}</div>
+      ${mkSegGuests.total > guests.length ? `<div class="note" style="margin-top:6px">Показаны первые ${guests.length} из ${mkSegGuests.total}</div>` : ''}`;
+  }
+
+  // Как сообщение будет выглядеть у гостя: {имя} → имя первого гостя сегмента, которому можно написать
+  function renderMkPreview() {
+    const box = document.getElementById('mkPreview');
+    if (!box) return;
+    const text = mkText.trim();
+    if (!text) { box.innerHTML = '<span class="mk-preview-empty">Здесь появится сообщение — так, как его увидит гость.</span>'; return; }
+    const sample = (mkSegGuests && mkSegGuests.key === mkSelected.key && mkSegGuests.guests.find(g => g.reachable)?.name) || 'Анна';
+    const first = String(sample).trim().split(/\s+/)[0];
+    const shown = text.replace(/\{имя\}/gi, first);
+    box.innerHTML = escHtml(shown).replace(/\n/g, '<br>') + `<div class="mk-bubble-meta">${/\{имя\}/i.test(text) ? `пример для «${escHtml(first)}» · ` : ''}${new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}</div>`;
   }
 
   function renderMkTarget() {
@@ -5538,64 +5686,69 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
     if (!box) return;
     const cur = mkCurrent();
     const d = mkData;
-    let html = '';
-    if (!cur) {
-      html += '<div class="note" style="margin-bottom:10px">Выберите сегмент — кому отправить.</div>';
-    } else {
-      html += `<div class="hint-box" style="margin-bottom:10px">
-        <div class="hint-title">Получатели</div>
-        <div style="font-size:13px;line-height:1.5">${escHtml(cur.title)}: написать можно <b style="color:var(--accent);font-weight:500">${cur.reachable}</b> из ${cur.total}</div>
-        <button class="link-btn" onclick="mkToggleGuests()">${mkGuestsOpen ? 'Скрыть список' : 'Показать список'}</button>
-        <div id="mkGuests"></div>
-      </div>`;
-    }
     const hasText = !!mkText.trim();
-    const canSend = !!cur && cur.reachable > 0 && hasText;
-    html += `<button class="btn-primary btn-full" ${hasText ? '' : 'disabled style="opacity:.5"'} onclick="mkSend(true)">Отправить себе для проверки</button>`;
-    html += `<button class="btn-primary btn-full" id="mkSendBtn" ${canSend ? 'style="background:var(--accent);color:var(--bg);"' : 'disabled style="opacity:.5"'} onclick="mkSend(false)">${cur ? `Отправить ${cur.reachable} ${ruPlural(cur.reachable, 'гостю', 'гостям', 'гостям')}` : 'Отправить'}</button>`;
-    if (!d.canSendNow) {
-      html += `<div class="note" style="margin-top:8px;text-align:center">Сейчас рассылка не уйдёт: отправляем с ${d.hours.from}:00 до ${d.hours.to}:00. Проверку себе можно отправить в любое время.</div>`;
-    }
-    box.innerHTML = html;
-    if (mkGuestsOpen && cur) mkLoadGuests();
+    const running = !!d.running;
+    let reason = '';
+    if (!cur) reason = 'Выберите в шаге 1, кому отправить';
+    else if (!cur.reachable) reason = 'В этом сегменте некому написать в Telegram';
+    else if (!hasText) reason = 'Напишите текст в шаге 2';
+    else if (!d.canSendNow) reason = `Сейчас не отправить: рассылки уходят с ${d.hours.from}:00 до ${d.hours.to}:00`;
+    else if (running) reason = 'Дождитесь окончания текущей рассылки';
+    const canSend = !reason;
+    box.innerHTML = `
+      ${cur ? `<div class="mk-summary"><span>${escHtml(cur.title)}</span><b>${cur.reachable} ${ruPlural(cur.reachable, 'гость', 'гостя', 'гостей')}</b></div>` : ''}
+      <button class="btn-primary btn-full mk-send" id="mkSendBtn" ${canSend ? '' : 'disabled'} onclick="mkSend(false)">${cur && cur.reachable ? `Отправить ${cur.reachable} ${ruPlural(cur.reachable, 'гостю', 'гостям', 'гостям')}` : 'Отправить'}</button>
+      ${reason ? `<div class="mk-reason">${escHtml(reason)}</div>` : ''}
+      <button class="btn-primary btn-full mk-test" ${hasText ? '' : 'disabled'} onclick="mkSend(true)">Отправить себе для проверки</button>
+      <div class="mk-reason" style="margin-top:6px">Проверка приходит вам от гостевого бота — в любое время</div>`;
   }
 
   function mkSelect(key) {
     mkSelected = { key };
     mkGuestsOpen = false;
-    document.querySelectorAll('.seg-item').forEach(x => x.classList.toggle('selected', x.dataset.key === key));
+    document.querySelectorAll('.mk-seg').forEach(x => x.classList.toggle('selected', x.dataset.key === key));
+    renderMkWho();
     renderMkTarget();
+    mkLoadSegment();
   }
   function mkOnText(v) {
-    const hadText = !!mkText.trim();
     mkText = v;
     const c = document.getElementById('mkCount');
     if (c) c.textContent = `${v.length}/3500`;
-    if (hadText !== !!v.trim()) renderMkTarget();
+    renderMkPreview();
+    renderMkTarget();
+  }
+  function mkInsertName() {
+    const ta = document.getElementById('mkText');
+    if (!ta) return;
+    const start = ta.selectionStart ?? ta.value.length, end = ta.selectionEnd ?? start;
+    ta.value = ta.value.slice(0, start) + '{имя}' + ta.value.slice(end);
+    ta.focus();
+    ta.selectionStart = ta.selectionEnd = start + 5;
+    mkOnText(ta.value);
   }
   function mkToggleGuests() {
     mkGuestsOpen = !mkGuestsOpen;
-    renderMkTarget();
+    renderMkWho();
   }
 
-  async function mkLoadGuests() {
-    const box = document.getElementById('mkGuests');
-    if (!box) return;
-    box.innerHTML = '<div class="loading" style="padding:10px">Загружаю...</div>';
+  // Гости выбранного сегмента: для разбивки «почему не всем», списка и примера имени в превью
+  async function mkLoadSegment() {
+    const key = mkSelected.key;
+    if (!key) return;
+    const seq = ++mkSegSeq;
     try {
-      const res = await fetch(`${PROXY_BASE}/api/admin/marketing/segment?key=${encodeURIComponent(mkSelected.key)}&pin=${getPin()}`);
+      const res = await fetch(`${PROXY_BASE}/api/admin/marketing/segment?key=${encodeURIComponent(key)}&pin=${getPin()}`);
       if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить список'));
       const seg = await res.json();
-      if (!seg.guests.length) { box.innerHTML = '<div class="autotag-empty">В сегменте никого нет</div>'; return; }
-      box.innerHTML = `<div class="mk-guests">${seg.guests.map(g => `
-        <div class="mk-guest" onclick="openGuestCard('${escJs(g.id)}')">
-          <span class="mk-guest-name">${escHtml(g.name || 'Без имени')}</span>
-          <span class="mk-guest-meta">${g.reachable ? '<span class="pill good">в Telegram</span>' : `<span class="pill">${escHtml(MK_REASON[g.reason] || '')}</span>`}</span>
-        </div>`).join('')}</div>
-        ${seg.total > seg.guests.length ? `<div class="note" style="margin-top:6px">Показаны первые ${seg.guests.length} из ${seg.total}</div>` : ''}`;
+      if (seq !== mkSegSeq) return;
+      mkSegGuests = { key, guests: seg.guests || [], total: seg.total || 0, partial: (seg.total || 0) > (seg.guests || []).length };
     } catch (e) {
-      box.innerHTML = `<div class="autotag-empty">${escHtml(e.message)}</div>`;
+      if (seq !== mkSegSeq) return;
+      mkSegGuests = { key, guests: [], total: 0, error: e.message };
     }
+    renderMkWho();
+    renderMkPreview();
   }
 
   async function mkSend(test) {
@@ -5618,20 +5771,39 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
       if (test) {
         notify('Проверка отправлена — посмотрите сообщение от гостевого бота в Telegram', 'ok');
       } else {
+        const data = await res.json().catch(() => ({}));
         notify('Рассылка запущена. Итог придёт в Telegram и появится в журнале.', 'ok');
         mkText = '';
         const ta = document.getElementById('mkText');
         if (ta) ta.value = '';
         const c = document.getElementById('mkCount');
         if (c) c.textContent = '0/3500';
+        if (data.job) { mkData.running = data.job; renderMkRunning(); }
+        renderMkPreview();
         loadMarketingLog();
-        setTimeout(loadMarketingLog, 5000);
+        setTimeout(mkRefreshStatus, 5000);
       }
     } catch {
       notify('Ошибка соединения — проверьте интернет');
     } finally {
       renderMkTarget();
     }
+  }
+
+  // Пока идёт рассылка — обновляем полосу и журнал, пока она не закончится
+  async function mkRefreshStatus() {
+    if (activeScreenName() !== 'marketing') return;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/marketing/segments?pin=${getPin()}`);
+      if (!res.ok) return;
+      const d = await res.json();
+      mkData.running = d.running;
+      mkData.canSendNow = d.canSendNow;
+      renderMkRunning();
+      renderMkTarget();
+      loadMarketingLog();
+      if (d.running) setTimeout(mkRefreshStatus, 5000);
+    } catch {}
   }
 
   async function loadMarketingLog() {
@@ -5646,19 +5818,22 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
       if (!list.length) html += '<div class="autotag-empty">Рассылок ещё не было</div>';
       html += list.map(b => {
         const pill = b.status === 'Отправлена' ? 'good' : b.status === 'Прервана' ? 'bad' : 'warn';
-        return `<div class="log-item">
-          <div class="log-head"><span>${escHtml(fmtDateTime(b.createdAt))} · ${escHtml(b.segment || '')}</span><span class="pill ${pill}">${escHtml(b.status || '')}</span></div>
+        const pct = b.total ? Math.round((b.sent || 0) / b.total * 100) : 0;
+        const when = b.createdAt ? `${capFirst(humanDay(b.createdAt))}, ${new Date(b.createdAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}` : '';
+        return `<div class="log-item mk-log" onclick="this.classList.toggle('open')">
+          <div class="log-head"><span>${escHtml(when)} · ${escHtml(b.segment || '')}</span><span class="pill ${pill}">${escHtml(b.status || '')}</span></div>
           <div class="log-text">${escHtml(b.text || '')}</div>
-          <div class="log-stats">Доставлено ${b.sent} из ${b.total}${b.failed ? ` · не доставлено ${b.failed}${b.blocked ? ` (заблокировали бота: ${b.blocked})` : ''}` : ''}</div>
+          <div class="mk-bar small"><i style="width:${pct}%"></i></div>
+          <div class="log-stats">Доставлено <b>${b.sent}</b> из ${b.total}${b.failed ? ` · не доставлено ${b.failed}${b.blocked ? ` (заблокировали бота: ${b.blocked})` : ''}` : ''}</div>
           ${b.author ? `<div class="note" style="margin-top:4px">${escHtml(b.author)}</div>` : ''}
         </div>`;
       }).join('');
       if (!data.storedInNotion) {
-        html += '<div class="note" style="margin-top:6px">Журнал сейчас хранится только в памяти сервера. Чтобы он сохранялся в Notion (база «Рассылки»), у интеграции должен быть доступ к странице, где лежит «Карточка Гостя».</div>';
+        html += '<div class="note" style="margin-top:6px">Журнал пока хранится только до перезапуска сервера. Чтобы он сохранялся, подключите интеграцию к базе «Рассылки» в Notion.</div>';
       }
       box.innerHTML = html;
     } catch (e) {
-      box.innerHTML = `<div class="autotag-empty">${escHtml(e.message)}</div>`;
+      box.innerHTML = errorStateHtml(e.message, 'loadMarketingLog()');
     }
   }
 
