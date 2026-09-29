@@ -217,6 +217,12 @@
     .visit-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 8px; }
     .visit-date { font-size: 11px; color: var(--accent); letter-spacing: 0.5px; margin-bottom: 6px; }
     .visit-detail { font-size: 13px; color: var(--text-sub); line-height: 1.6; }
+    /* Несколько кальянов за вечер: нумерация в порядке заказа */
+    .hk-list { display: flex; flex-direction: column; gap: 5px; }
+    .hk-row { display: flex; align-items: flex-start; gap: 9px; font-size: 13px; color: var(--text-sub); line-height: 1.5; }
+    .hk-n { flex-shrink: 0; width: 19px; height: 19px; margin-top: 1px; border-radius: 50%; background: var(--accent-dim); border: 1px solid rgba(184,115,51,0.4); color: var(--accent); font-size: 10.5px; line-height: 17px; text-align: center; font-variant-numeric: tabular-nums; }
+    .hk-today { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 16px; }
+    .hk-title { font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
 
     /* BOOKING GRID — компактные боксы (как ячейки в графике смен), чтобы
        видеть сразу все брони на экране без прокрутки. */
@@ -1641,10 +1647,11 @@
     </div>
   </div>
   <div style="padding:0 16px">
+    <div class="hk-today" id="visitTodayInfo" style="display:none"></div>
     <div class="form-group">
       <label class="form-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M8 3v7a2 2 0 002 2v9M8 3v7"/><path d="M17 3c-1.5 0-2.5 1.5-2.5 4s1 4 2.5 4v10"/></svg>Кальян — если заказывал</label>
       <input class="form-input" id="visitHookah" type="text" placeholder="Например: Персик со льдом">
-      <div class="note" style="margin:6px 2px 0">Гость был без кальяна — оставьте пустым, визит всё равно запишется.</div>
+      <div class="note" style="margin:6px 2px 0">Гость был без кальяна — оставьте пустым, визит всё равно запишется. Заказал второй — добавьте визит ещё раз, кальяны пронумеруются по порядку.</div>
     </div>
     <div class="form-group">
       <label class="form-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Заметки</label>
@@ -6627,11 +6634,20 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
       ? new Date(guest.birthday).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
       : 'Не указан';
 
+    const HOOKAH_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M8 3v7a2 2 0 002 2v9M8 3v7"/><path d="M17 3c-1.5 0-2.5 1.5-2.5 4s1 4 2.5 4v10"/></svg>';
+    // один кальян — просто строка; два и больше — список с номерами в порядке заказа
+    const hookahHtml = hookah => {
+      const parts = hookahList(hookah);
+      if (!parts.length) return `<div class="visit-detail">${HOOKAH_ICON}Без кальяна</div>`;
+      if (parts.length === 1) return `<div class="visit-detail">${HOOKAH_ICON}${escHtml(parts[0])}</div>`;
+      return `<div class="hk-list">${parts.map((h, i) => `<div class="hk-row"><span class="hk-n">${i + 1}</span><span>${escHtml(h)}</span></div>`).join('')}</div>`;
+    };
+
     const visitsHtml = guest.visits.length
       ? guest.visits.map(v => `
           <div class="visit-item">
             <div class="visit-date"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>${escHtml(v.date || '—')}</div>
-            <div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M8 3v7a2 2 0 002 2v9M8 3v7"/><path d="M17 3c-1.5 0-2.5 1.5-2.5 4s1 4 2.5 4v10"/></svg>${v.hookah ? escHtml(v.hookah) : 'Без кальяна'}</div>
+            ${hookahHtml(v.hookah)}
             ${v.notes ? `<div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>${escHtml(v.notes)}</div>` : ''}
           </div>
         `).join('')
@@ -6898,7 +6914,23 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
 
   // ─── ADD VISIT ─────────────────────────────────
 
+  // «Вишня + Леденец» → ['Вишня', 'Леденец'] (тот же разделитель ' + ', что и на сервере)
+  function hookahList(value) {
+    return String(value || '').split(' + ').map(x => x.trim()).filter(Boolean);
+  }
+
   function openAddVisit() {
+    // уже записанные сегодня кальяны — чтобы КМ видел, что новый встанет под следующим номером
+    const todays = (currentGuest.visits || []).find(v => v.date === venueDayStr());
+    const already = todays ? hookahList(todays.hookah) : [];
+    const info = document.getElementById('visitTodayInfo');
+    if (info) {
+      info.style.display = already.length ? '' : 'none';
+      info.innerHTML = already.length
+        ? `<div class="hk-title">Уже записано на сегодня</div><div class="hk-list">${already.map((h, i) => `<div class="hk-row"><span class="hk-n">${i + 1}</span><span>${escHtml(h)}</span></div>`).join('')}</div>
+           <div class="note" style="margin-top:8px">Новый кальян встанет следом — под номером ${already.length + 1}.</div>`
+        : '';
+    }
     document.getElementById('visitHookah').value = '';
     document.getElementById('visitNotes').value = '';
     document.getElementById('visitGuestNameHeader').textContent = currentGuest.fullName || currentGuest.name;
