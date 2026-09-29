@@ -7018,7 +7018,10 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
       });
       if (res.status === 401) { showScreen('pin'); return; }
       if (!res.ok) { alert(await responseError(res, 'Визит не сохранился — попробуйте ещё раз')); return; }
-      showSuccess('Визит сохранён', currentGuest.fullName || currentGuest.name);
+      let saved = null;
+      try { saved = await res.json(); } catch {}
+      const guestLabel = currentGuest.fullName || currentGuest.name;
+      showSuccess('Визит сохранён', saved && saved.bookingMarked ? `${guestLabel} · бронь отмечена «Пришёл»` : guestLabel);
       openGuestCard(currentGuest.id);
     } catch {
       alert('Нет связи — визит не сохранился. Проверьте интернет и попробуйте ещё раз.');
