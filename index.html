@@ -1609,6 +1609,11 @@
       <input class="form-input" id="ngName" type="text" placeholder="Имя">
     </div>
     <div class="form-group">
+      <label class="form-label">Фамилия (необязательно)</label>
+      <input class="form-input" id="ngSurname" type="text" placeholder="Фамилия">
+      <div class="note" style="margin-top:6px">Поможет отличить тёзок.</div>
+    </div>
+    <div class="form-group">
       <label class="form-label">День рождения (необязательно)</label>
       <input class="form-input" id="ngBirthday" type="date">
     </div>
@@ -1636,14 +1641,6 @@
     </div>
   </div>
   <div style="padding:0 16px">
-    <div class="form-group">
-      <label class="form-label">Когда был</label>
-      <div class="chip-row" id="visitDateChips">
-        <div class="chip selected" data-value="0" onclick="selectChip(this,'visitDateChips')">Сегодня</div>
-        <div class="chip" data-value="-1" onclick="selectChip(this,'visitDateChips')">Вчера</div>
-        <div class="chip" data-value="-2" onclick="selectChip(this,'visitDateChips')">Позавчера</div>
-      </div>
-    </div>
     <div class="form-group">
       <label class="form-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M8 3v7a2 2 0 002 2v9M8 3v7"/><path d="M17 3c-1.5 0-2.5 1.5-2.5 4s1 4 2.5 4v10"/></svg>Кальян — если заказывал</label>
       <input class="form-input" id="visitHookah" type="text" placeholder="Например: Персик со льдом">
@@ -3570,6 +3567,7 @@
     el.innerHTML = `
       ${noticeHtml}
       <div class="guest-name">${escHtml(b.name || '')}</div>
+      ${b.bookedName ? `<div class="note" style="margin:2px 0 8px">В брони записан как «${escHtml(b.bookedName)}»</div>` : ''}
       <div class="status-pill" style="background:${st.color}22;color:${st.color};border:1px solid ${st.color}55;">${st.label}</div>
 
       <div class="visit-item" style="margin-top:14px;">
@@ -6223,7 +6221,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
       const guest = await res.json();
       currentGuest = guest;
       renderGuestCard(guest);
-      trackRecentGuest(guest.id, guest.name);
+      trackRecentGuest(guest.id, guest.fullName || guest.name);
       loadGuestPhoto(id);
     } catch {
       el.innerHTML = '<div class="empty-state">Не удалось загрузить карточку</div>';
@@ -6643,7 +6641,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
       <div class="card-header">
         <div class="card-avatar" id="cardAvatar">${currentGuestPhotoUrl ? `<img src="${currentGuestPhotoUrl}" alt="">` : (guest.name || '?').charAt(0).toUpperCase()}</div>
         <div class="card-header-text">
-          <div class="guest-name">${escHtml(guest.name)}</div>
+          <div class="guest-name">${escHtml(guest.fullName || guest.name)}</div>
           <div class="card-pills">
             ${guest.vip ? '<div class="status-pill vip">★ VIP</div>' : ''}
             <span onclick="openSegmentInfo()">${segmentPillHtml(guest.segment?.key, guest.segment?.name || 'Без визитов')}</span>
@@ -6658,6 +6656,12 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
         <div class="info-row-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></svg></div>
         <div style="min-width:0"><div class="info-row-label">Сегмент · по визитам</div><div class="info-row-value seg-value">${guestSegmentLine(guest)}</div></div>
         <div class="info-row-edit"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+      </div>
+
+      <div class="info-row" onclick="openEditField('name','Имя и фамилия')">
+        <div class="info-row-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.2-4 4.3-6 8-6s6.8 2 8 6"/></svg></div>
+        <div style="min-width:0"><div class="info-row-label">Имя и фамилия</div><div class="info-row-value">${escHtml(guest.fullName || guest.name)}${guest.surname ? '' : ' <span class="muted" style="font-size:12px">· фамилия не указана</span>'}</div></div>
+        <div class="info-row-edit">${editIcon}</div>
       </div>
 
       <div class="info-row" onclick="openEditField('birthday','Дата рождения')">
@@ -6716,7 +6720,13 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
     const cancelBtn = document.getElementById('editOverlayCancel');
     if (cancelBtn) cancelBtn.textContent = 'Отмена';
 
-    if (field === 'birthday') {
+    if (field === 'name') {
+      body.innerHTML = `
+        <div class="form-group"><label class="form-label">Имя</label><input class="form-input" id="editNameFirst" type="text" maxlength="100" placeholder="Имя" value="${escHtml(currentGuest.name || '')}"></div>
+        <div class="form-group"><label class="form-label">Фамилия (необязательно)</label><input class="form-input" id="editNameLast" type="text" maxlength="100" placeholder="Фамилия" value="${escHtml(currentGuest.surname || '')}"></div>
+        <div class="note" style="margin-top:6px">Узнали гостя вживую — впишите, как его зовут на самом деле. В бронях и списках будет это имя.</div>
+      `;
+    } else if (field === 'birthday') {
       const parts = currentGuest.birthday ? currentGuest.birthday.split('-') : ['', '', ''];
       const [by, bm, bd] = parts;
       const months = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
@@ -6756,7 +6766,12 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
   async function saveEditField() {
     if (!editingField) { closeEditOverlay(); return; }
     let value;
-    if (editingField === 'birthday') {
+    let surname;
+    if (editingField === 'name') {
+      value = document.getElementById('editNameFirst').value.trim();
+      surname = document.getElementById('editNameLast').value.trim();
+      if (!value) { alert('Имя не может быть пустым'); return; }
+    } else if (editingField === 'birthday') {
       const d = document.getElementById('editBirthDay').value;
       const m = document.getElementById('editBirthMonth').value;
       const y = document.getElementById('editBirthYear').value;
@@ -6767,15 +6782,15 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
     }
 
     if (editingField === 'phone' && !isPhoneComplete(value)) { alert('Укажите телефон полностью — карточка без телефона не остаётся'); return; }
-    await sendGuestFieldUpdate(editingField, value, false);
+    await sendGuestFieldUpdate(editingField, value, false, surname);
   }
 
-  async function sendGuestFieldUpdate(field, value, force) {
+  async function sendGuestFieldUpdate(field, value, force, surname) {
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/guest/${currentGuest.id}?pin=${getPin()}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: getPin(), field, value, force: !!force })
+        body: JSON.stringify({ pin: getPin(), field, value, surname, force: !!force })
       });
       if (res.status === 409) {
         const data = await res.json().catch(() => ({}));
@@ -6834,6 +6849,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
 
   function openNewGuest(prefillName, prefillPhone) {
     document.getElementById('ngName').value = prefillName || '';
+    document.getElementById('ngSurname').value = '';
     document.getElementById('ngBirthday').value = '';
     const phoneInput = document.getElementById('ngPhone');
     phoneInput.value = prefillPhone || '+7';
@@ -6844,6 +6860,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
 
   async function submitNewGuest(force) {
     const name = document.getElementById('ngName').value.trim();
+    const surname = document.getElementById('ngSurname').value.trim();
     if (!name) { alert('Укажите имя гостя'); return; }
 
     const birthday = document.getElementById('ngBirthday').value;
@@ -6860,7 +6877,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
       const res = await fetch(`${PROXY_BASE}/api/staff/guest?pin=${getPin()}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: getPin(), name, birthday, phone, important, force: !!force })
+        body: JSON.stringify({ pin: getPin(), name, surname, birthday, phone, important, force: !!force })
       });
       if (res.status === 401) { showScreen('pin'); return; }
       const data = await res.json().catch(() => ({}));
@@ -6884,8 +6901,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
   function openAddVisit() {
     document.getElementById('visitHookah').value = '';
     document.getElementById('visitNotes').value = '';
-    document.querySelectorAll('#visitDateChips .chip').forEach((c, i) => c.classList.toggle('selected', i === 0));
-    document.getElementById('visitGuestNameHeader').textContent = currentGuest.name;
+    document.getElementById('visitGuestNameHeader').textContent = currentGuest.fullName || currentGuest.name;
     showScreen('visit');
   }
 
@@ -6957,8 +6973,6 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
   async function submitVisit() {
     const hookah = document.getElementById('visitHookah').value.trim();
     const notes = document.getElementById('visitNotes').value.trim();
-    const offset = Number(document.querySelector('#visitDateChips .chip.selected')?.dataset.value || 0);
-    const date = offset ? venueDayStr(offset) : undefined;
 
     const btn = document.getElementById('visitSubmitBtn');
     btn.disabled = true;
@@ -6968,12 +6982,11 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
       const res = await fetch(`${PROXY_BASE}/api/staff/visit?pin=${getPin()}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: getPin(), guestId: currentGuest.id, guestName: currentGuest.name, hookah, notes, date })
+        body: JSON.stringify({ pin: getPin(), guestId: currentGuest.id, guestName: currentGuest.fullName || currentGuest.name, hookah, notes })
       });
       if (res.status === 401) { showScreen('pin'); return; }
       if (!res.ok) { alert(await responseError(res, 'Визит не сохранился — попробуйте ещё раз')); return; }
-      const whenLabel = offset === -1 ? ' · вчера' : offset === -2 ? ' · позавчера' : '';
-      showSuccess('Визит сохранён', currentGuest.name + whenLabel);
+      showSuccess('Визит сохранён', currentGuest.fullName || currentGuest.name);
       openGuestCard(currentGuest.id);
     } catch {
       alert('Нет связи — визит не сохранился. Проверьте интернет и попробуйте ещё раз.');
