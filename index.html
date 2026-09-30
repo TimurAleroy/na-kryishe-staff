@@ -1013,9 +1013,9 @@
     .hz-tdot.pending { background: #f59e0b; }
     .hz-tbusy { display: inline-block; width: 14px; height: 8px; border-radius: 3px; background: rgba(74,222,128,0.18); border: 1px solid rgba(74,222,128,0.3); margin: 0 2px 0 8px; }
     .hz-zonehead { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin: 14px 2px 8px; font-size: 13px; color: var(--text); }
-    .hz-wrap { background: #170C03; border: 1px solid var(--border); border-radius: 16px; padding: 6px; }
+    .hz-wrap { background: transparent; border: none; padding: 0; }
     .hz-svg { display: block; width: 100%; height: auto; font-family: 'Inter', sans-serif; user-select: none; -webkit-user-select: none; }
-    .hz-wall { fill: none; stroke: rgba(240,223,192,0.12); stroke-width: 1.5; }
+    .hz-wall { fill: none; stroke: none; }
     .hz-window { stroke: rgba(125,180,230,0.55); stroke-width: 3; stroke-linecap: round; }
     .hz-note { fill: rgba(240,223,192,0.32); font-size: 8px; letter-spacing: 1px; }
     .hz-counter { fill: rgba(184,115,51,0.16); stroke: rgba(184,115,51,0.4); }
@@ -2943,7 +2943,7 @@
       `<text x="${(S(205) - 37 + W - 4) / 2}" y="386" text-anchor="middle" class="hz-note">окна</text>`,
       // барная стойка
       '<path d="M10 118 H30 V302 H10 Z" class="hz-counter"/>',
-      '<text x="20" y="214" text-anchor="middle" class="hz-note" transform="rotate(-90 20 214)">стойка</text>',
+      '<text x="20" y="214" text-anchor="middle" class="hz-note" transform="rotate(-90 20 214)">бар</text>',
       // диваны кабинок у дальней стены
       ...[131, 235, 339].flatMap(c => [
         `<rect x="${S(c) - 47}" y="10" width="22" height="60" rx="6" class="hz-sofa"/>`,
