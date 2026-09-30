@@ -114,6 +114,18 @@
     }
     .btn-primary:active { background: rgba(184,115,51,0.24); }
     .btn-full { width: 100%; text-align: center; margin-top: 8px; }
+    /* Кнопки: главная (заливка), второстепенная (контур), опасная, «добавить» (компактная) */
+    .btn-cta { display: block; width: 100%; margin-top: 10px; padding: 13px 18px; border: none; border-radius: 100px; background: linear-gradient(135deg, #D28C48, var(--accent)); color: var(--bg); font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 600; letter-spacing: 0.3px; text-align: center; cursor: pointer; box-shadow: 0 6px 18px rgba(184,115,51,0.25); }
+    .btn-cta:active { filter: brightness(0.9); }
+    .btn-cta:disabled { opacity: 0.45; cursor: default; box-shadow: none; }
+    .btn-ghost { display: block; width: 100%; margin-top: 8px; padding: 12px 18px; border: 1px solid rgba(240,223,192,0.16); border-radius: 100px; background: transparent; color: var(--text-sub); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; text-align: center; cursor: pointer; }
+    .btn-ghost:active { background: rgba(240,223,192,0.06); }
+    .btn-ghost:disabled { opacity: 0.45; cursor: default; }
+    .btn-ghost.danger { color: #ef4444; border-color: rgba(239,68,68,0.4); }
+    .btn-ghost.danger:active { background: rgba(239,68,68,0.1); }
+    .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+    .btn-row .btn-ghost { margin-top: 0; padding-left: 10px; padding-right: 10px; }
+    .add-row { display: flex; justify-content: flex-end; margin: 4px 0 10px; }
     .search-input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; }
     .search-under { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; min-height: 34px; }
     .search-hint { font-size: 11.5px; color: var(--text-muted); flex: 1; min-width: 0; line-height: 1.35; }
@@ -1368,7 +1380,7 @@
   </div>
   <div style="padding:0 16px">
     <div id="founderTaskNewBtnWrap" style="display:none;margin-bottom:14px;">
-      <button class="btn-primary btn-full" onclick="toggleFounderTaskComposer()">+ Новая задача</button>
+      <div class="add-row" style="margin:0"><button type="button" class="btn-new-guest" onclick="toggleFounderTaskComposer()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Новая задача</button></div>
     </div>
     <div id="founderTaskComposer" style="display:none;margin-bottom:16px;">
       <div class="form-group">
@@ -1379,7 +1391,7 @@
         <label class="form-label">Срок (необязательно)</label>
         <input class="form-input" type="date" id="ftDeadline">
       </div>
-      <button class="btn-primary btn-full" id="ftSubmitBtn" onclick="submitFounderTask()">Отправить</button>
+      <button class="btn-cta" id="ftSubmitBtn" onclick="submitFounderTask()">Отправить</button>
     </div>
     <div id="founderTasksContent"><div class="loading">Загружаю...</div></div>
     <button type="button" class="pb-link" style="margin-top:14px;padding-left:0" onclick="toggleFounderTasksDone()" id="founderTasksDoneToggle">Показать выполненные</button>
@@ -1396,7 +1408,12 @@
     <div><h1 style="font-size:14px;letter-spacing:1px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><path d="M8 14l2 2 4-4"/></svg>Брони</h1></div>
   </div>
   <div style="padding:0 16px">
-    <button class="btn-primary btn-full" onclick="openAddBooking()">+ Записать бронь</button>
+    <div style="display:flex;justify-content:flex-end;margin:4px 0 8px;">
+      <button type="button" class="btn-new-guest" onclick="openAddBooking()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Записать бронь
+      </button>
+    </div>
     <div id="bookingsContent"><div class="loading">Загружаю...</div></div>
   </div>
 </div>
@@ -1454,7 +1471,7 @@
       <label class="form-label">Комментарий (необязательно)</label>
       <textarea class="form-input" id="abComment" placeholder="Пожелания гостя"></textarea>
     </div>
-    <button class="btn-primary btn-full" id="abSubmitBtn" onclick="submitAddBooking()">Создать бронь — сразу подтверждена</button>
+    <button class="btn-cta" id="abSubmitBtn" onclick="submitAddBooking()">Создать бронь — сразу подтверждена</button>
   </div>
 </div>
 
@@ -1467,7 +1484,7 @@
     <div><h1 style="font-size:14px;letter-spacing:1px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" style="vertical-align:-2px;margin-right:5px;display:inline-block"><polygon points="12 3 13.3 8.7 19 10 13.3 11.3 12 17 10.7 11.3 5 10 10.7 8.7 12 3"/></svg>Афиша</h1></div>
   </div>
   <div style="padding:0 16px">
-    <button class="btn-primary btn-full" onclick="openAddEvent()">+ Новое мероприятие</button>
+    <div class="add-row"><button type="button" class="btn-new-guest" onclick="openAddEvent()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Новое мероприятие</button></div>
     <div class="sec">Ближайшие</div>
     <div id="eventsContent"><div class="loading">Загружаю...</div></div>
   </div>
@@ -1520,8 +1537,8 @@
       <label class="form-label">Описание (необязательно)</label>
       <textarea class="form-input" id="evDescription" placeholder="Коротко о мероприятии"></textarea>
     </div>
-    <button class="btn-primary btn-full" id="evSubmitBtn" onclick="submitEvent()">Создать</button>
-    <button class="btn-primary btn-full" id="evDeleteBtn" onclick="deleteEvent()" style="display:none;background:transparent;border:1px solid #ef4444;color:#ef4444;margin-top:10px;">Удалить мероприятие</button>
+    <button class="btn-cta" id="evSubmitBtn" onclick="submitEvent()">Создать</button>
+    <button class="btn-ghost danger" id="evDeleteBtn" onclick="deleteEvent()" style="display:none;margin-top:10px;">Удалить мероприятие</button>
   </div>
 </div>
 
@@ -1590,8 +1607,8 @@
       <label class="form-label">Заметка (необязательно)</label>
       <textarea class="form-input" id="shNote" placeholder="Например: подменяет Ивана"></textarea>
     </div>
-    <button class="btn-primary btn-full" id="shSubmitBtn" onclick="submitShift()">Сохранить</button>
-    <button class="btn-primary btn-full" id="shDeleteBtn" onclick="deleteShift()" style="display:none;background:transparent;border:1px solid #ef4444;color:#ef4444;margin-top:10px;">Удалить смену</button>
+    <button class="btn-cta" id="shSubmitBtn" onclick="submitShift()">Сохранить</button>
+    <button class="btn-ghost danger" id="shDeleteBtn" onclick="deleteShift()" style="display:none;margin-top:10px;">Удалить смену</button>
   </div>
 </div>
 
@@ -1761,7 +1778,7 @@
       </div>
     </div>
     <div class="pb-note" style="margin:-4px 0 12px">«Высокая» сразу приходит администрации в Telegram.</div>
-    <button class="btn-primary btn-full" id="probSubmitBtn" onclick="submitProblem()">Отправить</button>
+    <button class="btn-cta" id="probSubmitBtn" onclick="submitProblem()">Отправить</button>
   </div>
 </div>
 
@@ -1790,7 +1807,7 @@
       <label class="enps-label" for="enpsImprove">Что можно улучшить?</label>
       <textarea class="form-input" id="enpsImprove" placeholder="Пара слов"></textarea>
     </div>
-    <button class="btn-primary btn-full" id="enpsSubmitBtn" onclick="submitEnps()">Отправить анонимно</button>
+    <button class="btn-cta" id="enpsSubmitBtn" onclick="submitEnps()">Отправить анонимно</button>
     <div style="height:16px"></div>
   </div>
 </div>
@@ -1809,7 +1826,7 @@
       <div class="chip" data-value="Закрытие" onclick="switchChecklistType(this)">Закрытие</div>
     </div>
     <div id="checklistItems"></div>
-    <button class="btn-primary btn-full" id="checklistSubmitBtn" onclick="completeChecklist()">Готово, отметить смену</button>
+    <button class="btn-cta" id="checklistSubmitBtn" onclick="completeChecklist()">Готово, отметить смену</button>
   </div>
 </div>
 
@@ -1863,7 +1880,7 @@
       <label class="form-label">Что важно для гостя (необязательно)</label>
       <textarea class="form-input" id="ngImportant" placeholder="Сервис, место, атмосфера..."></textarea>
     </div>
-    <button class="btn-primary btn-full" id="ngSubmitBtn" onclick="submitNewGuest()">Создать карточку</button>
+    <button class="btn-cta" id="ngSubmitBtn" onclick="submitNewGuest()">Создать карточку</button>
   </div>
 </div>
 
@@ -1888,7 +1905,7 @@
       <label class="form-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Заметки</label>
       <textarea class="form-input" id="visitNotes" placeholder="Необязательно"></textarea>
     </div>
-    <button class="btn-primary btn-full" id="visitSubmitBtn" onclick="submitVisit()">Сохранить визит</button>
+    <button class="btn-cta" id="visitSubmitBtn" onclick="submitVisit()">Сохранить визит</button>
   </div>
 </div>
 
@@ -3620,7 +3637,7 @@
     return `<div class="hint-box" style="margin-top:12px">
       <div class="hint-title">${escHtml(title)}</div>
       ${rows}
-      <button class="btn-primary btn-full" onclick="openAddBookingAt(hallDate, ${t}, '${escJs(tb.key)}')">+ Бронь на этот стол в ${hhmm(t)}</button>
+      <div class="add-row" style="justify-content:flex-start;margin:10px 0 0"><button type="button" class="btn-new-guest" onclick="openAddBookingAt(hallDate, ${t}, '${escJs(tb.key)}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Бронь на этот стол в ${hhmm(t)}</button></div>
     </div>`;
   }
 
@@ -3831,8 +3848,8 @@
         <div class="form-group"><label class="form-label">Время</label><input class="form-input" type="time" id="bkEditTime" value="${escHtml(currentTime)}"></div>
         <div class="form-group"><label class="form-label">Гостей</label><input class="form-input" type="number" min="1" id="bkEditGuests" value="${escHtml(String(b.guests || ''))}"></div>
         <div class="form-group"><label class="form-label">Комментарий</label><textarea class="form-input" id="bkEditComment">${escHtml(b.comment || '')}</textarea></div>
-        <button class="btn-primary btn-full" onclick="saveBookingEdit()">Сохранить</button>
-        <button class="btn-primary btn-full" style="margin-top:8px;background:transparent;" onclick="bookingEditMode=false;renderBookingDetail();">Отмена</button>
+        <button class="btn-cta" onclick="saveBookingEdit()">Сохранить</button>
+        <button class="btn-ghost" onclick="bookingEditMode=false;renderBookingDetail();">Отмена</button>
       `;
       return;
     }
@@ -3853,7 +3870,7 @@
           </div>
         </div>
         ${tableConflictWarningHtml('tableConflictWarning')}
-        ${currentBookingSource === 'cur' ? `<button class="btn-primary btn-full" style="margin-top:10px;background:transparent;" onclick="seatFromDetail()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><rect x="3" y="3" width="18" height="18" rx="3"/><rect x="7" y="7" width="4" height="4" rx="1"/><circle cx="16" cy="9" r="2"/><rect x="7" y="14" width="10" height="3.5" rx="1.5"/></svg>Выбрать стол на схеме</button>` : ''}
+        ${currentBookingSource === 'cur' ? `<button class="btn-ghost" style="margin-top:10px;" onclick="seatFromDetail()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><rect x="3" y="3" width="18" height="18" rx="3"/><rect x="7" y="7" width="4" height="4" rx="1"/><circle cx="16" cy="9" r="2"/><rect x="7" y="14" width="10" height="3.5" rx="1.5"/></svg>Выбрать стол на схеме</button>` : ''}
       </div>
     `;
 
@@ -3878,9 +3895,9 @@
 
       ${b.past ? '<div class="note" style="margin-top:14px">Бронь уже прошла — подтверждать, переносить и отменять её не нужно.</div>' : tableBlockHtml}
 
-${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary btn-full" id="bkConfirmBtn" onclick="confirmBookingAction()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><path d="M4 12l5 5L20 6"/></svg>Подтвердить</button>` : ''}
-      <button class="btn-primary btn-full" style="margin-top:8px;" onclick="openBookingEdit()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:6px;display:inline-block"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Изменить</button>
-      <button class="btn-primary btn-full" style="margin-top:8px;background:rgba(239,68,68,0.12);color:#ef4444;border-color:rgba(239,68,68,0.35);" onclick="cancelBookingAction()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg>Отменить бронь</button>`}
+${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="bkConfirmBtn" onclick="confirmBookingAction()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><path d="M4 12l5 5L20 6"/></svg>Подтвердить</button>` : ''}
+      <div class="btn-row"><button class="btn-ghost" onclick="openBookingEdit()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:6px;display:inline-block"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Изменить</button>
+      <button class="btn-ghost danger" onclick="cancelBookingAction()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg>Отменить бронь</button></div>`}
     `;
   }
 
@@ -4026,8 +4043,8 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
       <div class="pick">${tb
         ? `Выбран <b>${escHtml(tableName)}</b> · ${tb.seats} чел${warnSeats}<small>Можно выбрать другой стол на схеме</small>`
         : `Стол не выбран<small>Нажмите на стол на схеме</small>`}</div>
-      <button class="btn-primary btn-full" id="seatConfirmBtn" ${tb ? '' : 'disabled'} onclick="confirmSeating()">${pending ? '✓ Подтвердить бронь' : 'Сохранить стол'}</button>
-      <button class="btn-primary btn-full" style="margin-top:8px;background:transparent;" onclick="cancelSeating()">Отмена</button>
+      <button class="btn-cta" id="seatConfirmBtn" ${tb ? '' : 'disabled'} onclick="confirmSeating()">${pending ? '✓ Подтвердить бронь' : 'Сохранить стол'}</button>
+      <button class="btn-ghost" onclick="cancelSeating()">Отмена</button>
     </div>`;
   }
 
@@ -4177,7 +4194,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
     showScreen('problems');
     const el = document.getElementById('problemsContent');
     el.innerHTML = '<div class="loading">Загружаю...</div>';
-    const reportBtn = `<button type="button" class="btn-primary btn-full" style="margin:0 0 14px" onclick="openReportProblem()">+ Сообщить о проблеме</button>`;
+    const reportBtn = `<div class="add-row" style="margin:0 0 14px"><button type="button" class="btn-new-guest" onclick="openReportProblem()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Сообщить о проблеме</button></div>`;
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/problems?pin=${getPin()}`);
       if (res.status === 401) { showScreen('pin'); return; }
@@ -4818,7 +4835,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
       : `<div style="padding:4px 0 12px;color:var(--text-muted);font-size:12px;">Смены не назначены</div>`;
 
     const addBtn = isAdmin
-      ? `<button class="btn-primary btn-full" style="margin-top:10px;" onclick="openAddShift('${selectedScheduleDate}')">+ Добавить смену</button>`
+      ? `<div class="add-row" style="margin-top:12px"><button type="button" class="btn-new-guest" onclick="openAddShift('${selectedScheduleDate}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Добавить смену</button></div>`
       : '';
 
     panel.innerHTML = heading + rowsHtml + addBtn;
@@ -5352,7 +5369,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
           </div>
           <div class="enps-hero-title" style="text-align:center">Спасибо!</div>
           <div class="enps-hero-text" style="text-align:center;margin-top:8px">Ответ анонимный — мы его получили и обязательно прочитаем.</div>
-          <button class="btn-primary btn-full" style="margin-top:26px" onclick="showScreen('home')">На главную</button>
+          <button class="btn-cta" style="margin-top:26px" onclick="showScreen('home')">На главную</button>
         </div>
       `;
     } catch {
@@ -5698,9 +5715,9 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
     const canSend = !reason;
     box.innerHTML = `
       ${cur ? `<div class="mk-summary"><span>${escHtml(cur.title)}</span><b>${cur.reachable} ${ruPlural(cur.reachable, 'гость', 'гостя', 'гостей')}</b></div>` : ''}
-      <button class="btn-primary btn-full mk-send" id="mkSendBtn" ${canSend ? '' : 'disabled'} onclick="mkSend(false)">${cur && cur.reachable ? `Отправить ${cur.reachable} ${ruPlural(cur.reachable, 'гостю', 'гостям', 'гостям')}` : 'Отправить'}</button>
+      <button class="btn-cta mk-send" id="mkSendBtn" ${canSend ? '' : 'disabled'} onclick="mkSend(false)">${cur && cur.reachable ? `Отправить ${cur.reachable} ${ruPlural(cur.reachable, 'гостю', 'гостям', 'гостям')}` : 'Отправить'}</button>
       ${reason ? `<div class="mk-reason">${escHtml(reason)}</div>` : ''}
-      <button class="btn-primary btn-full mk-test" ${hasText ? '' : 'disabled'} onclick="mkSend(true)">Отправить себе для проверки</button>
+      <button class="btn-ghost mk-test" ${hasText ? '' : 'disabled'} onclick="mkSend(true)">Отправить себе для проверки</button>
       <div class="mk-reason" style="margin-top:6px">Проверка приходит вам от гостевого бота — в любое время</div>`;
   }
 
@@ -6538,8 +6555,8 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
           html += `<div class="dup-conflict"><div class="form-label">${label} — в карточках по-разному</div><div class="chip-row">${opts.map((o, i) =>
             `<div class="chip${o.value === current ? ' selected' : ''}" onclick="dupSetField('${key}', '${field}', ${i})">${escHtml(o.label)}</div>`).join('')}</div></div>`;
         }
-        html += `<button class="btn-primary btn-full" ${dupBusy ? 'disabled' : ''} onclick="dupMergeGroup('${key}')">Объединить в «${escHtml(main.name || 'главную')}»</button>
-          <button class="btn-primary btn-full" style="margin-top:8px;background:transparent;" ${dupBusy ? 'disabled' : ''} onclick="dupNotDuplicates('${key}')">Это разные люди с одним номером</button></div>`;
+        html += `<button class="btn-cta" ${dupBusy ? 'disabled' : ''} onclick="dupMergeGroup('${key}')">Объединить в «${escHtml(main.name || 'главную')}»</button>
+          <button class="btn-ghost" ${dupBusy ? 'disabled' : ''} onclick="dupNotDuplicates('${key}')">Это разные люди с одним номером</button></div>`;
       });
     }
     if (d.noPhone.length) {
@@ -6847,7 +6864,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
         <div style="font-size:12px;color:var(--text-sub);margin-bottom:12px;">
           Бронировал${g.bookingsCount ? ' · ' + g.bookingsCount + ' раз' : ''} через приложение${g.phone ? ' · ' + escHtml(g.phone) : ''}.<br>В карточке гостей его пока нет.
         </div>
-        <button class="btn-primary" style="width:100%;" onclick="openNewGuest('${nameEsc}','${phoneEsc}')">Создать карточку</button>
+        <button class="btn-cta" onclick="openNewGuest('${nameEsc}','${phoneEsc}')">Создать карточку</button>
       </div>`;
   }
 
@@ -6894,7 +6911,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
 
       const phoneEsc = escHtml(escJs(phone));
       resultsEl.innerHTML = `<div class="empty-state">Гостя с этим номером нет ни в карточках, ни в бронях.</div>
-        <button class="btn-primary btn-full" onclick="openNewGuest('', '${phoneEsc}')">Создать карточку с этим номером</button>`;
+        <button class="btn-cta" onclick="openNewGuest('', '${phoneEsc}')">Создать карточку с этим номером</button>`;
     } catch {
       resultsEl.innerHTML = '<div class="empty-state">Не удалось выполнить поиск</div>';
     }
@@ -7678,7 +7695,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-primary bt
     document.getElementById('editOverlayBody').innerHTML = `
       <div class="note" style="margin-bottom:10px">Один гость — одна карточка. Скорее всего, это тот же человек — откройте его карточку.</div>
       ${list}
-      ${force ? `<button class="btn-primary btn-full" style="margin-top:6px;background:transparent;" onclick="runDuplicateForce()">${escHtml(force.label)}</button>
+      ${force ? `<button class="btn-ghost" style="margin-top:6px;" onclick="runDuplicateForce()">${escHtml(force.label)}</button>
         <div class="note" style="margin-top:6px">Только если это другой человек с тем же номером (например, бронирует за супругу).</div>` : ''}`;
     document.getElementById('editOverlay').classList.add('show');
   }
