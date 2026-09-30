@@ -468,6 +468,16 @@
     textarea.form-input { resize: none; height: 80px; }
     select.form-input { cursor: pointer; }
     input[type="date"].form-input, input[type="datetime-local"].form-input { text-align: left; }
+    /* Поле с числом: свои кнопки «больше / меньше» в цвет приложения вместо белых системных */
+    .num-field { position: relative; }
+    .num-field .form-input { padding-right: 46px; -moz-appearance: textfield; appearance: textfield; }
+    .num-field .form-input::-webkit-inner-spin-button, .num-field .form-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    .num-steps { position: absolute; top: 50%; right: 8px; transform: translateY(-50%); display: flex; flex-direction: column; gap: 3px; }
+    .num-steps button { width: 26px; height: 17px; padding: 0; display: flex; align-items: center; justify-content: center; background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(184,115,51,0.35); border-radius: 6px; cursor: pointer; }
+    .num-steps button:hover, .num-steps button:active { background: rgba(184,115,51,0.28); }
+    /* Значки календаря и часов в полях даты/времени — тоже в цвет приложения */
+    input[type="date"].form-input, input[type="time"].form-input, input[type="datetime-local"].form-input { color-scheme: dark; }
+    input[type="date"].form-input::-webkit-calendar-picker-indicator, input[type="time"].form-input::-webkit-calendar-picker-indicator, input[type="datetime-local"].form-input::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.85; filter: invert(52%) sepia(62%) saturate(560%) hue-rotate(345deg) brightness(92%); }
 
     .chip-row { display: flex; gap: 8px; flex-wrap: wrap; }
     .chip {
@@ -1458,7 +1468,7 @@
     </div>
     <div class="form-group">
       <label class="form-label">Гостей (необязательно)</label>
-      <input class="form-input" id="abGuests" type="number" min="1">
+      <div class="num-field"><input class="form-input" id="abGuests" type="number" min="1"><div class="num-steps"><button type="button" tabindex="-1" aria-label="Больше" onclick="stepNum(this,1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 15 12 9 18 15"/></svg></button><button type="button" tabindex="-1" aria-label="Меньше" onclick="stepNum(this,-1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button></div></div>
     </div>
     <div class="form-group">
       <label class="form-label">Стол (необязательно, можно назначить позже)</label>
@@ -3846,7 +3856,7 @@
         <div class="guest-name">${escHtml(b.name || '')}</div>
         <div class="form-group" style="margin-top:14px;"><label class="form-label">Дата</label><input class="form-input" type="date" id="bkEditDate" value="${escHtml(currentDate)}"></div>
         <div class="form-group"><label class="form-label">Время</label><input class="form-input" type="time" id="bkEditTime" value="${escHtml(currentTime)}"></div>
-        <div class="form-group"><label class="form-label">Гостей</label><input class="form-input" type="number" min="1" id="bkEditGuests" value="${escHtml(String(b.guests || ''))}"></div>
+        <div class="form-group"><label class="form-label">Гостей</label><div class="num-field"><input class="form-input" type="number" min="1" id="bkEditGuests" value="${escHtml(String(b.guests || ''))}"><div class="num-steps"><button type="button" tabindex="-1" aria-label="Больше" onclick="stepNum(this,1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 15 12 9 18 15"/></svg></button><button type="button" tabindex="-1" aria-label="Меньше" onclick="stepNum(this,-1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button></div></div></div>
         <div class="form-group"><label class="form-label">Комментарий</label><textarea class="form-input" id="bkEditComment">${escHtml(b.comment || '')}</textarea></div>
         <button class="btn-cta" onclick="saveBookingEdit()">Сохранить</button>
         <button class="btn-ghost" onclick="bookingEditMode=false;renderBookingDetail();">Отмена</button>
@@ -7255,6 +7265,18 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
   let tagAddGroup = null; // 'special' | 'allergy' | null — какая группа сейчас в режиме добавления тега
   var cardTagsOpen = false; // раскрыт ли блок «Теги и вкусы» в открытой карточке
 
+  // Кнопки «больше / меньше» у поля с числом (.num-field)
+  function stepNum(btn, dir) {
+    const inp = btn.closest('.num-field')?.querySelector('input');
+    if (!inp) return;
+    const min = inp.min !== '' ? Number(inp.min) : 0;
+    const max = inp.max !== '' ? Number(inp.max) : Infinity;
+    const cur = parseInt(inp.value, 10);
+    let next = Number.isFinite(cur) ? cur + dir : (dir > 0 ? min : min);
+    next = Math.min(max, Math.max(min, next));
+    inp.value = String(next);
+    inp.dispatchEvent(new Event('input', { bubbles: true }));
+  }
   function escHtml(s) {
     return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
