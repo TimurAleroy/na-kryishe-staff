@@ -91,6 +91,8 @@
     /* ВХОД: логин и пароль, быстрый PIN, смена пароля */
     .auth-view { width: 100%; max-width: 320px; }
     .auth-input { margin-bottom: 10px; }
+    .auth-check { display: flex; align-items: center; gap: 10px; margin: 2px 2px 14px; color: var(--text-sub); font-size: 14px; cursor: pointer; user-select: none; }
+    .auth-check input { width: 18px; height: 18px; accent-color: var(--accent, #c98a4b); flex: none; margin: 0; }
     .auth-pass-wrap { position: relative; }
     .auth-pass-wrap .form-input { padding-right: 46px; }
     .auth-eye { position: absolute; right: 6px; top: 0; height: 100%; width: 40px; background: none; border: none; color: var(--text-sub); cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -1543,6 +1545,7 @@
         <input class="form-input" id="authPass" name="password" type="password" autocomplete="current-password" placeholder="Пароль">
         <button type="button" class="auth-eye" onclick="toggleAuthEye('authPass', this)" aria-label="Показать пароль"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
       </div>
+      <label class="auth-check"><input type="checkbox" id="authRemember"><span>Сохранить пароль</span></label>
       <button class="btn-cta" id="authLoginBtn" type="submit">Войти</button>
     </form>
   </div>
@@ -2784,23 +2787,31 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // Быстрый PIN работает только вместе с ключом устройства, который хранится на этом телефоне; 5 неверных PIN
   // подряд — и устройство отключается (нужен пароль). getPin() по старой привычке отдаёт ключ входа:
   // обёртка fetch сама переносит его из адреса и тела запроса в заголовок.
-  const TOKEN_KEY = 'staff_token', DEVICE_KEY = 'staff_device', QUICK_SKIP_KEY = 'staff_quick_skip';
+  const TOKEN_KEY = 'staff_token', DEVICE_KEY = 'staff_device', QUICK_SKIP_KEY = 'staff_quick_skip', SAVED_TOKEN_KEY = 'staff_token_saved', LAST_LOGIN_KEY = 'staff_last_login';
+  // «Сохранить пароль»: сам пароль приложение нигде не хранит — запоминается вход (ключ на 30 дней) на этом устройстве
   var authToken = '';
   try { authToken = sessionStorage.getItem(TOKEN_KEY) || ''; } catch {}
+  function getSavedToken() { try { return localStorage.getItem(SAVED_TOKEN_KEY) || ''; } catch { return ''; } }
   function getPin() { return authToken; }
-  function setToken(t) {
+  // persist: true — запомнить вход на устройстве, false — не запоминать, не указано — как было (ключ обновился)
+  function setToken(t, persist) {
     authToken = t || '';
     try { if (authToken) sessionStorage.setItem(TOKEN_KEY, authToken); else sessionStorage.removeItem(TOKEN_KEY); } catch {}
+    try {
+      if (!authToken || persist === false) localStorage.removeItem(SAVED_TOKEN_KEY);
+      else if (persist === true || localStorage.getItem(SAVED_TOKEN_KEY)) localStorage.setItem(SAVED_TOKEN_KEY, authToken);
+    } catch {}
   }
+  function quickSkipped() { try { return localStorage.getItem(QUICK_SKIP_KEY) === '1'; } catch { return false; } }
   function getDeviceToken() { try { return localStorage.getItem(DEVICE_KEY) || ''; } catch { return ''; } }
   function setDeviceToken(t) { try { if (t) localStorage.setItem(DEVICE_KEY, t); else localStorage.removeItem(DEVICE_KEY); } catch {} }
-  function quickSkipped() { try { return localStorage.getItem(QUICK_SKIP_KEY) === '1'; } catch { return false; } }
 
   var authViewName = '';
   var authBusy = false;
   var authSession = null;     // ответ сервера о вошедшем: имя, роль, права, логин
   var authSetupFirst = '';    // первый ввод нового быстрого PIN
   var authAfter = null;       // что делать, когда вход/настройка закончены
+  var authRemember = false;   // отмечено «Сохранить пароль» при входе по паролю
 
   function authLinkHtml(label, fn) { return `<button type="button" class="auth-link" onclick="${fn}">${label}</button>`; }
 
@@ -2825,9 +2836,14 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (v === 'quick') links = authLinkHtml('Войти по логину и паролю', "authSetView('password')") + authLinkHtml('Это не мой телефон — забыть устройство', 'authForgetDevice()');
     else if (v === 'password') links = (hasDevice ? authLinkHtml('Войти по быстрому PIN', "authSetView('quick')") : '') + authLinkHtml('Пароля ещё нет? Войти по старому PIN', "authSetView('legacy')");
     else if (v === 'legacy') links = authLinkHtml('Войти по логину и паролю', "authSetView('password')");
-    else if (v === 'setup1' || v === 'setup2') links = authLinkHtml(v === 'setup2' ? 'Ввести заново' : 'Не сейчас', v === 'setup2' ? "authSetView('setup1')" : 'authSkipQuick()');
+    else if (v === 'setup1' || v === 'setup2') links = authLinkHtml(v === 'setup2' ? 'Ввести заново' : (authAfter === enterApp ? 'Не сейчас' : 'Отмена'), v === 'setup2' ? "authSetView('setup1')" : 'authSkipQuick()');
     else if (v === 'setpass') links = authLinkHtml('Выйти', 'logout()');
     document.getElementById('authLinks').innerHTML = links;
+    if (v === 'password') {
+      let last = ''; try { last = localStorage.getItem(LAST_LOGIN_KEY) || ''; } catch {}
+      const lg = document.getElementById('authLogin');
+      if (last && !lg.value) { lg.value = last; document.getElementById('authRemember').checked = true; } // раньше отмечали «Сохранить пароль» — логин подставляем
+    }
     if (v === 'password') setTimeout(() => { try { document.getElementById(document.getElementById('authLogin').value ? 'authPass' : 'authLogin').focus(); } catch {} }, 60);
     if (v === 'setpass') {
       document.getElementById('authNewPass').value = ''; document.getElementById('authNewPass2').value = '';
@@ -2913,7 +2929,13 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     authBusy = true; btn.disabled = true; btn.textContent = 'Входим...'; authError('');
     try {
       const r = await authPost('/api/auth/login', { login, password });
-      if (r.ok) { document.getElementById('authPass').value = ''; authBusy = false; authLoggedIn(r.data); }
+      if (r.ok) {
+        authRemember = !!document.getElementById('authRemember').checked;
+        try { if (authRemember) localStorage.setItem(LAST_LOGIN_KEY, login); else localStorage.removeItem(LAST_LOGIN_KEY); } catch {}
+        // браузеру — предложить запомнить пароль в его собственном хранилище (где поддерживается)
+        if (authRemember) { try { if (window.PasswordCredential && navigator.credentials) navigator.credentials.store(new PasswordCredential({ id: login, password, name: login })).catch(() => {}); } catch {} }
+        document.getElementById('authPass').value = ''; authBusy = false; authLoggedIn(r.data);
+      }
       else { authBusy = false; authError(r.data.error || 'Не удалось войти'); document.getElementById('authPass').value = ''; document.getElementById('authPass').focus(); }
     } catch { authBusy = false; authError('Ошибка соединения'); }
     btn.disabled = false; btn.textContent = 'Войти';
@@ -2922,7 +2944,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
   // Сервер пустил: запоминаем ключ; если нужно сменить пароль — сначала он
   function authLoggedIn(data) {
-    setToken(data.token);
+    setToken(data.token, authRemember);
+    authRemember = false;
     authSession = data;
     authAfter = null;
     if (data.mustChange) { authForceSetPassword(); return; }
@@ -2967,16 +2990,17 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
 
   // После входа предлагаем быстрый PIN, если на этом телефоне его ещё нет
+  // После входа по паролю на телефоне без быстрого входа предлагаем PIN; можно отказаться («Не сейчас»)
   function authOfferQuick() {
     if (!getDeviceToken() && !quickSkipped()) {
-      authSetView('setup1', 'PIN нужен только на этом телефоне: дальше хватит его вместо пароля');
       authAfter = enterApp;
+      authSetView('setup1', 'PIN нужен только на этом телефоне: дальше хватит его вместо пароля');
       return;
     }
     enterApp();
   }
   function authSkipQuick() {
-    if (authAfter === enterApp || !authAfter) { try { localStorage.setItem(QUICK_SKIP_KEY, '1'); } catch {} } // «Не сейчас» при входе: больше не предлагаем (включается в «Моём входе»)
+    if (authAfter === enterApp || !authAfter) { try { localStorage.setItem(QUICK_SKIP_KEY, '1'); } catch {} } // отказ при входе: больше не предлагаем (включается в «Моём входе»)
     authFinish();
   }
   function authFinish() { const f = authAfter || enterApp; authAfter = null; f(); }
@@ -3017,6 +3041,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // Открыли приложение заново: если вкладка помнит вход — продолжаем, иначе экран входа
   async function authInit() {
     try { localStorage.removeItem('staff_pin'); } catch {}  // прежний вход по PIN-коду больше не хранится
+    if (!authToken && !getDeviceToken() && getSavedToken()) authToken = getSavedToken(); // «Сохранить пароль»: вход помнится, пока не нажмут «Выйти»
     if (authToken) {
       try {
         const res = await fetch(`${PROXY_BASE}/api/auth/me`);
@@ -3119,7 +3144,6 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('guests.merge')) list.push({ group: G.guests, icon: 'duplicates', short: 'дубли', title: 'Дубли', sub: 'Одна карточка на гостя', fn: 'openDuplicates()' });
     if (can('tags.manage')) list.push({ group: G.guests, icon: 'tags', short: 'теги', title: 'Теги', sub: 'Список, цвета, подсказки', fn: 'openTagsEdit()' });
     if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'Логины, роли и права', fn: 'openEmployees()' });
-    else if (can('employees.reset_password')) list.push({ group: G.team, icon: 'team', short: 'доступ', title: 'Доступ и пароли', sub: 'Временные пароли, блокировки', fn: 'openEmployees()' });
     if (can('candidates.view')) list.push({ group: G.team, icon: 'candidates', short: 'кандидаты', title: 'Кандидаты', sub: 'Отклики на вакансии', fn: 'openCandidates()' });
     if (can('settings.manage')) list.push({ group: G.system, icon: 'reviews', short: 'отзывы', title: 'Просьбы об отзыве', sub: 'Когда и кому бот пишет', fn: 'openReviewRules()' });
     if (can('audit.view')) list.push({ group: G.system, icon: 'audit', short: 'журнал', title: 'Журнал', sub: 'Кто и что менял', fn: 'openAudit()' });
@@ -9800,6 +9824,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       if (!await askConfirm('Отключить быстрый вход на этом телефоне?\n\nДальше — только логин и пароль.', { ok: 'Отключить' })) return;
       const t = getDeviceToken();
       setDeviceToken('');
+      try { localStorage.setItem(QUICK_SKIP_KEY, '1'); } catch {} // выключили сами — снова не навязываем
       try { await authPost('/api/auth/device-forget', { deviceToken: t }); } catch {}
       renderAccQuick();
       loadAccSessions();
