@@ -891,6 +891,15 @@
     .dup-card.shared { cursor: default; opacity: 0.6; border-style: dashed; }
     .dup-card.shared .dup-role { color: var(--text-muted); }
     .dup-card-body { flex: 1; min-width: 0; }
+    .emp-row { display: flex; align-items: center; gap: 12px; padding: 11px 14px; margin-bottom: 8px; border: 1px solid var(--border); border-radius: 14px; background: var(--bg-card); cursor: pointer; transition: background .15s; }
+    .emp-row:active { background: var(--bg-card-hover); }
+    @media (hover: hover) { .emp-row:hover { background: var(--bg-card-hover); } }
+    .emp-row.off { opacity: 0.55; }
+    .emp-body { flex: 1; min-width: 0; }
+    .emp-name { font-size: 14px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .emp-meta { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+    .emp-role { font-size: 11.5px; color: var(--accent); white-space: nowrap; }
+    .emp-hint { font-size: 11.5px; line-height: 1.5; color: var(--text-muted); margin-top: 6px; }
     .dup-name { font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
     .dup-meta { font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin-top: 3px; }
     .dup-meta .danger { color: #fca5a5; }
@@ -1680,6 +1689,52 @@
   <div style="padding:0 16px" id="duplicatesContent"><div class="loading">Ищу...</div></div>
 </div>
 
+<!-- ОСНОВАТЕЛЬ: СОТРУДНИКИ -->
+<div class="screen" id="screen-employees">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('home')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Сотрудники</h1><p>Доступ в приложение по PIN-коду</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div class="add-row" style="margin:14px 0 16px"><button type="button" class="btn-new-guest" onclick="openEmployeeForm()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Новый сотрудник</button></div>
+    <div id="employeesContent"><div class="loading">Загружаю...</div></div>
+  </div>
+</div>
+
+<div class="screen" id="screen-employee-form">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('employees')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;" id="empFormTitle">Новый сотрудник</h1></div>
+  </div>
+  <div style="padding:0 16px">
+    <div class="form-group">
+      <label class="form-label">Имя</label>
+      <input class="form-input" id="empName" type="text" maxlength="100" autocomplete="off" placeholder="Как подписывать в графике и карточках">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Роль</label>
+      <select class="form-input" id="empRole" onchange="updateEmpRoleHint()"></select>
+      <div class="emp-hint" id="empRoleHint"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" id="empPinLabel">PIN-код (4 цифры)</label>
+      <input class="form-input" id="empPin" type="text" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="••••">
+      <div class="emp-hint" id="empPinHint"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Telegram ID (необязательно)</label>
+      <input class="form-input" id="empTg" type="text" inputmode="numeric" maxlength="15" autocomplete="off" placeholder="Только цифры — для сообщений бота">
+    </div>
+    <button class="btn-cta" id="empSubmitBtn" onclick="submitEmployee()">Сохранить</button>
+    <button class="btn-ghost danger" id="empActiveBtn" onclick="toggleEmployeeActive()" style="display:none;margin-top:10px;">Уволить</button>
+    <div class="emp-hint" id="empActiveHint" style="display:none;text-align:center"></div>
+  </div>
+</div>
+
 <!-- ADMIN: СЕГМЕНТЫ ГОСТЕЙ ПО ВИЗИТАМ -->
 <div class="screen" id="screen-segments">
   <div class="header">
@@ -2140,7 +2195,8 @@
       analytics: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>',
       feedback: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M21 12a8 8 0 01-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1121 12z"/></svg>',
       segments: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/><path d="M3 17.5l9 5 9-5" opacity="0.55"/></svg>',
-      duplicates: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2"/></svg>'
+      duplicates: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2"/></svg>',
+      team: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.2a3.2 3.2 0 010 5.6"/><path d="M18 14.4c1.8.8 3 2.6 3 5.6"/></svg>'
     };
 
     // Группы — по тому, как часто ими пользуются за смену: «Внимание» → «Смена» →
@@ -2196,6 +2252,7 @@
       analyticsRows += qrow(icons.segments, 'Сегменты', 'Чемпионы → потерянные', "openSegments()");
       analyticsRows += qrow(icons.feedback, 'Обратная связь', 'Отзывы · eNPS', "openFeedback()");
       analyticsRows += qrow(icons.guestsTable, 'Таблица гостей', 'На компьютере', "openGuestsTable()", { extraClass: 'desktop-only' });
+      serviceRows += qrow(icons.team, 'Сотрудники', 'PIN-коды и роли', "openEmployees()");
     }
 
     let html = '';
@@ -6800,9 +6857,177 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
     return `<div class="chlog-box">${items}</div>${more}`;
   }
 
+  // ─── ОСНОВАТЕЛЬ: СОТРУДНИКИ ────────────────────
+  // Добавить сотрудника, поменять имя, роль, PIN, Telegram, уволить и вернуть на работу.
+  // PIN после сохранения не показывается (на сервере хранится только его отпечаток) —
+  // его можно только задать заново. Себя уволить и поменять себе роль нельзя.
+  var empData = { employees: [], roles: [] };
+  var editingEmployeeId = null;
+
+  function openEmployees() {
+    showScreen('employees');
+    loadEmployees();
+  }
+
+  async function loadEmployees() {
+    const el = document.getElementById('employeesContent');
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/founder/employees?pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить сотрудников'));
+      empData = await res.json();
+      renderEmployees();
+    } catch (e) {
+      el.innerHTML = `<div class="empty-state">${escHtml(e.message || 'Не удалось загрузить сотрудников')}</div>`;
+    }
+  }
+
+  function empRowHtml(e) {
+    const meta = [];
+    if (e.isSelf) meta.push('это вы');
+    if (!e.hasPin) meta.push('нет PIN-кода');
+    if (e.telegramId) meta.push('Telegram привязан');
+    return `
+      <div class="emp-row${e.active ? '' : ' off'}" onclick="openEmployeeForm('${escJs(e.id)}')">
+        <div class="emp-body">
+          <div class="emp-name">${escHtml(e.name)}</div>
+          ${meta.length ? `<div class="emp-meta">${escHtml(meta.join(' · '))}</div>` : ''}
+        </div>
+        <div class="emp-role">${escHtml(e.role)}</div>
+        <div class="qrow-chev">›</div>
+      </div>`;
+  }
+
+  function renderEmployees() {
+    const el = document.getElementById('employeesContent');
+    const list = empData.employees || [];
+    const working = list.filter(e => e.active);
+    const fired = list.filter(e => !e.active);
+    let html = '';
+    if (!list.length) html = '<div class="empty-state">Сотрудников пока нет</div>';
+    if (working.length) html += `<div class="sec">Работают · ${working.length}</div>` + working.map(empRowHtml).join('');
+    if (fired.length) html += `<div class="sec" style="margin-top:18px">Уволены · ${fired.length}</div>` + fired.map(empRowHtml).join('');
+    el.innerHTML = html;
+  }
+
+  // Подсказка под выбором роли: что даёт самая «сильная» роль
+  function updateEmpRoleHint() {
+    const sel = document.getElementById('empRole');
+    const e = editingEmployeeId ? (empData.employees || []).find(x => x.id === editingEmployeeId) : null;
+    let text = '';
+    if (e && e.isSelf) text = 'Свою роль менять нельзя — это может сделать другой основатель.';
+    else if (sel.value === 'Основатель') text = 'Основатель видит всё: аналитику, рассылки, обратную связь и этот экран.';
+    else if (sel.value === 'Администратор') text = 'Администратор ведёт брони, гостей, график и проблемы; аналитики и рассылок не видит.';
+    document.getElementById('empRoleHint').textContent = text;
+  }
+
+  function openEmployeeForm(id) {
+    editingEmployeeId = id || null;
+    const e = id ? (empData.employees || []).find(x => x.id === id) : null;
+    const roles = empData.roles && empData.roles.length ? empData.roles : ['Основатель', 'Администратор', 'КМ', 'Бармен', 'Повар', 'Официант'];
+    const sel = document.getElementById('empRole');
+    sel.innerHTML = roles.map(r => `<option value="${escHtml(r)}">${escHtml(r)}</option>`).join('');
+    document.getElementById('empName').value = e ? e.name : '';
+    sel.value = e ? e.role : 'Официант';
+    sel.disabled = !!(e && e.isSelf);
+    updateEmpRoleHint();
+    document.getElementById('empPin').value = '';
+    document.getElementById('empPinLabel').textContent = e ? 'Новый PIN-код (4 цифры)' : 'PIN-код (4 цифры)';
+    document.getElementById('empPinHint').textContent = e
+      ? 'Текущий PIN не показывается. Оставьте поле пустым, чтобы не менять.'
+      : 'По этому коду сотрудник входит в приложение. У каждого свой.';
+    document.getElementById('empTg').value = e ? (e.telegramId || '') : '';
+    document.getElementById('empFormTitle').textContent = e ? e.name : 'Новый сотрудник';
+    document.getElementById('empSubmitBtn').textContent = 'Сохранить';
+    const activeBtn = document.getElementById('empActiveBtn');
+    const activeHint = document.getElementById('empActiveHint');
+    if (e && !e.isSelf) {
+      activeBtn.style.display = 'block';
+      activeBtn.textContent = e.active ? 'Уволить' : 'Вернуть на работу';
+      activeBtn.classList.toggle('danger', !!e.active);
+      activeHint.style.display = 'block';
+      activeHint.textContent = e.active
+        ? 'Доступ закроется сразу. Смены и записи сотрудника сохранятся.'
+        : 'Если его старый PIN уже занят, введите новый выше — он применится при возврате.';
+    } else {
+      activeBtn.style.display = 'none';
+      activeHint.style.display = 'none';
+    }
+    showScreen('employee-form');
+  }
+
+  // Список сотрудников в форме графика — сбрасываем, чтобы новые люди появились сразу
+  function forgetScheduleEmployees() { scheduleEmployeesCache = null; }
+
+  async function sendEmployee(method, url, body, btn, busyText, idleText) {
+    btn.disabled = true;
+    btn.textContent = busyText;
+    try {
+      const res = await fetch(`${PROXY_BASE}${url}?pin=${getPin()}`, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json().catch(() => ({}));
+      btn.disabled = false;
+      btn.textContent = idleText;
+      if (!res.ok) { notify(data.error || 'Не удалось сохранить'); return null; }
+      return data;
+    } catch {
+      btn.disabled = false;
+      btn.textContent = idleText;
+      notify('Не удалось сохранить — проверьте соединение');
+      return null;
+    }
+  }
+
+  async function submitEmployee() {
+    const name = document.getElementById('empName').value.trim();
+    const role = document.getElementById('empRole').value;
+    const newPin = document.getElementById('empPin').value.trim();
+    const telegramId = document.getElementById('empTg').value.trim();
+    const btn = document.getElementById('empSubmitBtn');
+    if (!name) { notify('Укажите имя'); return; }
+    if (!editingEmployeeId && !/^\d{4}$/.test(newPin)) { notify('PIN — ровно 4 цифры'); return; }
+    if (newPin && !/^\d{4}$/.test(newPin)) { notify('PIN — ровно 4 цифры'); return; }
+    if (telegramId && !/^\d{3,15}$/.test(telegramId)) { notify('Telegram ID — только цифры'); return; }
+
+    const e = editingEmployeeId ? (empData.employees || []).find(x => x.id === editingEmployeeId) : null;
+    let data;
+    if (!editingEmployeeId) {
+      data = await sendEmployee('POST', '/api/founder/employees', { name, role, newPin, telegramId }, btn, 'Сохраняем...', 'Сохранить');
+    } else {
+      data = await sendEmployee('PATCH', `/api/founder/employees/${editingEmployeeId}`, { name, role: e && e.isSelf ? undefined : role, newPin: newPin || undefined, telegramId }, btn, 'Сохраняем...', 'Сохранить');
+      // поменяли свой PIN — запоминаем новый, иначе приложение «разлогинит» само себя
+      if (data && e && e.isSelf && newPin) { try { localStorage.setItem('staff_pin', newPin); } catch {} }
+    }
+    if (!data) return;
+    forgetScheduleEmployees();
+    showSuccess(editingEmployeeId ? 'Сохранено' : 'Сотрудник добавлен', '');
+    editingEmployeeId = null;
+    openEmployees();
+  }
+
+  async function toggleEmployeeActive() {
+    const e = (empData.employees || []).find(x => x.id === editingEmployeeId);
+    if (!e) return;
+    const newPin = document.getElementById('empPin').value.trim();
+    if (newPin && !/^\d{4}$/.test(newPin)) { notify('PIN — ровно 4 цифры'); return; }
+    if (e.active && !await askConfirm(`Уволить «${e.name}»? Доступ в приложение закроется сразу.`, { ok: 'Уволить', danger: true })) return;
+    const btn = document.getElementById('empActiveBtn');
+    const idle = e.active ? 'Уволить' : 'Вернуть на работу';
+    const data = await sendEmployee('PATCH', `/api/founder/employees/${e.id}`, { active: !e.active, newPin: !e.active && newPin ? newPin : undefined }, btn, 'Сохраняем...', idle);
+    if (!data) return;
+    forgetScheduleEmployees();
+    showSuccess(e.active ? 'Сотрудник уволен' : 'Сотрудник возвращён', '');
+    editingEmployeeId = null;
+    openEmployees();
+  }
+
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates'];
+  const screens = ['pin', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form'];
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
 
