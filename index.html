@@ -1968,7 +1968,7 @@
     </div>
     <div class="form-group" id="empLoginWrap">
       <label class="form-label">Логин</label>
-      <input class="form-input" id="empLogin" type="text" maxlength="40" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Латиницей, например anna.k">
+      <input class="form-input" id="empLogin" type="text" maxlength="40" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Латиницей, например anna.k (обязательно)">
       <div class="emp-hint" id="empLoginHint"></div>
     </div>
     <div class="form-group" id="empTempWrap">
@@ -2834,7 +2834,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const hasDevice = !!getDeviceToken();
     let links = '';
     if (v === 'quick') links = authLinkHtml('Войти по логину и паролю', "authSetView('password')") + authLinkHtml('Это не мой телефон — забыть устройство', 'authForgetDevice()');
-    else if (v === 'password') links = (hasDevice ? authLinkHtml('Войти по быстрому PIN', "authSetView('quick')") : '') + authLinkHtml('Пароля ещё нет? Войти по старому PIN', "authSetView('legacy')");
+    else if (v === 'password') links = hasDevice ? authLinkHtml('Войти по быстрому PIN', "authSetView('quick')") : '';
     else if (v === 'legacy') links = authLinkHtml('Войти по логину и паролю', "authSetView('password')");
     else if (v === 'setup1' || v === 'setup2') links = authLinkHtml(v === 'setup2' ? 'Ввести заново' : (authAfter === enterApp ? 'Не сейчас' : 'Отмена'), v === 'setup2' ? "authSetView('setup1')" : 'authSkipQuick()');
     else if (v === 'setpass') links = authLinkHtml('Выйти', 'logout()');
@@ -2955,7 +2955,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function authForceSetPassword() {
     const legacy = authSession && authSession.viaLegacy;
     authSetView('setpass');
-    document.getElementById('authSetNote').textContent = 'Вход по временному паролю или старому PIN. Задайте свой пароль — от 8 знаков. Его знаете только вы.';
+    document.getElementById('authSetNote').textContent = 'Вы вошли по временному паролю. Задайте свой пароль — от 8 знаков. Его знаете только вы.';
   }
   function forceSetPassword() { // сервер потребовал сменить пароль посреди работы
     if (activeScreenName() !== 'pin' || authViewName !== 'setpass') { showScreen('pin'); authForceSetPassword(); }
@@ -9567,7 +9567,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
 
   function empStatusText(e) {
     if (e.lockedUntil) return { t: 'Вход временно закрыт', h: `После неверных паролей до ${fmtDateTime(e.lockedUntil)}. Можно снять блокировку вручную.` };
-    if (!e.hasPassword) return { t: 'Пароль не задан', h: 'Пока человек входит по старому PIN-коду. Задайте временный пароль — и старый PIN перестанет работать.' };
+    if (!e.hasPassword) return { t: 'Пароль не задан', h: e.loginSet ? 'Войти он пока не может. Задайте временный пароль и передайте ему логин и пароль.' : 'Войти он пока не может. Придумайте логин и задайте временный пароль.' };
     if (e.mustChangePassword) return { t: 'Ждёт смены пароля', h: 'Временный пароль задан, сотрудник ещё не сменил его.' };
     return { t: 'Пароль задан', h: e.passwordChangedAt ? `Сменён ${fmtDateTime(e.passwordChangedAt)}. Самого пароля никто не видит — хранится только его защитный код.` : 'Самого пароля никто не видит — хранится только его защитный код.' };
   }
@@ -9587,8 +9587,8 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     document.getElementById('empTempWrap').style.display = full && !e ? '' : 'none';
     document.getElementById('empLogin').value = e ? (e.login || '') : '';
     document.getElementById('empLoginHint').textContent = e
-      ? 'Под этим логином человек входит в приложение. Если сменить логин, он войдёт под новым — пароль останется прежним.'
-      : 'Оставьте пустым — подберём из имени (например, anna.k).';
+      ? (e.loginSet ? 'Под этим логином человек входит в приложение. Если сменить логин, он войдёт под новым — пароль останется прежним.' : 'Логин ещё не задан. Придумайте его (латиницей) и нажмите «Задать временный пароль» ниже.')
+      : 'Придумайте сами: латиницей, например anna.k. Он не обязан совпадать с именем.';
     document.getElementById('empTemp').value = '';
     document.getElementById('empTg').value = e ? (e.telegramId || '') : '';
     document.getElementById('empFormTitle').textContent = e ? e.name : 'Новый сотрудник';
@@ -9679,12 +9679,22 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     if (!e || e.isSelf) return;
     const custom = document.getElementById('empResetPw').value.trim();
     if (custom && custom.length < 8) { notify('Временный пароль — от 8 знаков'); return; }
+    // логин: если его ещё нет или в поле другой — сначала сохраняем его
+    const typedLogin = document.getElementById('empLogin').value.trim();
+    if (!e.loginSet && !typedLogin) { notify('Сначала придумайте логин сотруднику (поле «Логин» выше)'); document.getElementById('empLogin').focus(); return; }
+    if (typedLogin && !/^[a-zA-Z0-9._-]{2,40}$/.test(typedLogin)) { notify('Логин: 2–40 знаков, латинские буквы, цифры, точка, дефис или подчёркивание'); return; }
+    const newLogin = typedLogin && typedLogin.toLowerCase() !== String(e.login || '').toLowerCase() ? typedLogin : '';
     const ask = e.hasPassword
       ? `Задать «${e.name}» новый временный пароль?\n\nПрежний пароль перестанет работать, все его телефоны выйдут из приложения. При входе он задаст свой пароль.`
-      : `Задать «${e.name}» временный пароль?\n\nДо этого он входил по старому PIN-коду — после этого PIN перестанет работать. При первом входе он задаст свой пароль.`;
+      : `Задать «${e.name}» временный пароль?\n\nПри первом входе он задаст свой пароль.`;
     if (!await askConfirm(ask, { ok: 'Задать' })) return;
     const btn = document.getElementById('empResetBtn');
     const idle = btn.textContent;
+    if (newLogin) {
+      const saved = await sendEmployee('PATCH', `/api/founder/employees/${encodeURIComponent(e.id)}`, { login: newLogin }, btn, 'Сохраняем логин...', idle);
+      if (!saved) return;
+      e.login = newLogin.toLowerCase(); e.loginSet = true;
+    }
     const data = await sendEmployee('POST', `/api/auth/reset-password/${encodeURIComponent(e.id)}`, { tempPassword: custom || undefined }, btn, 'Задаём...', idle);
     if (!data) return;
     await showCredentialsDialog('Временный пароль задан', `Передайте «${e.name}» логин и пароль лично или в личном сообщении.`, e.login, data.password);
@@ -9762,6 +9772,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     const telegramId = document.getElementById('empTg').value.trim();
     const btn = document.getElementById('empSubmitBtn');
     if (!name) { notify('Укажите имя'); return; }
+    if (!editingEmployeeId && !login) { notify('Придумайте логин сотруднику'); return; }
     if (login && !/^[a-zA-Z0-9._-]{2,40}$/.test(login)) { notify('Логин: 2–40 знаков, латинские буквы, цифры, точка, дефис или подчёркивание'); return; }
     if (!editingEmployeeId && tempPassword && tempPassword.length < 8) { notify('Временный пароль — от 8 знаков'); return; }
     if (telegramId && !/^\d{3,15}$/.test(telegramId)) { notify('Telegram ID — только цифры'); return; }
