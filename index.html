@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>На Крыше — Персонал</title>
+  <title>JARVIS</title>
   <!-- Фавикон — геометрия вторичного лого (мачта + полый треугольник,
        та же, что у декоративных стрелок и hero-scroll на сайте), на тёмной
        карточке-подложке в цвет фона #1E1004. SVG — основной, PNG — фолбэк
@@ -899,6 +899,11 @@
     .emp-name { font-size: 14px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .emp-meta { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
     .emp-role { font-size: 11.5px; color: var(--accent); white-space: nowrap; }
+    .emp-pin-view { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px; border: 1px solid var(--border); border-radius: 14px; background: var(--bg-card); }
+    .emp-pin-val { font-size: 18px; letter-spacing: 6px; color: var(--text); font-variant-numeric: tabular-nums; }
+    .emp-pin-val.off { font-size: 12.5px; letter-spacing: 0; color: var(--text-muted); }
+    .emp-eye { background: none; border: none; color: var(--text-sub); cursor: pointer; padding: 4px; display: flex; align-items: center; }
+    .emp-eye:disabled { opacity: 0.35; cursor: default; }
     .emp-hint { font-size: 11.5px; line-height: 1.5; color: var(--text-muted); margin-top: 6px; }
     .dup-name { font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
     .dup-meta { font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin-top: 3px; }
@@ -1311,7 +1316,7 @@
 
 <!-- PIN SCREEN -->
 <div class="screen active" id="screen-pin">
-  <div class="pin-title">На Крыше</div>
+  <div class="pin-title">JARVIS</div>
   <div class="pin-sub">Вход для персонала</div>
   <div class="pin-dots" id="pinDots">
     <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
@@ -1337,7 +1342,7 @@
 <div class="screen" id="screen-home">
   <div class="header">
     <div>
-      <h1>На Крыше</h1>
+      <h1>JARVIS</h1>
       <p id="roleLabel">Персонал · Гости</p>
     </div>
     <button type="button" class="logout-btn" onclick="logout()" title="Выйти и войти под другим PIN-кодом">
@@ -1719,6 +1724,14 @@
       <label class="form-label">Роль</label>
       <select class="form-input" id="empRole" onchange="updateEmpRoleHint()"></select>
       <div class="emp-hint" id="empRoleHint"></div>
+    </div>
+    <div class="form-group" id="empPinCurrentWrap" style="display:none">
+      <label class="form-label">Текущий PIN-код</label>
+      <div class="emp-pin-view">
+        <span class="emp-pin-val" id="empPinShown">••••</span>
+        <button type="button" class="emp-eye" id="empPinEye" onclick="toggleEmpPinView()" title="Показать PIN-код" aria-label="Показать PIN-код"></button>
+      </div>
+      <div class="emp-hint" id="empPinCurrentHint"></div>
     </div>
     <div class="form-group">
       <label class="form-label" id="empPinLabel">PIN-код (4 цифры)</label>
@@ -6860,8 +6873,8 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
 
   // ─── ОСНОВАТЕЛЬ: СОТРУДНИКИ ────────────────────
   // Добавить сотрудника, поменять имя, роль, PIN, Telegram, уволить и вернуть на работу.
-  // PIN после сохранения не показывается (на сервере хранится только его отпечаток) —
-  // его можно только задать заново. Себя уволить и поменять себе роль нельзя.
+  // Текущий PIN можно посмотреть кнопкой «глаз» (на сервере хранится зашифрованным,
+  // каждый просмотр пишется в журнал) или задать заново. Себя уволить и поменять себе роль нельзя.
   var empData = { employees: [], roles: [] };
   var editingEmployeeId = null;
 
@@ -6912,6 +6925,54 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
     el.innerHTML = html;
   }
 
+  // «Глаз» у текущего PIN: по нажатию сервер отдаёт PIN основателю (каждый просмотр пишется в журнал)
+  var empPinVisible = false;
+  var EYE_ON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+  var EYE_OFF = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17.9 17.9A10.9 10.9 0 0112 19c-7 0-11-7-11-7a19.8 19.8 0 015.1-5.9M9.9 5.2A10.4 10.4 0 0112 5c7 0 11 7 11 7a19.7 19.7 0 01-2.2 3.2"/><path d="M14.1 14.1a3 3 0 11-4.2-4.2"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+
+  function resetEmpPinView(e) {
+    empPinVisible = false;
+    const wrap = document.getElementById('empPinCurrentWrap');
+    wrap.style.display = e ? 'block' : 'none';
+    const val = document.getElementById('empPinShown');
+    const eye = document.getElementById('empPinEye');
+    const hint = document.getElementById('empPinCurrentHint');
+    val.className = 'emp-pin-val';
+    val.textContent = '••••';
+    eye.innerHTML = EYE_ON;
+    eye.title = eye.ariaLabel = 'Показать PIN-код';
+    eye.disabled = false;
+    hint.textContent = '';
+    if (e && !e.canViewPin) {
+      val.className = 'emp-pin-val off';
+      val.textContent = 'пока не сохранён';
+      eye.disabled = true;
+      hint.textContent = 'Появится после первого входа сотрудника или после смены PIN.';
+    }
+  }
+
+  async function toggleEmpPinView() {
+    const val = document.getElementById('empPinShown');
+    const eye = document.getElementById('empPinEye');
+    if (empPinVisible) { resetEmpPinView((empData.employees || []).find(x => x.id === editingEmployeeId)); return; }
+    if (!editingEmployeeId) return;
+    eye.disabled = true;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/founder/employees/${editingEmployeeId}/pin?pin=${getPin()}`);
+      const data = await res.json().catch(() => ({}));
+      eye.disabled = false;
+      if (!res.ok) { notify(data.error || 'Не удалось показать PIN'); return; }
+      empPinVisible = true;
+      val.className = 'emp-pin-val';
+      val.textContent = data.pin;
+      eye.innerHTML = EYE_OFF;
+      eye.title = eye.ariaLabel = 'Скрыть PIN-код';
+    } catch {
+      eye.disabled = false;
+      notify('Не удалось показать PIN — проверьте соединение');
+    }
+  }
+
   // Подсказка под выбором роли: что даёт самая «сильная» роль
   function updateEmpRoleHint() {
     const sel = document.getElementById('empRole');
@@ -6934,9 +6995,10 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
     sel.disabled = !!(e && e.isSelf);
     updateEmpRoleHint();
     document.getElementById('empPin').value = '';
+    resetEmpPinView(e);
     document.getElementById('empPinLabel').textContent = e ? 'Новый PIN-код (4 цифры)' : 'PIN-код (4 цифры)';
     document.getElementById('empPinHint').textContent = e
-      ? 'Текущий PIN не показывается. Оставьте поле пустым, чтобы не менять.'
+      ? 'Чтобы сменить PIN, введите новый. Оставьте поле пустым, чтобы не менять.'
       : 'По этому коду сотрудник входит в приложение. У каждого свой.';
     document.getElementById('empTg').value = e ? (e.telegramId || '') : '';
     document.getElementById('empFormTitle').textContent = e ? e.name : 'Новый сотрудник';
