@@ -553,9 +553,6 @@
       color: var(--text-sub);
       cursor: pointer;
     }
-    .chip.has-x { display: inline-flex; align-items: center; gap: 4px; padding-right: 4px; }
-    .chip-x { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 28px; margin: -6px 0; border-radius: 50%; font-size: 18px; line-height: 1; opacity: 0.6; }
-    .chip-x:active { opacity: 1; background: rgba(255,255,255,0.1); }
     .chip.selected { background: var(--accent-dim); border-color: rgba(184,115,51,0.4); color: var(--accent); }
 
     /* КАЛЕНДАРЬ (график смен) */
@@ -1711,10 +1708,9 @@
       <input class="form-input" id="evName" type="text" placeholder="Например: Вечер с DJ Max">
     </div>
     <div class="form-group">
-      <label class="form-label">Формат</label>
-      <div class="chip-row" id="evFormatChips"></div>
-      <input class="form-input" id="evFormatOwn" type="text" maxlength="100" placeholder="Свой формат, например: Джаз-вечер" style="display:none;margin-top:10px">
-      <div class="poster-note">Выберите из списка или нажмите «+ Свой формат». Формат, который вы однажды ввели, потом появится в списке сам.</div>
+      <label class="form-label">Пометка (необязательно)</label>
+      <input class="form-input" id="evFormat" type="text" maxlength="100" placeholder="Например: DJ-сет, 18+, вход свободный" autocomplete="off">
+      <div class="poster-note">Если нужно что-то добавить к названию — впишите сюда, это покажется в афише над описанием. Можно оставить пустым.</div>
     </div>
     <div class="form-group">
       <label class="form-label">Дата</label>
@@ -5145,80 +5141,8 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     return ({ 'Dj Set': 'DJ-сет', 'DJ Set': 'DJ-сет' })[f] || f;
   }
 
-  // Форматы: готовые + те, что уже вводили раньше + «свой». Хранится текст как есть («Dj Set» — историческое название DJ-сета).
-  const EV_FORMATS = [['Dj Set', 'DJ-сет'], ['Киносеанс', 'Киносеанс'], ['Дегустация', 'Дегустация'], ['Живая музыка', 'Живая музыка'], ['Стендап', 'Стендап'], ['Вечеринка', 'Вечеринка']];
   const EV_TIMES = ['18:00', '19:00', '20:00', '21:00', '22:00', '23:00'];
-  var evFormat = 'Dj Set', evOwnOn = false, evDay = '', evTime = '';
-
-  // Список форматов хранится на сервере (его можно пополнять и чистить крестиком). Пока он не загрузился
-  // или сервер недоступен — показываем готовые + уже встречавшиеся в афише, без крестиков.
-  var evServerFormats = null;
-  function evFormatList(current) {
-    const list = [];
-    const known = new Set();
-    const add = (v, l, id) => { const t = String(v || '').trim(); if (t && !known.has(t.toLowerCase())) { known.add(t.toLowerCase()); list.push({ v: t, l: l || eventFormatLabel(t), id: id || '' }); } };
-    if (evServerFormats) {
-      evServerFormats.forEach(f => add(f.name, '', f.id));
-    } else {
-      EV_FORMATS.forEach(([v, l]) => add(v, l));
-      (window._eventsCache || []).forEach(e => add(e.format));
-    }
-    add(current);
-    return list;
-  }
-  async function evLoadFormats() {
-    try {
-      const res = await fetch(`${PROXY_BASE}/api/admin/event-formats?pin=${getPin()}`);
-      if (!res.ok) throw new Error('formats');
-      const data = await res.json();
-      if (!Array.isArray(data)) throw new Error('formats');
-      evServerFormats = data.filter(f => f && f.id && f.name);
-    } catch (e) {
-      evServerFormats = null;
-    }
-    // Новое мероприятие: если стандартный формат уже убран из списка — предлагаем первый из оставшихся
-    if (evServerFormats && !editingEventId && !evOwnOn && !evServerFormats.some(f => f.name.toLowerCase() === evFormat.toLowerCase())) {
-      if (evServerFormats.length) evFormat = evServerFormats[0].name; else evOwnOn = true;
-    }
-    renderEvFormats();
-  }
-  async function evDeleteFormat(id) {
-    const f = (evServerFormats || []).find(x => x.id === id);
-    if (!f) return;
-    const ok = await askConfirm(`Убрать формат «${eventFormatLabel(f.name)}» из списка?\n\nМероприятия с этим форматом не изменятся — он просто пропадёт из выбора.`, { ok: 'Убрать', danger: true });
-    if (!ok) return;
-    try {
-      const res = await fetch(`${PROXY_BASE}/api/admin/event-formats/${encodeURIComponent(id)}?pin=${getPin()}`, { method: 'DELETE' });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || 'Не удалось убрать формат');
-    } catch (e) {
-      notify(e && e.message && e.message !== 'Failed to fetch' ? e.message : 'Не удалось убрать формат — проверьте связь и попробуйте ещё раз');
-      return;
-    }
-    const wasSelected = !evOwnOn && evFormat.toLowerCase() === f.name.toLowerCase();
-    evServerFormats = evServerFormats.filter(x => x.id !== id);
-    if (wasSelected) evFormat = evServerFormats.length ? evServerFormats[0].name : '';
-    if (!evFormat && !evOwnOn) evOwnOn = true;
-    renderEvFormats();
-    notify('Формат убран из списка');
-  }
-  function renderEvFormats() {
-    const el = document.getElementById('evFormatChips');
-    const list = evFormatList(evOwnOn ? '' : evFormat);
-    el.innerHTML = list.map(x => `<div class="chip${!evOwnOn && x.v.toLowerCase() === evFormat.toLowerCase() ? ' selected' : ''}${x.id ? ' has-x' : ''}" data-value="${escHtml(x.v)}" onclick="evPickFormat(this.dataset.value)">${escHtml(x.l)}${x.id ? `<span class="chip-x" role="button" aria-label="Убрать формат" data-id="${escHtml(x.id)}" onclick="event.stopPropagation(); evDeleteFormat(this.dataset.id)">×</span>` : ''}</div>`).join('')
-      + `<div class="chip${evOwnOn ? ' selected' : ''}" data-own="1" onclick="evPickOwnFormat()">+ Свой формат</div>`;
-    const own = document.getElementById('evFormatOwn');
-    own.style.display = evOwnOn ? '' : 'none';
-  }
-  function evPickFormat(v) { evOwnOn = false; evFormat = v; renderEvFormats(); }
-  function evPickOwnFormat() {
-    evOwnOn = true; renderEvFormats();
-    const own = document.getElementById('evFormatOwn');
-    own.focus();
-  }
-  function evCurrentFormat() {
-    return evOwnOn ? document.getElementById('evFormatOwn').value.trim() : evFormat;
-  }
+  var evDay = '', evTime = '';
 
   function evDayLabel(i, iso) {
     if (i === 0) return 'Сегодня';
@@ -5248,8 +5172,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     document.getElementById('eventFormTitle').textContent = 'Новое мероприятие';
     document.getElementById('evName').value = '';
     document.getElementById('evDescription').value = '';
-    document.getElementById('evFormatOwn').value = '';
-    evOwnOn = false; evFormat = 'Dj Set'; renderEvFormats(); evLoadFormats();
+    document.getElementById('evFormat').value = '';
     evDay = ''; evTime = '21:00'; renderEvWhen();
     document.getElementById('evSubmitBtn').textContent = 'Создать';
     document.getElementById('evDeleteBtn').style.display = 'none';
@@ -5264,8 +5187,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     document.getElementById('eventFormTitle').textContent = 'Редактировать мероприятие';
     document.getElementById('evName').value = ev.name || '';
     document.getElementById('evDescription').value = ev.description || '';
-    document.getElementById('evFormatOwn').value = '';
-    evOwnOn = false; evFormat = ev.format || 'Dj Set'; renderEvFormats(); evLoadFormats();
+    document.getElementById('evFormat').value = eventFormatLabel(ev.format || '');
     const raw = String(ev.date || '');
     evDay = raw.slice(0, 10);
     const tm = /T(\d{2}:\d{2})/.exec(raw);
@@ -5394,8 +5316,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     const dateVal = document.getElementById('evDate').value;
     if (!name) { notify('Напишите название мероприятия'); document.getElementById('evName').focus(); return; }
     if (!dateVal) { notify('Выберите дату мероприятия'); return; }
-    const format = evCurrentFormat();
-    if (!format) { notify('Напишите свой формат или выберите из списка'); document.getElementById('evFormatOwn').focus(); return; }
+    const format = document.getElementById('evFormat').value.trim();
     const description = document.getElementById('evDescription').value.trim();
 
     const btn = document.getElementById('evSubmitBtn');
