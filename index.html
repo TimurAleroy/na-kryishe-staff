@@ -430,6 +430,39 @@
     .tg-swatch.none { background: transparent; border: 1.5px dashed var(--text-muted); color: var(--text-muted); font-size: 11px; }
     .tg-swatch.sel { border-color: var(--text); box-shadow: 0 0 0 2px var(--bg); }
     .tg-swatch.none.sel { border-style: solid; }
+
+    /* ЖУРНАЛ ДЕЙСТВИЙ и ПРОСЬБЫ ОБ ОТЗЫВЕ (Сервис → Система) */
+    .au-filters { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 2px; }
+    .au-filters .form-input { padding: 10px 12px; font-size: 13px; }
+    #auditPeriod { gap: 6px; flex-wrap: nowrap; }
+    #auditPeriod .chip { padding: 8px 11px; font-size: 12.5px; white-space: nowrap; flex: 1; text-align: center; }
+    .au-note { font-size: 11.5px; color: var(--text-muted); margin: 10px 2px 0; line-height: 1.45; }
+    .au-day { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin: 18px 2px 6px; }
+    .au-row { display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px; margin-bottom: 6px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; }
+    .au-row.click { cursor: pointer; }
+    .au-row.click:active { background: var(--bg-card-hover); }
+    .au-time { flex: 0 0 38px; font-size: 12px; color: var(--text-muted); padding-top: 1px; font-variant-numeric: tabular-nums; }
+    .au-main { min-width: 0; flex: 1; }
+    .au-sum { font-size: 13.5px; color: var(--text); line-height: 1.4; word-break: break-word; }
+    .au-guest { color: var(--accent); }
+    .au-meta { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
+    .rr-sum { background: var(--accent-dim); border: 1px solid rgba(184,115,51,0.3); border-radius: 14px; padding: 12px 14px; font-size: 13px; color: var(--text); line-height: 1.55; margin-top: 8px; }
+    .rr-warn { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.35); border-radius: 14px; padding: 10px 14px; font-size: 12.5px; color: var(--text); line-height: 1.5; margin-top: 8px; }
+    .rr-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 0 14px; }
+    .rr-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid var(--border); }
+    .rr-card > :first-child { border-top: none; }
+    .rr-card .perm-row { padding: 12px 0; border-radius: 0; border-top: 1px solid var(--border); }
+    .rr-card > .perm-row:first-child { border-top: none; }
+    .rr-l { min-width: 0; flex: 1; }
+    .rr-t { display: block; font-size: 14px; color: var(--text); line-height: 1.35; }
+    .rr-h { display: block; font-size: 11.5px; color: var(--text-muted); line-height: 1.45; margin-top: 2px; }
+    .rr-r { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .rr-r .form-input { width: 78px; padding: 9px 8px; text-align: center; font-size: 14px; }
+    .rr-r select.form-input { width: 84px; padding: 9px 6px; }
+    .rr-u { font-size: 12px; color: var(--text-sub); }
+    .rr-stat { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-top: 1px solid var(--border); font-size: 13px; color: var(--text-sub); }
+    .rr-stat:first-child { border-top: none; }
+    .rr-stat b { font-weight: 400; color: var(--text); }
     .tg-preview { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .tag-chip-remove {
       width: 16px; height: 16px; border-radius: 50%; background: rgba(0,0,0,0.18);
@@ -1815,7 +1848,7 @@
 <!-- ADMIN: ДУБЛИ КАРТОЧЕК -->
 <div class="screen" id="screen-duplicates">
   <div class="header">
-    <div class="back-btn" onclick="showScreen('service')">
+    <div class="back-btn" onclick="showScreen('home')">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
     <div><h1 style="font-size:14px;letter-spacing:1px;">Дубли карточек</h1><p>Один гость — одна карточка</p></div>
@@ -2073,6 +2106,42 @@
     <div><h1 style="font-size:14px;letter-spacing:1px;">Объединить теги</h1><p id="tgMergeSub"></p></div>
   </div>
   <div style="padding:0 16px"><div id="tgMergeContent" style="margin-top:14px"></div><div style="height:16px"></div></div>
+</div>
+
+<!-- СЕРВИС → СИСТЕМА: ЖУРНАЛ ДЕЙСТВИЙ. Кто, когда и что менял; поиск и фильтры -->
+<div class="screen" id="screen-audit">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('service')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Журнал</h1><p>Кто и что менял</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <input class="form-input sl-search" id="auditSearch" type="search" placeholder="Поиск: имя гостя, сотрудник, слово" autocomplete="off" oninput="auSearchInput(this.value)" style="margin-top:10px">
+    <div class="chip-row" id="auditPeriod"></div>
+    <div class="au-filters">
+      <select class="form-input" id="auditWho" onchange="auSetWho(this.value)"><option value="">Все сотрудники</option></select>
+      <select class="form-input" id="auditType" onchange="auSetType(this.value)"><option value="">Всё</option></select>
+    </div>
+    <div class="au-note" id="auditCount"></div>
+    <div id="auditList"><div class="loading">Загружаю...</div></div>
+    <button class="btn-ghost" id="auditMore" style="display:none" onclick="loadAudit(false)">Показать ещё</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- СЕРВИС → СИСТЕМА: ПРОСЬБЫ ОБ ОТЗЫВЕ. Когда и кому бот просит оценить визит (без правки кода) -->
+<div class="screen" id="screen-review-rules">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('service')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Просьбы об отзыве</h1><p>Когда и кому бот просит оценить визит</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div id="rrContent" style="margin-top:6px"><div class="loading">Загружаю...</div></div>
+    <div style="height:16px"></div>
+  </div>
 </div>
 
 <!-- ОСНОВАТЕЛЬ: СОСТОЯНИЕ СИСТЕМЫ. Работает ли база, серверы, боты и когда была резервная копия -->
@@ -2510,7 +2579,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const base = ['guests.view', 'guests.create', 'guests.edit', 'tags.use', 'visits.record', 'guests.birthdays', 'guests.vip_list', 'checklist.use', 'schedule.view', 'menu.view', 'problems.view', 'problems.report', 'problems.work_own_role'];
     const own = { 'Бармен': ['menu.stoplist_drinks'], 'Повар': ['menu.stoplist_food'], 'КМ': ['menu.stoplist_hookah'] }[jobRole] || [];
     const admin = ['stories.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage'];
-    const owner = ['surveys.manage', 'tags.manage', 'founder_tasks.create', 'marketing.send', 'marketing.log', 'analytics.view', 'segments.view', 'feedback.view', 'guests.table', 'candidates.view'];
+    const owner = ['surveys.manage', 'tags.manage', 'audit.view', 'settings.manage', 'founder_tasks.create', 'marketing.send', 'marketing.log', 'analytics.view', 'segments.view', 'feedback.view', 'guests.table', 'candidates.view'];
     if (jobRole === 'Основатель') return base.concat(admin, owner);
     if (jobRole === 'Администратор') return base.concat(admin);
     return base.concat(own);
@@ -2684,20 +2753,20 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('menu.manage')) list.push({ group: G.content, icon: 'menu', short: 'меню', title: 'Меню', sub: 'Позиции, цены, фото', fn: 'openMenuEdit()' });
     if (can('stories.manage')) list.push({ group: G.content, icon: 'stories', short: 'сторис', title: 'Сторис', sub: 'Фото бара и ВИП-комнат', fn: 'openStoriesEdit()' });
     if (can('surveys.manage')) list.push({ group: G.content, icon: 'surveys', short: 'опросы', title: 'Опросы', sub: 'Фон, ретушь, тексты', fn: 'openSurveysEdit()' });
-    if (can('guests.merge')) list.push({ group: G.guests, icon: 'duplicates', short: 'дубли', title: 'Дубли', sub: 'Одна карточка на гостя', fn: 'openDuplicates()' });
     if (can('tags.manage')) list.push({ group: G.guests, icon: 'tags', short: 'теги', title: 'Теги', sub: 'Список, цвета, подсказки', fn: 'openTagsEdit()' });
     if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'PIN-коды, роли и права', fn: 'openEmployees()' });
     if (can('candidates.view')) list.push({ group: G.team, icon: 'candidates', short: 'кандидаты', title: 'Кандидаты', sub: 'Отклики на вакансии', fn: 'openCandidates()' });
+    if (can('settings.manage')) list.push({ group: G.system, icon: 'reviews', short: 'отзывы', title: 'Просьбы об отзыве', sub: 'Когда и кому бот пишет', fn: 'openReviewRules()' });
+    if (can('audit.view')) list.push({ group: G.system, icon: 'audit', short: 'журнал', title: 'Журнал', sub: 'Кто и что менял', fn: 'openAudit()' });
     if (currentJobRole === 'Основатель') list.push({ group: G.system, icon: 'status', short: 'состояние', title: 'Состояние', sub: 'База, боты, копии', fn: 'openSystemStatus()' });
     return list;
   }
 
-  // Плашки на плитках «Сервиса»: новые отклики, группы дублей, позиции меню без фото / без цены
+  // Плашки на плитках «Сервиса»: новые отклики, позиции меню без фото / без цены (дубли — точкой на главном экране)
   var svcBadges = {};
   function svcBadgeInfo(i) {
     const b = svcBadges || {};
     if (i.icon === 'candidates' && b.candidates > 0) return { n: b.candidates, sub: `Новых: ${b.candidates}` };
-    if (i.icon === 'duplicates' && b.duplicates > 0) return { n: b.duplicates, sub: `Групп: ${b.duplicates}` };
     if (i.icon === 'menu' && b.menuAny > 0) {
       const parts = [];
       if (b.menuNoPhoto > 0) parts.push(`без фото ${b.menuNoPhoto}`);
@@ -2781,6 +2850,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       stories: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2.5"/><circle cx="12" cy="10" r="2.4"/><path d="M6.5 18l4-4 3 3 2-2 2.5 2.5"/></svg>',
       surveys: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><path d="M8 13l2 2 4-4"/><line x1="8" y1="18" x2="12" y2="18"/></svg>',
       tags: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12V4a1 1 0 011-1h8l9 9-9 9-9-9z"/><circle cx="7.5" cy="7.5" r="1.3"/></svg>',
+      reviews: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8-4.3-4.1 5.9-.9L12 3.5z"/></svg>',
+      audit: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>',
       status: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 12 7 12 10 5 14 19 17 12 21 12"/></svg>',
       service: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>',
       team: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.2a3.2 3.2 0 010 5.6"/><path d="M18 14.4c1.8.8 3 2.6 3 5.6"/></svg>'
@@ -2837,6 +2908,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('founder_tasks.manage')) {
       attentionCards += qcard(icons.tasks, 'Задачи', 'От основателя', "openFounderTasks()", { dotId: 'qdotFounderTasks' });
     }
+    // «Дубли»: точка загорается, когда есть карточки, которые стоит объединить
+    if (can('guests.merge')) attentionCards += qcard(icons.duplicates, 'Дубли', 'Одна карточка на гостя', "openDuplicates()", { dotId: 'qdotDuplicates' });
 
     if (can('events.manage')) marketingRows += qrow(icons.events, 'Афиша', 'Мероприятия', "openEvents()");
     if (can('marketing.send')) marketingRows += qrow(icons.marketing, 'Рассылки', 'Через бота', "openMarketing()");
@@ -2845,7 +2918,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('feedback.view')) analyticsRows += qrow(icons.feedback, 'Обратная связь', 'Отзывы · eNPS', "openFeedback()");
     if (can('guests.table')) analyticsRows += qrow(icons.guestsTable, 'Таблица гостей', 'На компьютере', "openGuestsTable()", { extraClass: 'desktop-only' });
 
-    // «Сервис» — отдельный экран: меню, дубли, сотрудники, кандидаты. На главной — одна строка.
+    // «Сервис» — отдельный экран: меню, теги, сотрудники, кандидаты. На главной — одна строка.
     const serviceItems = serviceItemsFor();
     let serviceRows = '';
     if (serviceItems.length) serviceRows = qrow(icons.service, 'Сервис', serviceItems.map(i => i.short).join(' · '), "openService()", { extraClass: 'svc-main' });
@@ -2903,6 +2976,11 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
           const list = await res.json();
           setQuickActionDot('qdotFounderTasks', Array.isArray(list) && list.length > 0);
         }
+      } catch {}
+
+      if (can('guests.merge')) try {
+        const res = await fetch(`${PROXY_BASE}/api/staff/service-badges?pin=${getPin()}`);
+        if (res.ok) setQuickActionDot('qdotDuplicates', ((await res.json()).duplicates || 0) > 0);
       } catch {}
     }
   }
@@ -5892,6 +5970,245 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     } catch (e) {
       document.getElementById('ssChecked').textContent = 'Не удалось проверить';
       el.innerHTML = errorStateHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером сотрудников — возможно, он не запущен', 'loadSystemStatus()');
+    }
+  }
+
+  // ─── СЕРВИС → СИСТЕМА: ЖУРНАЛ ДЕЙСТВИЙ ───
+  var au = { q: '', days: '7', who: '', type: '', items: [], hasMore: false, total: 0, actors: [], types: [], seq: 0, timer: null };
+  const AU_PERIODS = [['0', 'Сегодня'], ['7', '7 дней'], ['30', '30 дней'], ['', 'Всё время']];
+  function openAudit() {
+    showScreen('audit');
+    renderAuditFilters();
+    loadAudit(true);
+  }
+  function renderAuditFilters() {
+    document.getElementById('auditPeriod').innerHTML = AU_PERIODS.map(([v, l]) => `<div class="chip${au.days === v ? ' selected' : ''}" onclick="auSetDays('${v}')">${l}</div>`).join('');
+    const fill = (id, first, rows, cur) => {
+      const sel = document.getElementById(id);
+      sel.innerHTML = '';
+      sel.appendChild(new Option(first, ''));
+      rows.forEach(r => sel.appendChild(new Option(`${r.label} · ${r.count}`, r.value)));
+      sel.value = cur;
+      if (sel.value !== cur) sel.value = '';
+    };
+    fill('auditWho', 'Все сотрудники', au.actors.map(a => ({ label: a.label, count: a.count, value: a.label })), au.who);
+    fill('auditType', 'Всё', au.types.map(t => ({ label: t.label, count: t.count, value: t.key })), au.type);
+  }
+  function auSetDays(v) { au.days = v; renderAuditFilters(); loadAudit(true); }
+  function auSetWho(v) { au.who = v; loadAudit(true); }
+  function auSetType(v) { au.type = v; loadAudit(true); }
+  function auSearchInput(v) {
+    au.q = v;
+    clearTimeout(au.timer);
+    au.timer = setTimeout(() => loadAudit(true), 350);
+  }
+  async function loadAudit(reset) {
+    const seq = ++au.seq;
+    const list = document.getElementById('auditList');
+    const more = document.getElementById('auditMore');
+    if (reset) {
+      au.items = [];
+      list.innerHTML = '<div class="loading">Загружаю...</div>';
+      more.style.display = 'none';
+      document.getElementById('auditCount').textContent = '';
+    } else { more.disabled = true; more.textContent = 'Загружаю...'; }
+    const params = new URLSearchParams({ pin: getPin() });
+    if (au.q.trim()) params.set('q', au.q.trim());
+    if (au.days !== '') params.set('days', au.days);
+    if (au.who) params.set('who', au.who);
+    if (au.type) params.set('type', au.type);
+    if (!reset && au.items.length) params.set('before', String(au.items[au.items.length - 1].id));
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/audit?${params.toString()}`);
+      if (seq !== au.seq) return;
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить журнал'));
+      const d = await res.json();
+      if (seq !== au.seq) return;
+      au.items = au.items.concat(d.items || []);
+      au.hasMore = !!d.hasMore;
+      if (reset) {
+        au.total = d.total || 0;
+        if (d.actors) { au.actors = d.actors; au.types = d.types || []; renderAuditFilters(); }
+      }
+      renderAuditList();
+    } catch (e) {
+      if (seq !== au.seq) return;
+      more.disabled = false; more.textContent = 'Показать ещё';
+      if (reset) list.innerHTML = errorStateHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером', 'loadAudit(true)');
+      else notify(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи — попробуйте ещё раз');
+    }
+  }
+  const AU_TZ = 'Europe/Moscow';
+  function auDayKey(iso) { return new Date(iso).toLocaleDateString('en-CA', { timeZone: AU_TZ }); }
+  function auDayLabel(key) {
+    const today = auDayKey(new Date().toISOString());
+    if (key === today) return 'Сегодня';
+    if (key === auDayKey(new Date(Date.now() - 86400000).toISOString())) return 'Вчера';
+    return new Date(key + 'T12:00:00Z').toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', weekday: 'short', timeZone: 'UTC' });
+  }
+  function renderAuditList() {
+    const list = document.getElementById('auditList');
+    const more = document.getElementById('auditMore');
+    more.disabled = false; more.textContent = 'Показать ещё';
+    more.style.display = au.hasMore ? '' : 'none';
+    document.getElementById('auditCount').textContent = au.total ? `Записей: ${au.total}` : '';
+    if (!au.items.length) {
+      const filtered = au.q.trim() || au.who || au.type || au.days !== '';
+      list.innerHTML = `<div class="empty-state">${filtered ? 'Ничего не нашлось. Попробуйте другой период или уберите фильтр' : 'Журнал пока пуст'}</div>`;
+      return;
+    }
+    let html = '', lastDay = '';
+    for (const it of au.items) {
+      const day = auDayKey(it.at);
+      if (day !== lastDay) { html += `<div class="au-day">${escHtml(auDayLabel(day))}</div>`; lastDay = day; }
+      const time = new Date(it.at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', timeZone: AU_TZ });
+      const guestLink = it.type === 'guest' && it.entityId && it.guestName;
+      html += `<div class="au-row${guestLink ? ' click' : ''}"${guestLink ? ` onclick="openGuestCard('${escHtml(escJs(it.entityId))}')"` : ''}>`
+        + `<div class="au-time">${time}</div>`
+        + `<div class="au-main"><div class="au-sum">${it.guestName ? `<span class="au-guest">${escHtml(it.guestName)}</span>: ` : ''}${escHtml(it.summary)}</div>`
+        + `<div class="au-meta">${escHtml(it.actor)} · ${escHtml(it.typeLabel)}</div></div>`
+        + (guestLink ? '<div class="qrow-chev">›</div>' : '') + '</div>';
+    }
+    list.innerHTML = html;
+  }
+
+  // ─── СЕРВИС → СИСТЕМА: ПРОСЬБЫ ОБ ОТЗЫВЕ ───
+  var rr = null;      // ответ сервера: правила, значения по умолчанию, статистика
+  const RR_BOOL = ['enabled', 'first_visit_always', 'skip_vip'];
+  const RR_NUM = ['every_nth_visit', 'min_days', 'regular_min_days', 'ignored_in_row', 'ignored_pause_days', 'recent_review_days', 'daily_cap', 'per_run'];
+  function openReviewRules() {
+    showScreen('review-rules');
+    loadReviewRules();
+  }
+  async function loadReviewRules() {
+    const el = document.getElementById('rrContent');
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/review-rules?pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить правила'));
+      rr = await res.json();
+      renderReviewRules();
+    } catch (e) {
+      el.innerHTML = errorStateHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером', 'loadReviewRules()');
+    }
+  }
+  function rrToggleHtml(key, title, hint) {
+    return `<label class="perm-row"><input type="checkbox" id="rr_${key}" onchange="rrChanged()"><span class="perm-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 9 17 20 6"/></svg></span><span><span class="rr-t">${title}</span>${hint ? `<span class="rr-h">${hint}</span>` : ''}</span></label>`;
+  }
+  function rrNumHtml(key, title, hint, unit) {
+    const lim = (rr.limits || {})[key] || {};
+    return `<div class="rr-row"><div class="rr-l"><span class="rr-t">${title}</span>${hint ? `<span class="rr-h">${hint}</span>` : ''}</div><div class="rr-r"><input class="form-input" type="number" inputmode="numeric" id="rr_${key}" min="${lim.min ?? 0}" max="${lim.max ?? 999}" step="1" oninput="rrChanged()"><span class="rr-u">${unit}</span></div></div>`;
+  }
+  function rrHoursHtml(key, title, hint, from, to) {
+    let opts = '';
+    for (let h = from; h <= to; h++) opts += `<option value="${h}">${h}:00</option>`;
+    return `<div class="rr-row"><div class="rr-l"><span class="rr-t">${title}</span>${hint ? `<span class="rr-h">${hint}</span>` : ''}</div><div class="rr-r"><select class="form-input" id="rr_${key}" onchange="rrChanged()">${opts}</select></div></div>`;
+  }
+  function renderReviewRules() {
+    const el = document.getElementById('rrContent');
+    if (!rr) return;
+    const lk = rr.locked || {};
+    const warns = [];
+    if (lk.off) warns.push('На сервере стоит переменная <b>REVIEW_REQUESTS=off</b> — просьбы выключены полностью, что бы ни было настроено здесь. Уберите её в Railway, чтобы включить.');
+    if (lk.hours) warns.push(`Часы отправки заданы на сервере переменной <b>REVIEW_REQUEST_HOURS=${escHtml(lk.hours)}</b> и главнее этого экрана. Уберите её в Railway, чтобы менять часы здесь.`);
+    const stats = (rr.stats && rr.stats.items) || [];
+    const meta = rr.meta && rr.meta.updatedAt ? `Последняя правка: ${fmtDateTime(rr.meta.updatedAt)}${rr.meta.updatedBy ? ', ' + escHtml(rr.meta.updatedBy) : ''}` : 'Пока стоят значения по умолчанию';
+    el.innerHTML = warns.map(w => `<div class="rr-warn">${w}</div>`).join('')
+      + '<div class="rr-sum" id="rrSummary"></div>'
+      + '<div class="tg-glabel">Включение</div><div class="rr-card">' + rrToggleHtml('enabled', 'Бот просит оценить визит', 'Выключите — просьбы не будут уходить никому') + '</div>'
+      + '<div class="tg-glabel">Когда</div><div class="rr-card">'
+        + rrHoursHtml('from', 'Начало окна отправки', 'Просьба уходит на следующий день после визита, в это окно (время бара)', 0, 23)
+        + rrHoursHtml('to', 'Конец окна', 'Не успели до этого часа — просьбу в этот раз не отправляем', 1, 24) + '</div>'
+      + '<div class="tg-glabel">Кому</div><div class="rr-card">'
+        + rrToggleHtml('first_visit_always', 'После первого визита — всегда', 'Мнение новичка о первом впечатлении самое ценное')
+        + rrNumHtml('every_nth_visit', 'Дальше — каждый N-й визит', 'Не после каждого прихода, чтобы не надоедать', 'визит')
+        + rrNumHtml('min_days', 'Не чаще, чем раз в', 'Между двумя просьбами одному гостю', 'дн.')
+        + rrNumHtml('regular_min_days', 'Постоянным — не чаще, чем раз в', 'Чемпионы и «Лояльные+»: их спрашиваем реже', 'дн.')
+        + rrToggleHtml('skip_vip', 'VIP ботом не спрашивать', 'Про вечер VIP-гостя спрашивает администратор лично') + '</div>'
+      + '<div class="tg-glabel">Когда не беспокоить</div><div class="rr-card">'
+        + rrNumHtml('ignored_in_row', 'Пауза после игнора: сколько просьб подряд', '0 — паузы нет. Ответом считается отзыв в течение недели', 'шт.')
+        + rrNumHtml('ignored_pause_days', 'Длина паузы', 'Сколько дней не спрашиваем после проигнорированных просьб', 'дн.')
+        + rrNumHtml('recent_review_days', 'Гость сам оставил отзыв за последние', 'Тогда не просим повторно. 0 — проверка выключена', 'дн.') + '</div>'
+      + '<div class="tg-glabel">Объём</div><div class="rr-card">'
+        + rrNumHtml('daily_cap', 'Не больше просьб в день', 'Потолок на один вечер. Сначала новички', 'шт.')
+        + rrNumHtml('per_run', 'За один проход', 'Бот проверяет раз в 10 минут и отправляет не больше этого числа', 'шт.') + '</div>'
+      + '<div class="tg-glabel">За последние 7 дней</div><div class="rr-card" style="padding-top:2px;padding-bottom:2px">'
+        + (stats.length ? stats.map(s => `<div class="rr-stat"><span>${escHtml(s.label)}</span><b>${s.count}</b></div>`).join('') : '<div class="rr-stat"><span>Просьб и пропусков пока нет</span></div>') + '</div>'
+      + `<div class="poster-note" style="margin-top:8px">Здесь видно, что бот сделал с вчерашними и более ранними визитами. ${meta}.</div>`
+      + '<button class="btn-cta" id="rrSaveBtn" style="margin-top:14px" onclick="saveReviewRules()">Сохранить</button>'
+      + '<button class="btn-ghost" onclick="rrResetDefaults()">Вернуть стандартные значения</button>';
+    rrFill(rr.rules);
+    document.getElementById('rr_from').disabled = !!lk.hours;
+    document.getElementById('rr_to').disabled = !!lk.hours;
+    rrChanged();
+  }
+  function rrFill(r) {
+    RR_BOOL.forEach(k => { document.getElementById('rr_' + k).checked = !!r[k]; });
+    RR_NUM.forEach(k => { document.getElementById('rr_' + k).value = r[k]; });
+    document.getElementById('rr_from').value = String(r.from);
+    document.getElementById('rr_to').value = String(r.to);
+  }
+  function rrRead() {
+    const o = {};
+    RR_BOOL.forEach(k => { o[k] = document.getElementById('rr_' + k).checked; });
+    RR_NUM.forEach(k => { const v = document.getElementById('rr_' + k).value; o[k] = v === '' ? NaN : Number(v); });
+    o.from = Number(document.getElementById('rr_from').value);
+    o.to = Number(document.getElementById('rr_to').value);
+    return o;
+  }
+  function rrSummary(r) {
+    if (!r.enabled) return 'Просьбы выключены: бот никого не спрашивает об отзыве.';
+    const n = r.every_nth_visit;
+    const p = [`Бот пишет гостю на следующий день после визита, с ${r.from}:00 до ${r.to}:00.`];
+    p.push(r.first_visit_always ? 'Первый раз — после первого визита гостя.' : `Первый раз — когда у гостя наберётся ${n} ${ruPlural(n, 'визит', 'визита', 'визитов')}.`);
+    p.push(`Дальше — ${n === 1 ? 'после каждого визита' : `после каждого ${n}-го визита`}, но не чаще раза в ${r.min_days} ${ruPlural(r.min_days, 'день', 'дня', 'дней')} (Чемпионов и «Лояльных+» — не чаще раза в ${r.regular_min_days}).`);
+    if (r.skip_vip) p.push('VIP бот не беспокоит: про вечер спрашивает администратор.');
+    if (r.ignored_in_row > 0) p.push(`Если гость не ответил на ${r.ignored_in_row} ${ruPlural(r.ignored_in_row, 'просьбу', 'просьбы', 'просьб')} подряд — пауза ${r.ignored_pause_days} ${ruPlural(r.ignored_pause_days, 'день', 'дня', 'дней')}.`);
+    else p.push('Паузы после проигнорированных просьб нет.');
+    if (r.recent_review_days > 0) p.push(`Тех, кто сам оставил отзыв за последние ${r.recent_review_days} ${ruPlural(r.recent_review_days, 'день', 'дня', 'дней')}, не спрашивает.`);
+    p.push(`Не больше ${r.daily_cap} ${ruPlural(r.daily_cap, 'просьбы', 'просьб', 'просьб')} в день.`);
+    return p.join(' ');
+  }
+  function rrDiff() {
+    const cur = rrRead(), orig = rr.rules, patch = {};
+    for (const k of Object.keys(orig)) if (cur[k] !== orig[k] && !(typeof cur[k] === 'number' && isNaN(cur[k]))) patch[k] = cur[k];
+    return { cur, patch };
+  }
+  function rrChanged() {
+    if (!rr) return;
+    const { cur, patch } = rrDiff();
+    const bad = Object.values(cur).some(v => typeof v === 'number' && isNaN(v));
+    document.getElementById('rrSummary').textContent = bad ? 'Заполните все числа — тогда здесь появится описание.' : rrSummary(cur);
+    const btn = document.getElementById('rrSaveBtn');
+    const n = Object.keys(patch).length;
+    btn.disabled = !n && !bad;
+    btn.textContent = n ? 'Сохранить' : 'Нет изменений';
+  }
+  function rrResetDefaults() {
+    if (!rr) return;
+    rrFill(rr.defaults);
+    rrChanged();
+    notify('Стандартные значения подставлены — нажмите «Сохранить»');
+  }
+  async function saveReviewRules() {
+    const btn = document.getElementById('rrSaveBtn');
+    if (btn.disabled) return;
+    const { cur, patch } = rrDiff();
+    if (Object.values(cur).some(v => typeof v === 'number' && isNaN(v))) { notify('Заполните все числа'); return; }
+    if (!Object.keys(patch).length) return;
+    btn.disabled = true; btn.textContent = 'Сохраняем...';
+    try {
+      const d = await tgRequest('PUT', '/api/admin/review-rules', { rules: patch });
+      rr.rules = d.rules;
+      notify('Правила сохранены — бот начнёт работать по ним в течение минуты');
+      loadReviewRules();
+    } catch (e) {
+      btn.disabled = false; btn.textContent = 'Сохранить';
+      notify(tgNetErr(e));
     }
   }
 
@@ -9010,7 +9327,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status'];
+  const screens = ['pin', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules'];
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
 
