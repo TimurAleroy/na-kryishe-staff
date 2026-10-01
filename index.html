@@ -1848,7 +1848,7 @@
 <!-- ADMIN: ДУБЛИ КАРТОЧЕК -->
 <div class="screen" id="screen-duplicates">
   <div class="header">
-    <div class="back-btn" onclick="showScreen('home')">
+    <div class="back-btn" onclick="showScreen(dupBack)">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
     <div><h1 style="font-size:14px;letter-spacing:1px;">Дубли карточек</h1><p>Один гость — одна карточка</p></div>
@@ -2753,6 +2753,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('menu.manage')) list.push({ group: G.content, icon: 'menu', short: 'меню', title: 'Меню', sub: 'Позиции, цены, фото', fn: 'openMenuEdit()' });
     if (can('stories.manage')) list.push({ group: G.content, icon: 'stories', short: 'сторис', title: 'Сторис', sub: 'Фото бара и ВИП-комнат', fn: 'openStoriesEdit()' });
     if (can('surveys.manage')) list.push({ group: G.content, icon: 'surveys', short: 'опросы', title: 'Опросы', sub: 'Фон, ретушь, тексты', fn: 'openSurveysEdit()' });
+    if (can('guests.merge')) list.push({ group: G.guests, icon: 'duplicates', short: 'дубли', title: 'Дубли', sub: 'Одна карточка на гостя', fn: 'openDuplicates()' });
     if (can('tags.manage')) list.push({ group: G.guests, icon: 'tags', short: 'теги', title: 'Теги', sub: 'Список, цвета, подсказки', fn: 'openTagsEdit()' });
     if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'PIN-коды, роли и права', fn: 'openEmployees()' });
     if (can('candidates.view')) list.push({ group: G.team, icon: 'candidates', short: 'кандидаты', title: 'Кандидаты', sub: 'Отклики на вакансии', fn: 'openCandidates()' });
@@ -2762,11 +2763,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     return list;
   }
 
-  // Плашки на плитках «Сервиса»: новые отклики, позиции меню без фото / без цены (дубли — точкой на главном экране)
+  // Плашки на плитках «Сервиса»: новые отклики, позиции меню без фото / без цены (дубли — и здесь, и точкой на главном экране)
   var svcBadges = {};
   function svcBadgeInfo(i) {
     const b = svcBadges || {};
     if (i.icon === 'candidates' && b.candidates > 0) return { n: b.candidates, sub: `Новых: ${b.candidates}` };
+    if (i.icon === 'duplicates' && b.duplicates > 0) return { n: b.duplicates, sub: `Найдено: ${b.duplicates}` };
     if (i.icon === 'menu' && b.menuAny > 0) {
       const parts = [];
       if (b.menuNoPhoto > 0) parts.push(`без фото ${b.menuNoPhoto}`);
@@ -8603,7 +8605,9 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
   let dupFields = {};   // ключ группы → { name, birthday, important } выбранные значения
   let dupBusy = false;
 
+  var dupBack = 'home';  // откуда открыли «Дубли»: с главного («Внимание») или из «Сервиса» — туда и «назад»
   function openDuplicates() {
+    dupBack = activeScreenName() === 'service' ? 'service' : 'home';
     showScreen('duplicates');
     loadDuplicates();
   }
