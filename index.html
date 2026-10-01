@@ -88,6 +88,35 @@
       80% { transform: translateX(6px); }
     }
 
+    /* ВХОД: логин и пароль, быстрый PIN, смена пароля */
+    .auth-view { width: 100%; max-width: 320px; }
+    .auth-input { margin-bottom: 10px; }
+    .auth-pass-wrap { position: relative; }
+    .auth-pass-wrap .form-input { padding-right: 46px; }
+    .auth-eye { position: absolute; right: 6px; top: 0; height: 100%; width: 40px; background: none; border: none; color: var(--text-sub); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .auth-note { font-size: 12px; color: var(--text-muted); line-height: 1.5; text-align: center; margin: 0 0 14px; }
+    .auth-links { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 10px; }
+    .auth-link { background: none; border: none; color: var(--text-sub); font-family: 'Inter', sans-serif; font-size: 12.5px; padding: 8px 10px; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(240,223,192,0.25); text-underline-offset: 3px; }
+    .auth-link:active { color: var(--accent); }
+    #screen-pin .pin-error { height: auto; min-height: 16px; text-align: center; max-width: 300px; line-height: 1.4; }
+    .acc-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; }
+    .acc-card .acc-t { font-size: 14px; color: var(--text); }
+    .acc-card .acc-s { font-size: 12px; color: var(--text-muted); margin-top: 3px; line-height: 1.45; }
+    .acc-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid var(--border); font-size: 13px; }
+    .acc-row:first-of-type { border-top: none; }
+    .acc-row .acc-main { flex: 1; min-width: 0; }
+    .acc-row .acc-sub { font-size: 11.5px; color: var(--text-muted); }
+    .acc-mini { background: none; border: 1px solid var(--border); color: var(--text-sub); border-radius: 100px; font-family: 'Inter', sans-serif; font-size: 11.5px; padding: 6px 12px; cursor: pointer; }
+    .acc-mini:active { background: rgba(240,223,192,0.06); }
+    .secret-box { margin-top: 12px; padding: 12px 14px; border: 1px dashed rgba(184,115,51,0.5); border-radius: 12px; background: rgba(184,115,51,0.08); }
+    .secret-box div { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--text-muted); padding: 3px 0; }
+    .secret-box b { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 15px; color: var(--text); font-weight: 500; letter-spacing: .5px; user-select: all; word-break: break-all; text-align: right; }
+    .emp-lock { color: #f87171; }
+    .access-btn { display: inline-flex; margin-left: auto; align-items: center; gap: 7px; flex-shrink: 0; height: 34px; padding: 0 11px; border-radius: 100px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-sub); font-family: 'Inter', sans-serif; font-size: 12px; cursor: pointer; }
+    .access-btn span { display: none; }
+    .access-btn:hover { color: var(--accent); border-color: rgba(184,115,51,0.4); }
+    @media (min-width: 700px) { .access-btn span { display: inline; } .access-btn + .logout-btn { margin-left: 8px; } .logout-btn { margin-left: 8px; } }
+
     /* SEARCH */
     .search-box { display: flex; gap: 10px; margin-bottom: 18px; }
     .search-input {
@@ -1483,25 +1512,56 @@
 <div class="screen active" id="screen-pin">
   <div class="pin-logo" role="img" aria-label="Jarvis"></div>
   <div class="pin-title pin-title-short">JARVIS</div>
-  <div class="pin-sub">Вход для персонала</div>
-  <div class="pin-dots" id="pinDots">
-    <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+  <div class="pin-sub" id="authSub">Вход для персонала</div>
+
+  <!-- PIN: быстрый вход на этом телефоне, старый PIN (пока нет пароля), придумать быстрый PIN -->
+  <div class="auth-view" id="authPinView" style="display:none">
+    <div class="pin-dots" id="pinDots" style="justify-content:center">
+      <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+    </div>
+    <div class="pin-keypad" id="pinKeypad">
+      <button class="pin-key" onclick="pinPress('1')">1</button>
+      <button class="pin-key" onclick="pinPress('2')">2</button>
+      <button class="pin-key" onclick="pinPress('3')">3</button>
+      <button class="pin-key" onclick="pinPress('4')">4</button>
+      <button class="pin-key" onclick="pinPress('5')">5</button>
+      <button class="pin-key" onclick="pinPress('6')">6</button>
+      <button class="pin-key" onclick="pinPress('7')">7</button>
+      <button class="pin-key" onclick="pinPress('8')">8</button>
+      <button class="pin-key" onclick="pinPress('9')">9</button>
+      <button class="pin-key empty"></button>
+      <button class="pin-key" onclick="pinPress('0')">0</button>
+      <button class="pin-key" onclick="pinBackspace()">⌫</button>
+    </div>
   </div>
-  <div class="pin-keypad" id="pinKeypad">
-    <button class="pin-key" onclick="pinPress('1')">1</button>
-    <button class="pin-key" onclick="pinPress('2')">2</button>
-    <button class="pin-key" onclick="pinPress('3')">3</button>
-    <button class="pin-key" onclick="pinPress('4')">4</button>
-    <button class="pin-key" onclick="pinPress('5')">5</button>
-    <button class="pin-key" onclick="pinPress('6')">6</button>
-    <button class="pin-key" onclick="pinPress('7')">7</button>
-    <button class="pin-key" onclick="pinPress('8')">8</button>
-    <button class="pin-key" onclick="pinPress('9')">9</button>
-    <button class="pin-key empty"></button>
-    <button class="pin-key" onclick="pinPress('0')">0</button>
-    <button class="pin-key" onclick="pinBackspace()">⌫</button>
+
+  <!-- Логин и пароль -->
+  <div class="auth-view" id="authPassView" style="display:none">
+    <form onsubmit="return submitPasswordLogin(event)" autocomplete="on">
+      <input class="form-input auth-input" id="authLogin" name="username" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Логин">
+      <div class="auth-pass-wrap auth-input">
+        <input class="form-input" id="authPass" name="password" type="password" autocomplete="current-password" placeholder="Пароль">
+        <button type="button" class="auth-eye" onclick="toggleAuthEye('authPass', this)" aria-label="Показать пароль"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+      </div>
+      <button class="btn-cta" id="authLoginBtn" type="submit">Войти</button>
+    </form>
   </div>
+
+  <!-- Новый пароль (временный пароль или первый вход по старому PIN) -->
+  <div class="auth-view" id="authSetPassView" style="display:none">
+    <form onsubmit="return submitSetPassword(event)" autocomplete="off">
+      <p class="auth-note" id="authSetNote">Задайте свой пароль — от 8 знаков. Его знаете только вы.</p>
+      <div class="auth-pass-wrap auth-input">
+        <input class="form-input" id="authNewPass" type="password" autocomplete="new-password" placeholder="Новый пароль (от 8 знаков)">
+        <button type="button" class="auth-eye" onclick="toggleAuthEye('authNewPass', this)" aria-label="Показать пароль"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+      </div>
+      <input class="form-input auth-input" id="authNewPass2" type="password" autocomplete="new-password" placeholder="Повторите пароль">
+      <button class="btn-cta" id="authSetBtn" type="submit">Сохранить пароль</button>
+    </form>
+  </div>
+
   <div class="pin-error" id="pinError"></div>
+  <div class="auth-links" id="authLinks"></div>
 </div>
 
 <!-- HOME / SEARCH -->
@@ -1511,7 +1571,11 @@
       <h1>JARVIS</h1>
       <p id="roleLabel">Персонал · Гости</p>
     </div>
-    <button type="button" class="logout-btn" onclick="logout()" title="Выйти и войти под другим PIN-кодом">
+    <button type="button" class="access-btn" onclick="openAccess()" title="Мой вход: пароль, быстрый вход, устройства" aria-label="Мой вход">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M10.8 12.2L20 3"/><path d="M17 6l3 3"/><path d="M14 9l2 2"/></svg>
+      <span>Мой вход</span>
+    </button>
+    <button type="button" class="logout-btn" onclick="logout()" title="Выйти из аккаунта">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       <span>Выйти</span>
     </button>
@@ -1872,10 +1936,10 @@
     <div class="back-btn" onclick="showScreen('service')">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
-    <div><h1 style="font-size:14px;letter-spacing:1px;">Сотрудники</h1><p>Доступ в приложение по PIN-коду</p></div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;" id="empScreenTitle">Сотрудники</h1><p id="empScreenSub">Логины, пароли, роли и права</p></div>
   </div>
   <div style="padding:0 16px">
-    <div class="add-row" style="margin:14px 0 16px"><button type="button" class="btn-new-guest" onclick="openEmployeeForm()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Новый сотрудник</button></div>
+    <div class="add-row" id="empAddRow" style="margin:14px 0 16px"><button type="button" class="btn-new-guest" onclick="openEmployeeForm()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Новый сотрудник</button></div>
     <div id="employeesContent"><div class="loading">Загружаю...</div></div>
   </div>
 </div>
@@ -1888,31 +1952,40 @@
     <div><h1 style="font-size:14px;letter-spacing:1px;" id="empFormTitle">Новый сотрудник</h1></div>
   </div>
   <div style="padding:0 16px">
-    <div class="form-group">
-      <label class="form-label">Имя</label>
-      <input class="form-input" id="empName" type="text" maxlength="100" autocomplete="off" placeholder="Как подписывать в графике и карточках">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Роль</label>
-      <select class="form-input" id="empRole" onchange="updateEmpRoleHint();renderEmpPerms(true)"></select>
-      <div class="emp-hint" id="empRoleHint"></div>
-    </div>
-    <div class="form-group" id="empPinCurrentWrap" style="display:none">
-      <label class="form-label">Текущий PIN-код</label>
-      <div class="emp-pin-view">
-        <span class="emp-pin-val" id="empPinShown">••••</span>
-        <button type="button" class="emp-eye" id="empPinEye" onclick="toggleEmpPinView()" title="Показать PIN-код" aria-label="Показать PIN-код"></button>
+    <div id="empFieldsTop">
+      <div class="form-group">
+        <label class="form-label">Имя</label>
+        <input class="form-input" id="empName" type="text" maxlength="100" autocomplete="off" placeholder="Как подписывать в графике и карточках">
       </div>
-      <div class="emp-hint" id="empPinCurrentHint"></div>
+      <div class="form-group">
+        <label class="form-label">Роль</label>
+        <select class="form-input" id="empRole" onchange="updateEmpRoleHint();renderEmpPerms(true)"></select>
+        <div class="emp-hint" id="empRoleHint"></div>
+      </div>
     </div>
-    <div class="form-group">
-      <label class="form-label" id="empPinLabel">PIN-код (4 цифры)</label>
-      <input class="form-input" id="empPin" type="text" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="••••">
-      <div class="emp-hint" id="empPinHint"></div>
+    <div class="form-group" id="empLoginWrap">
+      <label class="form-label">Логин</label>
+      <input class="form-input" id="empLogin" type="text" maxlength="40" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Латиницей, например anna.k">
+      <div class="emp-hint" id="empLoginHint"></div>
     </div>
-    <div class="form-group">
+    <div class="form-group" id="empTempWrap">
+      <label class="form-label">Временный пароль</label>
+      <input class="form-input" id="empTemp" type="text" maxlength="128" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Оставьте пустым — придумаем сами">
+      <div class="emp-hint">От 8 знаков. Сотрудник сменит его при первом входе. После сохранения пароль покажем один раз.</div>
+    </div>
+    <div class="form-group" id="empTgWrap">
       <label class="form-label">Telegram ID (необязательно)</label>
       <input class="form-input" id="empTg" type="text" inputmode="numeric" maxlength="15" autocomplete="off" placeholder="Только цифры — для сообщений бота">
+    </div>
+    <div class="form-group" id="empAccessWrap" style="display:none">
+      <label class="form-label">Вход и пароль</label>
+      <div class="acc-card" style="margin-bottom:0">
+        <div class="acc-t" id="empAccessState"></div>
+        <div class="acc-s" id="empAccessHint"></div>
+        <input class="form-input" id="empResetPw" type="text" maxlength="128" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Свой временный пароль (необязательно)" style="margin-top:12px">
+        <button type="button" class="btn-ghost" id="empResetBtn" onclick="resetEmployeePassword()">Задать временный пароль</button>
+        <button type="button" class="btn-ghost" id="empUnlockBtn" onclick="unlockEmployee()" style="display:none">Снять блокировку входа</button>
+      </div>
     </div>
     <div class="form-group" id="empLoginsWrap" style="display:none">
       <label class="form-label">Входы в приложение</label>
@@ -1930,6 +2003,43 @@
     <button class="btn-cta" id="empSubmitBtn" onclick="submitEmployee()">Сохранить</button>
     <button class="btn-ghost danger" id="empActiveBtn" onclick="toggleEmployeeActive()" style="display:none;margin-top:10px;">Уволить</button>
     <div class="emp-hint" id="empActiveHint" style="display:none;text-align:center"></div>
+  </div>
+</div>
+
+<!-- МОЙ ВХОД: пароль, быстрый вход, устройства -->
+<div class="screen" id="screen-access">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('home')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Мой вход</h1><p>Пароль, быстрый вход, устройства</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div class="acc-card"><div class="acc-t" id="accWho"></div><div class="acc-s" id="accLogin"></div></div>
+
+    <div class="sec">Быстрый вход на этом телефоне</div>
+    <div class="acc-card">
+      <div class="acc-s" id="accQuickText" style="margin:0 0 4px"></div>
+      <button type="button" class="btn-ghost" id="accQuickBtn" onclick="accToggleQuick()">Включить быстрый вход</button>
+    </div>
+
+    <div class="sec">Сменить пароль</div>
+    <div class="acc-card">
+      <form onsubmit="return accChangePassword(event)" autocomplete="off">
+        <input class="form-input auth-input" id="accCur" type="password" autocomplete="current-password" placeholder="Текущий пароль">
+        <input class="form-input auth-input" id="accNew" type="password" autocomplete="new-password" placeholder="Новый пароль (от 8 знаков)">
+        <input class="form-input auth-input" id="accNew2" type="password" autocomplete="new-password" placeholder="Повторите новый пароль">
+        <button class="btn-cta" id="accPassBtn" type="submit" style="margin-top:2px">Сменить пароль</button>
+        <div class="emp-hint" style="text-align:center">После смены на других устройствах придётся войти заново.</div>
+      </form>
+    </div>
+
+    <div class="sec">Где открыт мой аккаунт</div>
+    <div class="acc-card" id="accSessions"><div class="loading">Загружаю...</div></div>
+
+    <button type="button" class="btn-ghost" onclick="logout()">Выйти</button>
+    <button type="button" class="btn-ghost danger" id="accLogoutAllBtn" onclick="accLogoutAll()">Выйти на всех устройствах</button>
+    <div class="emp-hint" style="text-align:center">Потеряли телефон или кто-то узнал пароль — нажмите «Выйти на всех устройствах», затем смените пароль.</div>
   </div>
 </div>
 
@@ -2541,15 +2651,51 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
   const PROXY_BASE = 'https://staff-proxy-na-kryishe-production.up.railway.app';
 
+  // Запросы к серверу сотрудников: ключ входа уходит в заголовке Authorization, а не в адресе и теле запроса
+  // (адреса попадают в журналы и историю). Старые вызовы с ?pin=… и { pin } продолжают работать: pin вырезается.
+  // Заодно ловим «вход истёк» и «нужен новый пароль» в любом ответе.
+  (function () {
+    const nativeFetch = window.fetch.bind(window);
+    window.fetch = function (input, init) {
+      let url = typeof input === 'string' ? input : '';
+      if (!url || url.indexOf(PROXY_BASE) !== 0) return nativeFetch(input, init);
+      try {
+        if (url.indexOf('pin=') !== -1) {
+          const u = new URL(url);
+          if (u.searchParams.has('pin')) { u.searchParams.delete('pin'); url = u.toString(); }
+        }
+        init = Object.assign({}, init || {});
+        // в теле запросов входа (/api/auth/…, /api/staff/login) pin — это настоящий PIN, его не трогаем
+        if (typeof init.body === 'string' && init.body.charAt(0) === '{' && !/\/api\/(auth\/|staff\/login)/.test(url)) {
+          const o = JSON.parse(init.body);
+          if (Object.prototype.hasOwnProperty.call(o, 'pin')) { delete o.pin; init.body = JSON.stringify(o); }
+        }
+        const h = new Headers(init.headers || {});
+        if (authToken && !h.has('Authorization')) h.set('Authorization', 'Bearer ' + authToken);
+        init.headers = h;
+      } catch {}
+      return nativeFetch(url, init).then(res => {
+        if (authToken && (res.status === 401 || res.status === 403)) {
+          res.clone().json().then(d => {
+            if (!d) return;
+            if (d.code === 'session_expired') sessionLost();
+            else if (d.code === 'must_change_password') forceSetPassword();
+          }).catch(() => {});
+        }
+        return res;
+      });
+    };
+  })();
+
   // ─── PIN ───────────────────────────────────────
 
   let pinValue = '';
 
   function pinPress(digit) {
-    if (pinValue.length >= 4) return;
+    if (pinValue.length >= 4 || authBusy) return;
     pinValue += digit;
     renderPinDots();
-    if (pinValue.length === 4) attemptLogin();
+    if (pinValue.length === 4) authPinComplete();
   }
 
   function pinBackspace() {
@@ -2631,54 +2777,260 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   const tgWantsEnps = tgStartParamEnps === 'enps' || tgStartParamEnps.includes('enps');
   const enpsMode = urlWantsEnps || tgWantsEnps;
 
-  async function attemptLogin() {
-    try {
-      const res = await fetch(`${PROXY_BASE}/api/staff/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: pinValue })
-      });
-      const data = await res.json().catch(() => ({}));
-      if (res.ok) {
-        try { localStorage.setItem('staff_pin', pinValue); } catch {}
-        currentRole = data.role || 'staff';
-        currentEmployeeName = data.name || '';
-        currentJobRole = data.jobRole || '';
-        setPerms(data.perms, currentJobRole);
-        permsSig = [...currentPerms].sort().join(',');
-        applyRoleUI();
-        loadTagCatalog(true);
-        // Если открыли по QR из служебного помещения (?enps=1) — сразу на анонимный
-        // опрос, минуя обычный экран. PIN только подтвердил что это сотрудник —
-        // имя/роль дальше нигде с ответом не связываются.
-        if (enpsMode) {
-          renderEnpsScale();
-          showScreen('enps');
-          applyEnpsConfig();
-        } else {
-          showScreen('home');
-        }
-        fetch(`${PROXY_BASE}/api/staff/assignable-roles?pin=${pinValue}`)
-          .then(r => r.json()).then(roles => { if (Array.isArray(roles) && roles.length) ASSIGNABLE_ROLES_CLIENT = roles; })
-          .catch(() => {});
-      } else {
-        // 5xx — проблема на сервере (например, не настроен секрет), а не неверный код: показываем её причину
-        document.getElementById('pinError').textContent = res.status >= 500 && data.error ? data.error : 'Неверный PIN-код';
-        const dotsEl = document.getElementById('pinDots');
-        dotsEl.classList.add('shake');
-        setTimeout(() => dotsEl.classList.remove('shake'), 400);
-        pinValue = '';
-        renderPinDots();
-      }
-    } catch {
-      document.getElementById('pinError').textContent = 'Ошибка соединения';
-      pinValue = '';
-      renderPinDots();
+  // ─── ВХОД: ЛОГИН И ПАРОЛЬ, БЫСТРЫЙ PIN НА ЭТОМ ТЕЛЕФОНЕ ──────
+  // У каждого сотрудника личные логин и пароль. После входа сервер выдаёт длинный ключ (на 30 дней), приложение
+  // присылает его в заголовке Authorization (см. обёртку fetch выше). Ключ живёт, пока открыта вкладка/приложение;
+  // при следующем открытии вход быстрый — по короткому PIN этого телефона (если включён) или по паролю.
+  // Быстрый PIN работает только вместе с ключом устройства, который хранится на этом телефоне; 5 неверных PIN
+  // подряд — и устройство отключается (нужен пароль). getPin() по старой привычке отдаёт ключ входа:
+  // обёртка fetch сама переносит его из адреса и тела запроса в заголовок.
+  const TOKEN_KEY = 'staff_token', DEVICE_KEY = 'staff_device', QUICK_SKIP_KEY = 'staff_quick_skip';
+  var authToken = '';
+  try { authToken = sessionStorage.getItem(TOKEN_KEY) || ''; } catch {}
+  function getPin() { return authToken; }
+  function setToken(t) {
+    authToken = t || '';
+    try { if (authToken) sessionStorage.setItem(TOKEN_KEY, authToken); else sessionStorage.removeItem(TOKEN_KEY); } catch {}
+  }
+  function getDeviceToken() { try { return localStorage.getItem(DEVICE_KEY) || ''; } catch { return ''; } }
+  function setDeviceToken(t) { try { if (t) localStorage.setItem(DEVICE_KEY, t); else localStorage.removeItem(DEVICE_KEY); } catch {} }
+  function quickSkipped() { try { return localStorage.getItem(QUICK_SKIP_KEY) === '1'; } catch { return false; } }
+
+  var authViewName = '';
+  var authBusy = false;
+  var authSession = null;     // ответ сервера о вошедшем: имя, роль, права, логин
+  var authSetupFirst = '';    // первый ввод нового быстрого PIN
+  var authAfter = null;       // что делать, когда вход/настройка закончены
+
+  function authLinkHtml(label, fn) { return `<button type="button" class="auth-link" onclick="${fn}">${label}</button>`; }
+
+  // Какой вид показать на экране входа: quick | legacy | password | setpass | setup1 | setup2
+  function authSetView(v, msg) {
+    authViewName = v;
+    authBusy = false;
+    pinValue = ''; authSetupFirst = v === 'setup2' ? authSetupFirst : '';
+    renderPinDots();
+    const pinish = v === 'quick' || v === 'legacy' || v === 'setup1' || v === 'setup2';
+    document.getElementById('authPinView').style.display = pinish ? 'block' : 'none';
+    document.getElementById('authPassView').style.display = v === 'password' ? 'block' : 'none';
+    document.getElementById('authSetPassView').style.display = v === 'setpass' ? 'block' : 'none';
+    const subs = {
+      quick: 'Введите PIN', legacy: 'Вход по старому PIN-коду', password: 'Вход для персонала',
+      setpass: 'Придумайте свой пароль', setup1: 'Придумайте быстрый PIN', setup2: 'Повторите PIN'
+    };
+    document.getElementById('authSub').textContent = subs[v] || '';
+    document.getElementById('pinError').textContent = msg || '';
+    const hasDevice = !!getDeviceToken();
+    let links = '';
+    if (v === 'quick') links = authLinkHtml('Войти по логину и паролю', "authSetView('password')") + authLinkHtml('Это не мой телефон — забыть устройство', 'authForgetDevice()');
+    else if (v === 'password') links = (hasDevice ? authLinkHtml('Войти по быстрому PIN', "authSetView('quick')") : '') + authLinkHtml('Пароля ещё нет? Войти по старому PIN', "authSetView('legacy')");
+    else if (v === 'legacy') links = authLinkHtml('Войти по логину и паролю', "authSetView('password')");
+    else if (v === 'setup1' || v === 'setup2') links = authLinkHtml(v === 'setup2' ? 'Ввести заново' : 'Не сейчас', v === 'setup2' ? "authSetView('setup1')" : 'authSkipQuick()');
+    else if (v === 'setpass') links = authLinkHtml('Выйти', 'logout()');
+    document.getElementById('authLinks').innerHTML = links;
+    if (v === 'password') setTimeout(() => { try { document.getElementById(document.getElementById('authLogin').value ? 'authPass' : 'authLogin').focus(); } catch {} }, 60);
+    if (v === 'setpass') {
+      document.getElementById('authNewPass').value = ''; document.getElementById('authNewPass2').value = '';
+      setTimeout(() => { try { document.getElementById('authNewPass').focus(); } catch {} }, 60);
     }
   }
 
-  function getPin() {
-    try { return localStorage.getItem('staff_pin') || ''; } catch { return ''; }
+  // Открыли экран входа (стартовый или сессия истекла)
+  function authEnter(msg) {
+    setToken('');
+    authSession = null;
+    authSetView(getDeviceToken() ? 'quick' : 'password', msg);
+  }
+
+  function authShake() {
+    const dotsEl = document.getElementById('pinDots');
+    dotsEl.classList.add('shake');
+    setTimeout(() => dotsEl.classList.remove('shake'), 400);
+    pinValue = '';
+    renderPinDots();
+  }
+  function authError(text) { document.getElementById('pinError').textContent = text || ''; }
+
+  function toggleAuthEye(id, btn) {
+    const el = document.getElementById(id);
+    el.type = el.type === 'password' ? 'text' : 'password';
+    btn.setAttribute('aria-label', el.type === 'password' ? 'Показать пароль' : 'Скрыть пароль');
+  }
+
+  async function authPost(path, body) {
+    const res = await fetch(`${PROXY_BASE}${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) });
+    const data = await res.json().catch(() => ({}));
+    return { ok: res.ok, status: res.status, data };
+  }
+
+  // Четвёртая цифра набрана — что делать, зависит от вида
+  async function authPinComplete() {
+    const pin = pinValue;
+    const v = authViewName;
+    if (v === 'setup1') { authSetupFirst = pin; authSetView('setup2'); return; }
+    if (v === 'setup2') {
+      if (pin !== authSetupFirst) { authShake(); authSetupFirst = ''; authSetView('setup1', 'PIN не совпал — придумайте ещё раз'); return; }
+      authBusy = true;
+      try {
+        const r = await authPost('/api/auth/device', { pin, device: deviceLabel() });
+        if (!r.ok) { authSetView('setup1', r.data.error || 'Не удалось включить быстрый вход'); return; }
+        setDeviceToken(r.data.deviceToken);
+        authBusy = false;
+        notify('Быстрый вход включён на этом телефоне', 'ok');
+        authFinish();
+      } catch { authSetView('setup1', 'Ошибка соединения'); }
+      return;
+    }
+    authBusy = true;
+    try {
+      if (v === 'quick') {
+        const r = await authPost('/api/auth/device-login', { deviceToken: getDeviceToken(), pin });
+        authBusy = false;
+        if (r.ok) return authLoggedIn(r.data);
+        if (r.data && r.data.needPassword) { setDeviceToken(''); authSetView('password', r.data.error || 'Войдите по логину и паролю'); return; }
+        authShake(); authError(r.data.error || 'Неверный PIN');
+      } else if (v === 'legacy') {
+        const r = await authPost('/api/staff/login', { pin });
+        authBusy = false;
+        if (r.ok) return authLoggedIn(r.data);
+        authShake(); authError(r.data.error || 'Неверный PIN-код');
+      }
+    } catch {
+      authBusy = false;
+      authShake(); authError('Ошибка соединения');
+    }
+  }
+
+  function deviceLabel() { return /iPad|Tablet/i.test(navigator.userAgent) ? 'планшет' : /iPhone|Android|Mobile/i.test(navigator.userAgent) ? 'телефон' : 'компьютер'; }
+
+  async function submitPasswordLogin(ev) {
+    if (ev) ev.preventDefault();
+    if (authBusy) return false;
+    const login = document.getElementById('authLogin').value.trim();
+    const password = document.getElementById('authPass').value;
+    if (!login || !password) { authError('Введите логин и пароль'); return false; }
+    const btn = document.getElementById('authLoginBtn');
+    authBusy = true; btn.disabled = true; btn.textContent = 'Входим...'; authError('');
+    try {
+      const r = await authPost('/api/auth/login', { login, password });
+      if (r.ok) { document.getElementById('authPass').value = ''; authBusy = false; authLoggedIn(r.data); }
+      else { authBusy = false; authError(r.data.error || 'Не удалось войти'); document.getElementById('authPass').value = ''; document.getElementById('authPass').focus(); }
+    } catch { authBusy = false; authError('Ошибка соединения'); }
+    btn.disabled = false; btn.textContent = 'Войти';
+    return false;
+  }
+
+  // Сервер пустил: запоминаем ключ; если нужно сменить пароль — сначала он
+  function authLoggedIn(data) {
+    setToken(data.token);
+    authSession = data;
+    authAfter = null;
+    if (data.mustChange) { authForceSetPassword(); return; }
+    authOfferQuick();
+  }
+
+  function authForceSetPassword() {
+    const legacy = authSession && authSession.viaLegacy;
+    authSetView('setpass');
+    document.getElementById('authSetNote').textContent = 'Вход по временному паролю или старому PIN. Задайте свой пароль — от 8 знаков. Его знаете только вы.';
+  }
+  function forceSetPassword() { // сервер потребовал сменить пароль посреди работы
+    if (activeScreenName() !== 'pin' || authViewName !== 'setpass') { showScreen('pin'); authForceSetPassword(); }
+  }
+  function sessionLost() {
+    if (!authToken) return;
+    if (activeScreenName() !== 'pin') showScreen('pin');
+    authEnter('Вход истёк. Войдите снова');
+  }
+
+  async function submitSetPassword(ev) {
+    if (ev) ev.preventDefault();
+    if (authBusy) return false;
+    const p1 = document.getElementById('authNewPass').value;
+    const p2 = document.getElementById('authNewPass2').value;
+    if (p1.length < 8) { authError('Пароль — от 8 знаков'); return false; }
+    if (p1 !== p2) { authError('Пароли не совпадают'); return false; }
+    const btn = document.getElementById('authSetBtn');
+    authBusy = true; btn.disabled = true; btn.textContent = 'Сохраняем...'; authError('');
+    try {
+      const r = await authPost('/api/auth/password', { newPassword: p1 });
+      authBusy = false;
+      if (r.ok) {
+        document.getElementById('authNewPass').value = ''; document.getElementById('authNewPass2').value = '';
+        if (authSession) authSession.mustChange = false;
+        notify('Пароль сохранён', 'ok');
+        authOfferQuick();
+      } else authError(r.data.error || 'Не удалось сохранить пароль');
+    } catch { authBusy = false; authError('Ошибка соединения'); }
+    btn.disabled = false; btn.textContent = 'Сохранить пароль';
+    return false;
+  }
+
+  // После входа предлагаем быстрый PIN, если на этом телефоне его ещё нет
+  function authOfferQuick() {
+    if (!getDeviceToken() && !quickSkipped()) {
+      authSetView('setup1', 'PIN нужен только на этом телефоне: дальше хватит его вместо пароля');
+      authAfter = enterApp;
+      return;
+    }
+    enterApp();
+  }
+  function authSkipQuick() {
+    if (authAfter === enterApp || !authAfter) { try { localStorage.setItem(QUICK_SKIP_KEY, '1'); } catch {} } // «Не сейчас» при входе: больше не предлагаем (включается в «Моём входе»)
+    authFinish();
+  }
+  function authFinish() { const f = authAfter || enterApp; authAfter = null; f(); }
+
+  async function authForgetDevice() {
+    if (!await askConfirm('Забыть этот телефон?\n\nБыстрый вход по PIN на нём отключится, дальше — только логин и пароль.', { ok: 'Забыть' })) return;
+    const t = getDeviceToken();
+    setDeviceToken('');
+    try { await authPost('/api/auth/device-forget', { deviceToken: t }); } catch {}
+    authSetView('password');
+  }
+
+  // Вошли и всё настроено: открываем приложение
+  function enterApp() {
+    const data = authSession || {};
+    currentRole = data.role || 'staff';
+    currentEmployeeName = data.name || '';
+    currentJobRole = data.jobRole || '';
+    setPerms(data.perms, currentJobRole);
+    permsSig = [...currentPerms].sort().join(',');
+    applyRoleUI();
+    loadTagCatalog(true);
+    // Если открыли по QR из служебного помещения (?enps=1) — сразу на анонимный
+    // опрос, минуя обычный экран. Вход только подтвердил что это сотрудник —
+    // имя/роль дальше нигде с ответом не связываются.
+    if (enpsMode) {
+      renderEnpsScale();
+      showScreen('enps');
+      applyEnpsConfig();
+    } else {
+      showScreen('home');
+    }
+    fetch(`${PROXY_BASE}/api/staff/assignable-roles`)
+      .then(r => r.json()).then(roles => { if (Array.isArray(roles) && roles.length) ASSIGNABLE_ROLES_CLIENT = roles; })
+      .catch(() => {});
+  }
+
+  // Открыли приложение заново: если вкладка помнит вход — продолжаем, иначе экран входа
+  async function authInit() {
+    try { localStorage.removeItem('staff_pin'); } catch {}  // прежний вход по PIN-коду больше не хранится
+    if (authToken) {
+      try {
+        const res = await fetch(`${PROXY_BASE}/api/auth/me`);
+        const data = await res.json().catch(() => ({}));
+        if (res.ok) {
+          authSession = { ...data, token: authToken };
+          if (data.mustChange) { authForceSetPassword(); return; }
+          enterApp();
+          return;
+        }
+      } catch {}
+      setToken('');
+    }
+    authSetView(getDeviceToken() ? 'quick' : 'password');
   }
 
   // ─── ВЫХОД (кнопка «Выйти» на главном, только на компьютере) ──
@@ -2686,11 +3038,11 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // Теперь сбрасываем вход и всё, что загрузил прошлый сотрудник, и сразу
   // показываем экран PIN — без перезагрузки.
   function logout() {
-    try { localStorage.removeItem('staff_pin'); localStorage.removeItem('recent_guests'); } catch {}
-    pinValue = '';
-    renderPinDots();
-    const pinErr = document.getElementById('pinError');
-    if (pinErr) pinErr.textContent = '';
+    // сервер стирает ключ этого входа (быстрый вход на этом телефоне остаётся)
+    if (authToken) { try { fetch(`${PROXY_BASE}/api/auth/logout`, { method: 'POST' }).catch(() => {}); } catch {} }
+    try { localStorage.removeItem('recent_guests'); } catch {}
+    setToken('');
+    authSession = null;
 
     currentRole = 'staff';
     currentEmployeeName = '';
@@ -2748,6 +3100,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // На компьютере PIN можно набрать и с клавиатуры (цифры, Backspace)
   document.addEventListener('keydown', e => {
     if (!document.getElementById('screen-pin')?.classList.contains('active')) return;
+    if (document.getElementById('authPinView')?.style.display === 'none') return;
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     if (/^[0-9]$/.test(e.key)) { e.preventDefault(); pinPress(e.key); }
     else if (e.key === 'Backspace') { e.preventDefault(); pinBackspace(); }
@@ -2765,7 +3118,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('surveys.manage')) list.push({ group: G.content, icon: 'surveys', short: 'опросы', title: 'Опросы', sub: 'Фон, ретушь, тексты', fn: 'openSurveysEdit()' });
     if (can('guests.merge')) list.push({ group: G.guests, icon: 'duplicates', short: 'дубли', title: 'Дубли', sub: 'Одна карточка на гостя', fn: 'openDuplicates()' });
     if (can('tags.manage')) list.push({ group: G.guests, icon: 'tags', short: 'теги', title: 'Теги', sub: 'Список, цвета, подсказки', fn: 'openTagsEdit()' });
-    if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'PIN-коды, роли и права', fn: 'openEmployees()' });
+    if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'Логины, роли и права', fn: 'openEmployees()' });
+    else if (can('employees.reset_password')) list.push({ group: G.team, icon: 'team', short: 'доступ', title: 'Доступ и пароли', sub: 'Временные пароли, блокировки', fn: 'openEmployees()' });
     if (can('candidates.view')) list.push({ group: G.team, icon: 'candidates', short: 'кандидаты', title: 'Кандидаты', sub: 'Отклики на вакансии', fn: 'openCandidates()' });
     if (can('settings.manage')) list.push({ group: G.system, icon: 'reviews', short: 'отзывы', title: 'Просьбы об отзыве', sub: 'Когда и кому бот пишет', fn: 'openReviewRules()' });
     if (can('audit.view')) list.push({ group: G.system, icon: 'audit', short: 'журнал', title: 'Журнал', sub: 'Кто и что менял', fn: 'openAudit()' });
@@ -9000,7 +9354,13 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
   var permOpen = { boxes: true }; // какие секции раскрыты
   var editingEmployeeId = null;
 
+  // Основатель — всё; администратор (право «задавать временные пароли») — только доступ: список, пароли, блокировки
+  var empLimited = false;
   function openEmployees() {
+    empLimited = currentJobRole !== 'Основатель';
+    document.getElementById('empScreenTitle').textContent = empLimited ? 'Доступ и пароли' : 'Сотрудники';
+    document.getElementById('empScreenSub').textContent = empLimited ? 'Временные пароли и блокировки входа' : 'Логины, пароли, роли и права';
+    document.getElementById('empAddRow').style.display = empLimited ? 'none' : '';
     showScreen('employees');
     loadEmployees();
   }
@@ -9009,15 +9369,18 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     const el = document.getElementById('employeesContent');
     el.innerHTML = '<div class="loading">Загружаю...</div>';
     try {
-      const res = await fetch(`${PROXY_BASE}/api/founder/employees?pin=${getPin()}`);
+      const res = await fetch(`${PROXY_BASE}/api/founder/employees`);
       if (res.status === 401) { showScreen('pin'); return; }
       if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить сотрудников'));
       empData = await res.json();
       // конструктор прав: список галочек, наборы ролей и личные исключения (не критично: без него просто нет блока прав)
-      try {
-        const pr = await fetch(`${PROXY_BASE}/api/founder/permissions?pin=${getPin()}`);
-        permData = pr.ok ? await pr.json() : null;
-      } catch { permData = null; }
+      permData = null;
+      if (!empLimited) {
+        try {
+          const pr = await fetch(`${PROXY_BASE}/api/founder/permissions`);
+          permData = pr.ok ? await pr.json() : null;
+        } catch { permData = null; }
+      }
       renderEmployees();
     } catch (e) {
       el.innerHTML = `<div class="empty-state">${escHtml(e.message || 'Не удалось загрузить сотрудников')}</div>`;
@@ -9026,9 +9389,8 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
 
   // «в сети» (обращался к серверу последние 5 минут) / «был 2 ч назад» / «ещё не входил»
   function empSeenText(e) {
-    if (!e.hasPin) return '';
     const at = e.lastSeenAt || e.lastLoginAt;
-    if (!at) return 'ещё не входил';
+    if (!at) return e.hasPassword ? 'ещё не входил' : '';
     if (Date.now() - new Date(at) < 5 * 60 * 1000) return 'в сети';
     return `был ${timeAgo(at)}`;
   }
@@ -9036,7 +9398,10 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
   function empRowHtml(e) {
     const meta = [];
     if (e.isSelf) meta.push('это вы');
-    if (!e.hasPin) meta.push('нет PIN-кода');
+    if (e.login) meta.push(e.login);
+    if (e.lockedUntil) meta.push('вход закрыт');
+    else if (!e.hasPassword) meta.push('пароль не задан');
+    else if (e.mustChangePassword) meta.push('ждёт смены пароля');
     if (e.telegramId) meta.push('Telegram привязан');
     if (e.customPerms) meta.push('особые права');
     const seen = empSeenText(e);
@@ -9045,7 +9410,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       <div class="emp-row${e.active ? '' : ' off'}" onclick="openEmployeeForm('${escJs(e.id)}')">
         <div class="emp-body">
           <div class="emp-name">${escHtml(e.name)}</div>
-          ${meta.length ? `<div class="emp-meta">${escHtml(meta.join(' · '))}</div>` : ''}
+          ${meta.length ? `<div class="emp-meta${e.lockedUntil ? ' emp-lock' : ''}">${escHtml(meta.join(' · '))}</div>` : ''}
         </div>
         <div class="emp-role">${escHtml(e.role)}</div>
         <div class="qrow-chev">›</div>
@@ -9062,54 +9427,6 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     if (working.length) html += `<div class="sec">Работают · ${working.length}</div>` + working.map(empRowHtml).join('');
     if (fired.length) html += `<div class="sec" style="margin-top:18px">Уволены · ${fired.length}</div>` + fired.map(empRowHtml).join('');
     el.innerHTML = html;
-  }
-
-  // «Глаз» у текущего PIN: по нажатию сервер отдаёт PIN основателю (каждый просмотр пишется в журнал)
-  var empPinVisible = false;
-  var EYE_ON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>';
-  var EYE_OFF = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17.9 17.9A10.9 10.9 0 0112 19c-7 0-11-7-11-7a19.8 19.8 0 015.1-5.9M9.9 5.2A10.4 10.4 0 0112 5c7 0 11 7 11 7a19.7 19.7 0 01-2.2 3.2"/><path d="M14.1 14.1a3 3 0 11-4.2-4.2"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
-
-  function resetEmpPinView(e) {
-    empPinVisible = false;
-    const wrap = document.getElementById('empPinCurrentWrap');
-    wrap.style.display = e ? 'block' : 'none';
-    const val = document.getElementById('empPinShown');
-    const eye = document.getElementById('empPinEye');
-    const hint = document.getElementById('empPinCurrentHint');
-    val.className = 'emp-pin-val';
-    val.textContent = '••••';
-    eye.innerHTML = EYE_ON;
-    eye.title = eye.ariaLabel = 'Показать PIN-код';
-    eye.disabled = false;
-    hint.textContent = '';
-    if (e && !e.canViewPin) {
-      val.className = 'emp-pin-val off';
-      val.textContent = 'пока не сохранён';
-      eye.disabled = true;
-      hint.textContent = 'Появится после первого входа сотрудника или после смены PIN.';
-    }
-  }
-
-  async function toggleEmpPinView() {
-    const val = document.getElementById('empPinShown');
-    const eye = document.getElementById('empPinEye');
-    if (empPinVisible) { resetEmpPinView((empData.employees || []).find(x => x.id === editingEmployeeId)); return; }
-    if (!editingEmployeeId) return;
-    eye.disabled = true;
-    try {
-      const res = await fetch(`${PROXY_BASE}/api/founder/employees/${editingEmployeeId}/pin?pin=${getPin()}`);
-      const data = await res.json().catch(() => ({}));
-      eye.disabled = false;
-      if (!res.ok) { notify(data.error || 'Не удалось показать PIN'); return; }
-      empPinVisible = true;
-      val.className = 'emp-pin-val';
-      val.textContent = data.pin;
-      eye.innerHTML = EYE_OFF;
-      eye.title = eye.ariaLabel = 'Скрыть PIN-код';
-    } catch {
-      eye.disabled = false;
-      notify('Не удалось показать PIN — проверьте соединение');
-    }
   }
 
   // Подсказка под выбором роли: что даёт самая «сильная» роль
@@ -9224,55 +9541,145 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     }
   }
 
+  function empStatusText(e) {
+    if (e.lockedUntil) return { t: 'Вход временно закрыт', h: `После неверных паролей до ${fmtDateTime(e.lockedUntil)}. Можно снять блокировку вручную.` };
+    if (!e.hasPassword) return { t: 'Пароль не задан', h: 'Пока человек входит по старому PIN-коду. Задайте временный пароль — и старый PIN перестанет работать.' };
+    if (e.mustChangePassword) return { t: 'Ждёт смены пароля', h: 'Временный пароль задан, сотрудник ещё не сменил его.' };
+    return { t: 'Пароль задан', h: e.passwordChangedAt ? `Сменён ${fmtDateTime(e.passwordChangedAt)}. Самого пароля никто не видит — хранится только его защитный код.` : 'Самого пароля никто не видит — хранится только его защитный код.' };
+  }
+
   function openEmployeeForm(id) {
     editingEmployeeId = id || null;
     const e = id ? (empData.employees || []).find(x => x.id === id) : null;
     const roles = empData.roles && empData.roles.length ? empData.roles : ['Основатель', 'Администратор', 'КМ', 'Бармен', 'Повар', 'Официант'];
     const sel = document.getElementById('empRole');
+    const full = !empLimited; // администратору — только блок «Вход и пароль»
     sel.innerHTML = roles.map(r => `<option value="${escHtml(r)}">${escHtml(r)}</option>`).join('');
     document.getElementById('empName').value = e ? e.name : '';
     sel.value = e ? e.role : 'Официант';
     sel.disabled = !!(e && e.isSelf);
     updateEmpRoleHint();
-    document.getElementById('empPin').value = '';
-    resetEmpPinView(e);
-    document.getElementById('empPinLabel').textContent = e ? 'Новый PIN-код (4 цифры)' : 'PIN-код (4 цифры)';
-    document.getElementById('empPinHint').textContent = e
-      ? 'Чтобы сменить PIN, введите новый. Оставьте поле пустым, чтобы не менять.'
-      : 'По этому коду сотрудник входит в приложение. У каждого свой.';
+    ['empFieldsTop', 'empLoginWrap', 'empTgWrap'].forEach(w => { document.getElementById(w).style.display = full ? '' : 'none'; });
+    document.getElementById('empTempWrap').style.display = full && !e ? '' : 'none';
+    document.getElementById('empLogin').value = e ? (e.login || '') : '';
+    document.getElementById('empLoginHint').textContent = e
+      ? 'Под этим логином человек входит в приложение. Если сменить логин, он войдёт под новым — пароль останется прежним.'
+      : 'Оставьте пустым — подберём из имени (например, anna.k).';
+    document.getElementById('empTemp').value = '';
     document.getElementById('empTg').value = e ? (e.telegramId || '') : '';
     document.getElementById('empFormTitle').textContent = e ? e.name : 'Новый сотрудник';
+    document.getElementById('empSubmitBtn').style.display = full ? '' : 'none';
     document.getElementById('empSubmitBtn').textContent = 'Сохранить';
+    // вход и пароль: у существующего сотрудника (себе — нельзя, свой пароль меняется в «Моём входе»)
+    const aw = document.getElementById('empAccessWrap');
+    aw.style.display = e ? 'block' : 'none';
+    if (e) renderEmpAccess(e);
     const activeBtn = document.getElementById('empActiveBtn');
     const activeHint = document.getElementById('empActiveHint');
-    if (e && !e.isSelf) {
+    if (full && e && !e.isSelf) {
       activeBtn.style.display = 'block';
       activeBtn.textContent = e.active ? 'Уволить' : 'Вернуть на работу';
       activeBtn.classList.toggle('danger', !!e.active);
       activeHint.style.display = 'block';
       activeHint.textContent = e.active
-        ? 'Доступ закроется сразу. Смены и записи сотрудника сохранятся.'
-        : 'Если его старый PIN уже занят, введите новый выше — он применится при возврате.';
+        ? 'Доступ закроется сразу: все телефоны сотрудника выйдут из приложения. Смены и записи сохранятся.'
+        : (e.hasPassword ? '' : 'У него нет пароля: сначала задайте временный пароль выше, потом возвращайте на работу.');
     } else {
       activeBtn.style.display = 'none';
       activeHint.style.display = 'none';
     }
-    // журнал входов — только у существующего сотрудника
+    // журнал входов — только у существующего сотрудника (основателю)
     const lw = document.getElementById('empLoginsWrap');
-    lw.style.display = e ? 'block' : 'none';
+    lw.style.display = e && full ? 'block' : 'none';
     document.getElementById('empLoginsList').innerHTML = '';
     document.getElementById('empLoginsBtn').style.display = e ? 'block' : 'none';
     document.getElementById('empLoginsBtn').textContent = 'Показать журнал входов';
     if (e) {
       const parts = [];
-      parts.push(e.lastLoginAt ? `Последний вход: ${fmtDateTime(e.lastLoginAt)} (${timeAgo(e.lastLoginAt)})` : 'Ещё не входил по PIN-коду');
+      parts.push(e.lastLoginAt ? `Последний вход: ${fmtDateTime(e.lastLoginAt)} (${timeAgo(e.lastLoginAt)})` : 'Ещё не входил');
       if (e.lastSeenAt) parts.push(Date.now() - new Date(e.lastSeenAt) < 5 * 60 * 1000 ? 'Сейчас в сети' : `Был в сети: ${timeAgo(e.lastSeenAt)}`);
+      if (e.activeSessions) parts.push(`Открыт на устройствах: ${e.activeSessions}`);
       document.getElementById('empLoginsSummary').textContent = parts.join(' · ');
     }
     permState = null;
     permOpen = { boxes: true };
-    renderEmpPerms(e ? true : 'fresh');
+    document.getElementById('empPermsWrap').style.display = full ? '' : 'none';
+    if (full) renderEmpPerms(e ? true : 'fresh');
     showScreen('employee-form');
+  }
+
+  function renderEmpAccess(e) {
+    const st = empStatusText(e);
+    const self = !!e.isSelf;
+    document.getElementById('empAccessState').textContent = st.t;
+    document.getElementById('empAccessState').classList.toggle('emp-lock', !!e.lockedUntil);
+    document.getElementById('empAccessHint').textContent = self ? 'Свой пароль меняется в разделе «Мой вход» на главном экране.' : st.h;
+    document.getElementById('empResetPw').style.display = self ? 'none' : '';
+    document.getElementById('empResetPw').value = '';
+    const rb = document.getElementById('empResetBtn');
+    rb.style.display = self ? 'none' : 'block';
+    rb.textContent = e.hasPassword ? 'Задать новый временный пароль' : 'Задать временный пароль';
+    document.getElementById('empUnlockBtn').style.display = !self && e.lockedUntil ? 'block' : 'none';
+  }
+
+  // Окно с логином и временным паролем: показывается один раз, потом пароль нигде не увидеть
+  function showCredentialsDialog(title, text, login, password) {
+    return new Promise(resolve => {
+      const ov = document.createElement('div');
+      ov.className = 'app-dialog-ov';
+      ov.innerHTML = `<div class="app-dialog" role="dialog" aria-modal="true">
+        <div class="app-dialog-title">${escHtml(title)}</div>
+        <div class="app-dialog-text">${escHtml(text)}</div>
+        <div class="secret-box"><div><span>Логин</span><b>${escHtml(login)}</b></div><div><span>Пароль</span><b>${escHtml(password)}</b></div></div>
+        <div class="app-dialog-hint">Пароль показан один раз. Сотрудник сменит его при первом входе.</div>
+        <div class="app-dialog-btns">
+          <button type="button" class="app-dialog-btn" data-v="copy">Скопировать</button>
+          <button type="button" class="app-dialog-btn ok" data-v="done">Готово</button>
+        </div>
+      </div>`;
+      const done = () => { ov.remove(); resolve(); };
+      ov.addEventListener('click', async ev => {
+        const b = ev.target.closest('[data-v]');
+        if (!b) return;
+        if (b.dataset.v === 'done') return done();
+        const txt = `Приложение На Крыше\nЛогин: ${login}\nВременный пароль: ${password}`;
+        try { await navigator.clipboard.writeText(txt); b.textContent = 'Скопировано'; } catch { b.textContent = 'Выделите и скопируйте'; }
+      });
+      ov._cancel = done;
+      document.body.appendChild(ov);
+    });
+  }
+
+  async function resetEmployeePassword() {
+    const e = (empData.employees || []).find(x => x.id === editingEmployeeId);
+    if (!e || e.isSelf) return;
+    const custom = document.getElementById('empResetPw').value.trim();
+    if (custom && custom.length < 8) { notify('Временный пароль — от 8 знаков'); return; }
+    const ask = e.hasPassword
+      ? `Задать «${e.name}» новый временный пароль?\n\nПрежний пароль перестанет работать, все его телефоны выйдут из приложения. При входе он задаст свой пароль.`
+      : `Задать «${e.name}» временный пароль?\n\nДо этого он входил по старому PIN-коду — после этого PIN перестанет работать. При первом входе он задаст свой пароль.`;
+    if (!await askConfirm(ask, { ok: 'Задать' })) return;
+    const btn = document.getElementById('empResetBtn');
+    const idle = btn.textContent;
+    const data = await sendEmployee('POST', `/api/auth/reset-password/${encodeURIComponent(e.id)}`, { tempPassword: custom || undefined }, btn, 'Задаём...', idle);
+    if (!data) return;
+    await showCredentialsDialog('Временный пароль задан', `Передайте «${e.name}» логин и пароль лично или в личном сообщении.`, e.login, data.password);
+    forgetScheduleEmployees();
+    await loadEmployees();
+    const fresh = (empData.employees || []).find(x => x.id === e.id);
+    if (fresh) openEmployeeForm(fresh.id);
+  }
+
+  async function unlockEmployee() {
+    const e = (empData.employees || []).find(x => x.id === editingEmployeeId);
+    if (!e) return;
+    const btn = document.getElementById('empUnlockBtn');
+    const data = await sendEmployee('POST', `/api/auth/unlock/${encodeURIComponent(e.id)}`, {}, btn, 'Снимаем...', 'Снять блокировку входа');
+    if (!data) return;
+    notify('Блокировка снята', 'ok');
+    await loadEmployees();
+    const fresh = (empData.employees || []).find(x => x.id === e.id);
+    if (fresh) openEmployeeForm(fresh.id);
   }
 
   // Журнал входов: последние 30 — когда и с какого устройства (телефон / компьютер)
@@ -9305,7 +9712,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     btn.disabled = true;
     btn.textContent = busyText;
     try {
-      const res = await fetch(`${PROXY_BASE}${url}?pin=${getPin()}`, {
+      const res = await fetch(`${PROXY_BASE}${url}`, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
@@ -9326,41 +9733,41 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
   async function submitEmployee() {
     const name = document.getElementById('empName').value.trim();
     const role = document.getElementById('empRole').value;
-    const newPin = document.getElementById('empPin').value.trim();
+    const login = document.getElementById('empLogin').value.trim();
+    const tempPassword = document.getElementById('empTemp').value.trim();
     const telegramId = document.getElementById('empTg').value.trim();
     const btn = document.getElementById('empSubmitBtn');
     if (!name) { notify('Укажите имя'); return; }
-    if (!editingEmployeeId && !/^\d{4}$/.test(newPin)) { notify('PIN — ровно 4 цифры'); return; }
-    if (newPin && !/^\d{4}$/.test(newPin)) { notify('PIN — ровно 4 цифры'); return; }
+    if (login && !/^[a-zA-Z0-9._-]{2,40}$/.test(login)) { notify('Логин: 2–40 знаков, латинские буквы, цифры, точка, дефис или подчёркивание'); return; }
+    if (!editingEmployeeId && tempPassword && tempPassword.length < 8) { notify('Временный пароль — от 8 знаков'); return; }
     if (telegramId && !/^\d{3,15}$/.test(telegramId)) { notify('Telegram ID — только цифры'); return; }
 
     const e = editingEmployeeId ? (empData.employees || []).find(x => x.id === editingEmployeeId) : null;
     let data;
     if (!editingEmployeeId) {
-      data = await sendEmployee('POST', '/api/founder/employees', { name, role, newPin, telegramId }, btn, 'Сохраняем...', 'Сохранить');
+      data = await sendEmployee('POST', '/api/founder/employees', { name, role, login: login || undefined, tempPassword: tempPassword || undefined, telegramId }, btn, 'Сохраняем...', 'Сохранить');
     } else {
-      data = await sendEmployee('PATCH', `/api/founder/employees/${editingEmployeeId}`, { name, role: e && e.isSelf ? undefined : role, newPin: newPin || undefined, telegramId }, btn, 'Сохраняем...', 'Сохранить');
-      // поменяли свой PIN — запоминаем новый, иначе приложение «разлогинит» само себя
-      if (data && e && e.isSelf && newPin) { try { localStorage.setItem('staff_pin', newPin); } catch {} }
+      data = await sendEmployee('PATCH', `/api/founder/employees/${editingEmployeeId}`, { name, role: e && e.isSelf ? undefined : role, login: login || undefined, telegramId }, btn, 'Сохраняем...', 'Сохранить');
     }
     if (!data) return;
+    const wasNew = !editingEmployeeId;
     const savedId = editingEmployeeId || data.id;
     const permsOk = await saveEmpPerms(savedId, role);
     forgetScheduleEmployees();
-    if (permsOk) showSuccess(editingEmployeeId ? 'Сохранено' : 'Сотрудник добавлен', '');
     editingEmployeeId = null;
     openEmployees();
+    if (wasNew) {
+      await showCredentialsDialog('Сотрудник добавлен', `Передайте «${name}» логин и временный пароль лично или в личном сообщении.`, data.login, data.password);
+    } else if (permsOk) showSuccess('Сохранено', '');
   }
 
   async function toggleEmployeeActive() {
     const e = (empData.employees || []).find(x => x.id === editingEmployeeId);
     if (!e) return;
-    const newPin = document.getElementById('empPin').value.trim();
-    if (newPin && !/^\d{4}$/.test(newPin)) { notify('PIN — ровно 4 цифры'); return; }
-    if (e.active && !await askConfirm(`Уволить «${e.name}»? Доступ в приложение закроется сразу.`, { ok: 'Уволить', danger: true })) return;
+    if (e.active && !await askConfirm(`Уволить «${e.name}»?\n\nДоступ в приложение закроется сразу: все его телефоны выйдут.`, { ok: 'Уволить', danger: true })) return;
     const btn = document.getElementById('empActiveBtn');
     const idle = e.active ? 'Уволить' : 'Вернуть на работу';
-    const data = await sendEmployee('PATCH', `/api/founder/employees/${e.id}`, { active: !e.active, newPin: !e.active && newPin ? newPin : undefined }, btn, 'Сохраняем...', idle);
+    const data = await sendEmployee('PATCH', `/api/founder/employees/${e.id}`, { active: !e.active }, btn, 'Сохраняем...', idle);
     if (!data) return;
     forgetScheduleEmployees();
     showSuccess(e.active ? 'Сотрудник уволен' : 'Сотрудник возвращён', '');
@@ -9368,9 +9775,108 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     openEmployees();
   }
 
+  // ─── МОЙ ВХОД ──────────────────────────────────
+  // Пароль, быстрый вход на этом телефоне, где открыт аккаунт, выход на всех устройствах.
+  function openAccess() {
+    showScreen('access');
+    const s = authSession || {};
+    document.getElementById('accWho').textContent = [currentEmployeeName, currentJobRole].filter(Boolean).join(' · ');
+    document.getElementById('accLogin').textContent = s.login ? `Логин: ${s.login}` : '';
+    ['accCur', 'accNew', 'accNew2'].forEach(id => { document.getElementById(id).value = ''; });
+    renderAccQuick();
+    loadAccSessions();
+  }
+
+  function renderAccQuick() {
+    const has = !!getDeviceToken();
+    document.getElementById('accQuickText').textContent = has
+      ? 'Включён: при открытии приложения достаточно короткого PIN. Он работает только на этом телефоне.'
+      : 'Выключен: при открытии приложения нужен логин и пароль. Можно придумать короткий PIN — он будет работать только на этом телефоне.';
+    document.getElementById('accQuickBtn').textContent = has ? 'Отключить быстрый вход на этом телефоне' : 'Включить быстрый вход';
+  }
+
+  async function accToggleQuick() {
+    if (getDeviceToken()) {
+      if (!await askConfirm('Отключить быстрый вход на этом телефоне?\n\nДальше — только логин и пароль.', { ok: 'Отключить' })) return;
+      const t = getDeviceToken();
+      setDeviceToken('');
+      try { await authPost('/api/auth/device-forget', { deviceToken: t }); } catch {}
+      renderAccQuick();
+      loadAccSessions();
+      return;
+    }
+    // тот же экран с цифрами, но без выхода из аккаунта
+    authAfter = () => { openAccess(); };
+    showScreen('pin', { keepAuth: true });
+    authSetView('setup1', 'Этот PIN будет работать только на этом телефоне');
+  }
+
+  async function accChangePassword(ev) {
+    if (ev) ev.preventDefault();
+    const cur = document.getElementById('accCur').value;
+    const n1 = document.getElementById('accNew').value;
+    const n2 = document.getElementById('accNew2').value;
+    if (!cur) { notify('Введите текущий пароль'); return false; }
+    if (n1.length < 8) { notify('Новый пароль — от 8 знаков'); return false; }
+    if (n1 !== n2) { notify('Новые пароли не совпадают'); return false; }
+    const btn = document.getElementById('accPassBtn');
+    btn.disabled = true; btn.textContent = 'Меняем...';
+    try {
+      const r = await authPost('/api/auth/password', { currentPassword: cur, newPassword: n1 });
+      if (!r.ok) notify(r.data.error || 'Не удалось сменить пароль');
+      else {
+        ['accCur', 'accNew', 'accNew2'].forEach(id => { document.getElementById(id).value = ''; });
+        setDeviceToken(''); // сервер забыл быстрые входы: после смены пароля их нужно включить заново
+        renderAccQuick();
+        notify('Пароль изменён. На других устройствах войдите заново', 'ok');
+        loadAccSessions();
+      }
+    } catch { notify('Не удалось сменить пароль — проверьте соединение'); }
+    btn.disabled = false; btn.textContent = 'Сменить пароль';
+    return false;
+  }
+
+  async function loadAccSessions() {
+    const el = document.getElementById('accSessions');
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/auth/sessions`);
+      if (!res.ok) throw new Error('x');
+      const d = await res.json();
+      if (!d.devices.length && getDeviceToken()) { setDeviceToken(''); renderAccQuick(); } // сервер устройство уже забыл
+      const sess = d.sessions.map(x => `<div class="acc-row"><div class="acc-main">${escHtml(capFirst(x.device || 'устройство'))}${x.current ? ' · это устройство' : ''}<div class="acc-sub">${x.current ? 'сейчас' : 'был ' + escHtml(timeAgo(x.lastSeenAt))}</div></div></div>`).join('');
+      const devs = d.devices.map(x => `<div class="acc-row"><div class="acc-main">Быстрый вход: ${escHtml(x.device || 'устройство')}<div class="acc-sub">${x.lastUsedAt ? 'использовался ' + escHtml(timeAgo(x.lastUsedAt)) : 'ещё не использовался'}</div></div><button type="button" class="acc-mini" onclick="accRemoveDevice('${escJs(x.id)}')">Отключить</button></div>`).join('');
+      el.innerHTML = (sess || '<div class="acc-s">Открытых входов нет</div>') + devs;
+    } catch {
+      el.innerHTML = '<div class="acc-s">Не удалось загрузить — проверьте соединение</div>';
+    }
+  }
+
+  async function accRemoveDevice(id) {
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/auth/devices/${encodeURIComponent(id)}`, { method: 'DELETE' });
+      if (!res.ok) { notify(await responseError(res, 'Не удалось отключить')); return; }
+    } catch { notify('Не удалось отключить — проверьте соединение'); return; }
+    loadAccSessions();
+  }
+
+  async function accLogoutAll() {
+    if (!await askConfirm('Выйти на всех устройствах?\n\nВсе телефоны и компьютеры, где открыт ваш аккаунт, выйдут, быстрый вход отключится. Потом нужно войти заново.', { ok: 'Выйти везде', danger: true })) return;
+    const btn = document.getElementById('accLogoutAllBtn');
+    btn.disabled = true;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/auth/logout-all`, { method: 'POST' });
+      if (!res.ok) { notify(await responseError(res, 'Не удалось выйти')); btn.disabled = false; return; }
+    } catch { notify('Не удалось выйти — проверьте соединение'); btn.disabled = false; return; }
+    btn.disabled = false;
+    setDeviceToken('');
+    logout();
+    authEnter('Вы вышли на всех устройствах');
+  }
+
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules'];
+  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules'];
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
 
@@ -9383,6 +9889,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     if (prev) screenScroll[prev] = window.scrollY;
     screens.forEach(s => document.getElementById('screen-' + s)?.classList.remove('active'));
     document.getElementById('screen-' + name)?.classList.add('active');
+    if (name === 'pin' && prev !== 'pin' && !opts.keepAuth) authEnter(); // вход истёк или вышли: экран входа
     window.scrollTo(0, opts.restoreScroll ? (screenScroll[name] || 0) : 0);
     try { if (tg?.BackButton) (name === 'home' || name === 'pin') ? tg.BackButton.hide() : tg.BackButton.show(); } catch {}
     // Боковые панели десктопа обновляем при каждом возврате на главный —
@@ -10818,10 +11325,9 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
 
   // ─── INIT ──────────────────────────────────────
 
-  // PIN всегда запрашивается заново при открытии приложения — без автоматического входа.
-  // Это важно: если сотрудника уволили и мы поменяли STAFF_PIN, старое устройство
-  // больше не сможет зайти, даже если раньше вводило верный код.
-  try { localStorage.removeItem('staff_pin'); } catch {}
+  // При открытии приложения: если вкладка помнит вход — продолжаем; иначе быстрый PIN (если включён на этом
+  // телефоне) или логин и пароль. Уволенный сотрудник не войдёт: ключ и быстрый вход на сервере стёрты.
+  authInit();
 </script>
 </body>
 </html>
