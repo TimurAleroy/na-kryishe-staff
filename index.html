@@ -413,6 +413,24 @@
     .bk-flag.vip { color: #fbbf24; border-color: rgba(251,191,36,0.45); background: rgba(251,191,36,0.1); }
     .bk-flag.good { color: #4ade80; border-color: rgba(34,197,94,0.4); background: rgba(34,197,94,0.1); }
     .tag-chip.dislike { background: rgba(240,223,192,0.05); border-color: rgba(240,223,192,0.16); color: var(--text-sub); }
+    /* Цвета тегов (Сервис → Теги): один из семи, задаётся в списке тегов */
+    .tg-c-red { --tc: 248,113,113; } .tg-c-amber { --tc: 251,191,36; } .tg-c-green { --tc: 74,222,128; }
+    .tg-c-blue { --tc: 96,165,250; } .tg-c-purple { --tc: 192,132,252; } .tg-c-pink { --tc: 244,114,182; } .tg-c-gray { --tc: 168,162,158; }
+    .tag-chip.tg-col { background: rgba(var(--tc),0.14); border-color: rgba(var(--tc),0.42); color: rgb(var(--tc)); }
+    .bk-flag.tg-col { background: rgba(var(--tc),0.12); border-color: rgba(var(--tc),0.42); color: rgb(var(--tc)); }
+    .tg-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; background: rgb(var(--tc, 120,113,108)); }
+    .tg-dot.none { background: transparent; border: 1.5px dashed var(--text-muted); width: 9px; height: 9px; }
+    .tg-glabel { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin: 20px 0 8px; }
+    .tg-sublabel { font-size: 11.5px; color: var(--text-muted); margin: 12px 0 6px; }
+    .tg-list { display: flex; flex-direction: column; gap: 8px; }
+    .tg-sub { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tg-sub.tg-meta { color: var(--text-sub); }
+    .tg-swatches { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tg-swatch { width: 32px; height: 32px; border-radius: 50%; border: 2px solid transparent; background: rgb(var(--tc, 120,113,108)); cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; color: var(--bg); }
+    .tg-swatch.none { background: transparent; border: 1.5px dashed var(--text-muted); color: var(--text-muted); font-size: 11px; }
+    .tg-swatch.sel { border-color: var(--text); box-shadow: 0 0 0 2px var(--bg); }
+    .tg-swatch.none.sel { border-style: solid; }
+    .tg-preview { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .tag-chip-remove {
       width: 16px; height: 16px; border-radius: 50%; background: rgba(0,0,0,0.18);
       display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
@@ -1975,6 +1993,88 @@
   </div>
 </div>
 
+<!-- СЕРВИС: ТЕГИ. Список тегов гостей: названия, цвета, подсказки «что делать», кто может ставить -->
+<div class="screen" id="screen-tags-edit">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('service')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Теги</h1><p>Список, цвета, подсказки</p></div>
+  </div>
+  <div style="padding:0 16px"><div id="tagsContent" style="margin-top:6px"><div class="loading">Загружаю...</div></div><div style="height:16px"></div></div>
+</div>
+
+<div class="screen" id="screen-tag-form">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('tags-edit')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;" id="tgFormTitle">Новый тег</h1><p id="tgFormGroup"></p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div class="form-group" style="margin-top:14px">
+      <label class="form-label">Название</label>
+      <input class="form-input" id="tgName" type="text" maxlength="60" autocomplete="off" oninput="tgChanged()" placeholder="Например, не любит шум">
+      <div class="tg-preview" style="margin-top:10px"><div class="tag-chip" id="tgPreview"><span id="tgPreviewText"></span></div></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Цвет</label>
+      <div class="tg-swatches" id="tgSwatches"></div>
+      <div class="poster-note" id="tgColorNote"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Что делать (подсказка сотруднику)</label>
+      <textarea class="form-input" id="tgHint" maxlength="200" oninput="tgChanged()" placeholder="Например: посадить в тихую зону, подальше от колонок"></textarea>
+      <div class="poster-note">Показывается в карточке гостя в блоке «Что делать». Не больше 200 знаков: <span id="tgHintLen">0</span>.</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Кто может ставить и снимать</label>
+      <select class="form-input" id="tgMode" onchange="tgChanged()">
+        <option value="everyone">Любой, у кого есть право ставить теги</option>
+        <option value="roles">Только выбранные роли</option>
+      </select>
+      <div id="tgRolesBox" style="margin-top:6px"></div>
+      <div class="poster-note" id="tgModeNote"></div>
+    </div>
+    <div class="form-group" id="tgSpecialWrap">
+      <label class="form-label">Особое значение</label>
+      <select class="form-input" id="tgSpecial" onchange="tgChanged()">
+        <option value="">Обычный тег</option>
+        <option value="vip">VIP-гость</option>
+        <option value="non_grata">Нон-грата</option>
+      </select>
+      <div class="poster-note" id="tgSpecialNote"></div>
+    </div>
+    <div class="form-group">
+      <label class="perm-row" style="padding-left:0;padding-right:0">
+        <input type="checkbox" id="tgPreset" onchange="tgChanged()">
+        <span class="perm-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 9 17 20 6"/></svg></span>
+        <span><span style="font-size:14px;color:var(--text);display:block">Показывать среди готовых</span><span style="font-size:11.5px;color:var(--text-muted);line-height:1.45;display:block;margin-top:2px">Готовые теги ставятся в карточке одним нажатием. Без галочки тег остаётся у гостей, но в быстрый список не попадает.</span></span>
+      </label>
+    </div>
+    <button class="btn-cta" id="tgSaveBtn" onclick="saveTag()">Сохранить</button>
+    <div id="tgExtra">
+      <div class="poster-actions" id="tgMoveRow" style="margin-top:12px">
+        <button type="button" class="btn-primary" style="flex:1" onclick="moveTagBy('up')">↑ Выше в списке</button>
+        <button type="button" class="btn-primary" style="flex:1" onclick="moveTagBy('down')">↓ Ниже</button>
+      </div>
+      <button class="btn-ghost" onclick="openTagMerge()">Объединить с другим тегом</button>
+      <button class="btn-ghost danger" onclick="deleteTag()" style="margin-top:10px">Удалить тег</button>
+    </div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<div class="screen" id="screen-tag-merge">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('tag-form')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Объединить теги</h1><p id="tgMergeSub"></p></div>
+  </div>
+  <div style="padding:0 16px"><div id="tgMergeContent" style="margin-top:14px"></div><div style="height:16px"></div></div>
+</div>
+
 <!-- ОСНОВАТЕЛЬ: СОСТОЯНИЕ СИСТЕМЫ. Работает ли база, серверы, боты и когда была резервная копия -->
 <div class="screen" id="screen-system-status">
   <div class="header">
@@ -2410,7 +2510,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const base = ['guests.view', 'guests.create', 'guests.edit', 'tags.use', 'visits.record', 'guests.birthdays', 'guests.vip_list', 'checklist.use', 'schedule.view', 'menu.view', 'problems.view', 'problems.report', 'problems.work_own_role'];
     const own = { 'Бармен': ['menu.stoplist_drinks'], 'Повар': ['menu.stoplist_food'], 'КМ': ['menu.stoplist_hookah'] }[jobRole] || [];
     const admin = ['stories.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage'];
-    const owner = ['surveys.manage', 'founder_tasks.create', 'marketing.send', 'marketing.log', 'analytics.view', 'segments.view', 'feedback.view', 'guests.table', 'candidates.view'];
+    const owner = ['surveys.manage', 'tags.manage', 'founder_tasks.create', 'marketing.send', 'marketing.log', 'analytics.view', 'segments.view', 'feedback.view', 'guests.table', 'candidates.view'];
     if (jobRole === 'Основатель') return base.concat(admin, owner);
     if (jobRole === 'Администратор') return base.concat(admin);
     return base.concat(own);
@@ -2468,6 +2568,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         setPerms(data.perms, currentJobRole);
         permsSig = [...currentPerms].sort().join(',');
         applyRoleUI();
+        loadTagCatalog(true);
         // Если открыли по QR из служебного помещения (?enps=1) — сразу на анонимный
         // опрос, минуя обычный экран. PIN только подтвердил что это сотрудник —
         // имя/роль дальше нигде с ответом не связываются.
@@ -2517,6 +2618,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     currentJobRole = '';
     currentPerms = new Set();
     permsSig = '';
+    tagCatalog = null; tagCatalogSig = ''; tagCatalogAt = 0;
 
     // данные прошлого сотрудника — новый загрузит их заново под своим доступом
     bookingsListData = [];
@@ -2583,6 +2685,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('stories.manage')) list.push({ group: G.content, icon: 'stories', short: 'сторис', title: 'Сторис', sub: 'Фото бара и ВИП-комнат', fn: 'openStoriesEdit()' });
     if (can('surveys.manage')) list.push({ group: G.content, icon: 'surveys', short: 'опросы', title: 'Опросы', sub: 'Фон, ретушь, тексты', fn: 'openSurveysEdit()' });
     if (can('guests.merge')) list.push({ group: G.guests, icon: 'duplicates', short: 'дубли', title: 'Дубли', sub: 'Одна карточка на гостя', fn: 'openDuplicates()' });
+    if (can('tags.manage')) list.push({ group: G.guests, icon: 'tags', short: 'теги', title: 'Теги', sub: 'Список, цвета, подсказки', fn: 'openTagsEdit()' });
     if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'PIN-коды, роли и права', fn: 'openEmployees()' });
     if (can('candidates.view')) list.push({ group: G.team, icon: 'candidates', short: 'кандидаты', title: 'Кандидаты', sub: 'Отклики на вакансии', fn: 'openCandidates()' });
     if (currentJobRole === 'Основатель') list.push({ group: G.system, icon: 'status', short: 'состояние', title: 'Состояние', sub: 'База, боты, копии', fn: 'openSystemStatus()' });
@@ -2677,6 +2780,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       candidates: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="2.6"/><path d="M7.5 17c.8-2 2.4-3 4.5-3s3.7 1 4.5 3"/></svg>',
       stories: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2.5"/><circle cx="12" cy="10" r="2.4"/><path d="M6.5 18l4-4 3 3 2-2 2.5 2.5"/></svg>',
       surveys: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><path d="M8 13l2 2 4-4"/><line x1="8" y1="18" x2="12" y2="18"/></svg>',
+      tags: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12V4a1 1 0 011-1h8l9 9-9 9-9-9z"/><circle cx="7.5" cy="7.5" r="1.3"/></svg>',
       status: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 12 7 12 10 5 14 19 17 12 21 12"/></svg>',
       service: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>',
       team: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.2a3.2 3.2 0 010 5.6"/><path d="M18 14.4c1.8.8 3 2.6 3 5.6"/></svg>'
@@ -3419,15 +3523,15 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const g = b.guestCard;
     if (!g) return [];
     const flags = [];
-    if ((g.tagsSpecial || []).includes('Нон-грата')) flags.push({ cls: 'danger', text: 'Нон-грата' });
+    if (hasNonGrata(g)) flags.push({ cls: 'danger', text: 'Нон-грата' });
     if ((g.tagsAllergy || []).length) flags.push({ cls: 'danger', text: short ? 'Аллергия' : `Аллергия: ${g.tagsAllergy.join(', ')}` });
     const vip = g.vip || isVipTagList(g.tagsSpecial);
     if (vip) flags.push({ cls: 'vip', text: 'VIP' });
     const bd = g.birthday;
     if (bd) flags.push({ cls: 'good', text: short ? 'ДР' : bd.when === 'today' ? 'ДР в этот день' : bd.when === 'soon' ? `ДР через ${bd.days} дн.` : `ДР был ${bd.days} дн. назад` });
     for (const t of (g.tagsSpecial || [])) {
-      if (t === 'Нон-грата' || isVipTagList([t])) continue; // VIP уже выше, отдельной пометкой
-      flags.push({ cls: '', text: t });
+      if (isNonGrataName(t) || isVipName(t)) continue; // VIP и нон-грата уже выше, отдельной пометкой
+      flags.push({ cls: tagColorCls('special', t).trim(), text: t });
     }
     return flags;
   }
@@ -5993,6 +6097,216 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     btn.textContent = 'Сохранить';
     showSuccess('Опрос сохранён', 'Новое оформление уже у гостей');
     openSurveysEdit();
+  }
+
+  // ─── СЕРВИС: ТЕГИ ──
+  // Список тегов гостей: названия, цвета, подсказки «что делать», кто может ставить, порядок, объединение.
+  var tgAdmin = null;                                  // ответ /api/admin/tags: { groups, roles, palette }
+  var tgState = { id: null, group: 'special', color: '' };
+  const TG_GROUPS = [['special', 'Особые'], ['allergy', 'Аллергии'], ['tasteLike', 'Любит (табак / вкусы)'], ['tasteDislike', 'Не любит']];
+  const TG_COLOR_NAMES = { red: 'Красный', amber: 'Янтарный', green: 'Зелёный', blue: 'Синий', purple: 'Фиолетовый', pink: 'Розовый', gray: 'Серый' };
+  const TG_SPECIAL_LABEL = { vip: 'VIP-гость', non_grata: 'Нон-грата' };
+
+  function tgFind(id) {
+    if (!tgAdmin) return null;
+    for (const [k] of TG_GROUPS) {
+      const t = (tgAdmin.groups[k] || []).find(x => x.id === id);
+      if (t) return { tag: t, group: k };
+    }
+    return null;
+  }
+  function tgGroupLabel(k) { return (TG_GROUPS.find(g => g[0] === k) || [k, k])[1]; }
+
+  function openTagsEdit() {
+    showScreen('tags-edit');
+    loadTagsAdmin();
+  }
+  async function loadTagsAdmin(silent) {
+    const el = document.getElementById('tagsContent');
+    if (!silent) el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/tags?pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить теги'));
+      tgAdmin = await res.json();
+      renderTagsAdmin();
+    } catch (e) {
+      if (!silent) el.innerHTML = errorStateHtml(e.message || 'Не удалось загрузить теги', 'loadTagsAdmin()');
+    }
+  }
+  function tgWho(t) {
+    if (t.editMode !== 'roles') return '';
+    return t.roles.length ? 'ставят: ' + t.roles.join(', ') : 'ставит только основатель';
+  }
+  function tgRowHtml(t) {
+    const meta = [TG_SPECIAL_LABEL[t.special], tgWho(t)].filter(Boolean).join(' · ');
+    return `<div class="qrow" onclick="openTagForm('${t.id}')"><span class="tg-dot ${t.color ? 'tg-c-' + t.color : 'none'}"></span>`
+      + `<div style="min-width:0;flex:1"><div class="qrow-t">${escHtml(t.name)}</div>${t.hint ? `<div class="tg-sub">${escHtml(t.hint)}</div>` : ''}${meta ? `<div class="tg-sub tg-meta">${escHtml(meta)}</div>` : ''}</div>`
+      + `<div class="qrow-s">${t.guests} ${ruPlural(t.guests, 'гость', 'гостя', 'гостей')}</div><div class="qrow-chev">›</div></div>`;
+  }
+  function renderTagsAdmin() {
+    const el = document.getElementById('tagsContent');
+    if (!el || !tgAdmin) return;
+    const intro = '<div class="poster-note" style="margin:8px 0 0">Готовые теги в карточке гостя ставятся одним нажатием. Цвет и подсказка «что делать» видны всем сотрудникам. У каждого тега справа — сколько гостей его имеют.</div>';
+    el.innerHTML = intro + TG_GROUPS.map(([k, label]) => {
+      const list = tgAdmin.groups[k] || [];
+      const presets = list.filter(t => t.preset);
+      const manual = list.filter(t => !t.preset);
+      return `<div class="tg-glabel">${escHtml(label)}</div>`
+        + `<div class="tg-list">${presets.map(tgRowHtml).join('') || '<div class="poster-note">Готовых вариантов пока нет</div>'}</div>`
+        + (manual.length ? `<div class="tg-sublabel">Вписаны вручную в карточках: ${manual.length}</div><div class="tg-list">${manual.map(tgRowHtml).join('')}</div>` : '')
+        + `<button type="button" class="btn-ghost" onclick="openTagForm(null,'${k}')">+ Добавить тег</button>`;
+    }).join('');
+  }
+
+  function openTagForm(id, group) {
+    const f = id ? tgFind(id) : null;
+    if (id && !f) return;
+    const t = f ? f.tag : null;
+    tgState = { id: id || null, group: f ? f.group : (group || 'special'), color: t ? t.color : '' };
+    document.getElementById('tgFormTitle').textContent = t ? t.name : 'Новый тег';
+    document.getElementById('tgFormGroup').textContent = tgGroupLabel(tgState.group);
+    document.getElementById('tgName').value = t ? t.name : '';
+    document.getElementById('tgHint').value = t ? t.hint : '';
+    document.getElementById('tgMode').value = t ? t.editMode : 'everyone';
+    document.getElementById('tgSpecial').value = t ? t.special : '';
+    document.getElementById('tgPreset').checked = t ? t.preset : true;
+    document.getElementById('tgSpecialWrap').style.display = tgState.group === 'special' ? '' : 'none';
+    document.getElementById('tgExtra').style.display = t ? '' : 'none';
+    document.getElementById('tgMoveRow').style.display = t && t.preset ? 'flex' : 'none';
+    const roles = (tgAdmin && tgAdmin.roles) || [];
+    const chosen = t ? t.roles : [];
+    document.getElementById('tgRolesBox').innerHTML = roles.map(r => `<label class="perm-row"><input type="checkbox" class="tg-role" value="${escHtml(r)}" ${chosen.includes(r) ? 'checked' : ''} onchange="tgChanged()"><span class="perm-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 9 17 20 6"/></svg></span><span style="font-size:14px;color:var(--text)">${escHtml(r)}</span></label>`).join('');
+    document.getElementById('tgSaveBtn').disabled = false;
+    document.getElementById('tgSaveBtn').textContent = 'Сохранить';
+    tgChanged();
+    showScreen('tag-form');
+  }
+
+  function tgPickColor(c) { tgState.color = c; tgChanged(); }
+  function tgChanged() {
+    const group = tgState.group;
+    const name = document.getElementById('tgName').value.trim();
+    // цвета
+    const colors = ['', ...Object.keys(TG_COLOR_NAMES)];
+    document.getElementById('tgSwatches').innerHTML = colors.map(c => `<button type="button" class="tg-swatch ${c ? 'tg-c-' + c : 'none'}${tgState.color === c ? ' sel' : ''}" aria-label="${c ? TG_COLOR_NAMES[c] : 'Без цвета'}" onclick="tgPickColor('${c}')">${c ? '' : '—'}</button>`).join('');
+    document.getElementById('tgColorNote').textContent = tgState.color ? TG_COLOR_NAMES[tgState.color] : (group === 'allergy' ? 'Без цвета: красный, как все аллергии' : 'Без цвета: стандартный');
+    // образец
+    const base = group === 'allergy' ? ' allergy' : group === 'tasteDislike' ? ' dislike' : '';
+    const prev = document.getElementById('tgPreview');
+    prev.className = 'tag-chip' + base + (tgState.color ? ` tg-col tg-c-${tgState.color}` : '');
+    document.getElementById('tgPreviewText').textContent = name || 'Название тега';
+    document.getElementById('tgHintLen').textContent = String(document.getElementById('tgHint').value.length);
+    // правила
+    const mode = document.getElementById('tgMode').value;
+    const box = document.getElementById('tgRolesBox');
+    box.style.display = mode === 'roles' ? '' : 'none';
+    const picked = [...document.querySelectorAll('.tg-role:checked')].map(x => x.value);
+    document.getElementById('tgModeNote').textContent = mode === 'roles'
+      ? (picked.length ? 'Основатель может всегда, остальные из списка — тоже. Остальные сотрудники тег видят, но не ставят и не снимают.' : 'Роли не выбраны — тег сможет ставить и снимать только основатель.')
+      : 'Подойдёт любому сотруднику, у кого на экране «Сотрудники» включено право ставить теги.';
+    // особое значение
+    const sp = document.getElementById('tgSpecial').value;
+    document.getElementById('tgSpecialNote').textContent = sp === 'vip' ? 'Гость с этим тегом попадает в список VIP, помечается в бронях и считается в аналитике как VIP.'
+      : sp === 'non_grata' ? 'Гостю с этим тегом не уходят рассылки и просьбы об отзыве, в бронях и карточке красная пометка «Нон-грата».'
+      : 'Обычный тег: только подсказка и цвет. Название VIP или нон-грата не делает тег особым — это выбирается здесь.';
+  }
+
+  function tgCollect() {
+    const body = {
+      name: document.getElementById('tgName').value.trim(),
+      color: tgState.color,
+      hint: document.getElementById('tgHint').value.trim(),
+      editMode: document.getElementById('tgMode').value,
+      roles: [...document.querySelectorAll('.tg-role:checked')].map(x => x.value),
+      preset: document.getElementById('tgPreset').checked
+    };
+    if (tgState.group === 'special') body.special = document.getElementById('tgSpecial').value;
+    if (!tgState.id) body.group = tgState.group;
+    return body;
+  }
+
+  async function tgRequest(method, url, body) {
+    const sep = url.includes('?') ? '&' : '?';
+    const res = await fetch(`${PROXY_BASE}${url}${sep}pin=${getPin()}`, {
+      method, headers: { 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined
+    });
+    if (res.status === 401) { showScreen('pin'); throw new Error('Войдите заново'); }
+    if (!res.ok) throw new Error(await responseError(res, 'Не удалось выполнить действие'));
+    return res.json();
+  }
+  const tgNetErr = e => (e && e.message && e.message !== 'Failed to fetch') ? e.message : 'Нет связи — попробуйте ещё раз';
+
+  async function saveTag() {
+    const btn = document.getElementById('tgSaveBtn');
+    if (btn.disabled) return;
+    const body = tgCollect();
+    if (!body.name) { notify('Напишите название тега'); document.getElementById('tgName').focus(); return; }
+    btn.disabled = true; btn.textContent = 'Сохраняем...';
+    try {
+      if (tgState.id) await tgRequest('PATCH', `/api/admin/tags/${tgState.id}`, body);
+      else await tgRequest('POST', '/api/admin/tags', body);
+    } catch (e) {
+      btn.disabled = false; btn.textContent = 'Сохранить';
+      notify(tgNetErr(e));
+      return;
+    }
+    btn.disabled = false; btn.textContent = 'Сохранить';
+    loadTagCatalog(true);
+    showSuccess('Тег сохранён', 'Уже виден в карточках гостей');
+    openTagsEdit();
+  }
+
+  async function moveTagBy(dir) {
+    if (!tgState.id) return;
+    try {
+      await tgRequest('POST', `/api/admin/tags/${tgState.id}/move`, { dir });
+      notify('Порядок изменён', 'ok');
+      loadTagCatalog(true);
+      loadTagsAdmin(true);
+    } catch (e) { notify(tgNetErr(e)); }
+  }
+
+  async function deleteTag() {
+    const f = tgFind(tgState.id);
+    if (!f) return;
+    const t = f.tag;
+    const risk = f.group === 'allergy' ? ' Это аллергия: у этих гостей она перестанет показываться официантам, барменам и поварам.' : '';
+    const msg = t.guests > 0
+      ? `Удалить тег «${t.name}»?\n\nОн есть у ${t.guests} ${ruPlural(t.guests, 'гостя', 'гостей', 'гостей')} — у них он пропадёт.${risk} Вернуть нельзя. Если тег просто лишний или записан с опечаткой, лучше «Объединить с другим тегом».`
+      : `Удалить тег «${t.name}»?\n\nУ гостей его нет, на них это не повлияет.`;
+    if (!(await askConfirm(msg, { danger: true, ok: 'Удалить' }))) return;
+    try {
+      const r = await tgRequest('DELETE', `/api/admin/tags/${tgState.id}`);
+      notify(r.removedFrom ? `Тег удалён у гостей: ${r.removedFrom}` : 'Тег удалён', 'ok');
+      loadTagCatalog(true);
+      openTagsEdit();
+    } catch (e) { notify(tgNetErr(e)); }
+  }
+
+  function openTagMerge() {
+    const f = tgFind(tgState.id);
+    if (!f) return;
+    const others = (tgAdmin.groups[f.group] || []).filter(x => x.id !== f.tag.id);
+    document.getElementById('tgMergeSub').textContent = `«${f.tag.name}» · ${tgGroupLabel(f.group)}`;
+    document.getElementById('tgMergeContent').innerHTML = others.length
+      ? `<div class="poster-note" style="margin:0 0 10px">Выберите тег, который останется. Все гости с «${escHtml(f.tag.name)}» получат его, а «${escHtml(f.tag.name)}» исчезнет.</div><div class="tg-list">`
+        + others.map(x => `<div class="qrow" onclick="doTagMerge('${x.id}')"><span class="tg-dot ${x.color ? 'tg-c-' + x.color : 'none'}"></span><div class="qrow-t">${escHtml(x.name)}</div><div class="qrow-s">${x.guests} ${ruPlural(x.guests, 'гость', 'гостя', 'гостей')}</div><div class="qrow-chev">›</div></div>`).join('') + '</div>'
+      : '<div class="empty-state">В этой группе нет других тегов</div>';
+    showScreen('tag-merge');
+  }
+  async function doTagMerge(intoId) {
+    const a = tgFind(tgState.id), b = tgFind(intoId);
+    if (!a || !b) return;
+    const ok = await askConfirm(`Объединить «${a.tag.name}» с «${b.tag.name}»?\n\nВсе гости с «${a.tag.name}» получат «${b.tag.name}» (у кого уже есть оба — останется один). Тег «${a.tag.name}» исчезнет. Отменить нельзя.`, { danger: true, ok: 'Объединить' });
+    if (!ok) return;
+    try {
+      const r = await tgRequest('POST', `/api/admin/tags/${tgState.id}/merge`, { intoId });
+      notify(`Готово: «${b.tag.name}» осталось, гостей перенесено: ${r.moved}`, 'ok');
+      loadTagCatalog(true);
+      openTagsEdit();
+    } catch (e) { notify(tgNetErr(e)); }
   }
 
   // Оформление опроса команды (eNPS): фон, ретушь, затемнение, тексты; без настроек — как было
@@ -8696,7 +9010,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'system-status'];
+  const screens = ['pin', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status'];
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
 
@@ -8964,6 +9278,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     if (!sameGuest) { cardTagsOpen = false; showScreen('card'); }
     tagAddGroup = null;
     historyExpanded = false;
+    loadTagCatalog();
     if (!sameGuest) currentGuestPhotoUrl = null;
     const el = document.getElementById('cardContent');
     if (!sameGuest) {
@@ -9072,7 +9387,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     return `<span class="rfm-pill${small ? ' sm' : ''} rfm-${k}">${escHtml(name || 'Без визитов')}</span>`;
   }
   function isVipTagList(tags) {
-    return (tags || []).some(t => String(t).trim().toLowerCase() === 'vip');
+    return (tags || []).some(isVipName);
   }
   // Поставили/сняли тег VIP — сразу обновить плашку VIP и «Риск оттока» в карточке
   // (та же формула, что на сервере: VIP не был 30+ дней, или ходил 2+ раз за год и не был 30+ дней)
@@ -9116,14 +9431,13 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     document.getElementById('editOverlay').classList.add('show');
   }
 
-  // ─── РУЧНЫЕ ТЕГИ: пресеты, состояние формы добавления ──
+  // ─── РУЧНЫЕ ТЕГИ: каталог, пресеты, состояние формы добавления ──
+  // Список тегов, цвета, подсказки и правила «кто ставит» лежат на сервере (Сервис → Теги).
+  // Константы ниже — запасной вариант на случай, если каталог не загрузился (нет связи, сервер ещё старый).
 
   const TAG_PRESETS = {
-    // VIP, «Знаменитость» и «Нон-грата» — теги-статусы: их видят все, а ставит
-    // и снимает только администрация (остальным эти пресеты не показываются).
     special: ['VIP', 'Знаменитость', 'Не беспокоить', 'Не любит шум', 'Постоянный столик', 'Требует внимания', 'Молодожёны', 'День рождения', 'Нон-грата'],
     allergy: ['Орехи', 'Морепродукты', 'Глютен', 'Лактоза', 'Мёд', 'Цитрусовые'],
-    // «Табак / вкусы» — одни и те же варианты для «любит» и «не любит»
     tasteLike: ['Сладкие', 'Кислые', 'Фруктовые', 'Ягодные', 'Цитрусовые', 'Холодок', 'Десертные', 'Пряные', 'Крепкий табак', 'Лёгкий табак'],
     tasteDislike: ['Сладкие', 'Кислые', 'Фруктовые', 'Ягодные', 'Цитрусовые', 'Холодок', 'Десертные', 'Пряные', 'Крепкий табак', 'Лёгкий табак']
   };
@@ -9131,8 +9445,6 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
   // В каком поле карточки лежат теги каждой группы
   const TAG_GROUP_FIELD = { special: 'tagsSpecial', allergy: 'tagsAllergy', tasteLike: 'tastesLike', tasteDislike: 'tastesDislike' };
 
-  // Подсказка «что делать» — показывается в карточке в блоке «Что делать».
-  // Для тегов, вписанных вручную (не из списка), подсказки нет.
   const TAG_HINTS = {
     'Нон-грата': 'Не обслуживать — сразу позвать администратора',
     'VIP': 'Встретить по имени, сразу сообщить администратору',
@@ -9144,17 +9456,80 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     'Молодожёны': 'Поздравить, предложить комплимент',
     'День рождения': 'Поздравить, предложить комплимент'
   };
-
-  // Теги-статусы: ставит и снимает только Администратор/Основатель.
-  // Тот же список — на сервере (staff-proxy-na-kryishe, ADMIN_ONLY_TAGS), держать одинаковыми.
   const ADMIN_ONLY_TAGS = ['VIP', 'Знаменитость', 'Нон-грата'];
-  function isAdminOnlyTag(name) {
-    const n = String(name || '').trim().toLowerCase();
-    return ADMIN_ONLY_TAGS.some(t => t.toLowerCase() === n);
+
+  var tagCatalog = null;     // { special: [{ id, name, color, hint, editMode, roles, preset, isVip, isNonGrata }], allergy, tasteLike, tasteDislike }
+  var tagCatalogSig = '';
+  var tagCatalogAt = 0;
+  var tagCatalogBusy = false;
+
+  // Каталог читает любой сотрудник. Обновляется при входе и не чаще раза в две минуты при открытии карточки.
+  async function loadTagCatalog(force) {
+    if (tagCatalogBusy) return;
+    if (!force && tagCatalog && Date.now() - tagCatalogAt < 120000) return;
+    tagCatalogBusy = true;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/tags?pin=${getPin()}`);
+      if (!res.ok) return;
+      const d = await res.json();
+      if (!d || !d.groups) return;
+      const sig = JSON.stringify(d.groups);
+      const changed = tagCatalog !== null && sig !== tagCatalogSig;
+      tagCatalog = d.groups; tagCatalogSig = sig; tagCatalogAt = Date.now();
+      if (changed && activeScreenName() === 'card' && currentGuest && !tagAddGroup) {
+        try { refreshVipFlags(currentGuest); renderGuestCard(currentGuest); } catch {}
+      }
+    } catch {} finally { tagCatalogBusy = false; }
   }
+
+  function tagEntry(group, name) {
+    if (!tagCatalog) return null;
+    const n = String(name || '').trim().toLowerCase();
+    return (tagCatalog[group] || []).find(t => String(t.name).toLowerCase() === n) || null;
+  }
+  // VIP и «нон-грата» — особые значения тега, а не название: основатель может переименовать тег
+  function isVipName(name) {
+    if (!tagCatalog) return String(name || '').trim().toLowerCase() === 'vip';
+    const t = tagEntry('special', name);
+    return !!(t && t.isVip);
+  }
+  function isNonGrataName(name) {
+    if (!tagCatalog) return String(name || '').trim().toLowerCase() === 'нон-грата';
+    const t = tagEntry('special', name);
+    return !!(t && t.isNonGrata);
+  }
+  function hasNonGrata(g) {
+    return !!(g && (g.nonGrata === true || (g.tagsSpecial || []).some(isNonGrataName)));
+  }
+  function tagColorCls(group, name) {
+    const t = tagEntry(group, name);
+    return t && t.color ? ` tg-col tg-c-${t.color}` : '';
+  }
+  function tagHintFor(group, name) {
+    if (tagCatalog) { const t = tagEntry(group, name); return t && t.hint ? t.hint : ''; }
+    return group === 'special' ? (TAG_HINTS[name] || '') : '';
+  }
+  // Готовые варианты для кнопок в карточке
+  function tagPresetNames(group) {
+    if (tagCatalog) return (tagCatalog[group] || []).filter(t => t.preset).map(t => t.name);
+    return TAG_PRESETS[group] || [];
+  }
+  // Основатель может всегда; «все» — любой с правом ставить теги; «выбранные роли» — по списку тега
   function canEditTag(group, name) {
-    // Право «Ставить и снимать теги» — у основателя; поверх него правила самих тегов: статусы (VIP и др.) — только администрации
-    return can('tags.use') && (currentRole === 'admin' || group !== 'special' || !isAdminOnlyTag(name));
+    if (!can('tags.use')) return false;
+    if (tagCatalog) {
+      const t = tagEntry(group, name);
+      if (!t || t.editMode !== 'roles') return true;
+      return currentJobRole === 'Основатель' || (t.roles || []).includes(currentJobRole);
+    }
+    const n = String(name || '').trim().toLowerCase();
+    return currentRole === 'admin' || group !== 'special' || !ADMIN_ONLY_TAGS.some(t => t.toLowerCase() === n);
+  }
+  function tagRulesText(group, name) {
+    const t = tagEntry(group, name);
+    if (!t || t.editMode !== 'roles') return 'Тег «' + name + '» ставят и снимают не все — попросите администратора';
+    const who = (t.roles || []).map(r => r.toLowerCase());
+    return `Тег «${name}» может ставить и снимать только ${who.length ? who.join(', ') : 'основатель'}`;
   }
 
   // Сервер присылает понятный текст ошибки (например, «только администратор») — показываем его
@@ -9201,7 +9576,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     const name = (tagName || '').trim();
     if (!name) return;
     if (!canEditTag(group, name)) {
-      notify(`Тег «${name}» может ставить только администратор`);
+      notify(tagRulesText(group, name));
       return;
     }
     try {
@@ -9224,7 +9599,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
 
   async function removeManualTag(group, tagName) {
     if (!canEditTag(group, tagName)) {
-      notify(`Тег «${tagName}» может снять только администратор`);
+      notify(tagRulesText(group, tagName));
       return;
     }
     try {
@@ -9253,9 +9628,9 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
 
   function renderTagGroup(group, tags, label) {
     const chipClass = group === 'allergy' ? ' allergy' : group === 'tasteDislike' ? ' dislike' : '';
-    // Теги-статусы (VIP, Знаменитость, Нон-грата) не-администратор видит, но без крестика
+    // Теги с ограничением «только выбранные роли» остальные видят, но без крестика
     const chips = (tags || []).map(t => `
-      <div class="tag-chip${chipClass}">
+      <div class="tag-chip${chipClass}${tagColorCls(group, t)}">
         <span>${escHtml(t)}</span>
         ${canEditTag(group, t) ? `
         <div class="tag-chip-remove" onclick="removeManualTag('${group}','${escJs(t)}')">
@@ -9272,7 +9647,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
         <button onclick="submitTagAddInput('${group}')">ОК</button>
       </div>
       <div class="tag-presets">
-        ${(TAG_PRESETS[group] || []).filter(p => !(tags || []).some(t => String(t).trim().toLowerCase() === p.toLowerCase()) && canEditTag(group, p)).map(p => `<div class="tag-preset-chip" onclick="addManualTag('${group}','${escJs(p)}')">${escHtml(p)}</div>`).join('')}
+        ${tagPresetNames(group).filter(p => !(tags || []).some(t => String(t).trim().toLowerCase() === p.toLowerCase()) && canEditTag(group, p)).map(p => `<div class="tag-preset-chip" onclick="addManualTag('${group}','${escJs(p)}')">${escHtml(p)}</div>`).join('')}
       </div>
     ` : '';
 
@@ -9296,19 +9671,34 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
 
   function guestHints(guest) {
     const hints = [];
+    const lower = t => `${t.charAt(0).toLowerCase()}${t.slice(1)}`;
     const special = guest.tagsSpecial || [];
     // Самое важное — первым
-    if (special.includes('Нон-грата')) hints.push({ level: 'danger', text: TAG_HINTS['Нон-грата'] });
+    if (hasNonGrata(guest)) {
+      const ng = special.find(isNonGrataName);
+      hints.push({ level: 'danger', text: (ng && tagHintFor('special', ng)) || TAG_HINTS['Нон-грата'] });
+    }
     if ((guest.tagsAllergy || []).length) hints.push({ level: 'danger', text: `Аллергия: ${guest.tagsAllergy.join(', ')} — предупредить кухню и бар` });
+    for (const t of guest.tagsAllergy || []) {
+      const h = tagHintFor('allergy', t);
+      if (h) hints.push({ level: 'danger', text: `${t} — ${lower(h)}` });
+    }
     for (const t of special) {
-      if (t === 'Нон-грата') continue;
+      if (isNonGrataName(t)) continue;
       if (t === 'День рождения' && guest.autoTags?.birthday) continue; // про ДР скажет автотег
-      if (TAG_HINTS[t]) hints.push({ level: 'normal', text: `${t} — ${TAG_HINTS[t].charAt(0).toLowerCase()}${TAG_HINTS[t].slice(1)}` });
+      const h = tagHintFor('special', t);
+      if (h) hints.push({ level: 'normal', text: `${t} — ${lower(h)}` });
     }
     const bdHint = birthdayHint(guest.autoTags?.birthday);
     if (bdHint) hints.push({ level: 'good', text: bdHint });
     if ((guest.tastesDislike || []).length) hints.push({ level: 'normal', text: `Не предлагать: ${guest.tastesDislike.join(', ')}` });
     if ((guest.tastesLike || []).length) hints.push({ level: 'good', text: `Любит: ${guest.tastesLike.join(', ')} — предлагать в первую очередь` });
+    for (const [group, field] of [['tasteDislike', 'tastesDislike'], ['tasteLike', 'tastesLike']]) {
+      for (const t of guest[field] || []) {
+        const h = tagHintFor(group, t);
+        if (h) hints.push({ level: 'normal', text: `${t} — ${lower(h)}` });
+      }
+    }
     return hints;
   }
 
@@ -9369,7 +9759,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
 
   function renderAlertStrip(guest) {
     const badges = [];
-    if ((guest.tagsSpecial || []).includes('Нон-грата')) {
+    if (hasNonGrata(guest)) {
       badges.push(`<div class="alert-badge nongrata"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4"/></svg>Нон-грата</div>`);
     }
     // Плашки — только то, что надо увидеть за секунду. Остальное посчитанное — в «Автотегах».
