@@ -553,6 +553,9 @@
       color: var(--text-sub);
       cursor: pointer;
     }
+    .chip.has-x { display: inline-flex; align-items: center; gap: 4px; padding-right: 4px; }
+    .chip-x { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 28px; margin: -6px 0; border-radius: 50%; font-size: 18px; line-height: 1; opacity: 0.6; }
+    .chip-x:active { opacity: 1; background: rgba(255,255,255,0.1); }
     .chip.selected { background: var(--accent-dim); border-color: rgba(184,115,51,0.4); color: var(--accent); }
 
     /* КАЛЕНДАРЬ (график смен) */
@@ -5147,18 +5150,62 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
   const EV_TIMES = ['18:00', '19:00', '20:00', '21:00', '22:00', '23:00'];
   var evFormat = 'Dj Set', evOwnOn = false, evDay = '', evTime = '';
 
+  // Список форматов хранится на сервере (его можно пополнять и чистить крестиком). Пока он не загрузился
+  // или сервер недоступен — показываем готовые + уже встречавшиеся в афише, без крестиков.
+  var evServerFormats = null;
   function evFormatList(current) {
-    const list = EV_FORMATS.map(([v, l]) => ({ v, l }));
-    const known = new Set(list.map(x => x.v.toLowerCase()));
-    const add = f => { const t = String(f || '').trim(); if (t && !known.has(t.toLowerCase())) { known.add(t.toLowerCase()); list.push({ v: t, l: t }); } };
-    (window._eventsCache || []).forEach(e => add(e.format));
+    const list = [];
+    const known = new Set();
+    const add = (v, l, id) => { const t = String(v || '').trim(); if (t && !known.has(t.toLowerCase())) { known.add(t.toLowerCase()); list.push({ v: t, l: l || eventFormatLabel(t), id: id || '' }); } };
+    if (evServerFormats) {
+      evServerFormats.forEach(f => add(f.name, '', f.id));
+    } else {
+      EV_FORMATS.forEach(([v, l]) => add(v, l));
+      (window._eventsCache || []).forEach(e => add(e.format));
+    }
     add(current);
     return list;
+  }
+  async function evLoadFormats() {
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/event-formats?pin=${getPin()}`);
+      if (!res.ok) throw new Error('formats');
+      const data = await res.json();
+      if (!Array.isArray(data)) throw new Error('formats');
+      evServerFormats = data.filter(f => f && f.id && f.name);
+    } catch (e) {
+      evServerFormats = null;
+    }
+    // Новое мероприятие: если стандартный формат уже убран из списка — предлагаем первый из оставшихся
+    if (evServerFormats && !editingEventId && !evOwnOn && !evServerFormats.some(f => f.name.toLowerCase() === evFormat.toLowerCase())) {
+      if (evServerFormats.length) evFormat = evServerFormats[0].name; else evOwnOn = true;
+    }
+    renderEvFormats();
+  }
+  async function evDeleteFormat(id) {
+    const f = (evServerFormats || []).find(x => x.id === id);
+    if (!f) return;
+    const ok = await askConfirm(`Убрать формат «${eventFormatLabel(f.name)}» из списка?\n\nМероприятия с этим форматом не изменятся — он просто пропадёт из выбора.`, { ok: 'Убрать', danger: true });
+    if (!ok) return;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/event-formats/${encodeURIComponent(id)}?pin=${getPin()}`, { method: 'DELETE' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Не удалось убрать формат');
+    } catch (e) {
+      notify(e && e.message && e.message !== 'Failed to fetch' ? e.message : 'Не удалось убрать формат — проверьте связь и попробуйте ещё раз');
+      return;
+    }
+    const wasSelected = !evOwnOn && evFormat.toLowerCase() === f.name.toLowerCase();
+    evServerFormats = evServerFormats.filter(x => x.id !== id);
+    if (wasSelected) evFormat = evServerFormats.length ? evServerFormats[0].name : '';
+    if (!evFormat && !evOwnOn) evOwnOn = true;
+    renderEvFormats();
+    notify('Формат убран из списка');
   }
   function renderEvFormats() {
     const el = document.getElementById('evFormatChips');
     const list = evFormatList(evOwnOn ? '' : evFormat);
-    el.innerHTML = list.map(x => `<div class="chip${!evOwnOn && x.v === evFormat ? ' selected' : ''}" data-value="${escHtml(x.v)}" onclick="evPickFormat(this.dataset.value)">${escHtml(x.l)}</div>`).join('')
+    el.innerHTML = list.map(x => `<div class="chip${!evOwnOn && x.v.toLowerCase() === evFormat.toLowerCase() ? ' selected' : ''}${x.id ? ' has-x' : ''}" data-value="${escHtml(x.v)}" onclick="evPickFormat(this.dataset.value)">${escHtml(x.l)}${x.id ? `<span class="chip-x" role="button" aria-label="Убрать формат" data-id="${escHtml(x.id)}" onclick="event.stopPropagation(); evDeleteFormat(this.dataset.id)">×</span>` : ''}</div>`).join('')
       + `<div class="chip${evOwnOn ? ' selected' : ''}" data-own="1" onclick="evPickOwnFormat()">+ Свой формат</div>`;
     const own = document.getElementById('evFormatOwn');
     own.style.display = evOwnOn ? '' : 'none';
@@ -5202,7 +5249,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     document.getElementById('evName').value = '';
     document.getElementById('evDescription').value = '';
     document.getElementById('evFormatOwn').value = '';
-    evOwnOn = false; evFormat = 'Dj Set'; renderEvFormats();
+    evOwnOn = false; evFormat = 'Dj Set'; renderEvFormats(); evLoadFormats();
     evDay = ''; evTime = '21:00'; renderEvWhen();
     document.getElementById('evSubmitBtn').textContent = 'Создать';
     document.getElementById('evDeleteBtn').style.display = 'none';
@@ -5218,7 +5265,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     document.getElementById('evName').value = ev.name || '';
     document.getElementById('evDescription').value = ev.description || '';
     document.getElementById('evFormatOwn').value = '';
-    evOwnOn = false; evFormat = ev.format || 'Dj Set'; renderEvFormats();
+    evOwnOn = false; evFormat = ev.format || 'Dj Set'; renderEvFormats(); evLoadFormats();
     const raw = String(ev.date || '');
     evDay = raw.slice(0, 10);
     const tm = /T(\d{2}:\d{2})/.exec(raw);
