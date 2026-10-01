@@ -2075,7 +2075,8 @@
           .then(r => r.json()).then(roles => { if (Array.isArray(roles) && roles.length) ASSIGNABLE_ROLES_CLIENT = roles; })
           .catch(() => {});
       } else {
-        document.getElementById('pinError').textContent = 'Неверный PIN-код';
+        // 5xx — проблема на сервере (например, не настроен секрет), а не неверный код: показываем её причину
+        document.getElementById('pinError').textContent = res.status >= 500 && data.error ? data.error : 'Неверный PIN-код';
         const dotsEl = document.getElementById('pinDots');
         dotsEl.classList.add('shake');
         setTimeout(() => dotsEl.classList.remove('shake'), 400);
