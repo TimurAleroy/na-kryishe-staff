@@ -904,7 +904,44 @@
     .emp-pin-val.off { font-size: 12.5px; letter-spacing: 0; color: var(--text-muted); }
     .emp-eye { background: none; border: none; color: var(--text-sub); cursor: pointer; padding: 4px; display: flex; align-items: center; }
     .emp-eye:disabled { opacity: 0.35; cursor: default; }
+    /* конструктор прав в карточке сотрудника */
+    .perm-sec { margin-top: 10px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; }
+    .perm-sec summary { list-style: none; display: flex; align-items: center; gap: 10px; padding: 12px 14px; cursor: pointer; font-size: 13px; color: var(--text); }
+    .perm-sec summary::-webkit-details-marker { display: none; }
+    .perm-sec summary::after { content: '›'; color: var(--text-muted); font-size: 18px; line-height: 1; transform: rotate(90deg); transition: transform .15s; }
+    .perm-sec[open] summary::after { transform: rotate(-90deg); }
+    .perm-sum { margin-left: auto; font-size: 11.5px; color: var(--text-muted); }
+    .perm-body { padding: 0 6px 6px; }
+    .perm-row { display: flex; align-items: flex-start; gap: 12px; padding: 9px 8px; border-radius: 10px; cursor: pointer; }
+    .perm-row input { position: absolute; opacity: 0; pointer-events: none; }
+    .perm-box { flex: 0 0 auto; width: 20px; height: 20px; margin-top: 1px; border-radius: 6px; border: 1.5px solid var(--text-muted); display: flex; align-items: center; justify-content: center; transition: background .12s, border-color .12s; }
+    .perm-box svg { opacity: 0; }
+    .perm-row input:checked + .perm-box { background: var(--accent); border-color: var(--accent); }
+    .perm-row input:checked + .perm-box svg { opacity: 1; }
+    .perm-row input:focus-visible + .perm-box { outline: 2px solid var(--text-sub); outline-offset: 2px; }
+    .perm-txt { min-width: 0; font-size: 13px; color: var(--text); line-height: 1.35; }
+    .perm-txt small { display: block; font-size: 11.5px; color: var(--text-muted); margin-top: 1px; }
+    .perm-row.dis { opacity: 0.4; cursor: default; }
+    .perm-chg { display: inline-block; margin-left: 6px; font-size: 10.5px; letter-spacing: .3px; color: var(--accent); border: 1px solid var(--accent-dim); background: var(--accent-dim); border-radius: 8px; padding: 1px 6px; vertical-align: 1px; }
+    .perm-locked { margin-top: 10px; font-size: 11.5px; line-height: 1.5; color: var(--text-muted); }
     .emp-hint { font-size: 11.5px; line-height: 1.5; color: var(--text-muted); margin-top: 6px; }
+    .mi-thumb { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; flex-shrink: 0; background: #140a03; border: 1px solid var(--border); }
+    .mi-thumb.none { display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 15px; }
+    .mi-mv { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
+    .mi-mv button { background: none; border: 1px solid var(--border); border-radius: 8px; color: var(--text-sub); width: 30px; height: 20px; line-height: 1; font-size: 10px; cursor: pointer; padding: 0; }
+    .mi-mv button:active { background: var(--accent-dim); color: var(--accent); }
+    .mi-price { font-size: 12.5px; color: var(--accent); white-space: nowrap; margin-right: 4px; }
+    .cand-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 13px 14px; margin-bottom: 10px; }
+    .cand-card.new { border-color: rgba(184,115,51,0.45); }
+    .cand-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+    .cand-name { font-size: 15px; color: var(--text); }
+    .cand-when { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+    .cand-meta { font-size: 12.5px; color: var(--text-sub); margin-top: 3px; }
+    .cand-meta a { color: var(--accent); text-decoration: none; }
+    .cand-about { font-size: 13px; line-height: 1.5; color: var(--text); margin-top: 8px; white-space: pre-wrap; word-break: break-word; }
+    .cand-status { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+    .cand-status .chip { padding: 7px 11px; font-size: 12px; }
+    .cand-del { background: none; border: none; color: var(--text-muted); font-size: 11.5px; margin-top: 8px; padding: 0; cursor: pointer; text-decoration: underline; }
     .dup-name { font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
     .dup-meta { font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin-top: 3px; }
     .dup-meta .danger { color: #fca5a5; }
@@ -1351,13 +1388,13 @@
     </button>
   </div>
   <div style="padding:0 16px">
-    <div class="search-box" style="margin-bottom:8px;">
+    <div class="search-box" id="homeSearchBox" style="margin-bottom:8px;">
       <input class="search-input" id="searchInput" type="search" enterkeyhint="search" autocomplete="off" placeholder="Имя или телефон" oninput="updateSearchHint()" onkeydown="if(event.key==='Enter') doSearch()">
       <button class="btn-primary" onclick="doSearch()">Найти</button>
     </div>
-    <div class="search-under">
+    <div class="search-under" id="homeSearchUnder">
       <span class="search-hint" id="searchHint">Можно ввести 4 последние цифры номера</span>
-      <button type="button" class="btn-new-guest" onclick="openNewGuest()">
+      <button type="button" class="btn-new-guest" id="homeNewGuestBtn" onclick="openNewGuest()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Новый гость
       </button>
@@ -1432,7 +1469,7 @@
     <div><h1 style="font-size:14px;letter-spacing:1px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><path d="M8 14l2 2 4-4"/></svg>Брони</h1></div>
   </div>
   <div style="padding:0 16px">
-    <div style="display:flex;justify-content:flex-end;margin:4px 0 8px;">
+    <div style="display:flex;justify-content:flex-end;margin:4px 0 8px;" id="bkAddRow">
       <button type="button" class="btn-new-guest" onclick="openAddBooking()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Записать бронь
@@ -1523,7 +1560,7 @@
     <div><h1 style="font-size:14px;letter-spacing:1px;" id="eventFormTitle">Новое мероприятие</h1></div>
   </div>
   <div style="padding:0 16px">
-    <!-- Постер: его видят гости на сайте и в приложении (поле «Постер» мероприятия в Notion) -->
+    <!-- Постер: его видят гости на сайте и в приложении -->
     <div class="form-group">
       <label class="form-label">Постер</label>
       <div class="poster-drop" id="evPosterDrop" onclick="pickEventPoster()">
@@ -1686,7 +1723,7 @@
 <!-- ADMIN: ДУБЛИ КАРТОЧЕК -->
 <div class="screen" id="screen-duplicates">
   <div class="header">
-    <div class="back-btn" onclick="showScreen('home')">
+    <div class="back-btn" onclick="showScreen('service')">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
     <div><h1 style="font-size:14px;letter-spacing:1px;">Дубли карточек</h1><p>Один гость — одна карточка</p></div>
@@ -1697,7 +1734,7 @@
 <!-- ОСНОВАТЕЛЬ: СОТРУДНИКИ -->
 <div class="screen" id="screen-employees">
   <div class="header">
-    <div class="back-btn" onclick="showScreen('home')">
+    <div class="back-btn" onclick="showScreen('service')">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
     <div><h1 style="font-size:14px;letter-spacing:1px;">Сотрудники</h1><p>Доступ в приложение по PIN-коду</p></div>
@@ -1722,7 +1759,7 @@
     </div>
     <div class="form-group">
       <label class="form-label">Роль</label>
-      <select class="form-input" id="empRole" onchange="updateEmpRoleHint()"></select>
+      <select class="form-input" id="empRole" onchange="updateEmpRoleHint();renderEmpPerms(true)"></select>
       <div class="emp-hint" id="empRoleHint"></div>
     </div>
     <div class="form-group" id="empPinCurrentWrap" style="display:none">
@@ -1742,9 +1779,116 @@
       <label class="form-label">Telegram ID (необязательно)</label>
       <input class="form-input" id="empTg" type="text" inputmode="numeric" maxlength="15" autocomplete="off" placeholder="Только цифры — для сообщений бота">
     </div>
+    <div class="form-group" id="empPermsWrap">
+      <label class="form-label">Что видит и может</label>
+      <div class="emp-hint" id="empPermsIntro" style="margin:0 0 4px"></div>
+      <div id="empPermsBody"></div>
+      <button type="button" class="btn-ghost" id="empPermsReset" onclick="resetEmpPerms()" style="margin-top:12px">Вернуть как у роли</button>
+      <div class="perm-locked" id="empPermsLocked"></div>
+    </div>
     <button class="btn-cta" id="empSubmitBtn" onclick="submitEmployee()">Сохранить</button>
     <button class="btn-ghost danger" id="empActiveBtn" onclick="toggleEmployeeActive()" style="display:none;margin-top:10px;">Уволить</button>
     <div class="emp-hint" id="empActiveHint" style="display:none;text-align:center"></div>
+  </div>
+</div>
+
+<!-- СЕРВИС: редкие разделы управления (меню, дубли, сотрудники, кандидаты) — отдельный экран, чтобы не загромождать главный -->
+<div class="screen" id="screen-service">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('home')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Сервис</h1><p>Меню, гости, команда</p></div>
+  </div>
+  <div style="padding:0 16px"><div id="serviceContent" style="margin-top:14px"></div></div>
+</div>
+
+<!-- АДМИН: МЕНЮ. Что видят гости на сайте и в приложении; стоп-лист — отдельный экран -->
+<div class="screen" id="screen-menu-edit">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('service')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Меню</h1><p>Позиции, цены и фото — как у гостей</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div class="add-row" style="margin:14px 0 12px"><button type="button" class="btn-new-guest" onclick="openMenuItemForm()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Новая позиция</button></div>
+    <input class="form-input sl-search" id="menuEditSearch" type="search" placeholder="Найти позицию" autocomplete="off" oninput="menuEditQuery=this.value;renderMenuEdit()">
+    <div id="menuEditContent"><div class="loading">Загружаю...</div></div>
+  </div>
+</div>
+
+<div class="screen" id="screen-menu-item-form">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('menu-edit')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;" id="miFormTitle">Новая позиция</h1></div>
+  </div>
+  <div style="padding:0 16px">
+    <div class="form-group">
+      <label class="form-label">Фото (необязательно)</label>
+      <div class="poster-drop" id="miPhotoDrop" onclick="pickMenuPhoto()">
+        <img id="miPhotoImg" class="poster-img" alt="" style="display:none">
+        <div class="poster-empty" id="miPhotoEmpty">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>
+          <div class="t">Добавить фото</div>
+          <div class="s">С телефона — из галереи или камерой.<br>На компьютере — нажмите, перетащите файл или вставьте Ctrl+V.</div>
+        </div>
+      </div>
+      <div class="poster-actions" id="miPhotoActions" style="display:none">
+        <button type="button" class="btn-primary" style="flex:1;" onclick="pickMenuPhoto()">Заменить</button>
+        <button type="button" class="btn-primary" style="flex:1;background:transparent;border-color:rgba(239,68,68,0.45);color:#ef4444;" onclick="removeMenuPhoto()">Убрать</button>
+      </div>
+      <div class="poster-note" id="miPhotoNote"></div>
+      <input type="file" id="miPhotoInput" accept="image/*" style="display:none" onchange="onMenuPhotoFile(this.files[0]); this.value='';">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Название</label>
+      <input class="form-input" id="miName" type="text" maxlength="200" autocomplete="off" placeholder="Например: Мохито">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Категория</label>
+      <div class="chip-row" id="miCatChips"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Подраздел (необязательно)</label>
+      <input class="form-input" id="miSub" type="text" maxlength="100" autocomplete="off" list="miSubList" placeholder="Например: Пиццы, Салаты, Классика">
+      <datalist id="miSubList"></datalist>
+      <div class="emp-hint">Позиции с одним подразделом гость видит одним блоком.</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Цена, ₽ (необязательно)</label>
+      <input class="form-input" id="miPrice" type="text" inputmode="decimal" maxlength="10" autocomplete="off" placeholder="450">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Описание (необязательно)</label>
+      <textarea class="form-input" id="miDesc" maxlength="1500" placeholder="Состав, объём, вкус"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Наличие</label>
+      <div class="chip-row" id="miAvailChips">
+        <div class="chip selected" data-value="true" onclick="selectChip(this,'miAvailChips')">В наличии</div>
+        <div class="chip" data-value="false" onclick="selectChip(this,'miAvailChips')">В стопе</div>
+      </div>
+      <div class="emp-hint">«В стопе» — гость позицию не видит. Порядок позиций меняют стрелки ▲▼ в списке меню.</div>
+    </div>
+    <button class="btn-cta" id="miSubmitBtn" onclick="submitMenuItem()">Сохранить</button>
+    <button class="btn-ghost danger" id="miDeleteBtn" onclick="deleteMenuItem()" style="display:none;margin-top:10px;">Удалить позицию</button>
+  </div>
+</div>
+
+<!-- ОСНОВАТЕЛЬ: КАНДИДАТЫ. Отклики с сайта и из гостевого приложения («Работа у нас») -->
+<div class="screen" id="screen-candidates">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('service')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Кандидаты</h1><p>Отклики на вакансии</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div class="chip-row" id="candFilterChips" style="margin:14px 0 14px"></div>
+    <div id="candidatesContent"><div class="loading">Загружаю...</div></div>
   </div>
 </div>
 
@@ -2053,6 +2197,56 @@
   function isAdminRole(role) {
     return role === 'Администратор' || role === 'Основатель';
   }
+
+  // ─── ПРАВА ──────────────────────────────────────
+  // Что видит и может сотрудник = права его роли ± галочки основателя на экране «Сотрудники».
+  // Список прав присылает сервер при входе; сервер всё равно проверяет каждое действие сам,
+  // здесь права только решают, что показывать.
+  var currentPerms = new Set();
+  function can(key) { return currentPerms.has(key); }
+  function setPerms(list, jobRole) {
+    // Запасной набор — если сервер ещё старый (обновляется чуть позже приложения) и список прав не прислал
+    if (!Array.isArray(list)) list = fallbackPerms(jobRole);
+    currentPerms = new Set(list);
+  }
+  function fallbackPerms(jobRole) {
+    const base = ['guests.view', 'guests.create', 'guests.edit', 'tags.use', 'visits.record', 'guests.birthdays', 'guests.vip_list', 'checklist.use', 'schedule.view', 'menu.view', 'problems.view', 'problems.report', 'problems.work_own_role'];
+    const own = { 'Бармен': ['menu.stoplist_drinks'], 'Повар': ['menu.stoplist_food'], 'КМ': ['menu.stoplist_hookah'] }[jobRole] || [];
+    const admin = ['guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage'];
+    const owner = ['founder_tasks.create', 'marketing.send', 'marketing.log', 'analytics.view', 'segments.view', 'feedback.view', 'guests.table', 'candidates.view'];
+    if (jobRole === 'Основатель') return base.concat(admin, owner);
+    if (jobRole === 'Администратор') return base.concat(admin);
+    return base.concat(own);
+  }
+  // Действие недоступно: понятное сообщение вместо молчаливой ошибки сервера
+  function needPerm(key, what) {
+    if (can(key)) return true;
+    notify(`Нет доступа: ${what}. Попросите основателя открыть это в разделе «Сотрудники»`);
+    return false;
+  }
+  // Сервер ответил «нет доступа»: права могли поменять, пока человек был на экране
+  function accessDenied() {
+    notify('Нет доступа к этому разделу. Если он нужен для работы — попросите основателя открыть его в «Сотрудниках»');
+    refreshPerms();
+    showScreen('home');
+  }
+  // Права могли поменять, пока человек в приложении: перечитываем и обновляем главный экран
+  var permsSig = '';
+  async function refreshPerms() {
+    if (!getPin()) return;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/me?pin=${getPin()}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      if (!Array.isArray(data.perms)) return;
+      const sig = [...data.perms].sort().join(',');
+      if (sig === permsSig) return;
+      permsSig = sig;
+      setPerms(data.perms, data.jobRole);
+      currentRole = data.role || currentRole;
+      if (activeScreenName() === 'home') { applyRoleUI(); loadDeskPanels(); }
+    } catch {}
+  }
   // Скрытый вход в анонимный опрос eNPS — только по QR-коду из служебного помещения (?enps=1).
   // Если ссылку открывают через Telegram-механизм startapp (не обычный URL) — параметр
   // приходит не в window.location.search, а в initDataUnsafe.start_param, проверяем оба варианта.
@@ -2074,6 +2268,8 @@
         currentRole = data.role || 'staff';
         currentEmployeeName = data.name || '';
         currentJobRole = data.jobRole || '';
+        setPerms(data.perms, currentJobRole);
+        permsSig = [...currentPerms].sort().join(',');
         applyRoleUI();
         // Если открыли по QR из служебного помещения (?enps=1) — сразу на анонимный
         // опрос, минуя обычный экран. PIN только подтвердил что это сотрудник —
@@ -2121,6 +2317,8 @@
     currentRole = 'staff';
     currentEmployeeName = '';
     currentJobRole = '';
+    currentPerms = new Set();
+    permsSig = '';
 
     // данные прошлого сотрудника — новый загрузит их заново под своим доступом
     bookingsListData = [];
@@ -2176,6 +2374,25 @@
     else if (e.key === 'Backspace') { e.preventDefault(); pinBackspace(); }
   });
 
+  var homeIcons = {};
+
+  // Что лежит в «Сервисе» у этого сотрудника: меню, дубли, сотрудники (только основатель), кандидаты
+  function serviceItemsFor() {
+    const list = [];
+    if (can('menu.manage')) list.push({ icon: 'menu', short: 'меню', title: 'Меню', sub: 'Позиции, цены, фото', fn: 'openMenuEdit()' });
+    if (can('guests.merge')) list.push({ icon: 'duplicates', short: 'дубли', title: 'Дубли', sub: 'Одна карточка на гостя', fn: 'openDuplicates()' });
+    if (currentJobRole === 'Основатель') list.push({ icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'PIN-коды, роли и права', fn: 'openEmployees()' });
+    if (can('candidates.view')) list.push({ icon: 'candidates', short: 'кандидаты', title: 'Кандидаты', sub: 'Отклики на вакансии', fn: 'openCandidates()' });
+    return list;
+  }
+  function openService() {
+    const items = serviceItemsFor();
+    document.getElementById('serviceContent').innerHTML = items.length
+      ? items.map(i => `<div class="qrow" onclick="${i.fn}"><div class="qrow-icon">${homeIcons[i.icon] || ''}</div><div class="qrow-t">${i.title}</div><div class="qrow-s">${i.sub}</div><div class="qrow-chev">›</div></div>`).join('')
+      : '<div class="empty-state">Здесь пока ничего не открыто</div>';
+    showScreen('service');
+  }
+
   function applyRoleUI() {
     const roleLabel = document.getElementById('roleLabel');
     const grid = document.getElementById('quickActionsGrid');
@@ -2210,22 +2427,28 @@
       feedback: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M21 12a8 8 0 01-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1121 12z"/></svg>',
       segments: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/><path d="M3 17.5l9 5 9-5" opacity="0.55"/></svg>',
       duplicates: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2"/></svg>',
+      menu: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h11a3 3 0 013 3v15H8a3 3 0 01-3-3V3z"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="12" y2="16"/></svg>',
+      candidates: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="2.6"/><path d="M7.5 17c.8-2 2.4-3 4.5-3s3.7 1 4.5 3"/></svg>',
+      service: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>',
       team: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.2a3.2 3.2 0 010 5.6"/><path d="M18 14.4c1.8.8 3 2.6 3 5.6"/></svg>'
     };
 
     // Группы — по тому, как часто ими пользуются за смену: «Внимание» → «Смена» →
     // «Гости» → редкие разделы компактными строками (маркетинг, аналитика, сервис).
 
+    homeIcons = icons;
+    // Что показывать — решают права сотрудника (основатель выдаёт их галочками на экране «Сотрудники»)
     let shiftCards = '';
-    shiftCards += qcard(icons.checklist, 'Чек-лист', 'Смена', "openChecklist()");
-    shiftCards += qcard(icons.schedule, 'График', 'Кто когда работает', "openSchedule()");
-    // Стоп-лист видят все — официант принимает заказы и должен знать, чего нет
-    shiftCards += qcard(icons.stoplist, 'Стоп-лист', 'Чего нет в меню', "openStoplist()");
+    if (can('checklist.use')) shiftCards += qcard(icons.checklist, 'Чек-лист', 'Смена', "openChecklist()");
+    if (can('schedule.view')) shiftCards += qcard(icons.schedule, 'График', 'Кто когда работает', "openSchedule()");
+    // Стоп-лист: официант принимает заказы и должен знать, чего нет
+    if (can('menu.view')) shiftCards += qcard(icons.stoplist, 'Стоп-лист', 'Чего нет в меню', "openStoplist()");
 
     let guestsCards = '';
-    guestsCards += qcard(icons.birthday, 'Именинники', 'Сегодня', "openBirthdays()");
-    guestsCards += qcard(icons.vip, 'VIP-гости', 'Список', "openGuestList('vip')");
-    guestsCards += qcard(icons.recent, 'Недавние', 'Просмотренные', "openRecentGuests()");
+    if (can('guests.birthdays')) guestsCards += qcard(icons.birthday, 'Именинники', 'Сегодня', "openBirthdays()");
+    if (can('guests.vip_list')) guestsCards += qcard(icons.vip, 'VIP-гости', 'Список', "openGuestList('vip')");
+    if (can('guests.view')) guestsCards += qcard(icons.recent, 'Недавние', 'Просмотренные', "openRecentGuests()");
+    if (can('guests.list_inactive')) guestsCards += qcard(icons.inactive, 'Давно не было', 'Риск оттока', "openInactiveGuests()");
 
     const qrow = (icon, title, sub, onclick, opts = {}) => `
       <div class="qrow${opts.extraClass ? ' ' + opts.extraClass : ''}" onclick="${onclick}">
@@ -2236,46 +2459,52 @@
       </div>`;
     let marketingRows = '';
     let analyticsRows = '';
-    let serviceRows = '';
 
     const nameLabel = currentEmployeeName ? `${currentEmployeeName} · ${currentJobRole}` : (currentRole === 'admin' ? 'Администратор · Гости' : 'Персонал · Гости');
     roleLabel.textContent = nameLabel;
 
+    // Поиск и «Новый гость» — тоже по правам
+    const searchBox = document.getElementById('homeSearchBox');
+    if (searchBox) searchBox.style.display = can('guests.view') ? '' : 'none';
+    const newGuestBtn = document.getElementById('homeNewGuestBtn');
+    if (newGuestBtn) newGuestBtn.style.display = can('guests.create') ? '' : 'none';
+    const searchUnder = document.getElementById('homeSearchUnder');
+    if (searchUnder) searchUnder.style.display = can('guests.view') || can('guests.create') ? '' : 'none';
+    const searchHint = document.getElementById('searchHint');
+    if (searchHint) searchHint.style.visibility = can('guests.view') ? '' : 'hidden';
+
     // «Внимание» — то, что открывают постоянно за смену
     let attentionCards = '';
-    if (currentRole === 'admin') {
+    if (can('bookings.view')) {
       attentionCards += qcard(icons.bookings, 'Брони', 'Столы и мероприятия', "openBookings()", { dotId: 'qdotBookings' });
     }
     // Одна карточка: список проблем, а «Сообщить» — кнопкой внутри
-    attentionCards += qcard(icons.problem, 'Проблемы', 'Открытые · сообщить', "openProblems()", { dotId: 'qdotProblems' });
-    // «Задачи» видят Администратор и Основатель; ставить новую — только Основатель
-    if (currentRole === 'admin') {
+    if (can('problems.view')) attentionCards += qcard(icons.problem, 'Проблемы', 'Открытые · сообщить', "openProblems()", { dotId: 'qdotProblems' });
+    // «Задачи»: видеть и отмечать готовыми; ставить новую — отдельное право
+    if (can('founder_tasks.manage')) {
       attentionCards += qcard(icons.tasks, 'Задачи', 'От основателя', "openFounderTasks()", { dotId: 'qdotFounderTasks' });
     }
 
-    if (currentRole === 'admin') {
-      guestsCards += qcard(icons.inactive, 'Давно не было', 'Риск оттока', "openInactiveGuests()");
-      marketingRows += qrow(icons.events, 'Афиша', 'Мероприятия', "openEvents()");
-      serviceRows += qrow(icons.duplicates, 'Дубли', 'Одна карточка на гостя', "openDuplicates()");
-    }
+    if (can('events.manage')) marketingRows += qrow(icons.events, 'Афиша', 'Мероприятия', "openEvents()");
+    if (can('marketing.send')) marketingRows += qrow(icons.marketing, 'Рассылки', 'Через бота', "openMarketing()");
+    if (can('analytics.view')) analyticsRows += qrow(icons.analytics, 'Аналитика', 'Сравнение периодов', "openAnalytics()");
+    if (can('segments.view')) analyticsRows += qrow(icons.segments, 'Сегменты', 'Чемпионы → потерянные', "openSegments()");
+    if (can('feedback.view')) analyticsRows += qrow(icons.feedback, 'Обратная связь', 'Отзывы · eNPS', "openFeedback()");
+    if (can('guests.table')) analyticsRows += qrow(icons.guestsTable, 'Таблица гостей', 'На компьютере', "openGuestsTable()", { extraClass: 'desktop-only' });
 
-    // Аналитика и маркетинг — решение Тимура 27.09: видит только «Основатель»
-    if (currentJobRole === 'Основатель') {
-      marketingRows += qrow(icons.marketing, 'Рассылки', 'Через бота', "openMarketing()");
-      analyticsRows += qrow(icons.analytics, 'Аналитика', 'Сравнение периодов', "openAnalytics()");
-      analyticsRows += qrow(icons.segments, 'Сегменты', 'Чемпионы → потерянные', "openSegments()");
-      analyticsRows += qrow(icons.feedback, 'Обратная связь', 'Отзывы · eNPS', "openFeedback()");
-      analyticsRows += qrow(icons.guestsTable, 'Таблица гостей', 'На компьютере', "openGuestsTable()", { extraClass: 'desktop-only' });
-      serviceRows += qrow(icons.team, 'Сотрудники', 'PIN-коды и роли', "openEmployees()");
-    }
+    // «Сервис» — отдельный экран: меню, дубли, сотрудники, кандидаты. На главной — одна строка.
+    const serviceItems = serviceItemsFor();
+    let serviceRows = '';
+    if (serviceItems.length) serviceRows = qrow(icons.service, 'Сервис', serviceItems.map(i => i.short).join(' · '), "openService()");
 
     let html = '';
     if (attentionCards) html += qgroup('Внимание') + attentionCards;
-    html += qgroup('Смена') + shiftCards;
-    html += qgroup('Гости') + guestsCards;
+    if (shiftCards) html += qgroup('Смена') + shiftCards;
+    if (guestsCards) html += qgroup('Гости') + guestsCards;
     if (marketingRows) html += qgroup('Маркетинг') + marketingRows;
     if (analyticsRows) html += qgroup('Аналитика') + analyticsRows;
-    if (serviceRows) html += qgroup('Сервис') + serviceRows;
+    if (serviceRows) html += qgroup('Управление') + serviceRows;
+    if (!html) html = '<div class="empty-state" style="grid-column:1/-1">Пока ничего не открыто. Попросите основателя выдать доступ.</div>';
 
     grid.innerHTML = html;
     refreshQuickActionStatus();
@@ -2286,18 +2515,19 @@
   var quickStatusAt = 0;
   async function refreshQuickActionStatus() {
     quickStatusAt = Date.now();
-    try {
+    refreshPerms();
+    if (can('problems.view')) try {
       const res = await fetch(`${PROXY_BASE}/api/staff/problems?pin=${getPin()}`);
       if (res.ok) {
         const list = await res.json();
         // точка — только если есть проблема, которую этот сотрудник может взять или закрыть
-        const mine = Array.isArray(list) && list.some(p => isAdminRole(currentJobRole) || p.responsible === currentJobRole);
+        const mine = Array.isArray(list) && list.some(p => can('problems.manage_all') || (can('problems.work_own_role') && p.responsible === currentJobRole));
         setQuickActionDot('qdotProblems', mine);
       }
     } catch {}
 
-    if (currentRole === 'admin') {
-      try {
+    {
+      if (can('bookings.view')) try {
         const res = await fetch(`${PROXY_BASE}/api/staff/bookings?past=${BOOKINGS_PAST_DAYS}&pin=${getPin()}`);
         if (res.ok) {
           const list = await res.json();
@@ -2306,7 +2536,7 @@
         }
       } catch {}
 
-      try {
+      if (can('founder_tasks.manage')) try {
         const res = await fetch(`${PROXY_BASE}/api/admin/founder-tasks?pin=${getPin()}`);
         if (res.ok) {
           const list = await res.json();
@@ -2345,6 +2575,13 @@
     left.classList.add('role-ok');
     right.classList.add('role-ok');
 
+    // блоки панелей — только те, что разрешены этому сотруднику
+    const dpAllow = { dpShift: 'schedule.view', dpBirthdays: 'guests.birthdays', dpEvents: 'events.manage', dpProblems: 'problems.view', dpBookings: 'bookings.view', dpFounderTasks: 'founder_tasks.manage', dpNotes: 'notes.manage' };
+    for (const [id, key] of Object.entries(dpAllow)) {
+      const sec = document.getElementById(id)?.closest('.dp-section');
+      if (sec) sec.style.display = can(key) ? '' : 'none';
+    }
+
     const dateEl = document.getElementById('dpDate');
     if (dateEl) dateEl.textContent = capFirst(new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' }));
 
@@ -2356,6 +2593,7 @@
     // оставлять остальные блоки в вечном "Загружаю...".
     (async () => {
       const el = document.getElementById('dpShift');
+      if (!can('schedule.view')) return;
       try {
         const [shiftsRes, employeesRes] = await Promise.all([
           fetch(`${PROXY_BASE}/api/staff/schedule?pin=${pin}&from=${today}&to=${today}`),
@@ -2375,6 +2613,7 @@
 
     (async () => {
       const el = document.getElementById('dpBirthdays');
+      if (!can('guests.birthdays')) return;
       try {
         const res = await fetch(`${PROXY_BASE}/api/staff/birthdays?pin=${pin}`);
         const list = res.ok ? await res.json() : [];
@@ -2389,6 +2628,7 @@
     // добавление нового прямо с главного экрана (openAddEvent).
     (async () => {
       const el = document.getElementById('dpEvents');
+      if (!can('events.manage')) return;
       const countEl = document.getElementById('dpEventsCount');
       const MONTHS = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
       try {
@@ -2405,6 +2645,7 @@
 
     (async () => {
       const el = document.getElementById('dpProblems');
+      if (!can('problems.view')) return;
       const countEl = document.getElementById('dpProblemsCount');
       try {
         const res = await fetch(`${PROXY_BASE}/api/staff/problems?pin=${pin}`);
@@ -2417,6 +2658,7 @@
 
     (async () => {
       const el = document.getElementById('dpBookings');
+      if (!can('bookings.view')) return;
       const countEl = document.getElementById('dpBookingsCount');
       try {
         const res = await fetch(`${PROXY_BASE}/api/staff/bookings?pin=${pin}`);
@@ -2432,9 +2674,10 @@
     // Плюс в углу — только у Основателя, чтобы поставить задачу прямо
     // с главного экрана, не открывая полный список.
     const addBtn = document.getElementById('dpFounderTaskAddBtn');
-    if (addBtn) addBtn.style.display = currentJobRole === 'Основатель' ? 'inline-flex' : 'none';
+    if (addBtn) addBtn.style.display = can('founder_tasks.create') ? 'inline-flex' : 'none';
     (async () => {
       const el = document.getElementById('dpFounderTasks');
+      if (!can('founder_tasks.manage')) return;
       const countEl = document.getElementById('dpFounderTasksCount');
       try {
         const res = await fetch(`${PROXY_BASE}/api/admin/founder-tasks?pin=${pin}`);
@@ -2483,7 +2726,7 @@
     return false;
   }
   async function pollBookings() {
-    if (bookingsPollBusy || document.hidden || currentRole !== 'admin' || !getPin()) return;
+    if (bookingsPollBusy || document.hidden || !can('bookings.view') || !getPin()) return;
     if (document.getElementById('screen-pin')?.classList.contains('active')) return;
     bookingsPollBusy = true;
     try {
@@ -2525,7 +2768,7 @@
   async function loadDpNotes() {
     const el = document.getElementById('dpNotes');
     const countEl = document.getElementById('dpNotesCount');
-    if (!el) return;
+    if (!el || !can('notes.manage')) return;
     try {
       const res = await fetch(`${PROXY_BASE}/api/admin/notes?pin=${getPin()}`);
       const list = res.ok ? await res.json() : [];
@@ -2616,7 +2859,7 @@
   // плюсом в углу десктопной панели, чтобы не делать два клика подряд).
   function openFounderTasks(openComposer) {
     showScreen('founder-tasks');
-    const isFounder = currentJobRole === 'Основатель';
+    const isFounder = can('founder_tasks.create');
     const newBtnWrap = document.getElementById('founderTaskNewBtnWrap');
     if (newBtnWrap) newBtnWrap.style.display = isFounder ? 'block' : 'none';
     const composer = document.getElementById('founderTaskComposer');
@@ -2638,7 +2881,7 @@
     try {
       const res = await fetch(`${PROXY_BASE}/api/admin/founder-tasks?pin=${getPin()}`);
       if (res.status === 401) { showScreen('pin'); return; }
-      if (res.status === 403) { showScreen('home'); return; }
+      if (res.status === 403) { accessDenied(); return; }
       if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить задачи'));
       const list = await res.json();
       if (!Array.isArray(list)) throw new Error('Не удалось загрузить задачи');
@@ -3233,8 +3476,8 @@
           <div class="meta">${[b.guests ? `${b.guests} гост.` : '', b.table || '', b.status === 'pending' ? 'не подтверждали' : ''].filter(Boolean).map(escHtml).join(' · ')}</div>
         </div>
         <div class="rc-btns">
-          <button class="arr-btn yes" onclick="markArrival('past', ${i}, 'arrived')">Пришёл</button>
-          <button class="arr-btn no" onclick="markArrival('past', ${i}, 'noshow')">Нет</button>
+          ${can('bookings.mark_arrival') ? `<button class="arr-btn yes" onclick="markArrival('past', ${i}, 'arrived')">Пришёл</button>
+          <button class="arr-btn no" onclick="markArrival('past', ${i}, 'noshow')">Нет</button>` : ''}
         </div>
       </div>`).join('') : '';
     return `<div class="rc-box">
@@ -3712,13 +3955,13 @@
       return `<div class="hz-item" onclick="openBookingDetail(${it.idx})">
         <span><span class="hz-dot" style="background:${color}"></span><b style="font-weight:500">с ${hhmm(it.start)}</b> ${escHtml(b.name)}${b.guests ? ` · ${escHtml(String(b.guests))}` : ''}${nowTag}</span>
         ${bookingFlagsHtml(b, 2)}
-        ${b.status === 'pending' ? `<button type="button" class="hz-mini-btn" onclick="event.stopPropagation();confirmFromPlan(${it.idx}, this)">✓ Подтвердить</button>` : ''}
+        ${b.status === 'pending' && can('bookings.confirm') ? `<button type="button" class="hz-mini-btn" onclick="event.stopPropagation();confirmFromPlan(${it.idx}, this)">✓ Подтвердить</button>` : ''}
       </div>`;
     }).join('') : '<div class="autotag-empty">На этот день броней нет</div>';
     return `<div class="hint-box" style="margin-top:12px">
       <div class="hint-title">${escHtml(title)}</div>
       ${rows}
-      <div class="add-row" style="justify-content:flex-start;margin:10px 0 0"><button type="button" class="btn-new-guest" onclick="openAddBookingAt(hallDate, ${t}, '${escJs(tb.key)}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Бронь на этот стол в ${hhmm(t)}</button></div>
+      <div class="add-row" style="justify-content:flex-start;margin:10px 0 0;${can('bookings.create') ? '' : 'display:none'}"><button type="button" class="btn-new-guest" onclick="openAddBookingAt(hallDate, ${t}, '${escJs(tb.key)}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Бронь на этот стол в ${hhmm(t)}</button></div>
     </div>`;
   }
 
@@ -3726,6 +3969,7 @@
   // считается подтверждённой, отдельно подтверждать в приложении не нужно.
   // prefill — со схемы/графика: { date, time, table }
   function openAddBooking(prefill) {
+    if (!needPerm('bookings.create', 'записывать брони')) return;
     const pre = prefill || {};
     document.getElementById('abName').value = '';
     document.getElementById('abPhone').value = '+7';
@@ -3841,17 +4085,19 @@
       state = `<div class="arr-state noshow">✗ Не пришёл${whoWhen ? ` <span class="note">отметил(а) ${escHtml(whoWhen)}</span>` : ''}</div>`;
       btns = `<button class="arr-btn yes" onclick="markArrival('${src}', ${idx}, 'arrived')">Пришёл</button><button class="arr-btn" onclick="markArrival('${src}', ${idx}, 'clear')">Снять отметку</button>`;
     }
+    if (!can('bookings.mark_arrival')) btns = '';
     return `<div class="arr-box">
       <div class="arr-title">Гость пришёл?</div>
       ${state}
       <div class="arr-btns">${btns}</div>
-      ${!a ? `<div class="note" style="margin-top:8px">«Пришёл» запишет визит в карточку гостя — так он попадёт в сегменты. Нет карточки — она создастся по брони.${timeCame ? '' : ' «Не пришёл» появится, когда наступит время брони.'}</div>` : ''}
+      ${!a && btns ? `<div class="note" style="margin-top:8px">«Пришёл» запишет визит в карточку гостя — так он попадёт в сегменты. Нет карточки — она создастся по брони.${timeCame ? '' : ' «Не пришёл» появится, когда наступит время брони.'}</div>` : ''}
     </div>`;
   }
 
   let arrivalBusy = false;
   async function markArrival(source, idx, status) {
     if (arrivalBusy) return;
+    if (!needPerm('bookings.mark_arrival', 'отмечать, пришёл ли гость')) return;
     const b = bookingBySource(source, idx);
     if (!b || !b.uid) return;
     arrivalBusy = true;
@@ -3951,7 +4197,7 @@
           </div>
         </div>
         ${tableConflictWarningHtml('tableConflictWarning')}
-        ${currentBookingSource === 'cur' ? `<button class="btn-ghost" style="margin-top:10px;" onclick="seatFromDetail()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><rect x="3" y="3" width="18" height="18" rx="3"/><rect x="7" y="7" width="4" height="4" rx="1"/><circle cx="16" cy="9" r="2"/><rect x="7" y="14" width="10" height="3.5" rx="1.5"/></svg>Выбрать стол на схеме</button>` : ''}
+        ${currentBookingSource === 'cur' && can('bookings.assign_table') ? `<button class="btn-ghost" style="margin-top:10px;" onclick="seatFromDetail()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><rect x="3" y="3" width="18" height="18" rx="3"/><rect x="7" y="7" width="4" height="4" rx="1"/><circle cx="16" cy="9" r="2"/><rect x="7" y="14" width="10" height="3.5" rx="1.5"/></svg>Выбрать стол на схеме</button>` : ''}
       </div>
     `;
 
@@ -3976,19 +4222,21 @@
 
       ${b.past ? '<div class="note" style="margin-top:14px">Бронь уже прошла — подтверждать, переносить и отменять её не нужно.</div>' : tableBlockHtml}
 
-${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="bkConfirmBtn" onclick="confirmBookingAction()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><path d="M4 12l5 5L20 6"/></svg>Подтвердить</button>` : ''}
-      <div class="btn-row"><button class="btn-ghost" onclick="openBookingEdit()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:6px;display:inline-block"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Изменить</button>
-      <button class="btn-ghost danger" onclick="cancelBookingAction()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg>Отменить бронь</button></div>`}
+${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<button class="btn-cta" id="bkConfirmBtn" onclick="confirmBookingAction()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><path d="M4 12l5 5L20 6"/></svg>Подтвердить</button>` : ''}
+      <div class="btn-row">${can('bookings.edit') ? `<button class="btn-ghost" onclick="openBookingEdit()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:6px;display:inline-block"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Изменить</button>` : ''}
+      ${can('bookings.cancel') ? `<button class="btn-ghost danger" onclick="cancelBookingAction()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg>Отменить бронь</button>` : ''}</div>`}
     `;
   }
 
   function openBookingEdit() {
+    if (!needPerm('bookings.edit', 'менять брони')) return;
     bookingEditMode = true;
     renderBookingDetail();
   }
 
   async function confirmBookingAction() {
     if (bookingActionBusy) return;
+    if (!needPerm('bookings.confirm', 'подтверждать брони')) return;
     bookingActionBusy = true;
     const b = bookingBySource(currentBookingSource, currentBookingIndex);
     const btn = document.getElementById('bkConfirmBtn');
@@ -4084,6 +4332,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
     if (slot) { hallDate = slot.day; hallTime = Math.floor(slot.start / 15) * 15; }
   }
   function toggleSeating(idx) {
+    if (!needPerm('bookings.assign_table', 'назначать стол')) return;
     if (hallSeatIdx === idx) { hallSeatIdx = null; hallSeatPick = null; renderHallPlan(); return; }
     startSeating(idx, false);
     renderBookingsView();
@@ -4091,6 +4340,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
   }
   function seatFromDetail() {
     if (currentBookingSource !== 'cur') return;
+    if (!needPerm('bookings.assign_table', 'назначать стол')) return;
     startSeating(currentBookingIndex, true);
     bookingsView = 'plan';
     showScreen('bookings');
@@ -4187,6 +4437,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
   async function confirmFromPlan(idx, btn) {
     const b = bookingsListData[idx];
     if (!b || bookingActionBusy) return;
+    if (!needPerm('bookings.confirm', 'подтверждать брони')) return;
     bookingActionBusy = true;
     if (btn) { btn.disabled = true; btn.textContent = '…'; }
     try {
@@ -4210,6 +4461,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
 
   async function cancelBookingAction() {
     if (bookingActionBusy) return;
+    if (!needPerm('bookings.cancel', 'отменять брони')) return;
     if (!await askConfirm('Отменить эту бронь?\n\nГость получит уведомление об отмене.', { ok: 'Отменить бронь', cancel: 'Не отменять', danger: true })) return;
     bookingActionBusy = true;
     const b = bookingBySource(currentBookingSource, currentBookingIndex);
@@ -4275,7 +4527,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
     showScreen('problems');
     const el = document.getElementById('problemsContent');
     el.innerHTML = '<div class="loading">Загружаю...</div>';
-    const reportBtn = `<div class="add-row" style="margin:0 0 14px"><button type="button" class="btn-new-guest" onclick="openReportProblem()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Сообщить о проблеме</button></div>`;
+    const reportBtn = !can('problems.report') ? '' : `<div class="add-row" style="margin:0 0 14px"><button type="button" class="btn-new-guest" onclick="openReportProblem()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Сообщить о проблеме</button></div>`;
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/problems?pin=${getPin()}`);
       if (res.status === 401) { showScreen('pin'); return; }
@@ -4294,7 +4546,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
   }
 
   function renderProblemItem(p) {
-    const canAct = isAdminRole(currentJobRole) || currentJobRole === p.responsible;
+    const canAct = can('problems.manage_all') || (can('problems.work_own_role') && currentJobRole === p.responsible);
     const sevColor = PROBLEM_SEV_COLOR[p.severity] || 'var(--text-muted)';
     const id = escJs(p.id);
     const dl = p.deadline ? humanDeadline(p.deadline) : null;
@@ -4311,7 +4563,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
         ? `<button class="btn-primary pb-act" onclick="resolveProblem('${id}')">Отметить решённой</button>`
         : `<div class="pb-note">Закрыть может: ${escHtml(p.responsible || 'администратор')}</div>`;
     }
-    const reassign = currentRole === 'admin'
+    const reassign = can('problems.manage_all')
       ? `<button type="button" class="pb-link" onclick="reassignProblem('${id}')">Переназначить</button>`
       : '';
 
@@ -4437,7 +4689,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
     }
   }
 
-  // В Notion формат хранится как «Dj Set» — показываем по-русски
+  // Формат хранится как «Dj Set» — показываем по-русски
   function eventFormatLabel(f) {
     return ({ 'Dj Set': 'DJ-сет', 'DJ Set': 'DJ-сет' })[f] || f;
   }
@@ -4473,7 +4725,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
 
   // ─── ПОСТЕР МЕРОПРИЯТИЯ ───
   // Выбранное фото сжимается здесь же (до 1600 px по длинной стороне, JPEG) — так оно
-  // быстро уходит даже по мобильной сети и укладывается в лимит Notion (5 МБ).
+  // быстро уходит даже по мобильной сети и укладывается в лимит сервера (5 МБ).
   // Сохраняется вместе с мероприятием кнопкой «Создать/Сохранить».
   const eventPoster = { url: '', blob: null, preview: '', remove: false };
 
@@ -4523,10 +4775,10 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
       im.src = url;
     });
   }
-  async function compressPoster(file) {
+  async function compressPoster(file, maxSide) {
     const img = await loadImageForCanvas(file);
     const w0 = img.width, h0 = img.height;
-    const k = Math.min(1, 1600 / Math.max(w0, h0));
+    const k = Math.min(1, (maxSide || 1600) / Math.max(w0, h0));
     const w = Math.max(1, Math.round(w0 * k)), h = Math.max(1, Math.round(h0 * k));
     const canvas = document.createElement('canvas');
     canvas.width = w; canvas.height = h;
@@ -4644,7 +4896,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
 
   async function deleteEvent() {
     if (!editingEventId) return;
-    if (!await askConfirm('Удалить это мероприятие?\n\nОно пропадёт из афиши у гостей. Вернуть можно только в Notion.', { ok: 'Удалить', danger: true })) return;
+    if (!await askConfirm('Удалить это мероприятие?\n\nОно пропадёт из афиши у гостей. Вернуть его нельзя — только создать заново.', { ok: 'Удалить', danger: true })) return;
 
     const btn = document.getElementById('evDeleteBtn');
     btn.disabled = true;
@@ -4669,6 +4921,381 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
       btn.disabled = false;
       btn.textContent = 'Удалить мероприятие';
       notify('Не удалось удалить мероприятие');
+    }
+  }
+
+  // ─── МЕНЮ: РЕДАКТОР (администратор и основатель) ───
+  // То, что гости видят на сайте и в приложении. Стоп-лист («В наличии») — отдельный экран, его переключает
+  // и персонал своей категории; здесь правят сами позиции: название, цена, фото, порядок, удаление.
+  const MENU_EDIT_CATEGORIES = ['Еда', 'Коктейли', 'Алкоголь', 'Напитки', 'Кальян'];
+  let menuEditItems = [];
+  let menuEditQuery = '';
+  let editingMenuItemId = null;
+  const menuPhoto = { url: '', blob: null, preview: '', remove: false };
+
+  function openMenuEdit() {
+    menuEditQuery = '';
+    const inp = document.getElementById('menuEditSearch');
+    if (inp) inp.value = '';
+    showScreen('menu-edit');
+    loadMenuEdit();
+  }
+
+  async function fetchMenuEdit() {
+    const res = await fetch(`${PROXY_BASE}/api/staff/menu?pin=${getPin()}`);
+    if (res.status === 401) { showScreen('pin'); return false; }
+    if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить меню'));
+    const items = await res.json();
+    if (!Array.isArray(items)) throw new Error('Не удалось загрузить меню');
+    menuEditItems = items;
+    return true;
+  }
+
+  async function loadMenuEdit() {
+    const el = document.getElementById('menuEditContent');
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      if (await fetchMenuEdit()) renderMenuEdit();
+    } catch (e) {
+      el.innerHTML = errorStateHtml(e.message || 'Не удалось загрузить меню', 'loadMenuEdit()');
+    }
+  }
+
+  function menuEditRowHtml(it) {
+    const id = escJs(it.id);
+    const thumb = it.photo
+      ? `<img class="mi-thumb" src="${escHtml(it.photo)}" alt="" loading="lazy">`
+      : '<div class="mi-thumb none">·</div>';
+    return `<div class="emp-row${it.available ? '' : ' off'}" onclick="openMenuItemForm('${id}')">
+        ${thumb}
+        <div class="emp-body">
+          <div class="emp-name">${escHtml(it.name)}${it.available ? '' : ' <span class="sl-stop">стоп</span>'}</div>
+        </div>
+        <div class="mi-price">${it.price !== null && it.price !== undefined ? escHtml(String(it.price)) + ' ₽' : ''}</div>
+        <div class="mi-mv">
+          <button type="button" aria-label="Выше" onclick="event.stopPropagation();moveMenuItem('${id}','up')">▲</button>
+          <button type="button" aria-label="Ниже" onclick="event.stopPropagation();moveMenuItem('${id}','down')">▼</button>
+        </div>
+      </div>`;
+  }
+
+  function renderMenuEdit() {
+    const el = document.getElementById('menuEditContent');
+    if (!el) return;
+    if (!menuEditItems.length) {
+      el.innerHTML = '<div class="empty-state">Меню пока пустое.<br>Нажмите «Новая позиция».</div>';
+      return;
+    }
+    const q = menuEditQuery.trim().toLowerCase().replace(/ё/g, 'е');
+    const items = menuEditItems.filter(it => !q || String(it.name || '').toLowerCase().replace(/ё/g, 'е').includes(q));
+    if (!items.length) { el.innerHTML = '<div class="empty-state">Ничего не нашлось</div>'; return; }
+    const byCategory = {};
+    items.forEach(it => { (byCategory[it.category] = byCategory[it.category] || []).push(it); });
+    const cats = [...MENU_EDIT_CATEGORIES, ...Object.keys(byCategory).filter(c => !MENU_EDIT_CATEGORIES.includes(c))].filter(c => byCategory[c]?.length);
+    const html = cats.map(cat => {
+      const catItems = byCategory[cat];
+      const plain = catItems.filter(it => !it.subcategory);
+      const grouped = catItems.filter(it => it.subcategory);
+      const subOrder = [];
+      grouped.forEach(it => { if (!subOrder.includes(it.subcategory)) subOrder.push(it.subcategory); });
+      return `<div class="sec" style="margin-top:18px;">${escHtml(cat)} · ${catItems.length}</div>`
+        + plain.map(menuEditRowHtml).join('')
+        + subOrder.map(sub => `<div class="menu-subsec">${escHtml(sub)}</div>${grouped.filter(it => it.subcategory === sub).map(menuEditRowHtml).join('')}`).join('');
+    }).join('');
+    const y = window.scrollY;
+    el.innerHTML = html;
+    window.scrollTo(0, y);
+  }
+
+  let menuMoveBusy = false;
+  async function moveMenuItem(id, dir) {
+    if (menuMoveBusy) return;
+    menuMoveBusy = true;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/menu/${encodeURIComponent(id)}/move?pin=${getPin()}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), dir })
+      });
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось сдвинуть'));
+      await fetchMenuEdit();
+      renderMenuEdit();
+    } catch (e) {
+      notify(e.message && e.message !== 'Failed to fetch' ? e.message : 'Не удалось сдвинуть — проверьте соединение');
+    } finally {
+      menuMoveBusy = false;
+    }
+  }
+
+  // Подсказки подраздела — те, что уже есть в выбранной категории
+  function refreshMiSubList() {
+    const cat = (document.querySelector('#miCatChips .chip.selected') || {}).dataset?.value;
+    const subs = [...new Set(menuEditItems.filter(i => i.category === cat && i.subcategory).map(i => i.subcategory))];
+    document.getElementById('miSubList').innerHTML = subs.map(x => `<option value="${escHtml(x)}"></option>`).join('');
+  }
+  function selectMenuCat(el) {
+    selectChip(el, 'miCatChips');
+    refreshMiSubList();
+  }
+
+  function openMenuItemForm(id) {
+    const it = id ? menuEditItems.find(x => x.id === id) : null;
+    if (id && !it) return;
+    editingMenuItemId = it ? it.id : null;
+    document.getElementById('miFormTitle').textContent = it ? 'Редактировать позицию' : 'Новая позиция';
+    document.getElementById('miName').value = it ? it.name : '';
+    document.getElementById('miSub').value = it ? (it.subcategory || '') : '';
+    document.getElementById('miPrice').value = it && it.price !== null && it.price !== undefined ? String(it.price) : '';
+    document.getElementById('miDesc').value = it ? (it.description || '') : '';
+    const cur = it ? it.category : MENU_EDIT_CATEGORIES[0];
+    document.getElementById('miCatChips').innerHTML = MENU_EDIT_CATEGORIES
+      .map(c => `<div class="chip${c === cur ? ' selected' : ''}" data-value="${escHtml(c)}" onclick="selectMenuCat(this)">${escHtml(c)}</div>`).join('');
+    const avail = it ? it.available : true;
+    document.querySelectorAll('#miAvailChips .chip').forEach(c => c.classList.toggle('selected', (c.dataset.value === 'true') === avail));
+    document.getElementById('miSubmitBtn').textContent = 'Сохранить';
+    document.getElementById('miDeleteBtn').style.display = it ? 'block' : 'none';
+    resetMenuPhoto(it ? it.photo : '');
+    refreshMiSubList();
+    showScreen('menu-item-form');
+  }
+
+  // ─── фото позиции: сжимается здесь же (до 1200 px, JPEG), сохраняется вместе с позицией ───
+  function resetMenuPhoto(url) {
+    if (menuPhoto.preview) URL.revokeObjectURL(menuPhoto.preview);
+    menuPhoto.url = url || '';
+    menuPhoto.blob = null;
+    menuPhoto.preview = '';
+    menuPhoto.remove = false;
+    renderMenuPhoto('');
+  }
+  function renderMenuPhoto(note, warn) {
+    const src = menuPhoto.preview || (!menuPhoto.remove ? menuPhoto.url : '');
+    const img = document.getElementById('miPhotoImg');
+    const has = !!src;
+    img.style.display = has ? 'block' : 'none';
+    if (has) img.src = src; else img.removeAttribute('src');
+    document.getElementById('miPhotoEmpty').style.display = has ? 'none' : 'block';
+    document.getElementById('miPhotoActions').style.display = has ? 'flex' : 'none';
+    document.getElementById('miPhotoDrop').classList.toggle('has', has);
+    const n = document.getElementById('miPhotoNote');
+    n.textContent = note || (menuPhoto.blob ? 'Новое фото — сохранится кнопкой ниже' : menuPhoto.remove ? 'Фото будет убрано после сохранения' : '');
+    n.classList.toggle('warn', !!warn);
+  }
+  function pickMenuPhoto() { document.getElementById('miPhotoInput').click(); }
+  function removeMenuPhoto() {
+    if (window.event) window.event.stopPropagation();
+    if (menuPhoto.preview) URL.revokeObjectURL(menuPhoto.preview);
+    menuPhoto.blob = null;
+    menuPhoto.preview = '';
+    menuPhoto.remove = !!menuPhoto.url;
+    renderMenuPhoto();
+  }
+  async function onMenuPhotoFile(file) {
+    if (!file) return;
+    if (file.type && !file.type.startsWith('image/')) { renderMenuPhoto('Это не картинка — выберите фото (JPG, PNG)', true); return; }
+    renderMenuPhoto('Готовлю фото…');
+    try {
+      const { blob, w, h } = await compressPoster(file, 1200);
+      if (menuPhoto.preview) URL.revokeObjectURL(menuPhoto.preview);
+      menuPhoto.blob = blob;
+      menuPhoto.preview = URL.createObjectURL(blob);
+      menuPhoto.remove = false;
+      renderMenuPhoto(`Новое фото ${w}×${h}, ${(blob.size / 1024 / 1024).toFixed(1)} МБ — сохранится кнопкой ниже`);
+    } catch {
+      renderMenuPhoto('Не получилось открыть это фото. Сохраните его как JPG или PNG и выберите снова.', true);
+    }
+  }
+  (function () {
+    const drop = document.getElementById('miPhotoDrop');
+    if (!drop) return;
+    ['dragenter', 'dragover'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add('drag'); }));
+    ['dragleave', 'drop'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove('drag'); }));
+    drop.addEventListener('drop', e => { const f = e.dataTransfer?.files?.[0]; if (f) onMenuPhotoFile(f); });
+    document.addEventListener('paste', e => {
+      if (!document.getElementById('screen-menu-item-form')?.classList.contains('active')) return;
+      const item = [...(e.clipboardData?.items || [])].find(it => it.kind === 'file' && it.type.startsWith('image/'));
+      if (!item) return;
+      e.preventDefault();
+      onMenuPhotoFile(item.getAsFile());
+    });
+  })();
+
+  async function submitMenuItem() {
+    const name = document.getElementById('miName').value.trim();
+    const catChip = document.querySelector('#miCatChips .chip.selected');
+    const priceRaw = document.getElementById('miPrice').value.trim().replace(',', '.').replace(/\s/g, '');
+    if (!name) { notify('Укажите название'); return; }
+    if (!catChip) { notify('Выберите категорию'); return; }
+    if (priceRaw && !(Number(priceRaw) >= 0 && Number.isFinite(Number(priceRaw)))) { notify('Цена — число, например 450'); return; }
+    const body = {
+      pin: getPin(), name, category: catChip.dataset.value,
+      subcategory: document.getElementById('miSub').value.trim(),
+      price: priceRaw === '' ? '' : priceRaw,
+      description: document.getElementById('miDesc').value.trim(),
+      available: document.querySelector('#miAvailChips .chip.selected')?.dataset.value !== 'false'
+    };
+    const btn = document.getElementById('miSubmitBtn');
+    const isEdit = !!editingMenuItemId;
+    btn.disabled = true;
+    btn.textContent = 'Сохраняем...';
+    let itemId = editingMenuItemId;
+    try {
+      const res = await fetch(isEdit
+        ? `${PROXY_BASE}/api/admin/menu/${encodeURIComponent(editingMenuItemId)}?pin=${getPin()}`
+        : `${PROXY_BASE}/api/admin/menu?pin=${getPin()}`, {
+        method: isEdit ? 'PATCH' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Не удалось сохранить позицию');
+      if (!isEdit) itemId = data.id || null;
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = 'Сохранить';
+      notify(e.message && e.message !== 'Failed to fetch' ? e.message : 'Не удалось сохранить — проверьте соединение');
+      return;
+    }
+    let photoProblem = '';
+    try {
+      if (menuPhoto.blob) {
+        if (!itemId) throw new Error('Позиция создана, но фото прикрепить не вышло — откройте её и добавьте фото ещё раз');
+        btn.textContent = 'Загружаем фото...';
+        const r = await fetch(`${PROXY_BASE}/api/admin/menu/${encodeURIComponent(itemId)}/photo?pin=${getPin()}`, {
+          method: 'POST', headers: { 'Content-Type': 'image/jpeg' }, body: menuPhoto.blob
+        });
+        if (!r.ok) throw new Error(await responseError(r, 'Не удалось загрузить фото'));
+      } else if (menuPhoto.remove && itemId) {
+        btn.textContent = 'Убираем фото...';
+        const r = await fetch(`${PROXY_BASE}/api/admin/menu/${encodeURIComponent(itemId)}/photo?pin=${getPin()}`, { method: 'DELETE' });
+        if (!r.ok) throw new Error(await responseError(r, 'Не удалось убрать фото'));
+      }
+    } catch (e) {
+      photoProblem = e.message || 'Не удалось загрузить фото';
+    }
+    btn.disabled = false;
+    btn.textContent = 'Сохранить';
+    if (photoProblem) notify(`Позиция сохранена, но с фото проблема:\n${photoProblem}`);
+    showSuccess(isEdit ? 'Сохранено' : 'Позиция добавлена', name);
+    editingMenuItemId = null;
+    resetMenuPhoto('');
+    openMenuEdit();
+  }
+
+  async function deleteMenuItem() {
+    const it = menuEditItems.find(x => x.id === editingMenuItemId);
+    if (!it) return;
+    if (!await askConfirm(`Удалить «${it.name}» из меню?\n\nГости перестанут её видеть. Вернуть можно только добавив заново. Чтобы убрать позицию на время, поставьте «В стопе».`, { ok: 'Удалить', danger: true })) return;
+    const btn = document.getElementById('miDeleteBtn');
+    btn.disabled = true;
+    btn.textContent = 'Удаляем...';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/menu/${encodeURIComponent(it.id)}?pin=${getPin()}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось удалить'));
+      showSuccess('Позиция удалена', it.name);
+      editingMenuItemId = null;
+      openMenuEdit();
+    } catch (e) {
+      notify(e.message && e.message !== 'Failed to fetch' ? e.message : 'Не удалось удалить — проверьте соединение');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Удалить позицию';
+    }
+  }
+
+  // ─── КАНДИДАТЫ (только основатель) ───
+  // Отклики на вакансии приходят с сайта и из гостевого приложения. Здесь их читают и ведут по статусам.
+  const CAND_STATUSES = ['Новая', 'На связи', 'Принят', 'Отказ'];
+  let candList = [];
+  let candFilter = '';
+
+  function openCandidates() {
+    candFilter = '';
+    showScreen('candidates');
+    loadCandidates();
+  }
+
+  async function loadCandidates() {
+    const el = document.getElementById('candidatesContent');
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/founder/candidates?pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить кандидатов'));
+      const data = await res.json();
+      candList = Array.isArray(data.candidates) ? data.candidates : [];
+      renderCandidates();
+    } catch (e) {
+      el.innerHTML = errorStateHtml(e.message || 'Не удалось загрузить кандидатов', 'loadCandidates()');
+    }
+  }
+
+  function setCandFilter(f) { candFilter = f; renderCandidates(); }
+
+  function candWhen(iso) {
+    const d = new Date(iso);
+    if (isNaN(d)) return '';
+    return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) + ', ' + d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function candCardHtml(c) {
+    const id = escJs(c.id);
+    const phone = String(c.phone || '');
+    const meta = [c.position ? escHtml(c.position) : '', c.age ? `${escHtml(String(c.age))} ${ruPlural(c.age, 'год', 'года', 'лет')}` : ''].filter(Boolean).join(' · ');
+    return `<div class="cand-card${c.status === 'Новая' ? ' new' : ''}">
+        <div class="cand-head"><div class="cand-name">${escHtml(c.name)}</div><div class="cand-when">${escHtml(candWhen(c.appliedAt))}</div></div>
+        ${meta ? `<div class="cand-meta">${meta}</div>` : ''}
+        ${phone ? `<div class="cand-meta"><a href="tel:${escHtml(phone.replace(/[^\d+]/g, ''))}">${escHtml(phone)}</a></div>` : ''}
+        ${c.about ? `<div class="cand-about">${escHtml(c.about)}</div>` : ''}
+        <div class="cand-status">${CAND_STATUSES.map(st => `<div class="chip${c.status === st ? ' selected' : ''}" onclick="setCandidateStatus('${id}','${escJs(st)}')">${escHtml(st)}</div>`).join('')}</div>
+        <button type="button" class="cand-del" onclick="deleteCandidate('${id}')">Удалить отклик</button>
+      </div>`;
+  }
+
+  function renderCandidates() {
+    const chips = document.getElementById('candFilterChips');
+    const count = st => candList.filter(c => c.status === st).length;
+    chips.innerHTML = [['', `Все · ${candList.length}`], ...CAND_STATUSES.map(st => [st, `${st}${count(st) ? ' · ' + count(st) : ''}`])]
+      .map(([v, label]) => `<div class="chip${candFilter === v ? ' selected' : ''}" onclick="setCandFilter('${escJs(v)}')">${escHtml(label)}</div>`).join('');
+    const el = document.getElementById('candidatesContent');
+    const list = candFilter ? candList.filter(c => c.status === candFilter) : candList;
+    el.innerHTML = list.length
+      ? list.map(candCardHtml).join('')
+      : `<div class="empty-state">${candList.length ? 'В этом статусе никого нет' : 'Откликов пока нет.<br>Они появятся, когда кто-то заполнит форму «Работа у нас».'}</div>`;
+  }
+
+  async function setCandidateStatus(id, status) {
+    const c = candList.find(x => x.id === id);
+    if (!c || c.status === status) return;
+    const prev = c.status;
+    c.status = status;
+    renderCandidates();
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/founder/candidates/${encodeURIComponent(id)}?pin=${getPin()}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), status })
+      });
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось изменить статус'));
+    } catch (e) {
+      c.status = prev;
+      renderCandidates();
+      notify(e.message && e.message !== 'Failed to fetch' ? e.message : 'Не удалось изменить — проверьте соединение');
+    }
+  }
+
+  async function deleteCandidate(id) {
+    const c = candList.find(x => x.id === id);
+    if (!c) return;
+    if (!await askConfirm(`Удалить отклик «${c.name}»?\n\nИмя, телефон и текст будут стёрты без возможности вернуть.`, { ok: 'Удалить', danger: true })) return;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/founder/candidates/${encodeURIComponent(id)}?pin=${getPin()}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось удалить'));
+      candList = candList.filter(x => x.id !== id);
+      renderCandidates();
+      notify('Отклик удалён', 'ok');
+    } catch (e) {
+      notify(e.message && e.message !== 'Failed to fetch' ? e.message : 'Не удалось удалить — проверьте соединение');
     }
   }
 
@@ -4894,7 +5521,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
     const panel = document.getElementById('scheduleDayPanel');
     if (!selectedScheduleDate) { panel.innerHTML = ''; return; }
 
-    const isAdmin = currentRole === 'admin';
+    const isAdmin = can('schedule.edit');
     const dayShifts = scheduleShiftsByDate[selectedScheduleDate] || [];
     const heading = `<div class="sec" style="margin:0 0 8px;">${formatDayHeading(selectedScheduleDate)}</div>`;
 
@@ -5021,11 +5648,11 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
   }
 
   // ─── СТОП-ЛИСТ (снятие позиций меню "В наличии") ────
-  // Смотрят все, переключает только тот, чья категория — та же логика роль→категория,
-  // что и на сервере (сервер всё равно перепроверяет сам, это только для интерфейса).
-  const MENU_CATEGORY_EDIT_ROLE = { 'Напитки': 'Бармен', 'Коктейли': 'Бармен', 'Алкоголь': 'Бармен', 'Еда': 'Повар', 'Кальян': 'КМ' };
+  // Смотрят все, у кого есть право «Стоп-лист»; переключает тот, у кого есть право на категорию —
+  // как и на сервере (сервер всё равно перепроверяет сам, это только для интерфейса).
+  const MENU_CATEGORY_PERM = { 'Напитки': 'menu.stoplist_drinks', 'Коктейли': 'menu.stoplist_drinks', 'Алкоголь': 'menu.stoplist_drinks', 'Еда': 'menu.stoplist_food', 'Кальян': 'menu.stoplist_hookah' };
   function canEditMenuCategory(category) {
-    return isAdminRole(currentJobRole) || MENU_CATEGORY_EDIT_ROLE[category] === currentJobRole;
+    return can(MENU_CATEGORY_PERM[category] || 'menu.manage');
   }
   // Стоп-лист видят все (официант принимает заказы — ему важно знать, чего нет);
   // переключает только тот, чья категория, и администрация.
@@ -5050,7 +5677,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
       if (!Array.isArray(items)) throw new Error('Не удалось загрузить меню');
       stoplistItems = items;
       if (!items.length) {
-        el.innerHTML = '<div class="empty-state">Меню пока пустое — добавьте позиции в Notion</div>';
+        el.innerHTML = '<div class="empty-state">Меню пока пустое' + (can('menu.manage') ? '<br>Добавьте позиции в разделе «Меню»' : '') + '</div>';
         return;
       }
       el.innerHTML = `
@@ -5158,7 +5785,8 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
     el.innerHTML = '<div class="loading">Загружаю...</div>';
     try {
       const res = await fetch(`${PROXY_BASE}/api/admin/guests-table?pin=${getPin()}`);
-      if (res.status === 401 || res.status === 403) { showScreen('pin'); return; }
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
       guestsTableData = await res.json();
       renderGuestsTable();
     } catch {
@@ -5649,12 +6277,13 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
     el.innerHTML = '<div class="loading">Считаю сегменты...</div>';
     try {
       const res = await fetch(`${PROXY_BASE}/api/admin/marketing/segments?pin=${getPin()}`);
-      if (res.status === 401 || res.status === 403) { showScreen('pin'); return; }
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
       if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить сегменты'));
       mkData = await res.json();
       mkGuestsOpen = false;
       renderMarketing();
-      loadMarketingLog();
+      if (can('marketing.log')) loadMarketingLog();
       if (mkSelected.key) mkLoadSegment();
     } catch (e) {
       el.innerHTML = errorStateHtml(e.message || 'Не удалось загрузить сегменты', 'openMarketing()');
@@ -5708,7 +6337,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
       <div class="an-step"><b>4</b>Отправка</div>
       <div id="mkTarget"></div>`;
     html += '</div></div>';
-    html += `<div class="sec" style="margin-top:34px">Журнал рассылок</div><div id="mkLog"><div class="loading">Загружаю...</div></div>`;
+    if (can('marketing.log')) html += `<div class="sec" style="margin-top:34px">Журнал рассылок</div><div id="mkLog"><div class="loading">Загружаю...</div></div>`;
     html += `<div class="mk-rules">Сообщение приходит от гостевого бота «На Крыше». Написать можно тем, кто хоть раз открывал гостевое приложение и не отписался (команда /stop). Гостей с тегом «Нон-грата» в рассылки не берём. Отправка — с ${d.hours.from}:00 до ${d.hours.to}:00.</div>`;
     el.innerHTML = html;
     renderMkRunning();
@@ -5927,9 +6556,6 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
           ${b.author ? `<div class="note" style="margin-top:4px">${escHtml(b.author)}</div>` : ''}
         </div>`;
       }).join('');
-      if (!data.storedInNotion) {
-        html += '<div class="note" style="margin-top:6px">Журнал пока хранится только до перезапуска сервера. Чтобы он сохранялся, подключите интеграцию к базе «Рассылки» в Notion.</div>';
-      }
       box.innerHTML = html;
     } catch (e) {
       box.innerHTML = errorStateHtml(e.message, 'loadMarketingLog()');
@@ -6180,7 +6806,8 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
     const seq = ++anRequestSeq;
     try {
       const res = await fetch(`${PROXY_BASE}/api/admin/analytics?${q.toString()}&pin=${getPin()}`);
-      if (res.status === 401 || res.status === 403) { showScreen('pin'); return; }
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
       if (!res.ok) throw new Error(await responseError(res, 'Не удалось посчитать'));
       const data = await res.json();
       if (seq !== anRequestSeq) return; // пока считали, настройки уже поменяли
@@ -6436,7 +7063,8 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
       const q = new URLSearchParams({ pin: getPin() });
       if (sgState.month) q.set('month', sgState.month);
       const res = await fetch(`${PROXY_BASE}/api/admin/segments?${q.toString()}`);
-      if (res.status === 401 || res.status === 403) { showScreen('pin'); return; }
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
       if (!res.ok) throw new Error(await responseError(res, 'Не удалось посчитать сегменты'));
       const data = await res.json();
       if (seq !== sgRequestSeq) return; // пока считали, месяц уже переключили
@@ -6538,7 +7166,8 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
     el.innerHTML = '<div class="loading">Ищу дубли...</div>';
     try {
       const res = await fetch(`${PROXY_BASE}/api/admin/guests/duplicates?pin=${getPin()}`);
-      if (res.status === 401 || res.status === 403) { showScreen('pin'); return; }
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
       if (!res.ok) throw new Error(await responseError(res, 'Не удалось найти дубли'));
       dupData = await res.json();
       dupMain = {};
@@ -6765,7 +7394,8 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
     el.innerHTML = '<div class="loading">Загружаю отзывы...</div>';
     try {
       const res = await fetch(`${PROXY_BASE}/api/admin/feedback?days=${fbState.days}&pin=${getPin()}`);
-      if (res.status === 401 || res.status === 403) { showScreen('pin'); return; }
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
       if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить отзывы'));
       fbData = await res.json();
       renderFeedback();
@@ -6876,6 +7506,9 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
   // Текущий PIN можно посмотреть кнопкой «глаз» (на сервере хранится зашифрованным,
   // каждый просмотр пишется в журнал) или задать заново. Себя уволить и поменять себе роль нельзя.
   var empData = { employees: [], roles: [] };
+  var permData = null;          // { sections, locked, roleDefaults, overrides } с сервера
+  var permState = null;         // {право: true|false} — галочки открытой карточки сотрудника
+  var permOpen = { boxes: true }; // какие секции раскрыты
   var editingEmployeeId = null;
 
   function openEmployees() {
@@ -6891,6 +7524,11 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
       if (res.status === 401) { showScreen('pin'); return; }
       if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить сотрудников'));
       empData = await res.json();
+      // конструктор прав: список галочек, наборы ролей и личные исключения (не критично: без него просто нет блока прав)
+      try {
+        const pr = await fetch(`${PROXY_BASE}/api/founder/permissions?pin=${getPin()}`);
+        permData = pr.ok ? await pr.json() : null;
+      } catch { permData = null; }
       renderEmployees();
     } catch (e) {
       el.innerHTML = `<div class="empty-state">${escHtml(e.message || 'Не удалось загрузить сотрудников')}</div>`;
@@ -6902,6 +7540,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
     if (e.isSelf) meta.push('это вы');
     if (!e.hasPin) meta.push('нет PIN-кода');
     if (e.telegramId) meta.push('Telegram привязан');
+    if (e.customPerms) meta.push('особые права');
     return `
       <div class="emp-row${e.active ? '' : ' off'}" onclick="openEmployeeForm('${escJs(e.id)}')">
         <div class="emp-body">
@@ -6979,9 +7618,110 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
     const e = editingEmployeeId ? (empData.employees || []).find(x => x.id === editingEmployeeId) : null;
     let text = '';
     if (e && e.isSelf) text = 'Свою роль менять нельзя — это может сделать другой основатель.';
-    else if (sel.value === 'Основатель') text = 'Основатель видит всё: аналитику, рассылки, обратную связь и этот экран.';
-    else if (sel.value === 'Администратор') text = 'Администратор ведёт брони, гостей, график и проблемы; аналитики и рассылок не видит.';
+    else if (sel.value === 'Основатель') text = 'Основатель видит и может всё, включая этот экран. Его права галочками не настраиваются.';
+    else if (e && e.role !== sel.value) text = 'При смене роли личные настройки прав сбрасываются: сотрудник получит набор новой роли (ниже его можно поменять).';
     document.getElementById('empRoleHint').textContent = text;
+  }
+
+  // ─── КОНСТРУКТОР ПРАВ в карточке сотрудника ────────
+  // У каждой роли есть набор по умолчанию; основатель ставит и снимает галочки конкретному человеку:
+  // что показывать на главном экране и какие действия разрешить. Что отличается от роли — помечено «изменено».
+  const PERM_CHECK = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1E1004" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg>';
+
+  function permDefaultsFor(role) {
+    return new Set((permData && permData.roleDefaults && permData.roleDefaults[role]) || []);
+  }
+  // Галочки: набор роли + (если роль не менялась) личные исключения этого сотрудника
+  function setPermState(role, withOverrides) {
+    const def = permDefaultsFor(role);
+    const e = editingEmployeeId ? (empData.employees || []).find(x => x.id === editingEmployeeId) : null;
+    const ov = withOverrides && e && e.role === role ? ((permData.overrides || {})[e.id] || {}) : {};
+    permState = {};
+    for (const sec of permData.sections) for (const it of sec.items) permState[it.key] = ov[it.key] !== undefined ? ov[it.key] : def.has(it.key);
+  }
+  function permOn(key, requires) {
+    return !!permState[key] && (!requires || !!permState[requires]);
+  }
+
+  function renderEmpPerms(reinit) {
+    const wrap = document.getElementById('empPermsWrap');
+    const body = document.getElementById('empPermsBody');
+    const intro = document.getElementById('empPermsIntro');
+    const resetBtn = document.getElementById('empPermsReset');
+    const locked = document.getElementById('empPermsLocked');
+    const role = document.getElementById('empRole').value;
+    resetBtn.style.display = 'none';
+    locked.textContent = '';
+    if (role === 'Основатель') {
+      wrap.style.display = 'block';
+      intro.textContent = 'У основателя есть все права — они не настраиваются.';
+      body.innerHTML = '';
+      return;
+    }
+    if (!permData) {
+      wrap.style.display = 'block';
+      intro.textContent = 'Не удалось загрузить права. Откройте экран «Сотрудники» заново.';
+      body.innerHTML = '';
+      return;
+    }
+    wrap.style.display = 'block';
+    if (reinit || !permState) setPermState(role, reinit !== 'fresh');
+    const def = permDefaultsFor(role);
+    let changed = 0;
+    for (const k of Object.keys(permState)) if (permState[k] !== def.has(k)) changed++;
+    intro.textContent = `Набор по умолчанию — роль «${role}». Отметьте, что показывать этому сотруднику и что ему разрешено.${changed ? ` Не как у роли: ${changed}.` : ''}`;
+    resetBtn.style.display = changed ? 'block' : 'none';
+
+    body.innerHTML = permData.sections.map(sec => {
+      const on = sec.items.filter(it => permOn(it.key, it.requires)).length;
+      const rows = sec.items.map(it => {
+        const dis = !!(it.requires && !permState[it.requires]);
+        const chk = !!permState[it.key];
+        const diff = chk !== def.has(it.key);
+        const reqTitle = it.requires ? permTitleOf(it.requires) : '';
+        return `<label class="perm-row${dis ? ' dis' : ''}">
+          <input type="checkbox" ${chk ? 'checked' : ''} ${dis ? 'disabled' : ''} onchange="togglePerm('${escJs(it.key)}', this.checked)">
+          <span class="perm-box">${PERM_CHECK}</span>
+          <span class="perm-txt">${escHtml(it.title)}${diff ? '<span class="perm-chg">изменено</span>' : ''}${it.sub ? `<small>${escHtml(it.sub)}</small>` : ''}${dis ? `<small>Сначала включите «${escHtml(reqTitle)}»</small>` : ''}</span>
+        </label>`;
+      }).join('');
+      return `<details class="perm-sec" data-sec="${escHtml(sec.id)}" ${permOpen[sec.id] ? 'open' : ''} ontoggle="permOpen['${escJs(sec.id)}'] = this.open">
+        <summary><span>${escHtml(sec.title)}</span><span class="perm-sum">${on} из ${sec.items.length}</span></summary>
+        <div class="perm-body">${rows}</div>
+      </details>`;
+    }).join('');
+    locked.textContent = 'Только у основателя и галочками не выдаётся: ' + (permData.locked || []).map(l => l.title.replace(/:.*$/, '')).join(' · ') + '.';
+  }
+  function permTitleOf(key) {
+    for (const sec of permData.sections) for (const it of sec.items) if (it.key === key) return it.title;
+    return key;
+  }
+  function togglePerm(key, on) {
+    if (!permState) return;
+    permState[key] = !!on;
+    renderEmpPerms(false);
+  }
+  function resetEmpPerms() {
+    if (!permData) return;
+    setPermState(document.getElementById('empRole').value, false);
+    renderEmpPerms(false);
+  }
+  // После сохранения сотрудника отправляем галочки (сервер сам отбросит всё, что совпадает с ролью)
+  async function saveEmpPerms(id, role) {
+    if (!permData || !permState || role === 'Основатель' || !id) return true;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/founder/employees/${encodeURIComponent(id)}/permissions?pin=${getPin()}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ state: permState })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) { notify('Сотрудник сохранён, но права не сохранились: ' + (data.error || 'ошибка')); return false; }
+      return true;
+    } catch {
+      notify('Сотрудник сохранён, но права не сохранились — проверьте соединение');
+      return false;
+    }
   }
 
   function openEmployeeForm(id) {
@@ -7017,6 +7757,9 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
       activeBtn.style.display = 'none';
       activeHint.style.display = 'none';
     }
+    permState = null;
+    permOpen = { boxes: true };
+    renderEmpPerms(e ? true : 'fresh');
     showScreen('employee-form');
   }
 
@@ -7066,8 +7809,10 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
       if (data && e && e.isSelf && newPin) { try { localStorage.setItem('staff_pin', newPin); } catch {} }
     }
     if (!data) return;
+    const savedId = editingEmployeeId || data.id;
+    const permsOk = await saveEmpPerms(savedId, role);
     forgetScheduleEmployees();
-    showSuccess(editingEmployeeId ? 'Сохранено' : 'Сотрудник добавлен', '');
+    if (permsOk) showSuccess(editingEmployeeId ? 'Сохранено' : 'Сотрудник добавлен', '');
     editingEmployeeId = null;
     openEmployees();
   }
@@ -7090,7 +7835,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form'];
+  const screens = ['pin', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service'];
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
 
@@ -7112,7 +7857,11 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
       // точки на карточках — свежие при каждом возврате (не чаще раза в 20 с)
       if (prev && prev !== 'pin' && Date.now() - quickStatusAt > 20000) refreshQuickActionStatus();
     }
-    if (name === 'bookings') { renderBookingsView(); setTimeout(pollBookings, 0); }
+    if (name === 'bookings') {
+      const addRow = document.getElementById('bkAddRow');
+      if (addRow) addRow.style.display = can('bookings.create') ? 'flex' : 'none';
+      renderBookingsView(); setTimeout(pollBookings, 0);
+    }
   }
 
   // Назад: сначала закрываем открытое окно, потом — стрелка в шапке текущего экрана
@@ -7542,7 +8291,8 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
     return ADMIN_ONLY_TAGS.some(t => t.toLowerCase() === n);
   }
   function canEditTag(group, name) {
-    return currentRole === 'admin' || group !== 'special' || !isAdminOnlyTag(name);
+    // Право «Ставить и снимать теги» — у основателя; поверх него правила самих тегов: статусы (VIP и др.) — только администрации
+    return can('tags.use') && (currentRole === 'admin' || group !== 'special' || !isAdminOnlyTag(name));
   }
 
   // Сервер присылает понятный текст ошибки (например, «только администратор») — показываем его
@@ -7652,7 +8402,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
       </div>
     `).join('');
 
-    const addChip = `<div class="tag-add-chip" onclick="openTagAdd('${group}')">+ Добавить</div>`;
+    const addChip = can('tags.use') ? `<div class="tag-add-chip" onclick="openTagAdd('${group}')">+ Добавить</div>` : '';
 
     const addRow = tagAddGroup === group ? `
       <div class="tag-add-row">
@@ -7779,6 +8529,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
 
   function renderGuestCard(guest) {
     const el = document.getElementById('cardContent');
+    const canEdit = can('guests.edit'); // без права «Менять данные гостя» строки только для чтения
     const editIcon = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
 
     const birthdayDisplay = guest.birthday
@@ -7826,29 +8577,29 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
         <div class="info-row-edit"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
       </div>
 
-      <div class="info-row" onclick="openEditField('name','Имя и фамилия')">
+      <div class="info-row"${canEdit ? ` onclick="openEditField('name','Имя и фамилия')"` : ''}>
         <div class="info-row-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.2-4 4.3-6 8-6s6.8 2 8 6"/></svg></div>
         <div style="min-width:0"><div class="info-row-label">Имя и фамилия</div><div class="info-row-value">${escHtml(guest.fullName || guest.name)}${guest.surname ? '' : ' <span class="muted" style="font-size:12px">· фамилия не указана</span>'}</div></div>
-        <div class="info-row-edit">${editIcon}</div>
+        <div class="info-row-edit">${canEdit ? editIcon : ''}</div>
       </div>
 
-      <div class="info-row" onclick="openEditField('birthday','Дата рождения')">
+      <div class="info-row"${canEdit ? ` onclick="openEditField('birthday','Дата рождения')"` : ''}>
         <div class="info-row-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2c-1.5 2.5-3 4.5-3 7a3 3 0 006 0c0-2.5-1.5-4.5-3-7z"/><line x1="12" y1="14" x2="12" y2="22"/></svg></div>
         <div><div class="info-row-label">День рождения</div><div class="info-row-value">${birthdayDisplay}</div></div>
-        <div class="info-row-edit">${editIcon}</div>
+        <div class="info-row-edit">${canEdit ? editIcon : ''}</div>
       </div>
 
-      <div class="info-row" onclick="openEditField('phone','Телефон')">
+      <div class="info-row"${canEdit ? ` onclick="openEditField('phone','Телефон')"` : ''}>
         <div class="info-row-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="18" x2="14" y2="18"/></svg></div>
         <div style="flex:1;min-width:0;"><div class="info-row-label">Телефон</div><div class="info-row-value">${guest.phone ? escHtml(fmtPhoneRu(guest.phone)) : 'Не указан'}</div></div>
         ${guest.phone ? `<button type="button" class="copy-btn" onclick="event.stopPropagation();copyPhone('${escJs(guest.phone)}')" title="Скопировать номер">${COPY_ICON}Копировать</button>` : ''}
-        <div class="info-row-edit">${editIcon}</div>
+        <div class="info-row-edit">${canEdit ? editIcon : ''}</div>
       </div>
 
-      <div class="info-row" onclick="openEditField('important','Что важно для гостя')">
+      <div class="info-row"${canEdit ? ` onclick="openEditField('important','Что важно для гостя')"` : ''}>
         <div class="info-row-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 3l1.3 5.7L19 10l-5.7 1.3L12 17l-1.3-5.7L5 10l5.7-1.3L12 3z"/></svg></div>
         <div style="min-width:0"><div class="info-row-label">Важно для гостя</div><div class="info-row-value" style="white-space:pre-line">${guest.important ? escHtml(guest.important) : 'Не указано'}</div></div>
-        <div class="info-row-edit">${editIcon}</div>
+        <div class="info-row-edit">${canEdit ? editIcon : ''}</div>
       </div>
 
       <div class="sec">Автотеги</div>
@@ -7875,7 +8626,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
     const hasToday = (guest.visits || []).some(v => v.date === venueDayStr());
     const vb = document.getElementById('cardVisitBtn');
     if (vb) vb.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" style="vertical-align:-2px;margin-right:7px;display:inline-block"><path d="M8 3v7a2 2 0 002 2v9M8 3v7"/><path d="M17 3c-1.5 0-2.5 1.5-2.5 4s1 4 2.5 4v10"/></svg>${hasToday ? 'Добавить кальян к сегодняшнему визиту' : 'Добавить визит'}`;
-    document.getElementById('cardSticky').style.display = '';
+    document.getElementById('cardSticky').style.display = can('visits.record') ? '' : 'none';
   }
 
   // ─── EDIT FIELD ────────────────────────────────
@@ -8019,6 +8770,7 @@ ${b.past ? '' : `      ${b.status === 'pending' ? `<button class="btn-cta" id="b
   // ─── NEW GUEST ─────────────────────────────────
 
   function openNewGuest(prefillName, prefillPhone) {
+    if (!needPerm('guests.create', 'создавать карточки гостей')) return;
     document.getElementById('ngName').value = prefillName || '';
     document.getElementById('ngSurname').value = '';
     document.getElementById('ngBirthday').value = '';
