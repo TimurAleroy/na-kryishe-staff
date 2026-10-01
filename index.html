@@ -1709,15 +1709,22 @@
     </div>
     <div class="form-group">
       <label class="form-label">Формат</label>
-      <div class="chip-row" id="evFormatChips">
-        <div class="chip selected" data-value="Dj Set" onclick="selectChip(this,'evFormatChips')">DJ-сет</div>
-        <div class="chip" data-value="Киносеанс" onclick="selectChip(this,'evFormatChips')">Киносеанс</div>
-        <div class="chip" data-value="Дегустация" onclick="selectChip(this,'evFormatChips')">Дегустация</div>
-      </div>
+      <div class="chip-row" id="evFormatChips"></div>
+      <input class="form-input" id="evFormatOwn" type="text" maxlength="100" placeholder="Свой формат, например: Джаз-вечер" style="display:none;margin-top:10px">
+      <div class="poster-note">Выберите из списка или нажмите «+ Свой формат». Формат, который вы однажды ввели, потом появится в списке сам.</div>
     </div>
     <div class="form-group">
-      <label class="form-label">Дата и время</label>
-      <input class="form-input" id="evDate" type="datetime-local">
+      <label class="form-label">Дата</label>
+      <div class="chip-row" id="evDayChips"></div>
+      <input class="form-input" id="evDay" type="date" style="margin-top:10px" onchange="evSetDay(this.value)">
+      <div class="poster-note">Нужен другой день — выберите его в поле выше.</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Время начала</label>
+      <div class="chip-row" id="evTimeChips"></div>
+      <input class="form-input" id="evTime" type="time" step="300" style="margin-top:10px" onchange="evSetTime(this.value)">
+      <div class="poster-note" id="evWhenSummary"></div>
+      <input type="hidden" id="evDate">
     </div>
     <div class="form-group">
       <label class="form-label">Описание (необязательно)</label>
@@ -5135,13 +5142,68 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     return ({ 'Dj Set': 'DJ-сет', 'DJ Set': 'DJ-сет' })[f] || f;
   }
 
+  // Форматы: готовые + те, что уже вводили раньше + «свой». Хранится текст как есть («Dj Set» — историческое название DJ-сета).
+  const EV_FORMATS = [['Dj Set', 'DJ-сет'], ['Киносеанс', 'Киносеанс'], ['Дегустация', 'Дегустация'], ['Живая музыка', 'Живая музыка'], ['Стендап', 'Стендап'], ['Вечеринка', 'Вечеринка']];
+  const EV_TIMES = ['18:00', '19:00', '20:00', '21:00', '22:00', '23:00'];
+  var evFormat = 'Dj Set', evOwnOn = false, evDay = '', evTime = '';
+
+  function evFormatList(current) {
+    const list = EV_FORMATS.map(([v, l]) => ({ v, l }));
+    const known = new Set(list.map(x => x.v.toLowerCase()));
+    const add = f => { const t = String(f || '').trim(); if (t && !known.has(t.toLowerCase())) { known.add(t.toLowerCase()); list.push({ v: t, l: t }); } };
+    (window._eventsCache || []).forEach(e => add(e.format));
+    add(current);
+    return list;
+  }
+  function renderEvFormats() {
+    const el = document.getElementById('evFormatChips');
+    const list = evFormatList(evOwnOn ? '' : evFormat);
+    el.innerHTML = list.map(x => `<div class="chip${!evOwnOn && x.v === evFormat ? ' selected' : ''}" data-value="${escHtml(x.v)}" onclick="evPickFormat(this.dataset.value)">${escHtml(x.l)}</div>`).join('')
+      + `<div class="chip${evOwnOn ? ' selected' : ''}" data-own="1" onclick="evPickOwnFormat()">+ Свой формат</div>`;
+    const own = document.getElementById('evFormatOwn');
+    own.style.display = evOwnOn ? '' : 'none';
+  }
+  function evPickFormat(v) { evOwnOn = false; evFormat = v; renderEvFormats(); }
+  function evPickOwnFormat() {
+    evOwnOn = true; renderEvFormats();
+    const own = document.getElementById('evFormatOwn');
+    own.focus();
+  }
+  function evCurrentFormat() {
+    return evOwnOn ? document.getElementById('evFormatOwn').value.trim() : evFormat;
+  }
+
+  function evDayLabel(i, iso) {
+    if (i === 0) return 'Сегодня';
+    if (i === 1) return 'Завтра';
+    return new Date(iso + 'T12:00:00').toLocaleDateString('ru-RU', { weekday: 'short', day: 'numeric', month: 'short' }).replace('.', '');
+  }
+  function renderEvWhen() {
+    const today = localDateStr(new Date());
+    const days = [];
+    for (let i = 0; i < 8; i++) { const iso = shiftDateStr(today, i); days.push(`<div class="chip${evDay === iso ? ' selected' : ''}" data-day="${iso}" onclick="evSetDay('${iso}')">${escHtml(evDayLabel(i, iso))}</div>`); }
+    document.getElementById('evDayChips').innerHTML = days.join('');
+    document.getElementById('evTimeChips').innerHTML = EV_TIMES.map(t => `<div class="chip${evTime === t ? ' selected' : ''}" data-time="${t}" onclick="evSetTime('${t}')">${t}</div>`).join('')
+      + `<div class="chip${evDay && !evTime ? ' selected' : ''}" data-time="" onclick="evSetTime('')">Без времени</div>`;
+    document.getElementById('evDay').value = evDay;
+    document.getElementById('evTime').value = evTime;
+    document.getElementById('evDate').value = evDay ? (evTime ? `${evDay}T${evTime}` : evDay) : '';
+    const sum = document.getElementById('evWhenSummary');
+    sum.textContent = evDay
+      ? `В афише: ${capFirst(humanDay(evDay, { noRelative: false }))}${evTime ? `, в ${evTime}` : ', без точного времени'}`
+      : 'Выберите день, затем время начала (можно без времени).';
+  }
+  function evSetDay(v) { evDay = v || ''; renderEvWhen(); }
+  function evSetTime(v) { evTime = v || ''; renderEvWhen(); }
+
   function openAddEvent() {
     editingEventId = null;
     document.getElementById('eventFormTitle').textContent = 'Новое мероприятие';
     document.getElementById('evName').value = '';
-    document.getElementById('evDate').value = '';
     document.getElementById('evDescription').value = '';
-    document.querySelectorAll('#evFormatChips .chip').forEach((c, i) => c.classList.toggle('selected', i === 0));
+    document.getElementById('evFormatOwn').value = '';
+    evOwnOn = false; evFormat = 'Dj Set'; renderEvFormats();
+    evDay = ''; evTime = '21:00'; renderEvWhen();
     document.getElementById('evSubmitBtn').textContent = 'Создать';
     document.getElementById('evDeleteBtn').style.display = 'none';
     resetEventPoster('');
@@ -5154,10 +5216,14 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     editingEventId = id;
     document.getElementById('eventFormTitle').textContent = 'Редактировать мероприятие';
     document.getElementById('evName').value = ev.name || '';
-    // datetime-local ждёт "YYYY-MM-DDTHH:MM" — обрезаем секунды/зону, если есть
-    document.getElementById('evDate').value = (ev.date || '').slice(0, 16);
     document.getElementById('evDescription').value = ev.description || '';
-    document.querySelectorAll('#evFormatChips .chip').forEach(c => c.classList.toggle('selected', c.dataset.value === ev.format));
+    document.getElementById('evFormatOwn').value = '';
+    evOwnOn = false; evFormat = ev.format || 'Dj Set'; renderEvFormats();
+    const raw = String(ev.date || '');
+    evDay = raw.slice(0, 10);
+    const tm = /T(\d{2}:\d{2})/.exec(raw);
+    evTime = tm && tm[1] !== '00:00' ? tm[1] : '';
+    renderEvWhen();
     document.getElementById('evSubmitBtn').textContent = 'Сохранить';
     document.getElementById('evDeleteBtn').style.display = 'block';
     resetEventPoster(ev.poster || '');
@@ -5279,9 +5345,10 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
   async function submitEvent() {
     const name = document.getElementById('evName').value.trim();
     const dateVal = document.getElementById('evDate').value;
-    if (!name || !dateVal) { notify('Укажите название и дату'); return; }
-    const formatChip = document.querySelector('#evFormatChips .chip.selected');
-    const format = formatChip ? formatChip.dataset.value : 'Dj Set';
+    if (!name) { notify('Напишите название мероприятия'); document.getElementById('evName').focus(); return; }
+    if (!dateVal) { notify('Выберите дату мероприятия'); return; }
+    const format = evCurrentFormat();
+    if (!format) { notify('Напишите свой формат или выберите из списка'); document.getElementById('evFormatOwn').focus(); return; }
     const description = document.getElementById('evDescription').value.trim();
 
     const btn = document.getElementById('evSubmitBtn');
@@ -5303,10 +5370,10 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || 'save');
       if (!isEdit) eventId = data.id || null;
-    } catch {
+    } catch (e) {
       btn.disabled = false;
       btn.textContent = idleText;
-      notify('Не удалось сохранить мероприятие');
+      notify(e && e.message && e.message !== 'save' && e.message !== 'Failed to fetch' ? e.message : 'Не удалось сохранить мероприятие — проверьте связь и попробуйте ещё раз');
       return;
     }
 
