@@ -207,6 +207,19 @@
       border: 2px solid var(--bg-card);
     }
     .qcard-dot.alert { display: block; }
+    /* Счётчик на плитке «Сервиса»: сколько новых откликов / групп дублей / позиций меню без фото или цены */
+    .qcard-badge { position: absolute; top: 10px; right: 10px; min-width: 22px; height: 22px; padding: 0 7px; border-radius: 11px; background: #E8A33D; color: #1E1004; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .qcard-sub.warn { color: #E8A33D; }
+    .svc-glabel { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin: 20px 2px 0; }
+    .svc-glabel:first-child { margin-top: 4px; }
+    /* Состояние системы */
+    .ss-row { display: flex; align-items: flex-start; gap: 12px; padding: 13px 14px; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border); margin-bottom: 8px; }
+    .ss-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; background: var(--text-muted); }
+    .ss-dot.ok { background: #4ade80; box-shadow: 0 0 0 3px rgba(74,222,128,0.15); }
+    .ss-dot.bad { background: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.15); }
+    .ss-dot.warn { background: #E8A33D; box-shadow: 0 0 0 3px rgba(232,163,61,0.15); }
+    .ss-t { font-size: 14px; color: var(--text); }
+    .ss-s { font-size: 12px; color: var(--text-muted); margin-top: 2px; line-height: 1.45; }
 
     .result-item {
       background: var(--bg-card);
@@ -927,6 +940,9 @@
     .emp-hint { font-size: 11.5px; line-height: 1.5; color: var(--text-muted); margin-top: 6px; }
     .mi-thumb { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; flex-shrink: 0; background: #140a03; border: 1px solid var(--border); }
     .mi-thumb.none { display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 15px; }
+    .menu-subsec-edit { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .mi-mv.mi-mv-sub { flex-direction: row; }
+    .mi-mv button:disabled { opacity: 0.3; cursor: default; }
     .mi-mv { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
     .mi-mv button { background: none; border: 1px solid var(--border); border-radius: 8px; color: var(--text-sub); width: 30px; height: 20px; line-height: 1; font-size: 10px; cursor: pointer; padding: 0; }
     .mi-mv button:active { background: var(--accent-dim); color: var(--accent); }
@@ -995,6 +1011,52 @@
     .pb-act { flex: 1; padding: 11px 14px; }
     .pb-note { flex: 1; font-size: 11.5px; color: var(--text-muted); }
     .pb-link { background: none; border: none; color: var(--accent); font-family: 'Inter', sans-serif; font-size: 12.5px; cursor: pointer; padding: 10px 4px; white-space: nowrap; }
+    /* Сторис и опросы (раздел «Сервис») */
+    .st-set-head { display: flex; align-items: baseline; justify-content: space-between; margin: 20px 2px 10px; }
+    .st-set-title { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); }
+    .st-set-count { font-size: 11.5px; color: var(--text-muted); }
+    .st-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; margin-bottom: 8px; border: 1px solid var(--border); border-radius: 14px; background: var(--bg-card); }
+    .st-thumb { width: 54px; height: 72px; border-radius: 10px; object-fit: cover; flex-shrink: 0; background: #140a03; border: 1px solid var(--border); }
+    .st-main { flex: 1; min-width: 0; }
+    .st-main .form-input { padding: 9px 11px; font-size: 13.5px; margin-bottom: 7px; }
+    .st-btns { display: flex; gap: 14px; }
+    .st-btn { background: none; border: none; padding: 2px 0; font-family: 'Inter', sans-serif; font-size: 12px; color: var(--accent); cursor: pointer; }
+    .st-btn.danger { color: #ef4444; }
+    .st-add { width: 100%; margin-top: 2px; }
+    .st-empty { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; padding: 4px 4px 10px; }
+    .sv-preview { position: relative; height: 220px; border-radius: 16px; overflow: hidden; border: 1px solid var(--border); background: #140a03; margin: 14px 0 6px; }
+    .sv-prev-img { position: absolute; inset: -12px; background-size: cover; background-position: center 30%; }
+    .sv-prev-img.retouch { filter: blur(8px); }
+    .sv-prev-scrim { position: absolute; inset: 0; }
+    .sv-prev-body { position: relative; padding: 20px 18px; display: flex; flex-direction: column; height: 100%; justify-content: center; text-align: center; }
+    .sv-prev-h { font-family: 'Jost', sans-serif; font-size: 19px; letter-spacing: 1.5px; color: #F2E3D0; }
+    .sv-prev-t { font-size: 12px; color: rgba(242,227,208,0.78); line-height: 1.5; margin: 8px auto 14px; max-width: 280px; }
+    .sv-prev-scale { display: flex; gap: 4px; justify-content: center; }
+    .sv-prev-scale i { width: 15px; height: 22px; border-radius: 5px; border: 1px solid rgba(242,227,208,0.35); }
+    .sv-prev-note { position: absolute; left: 10px; bottom: 8px; font-size: 10.5px; color: rgba(242,227,208,0.6); }
+    .sv-link { font-size: 12.5px; color: var(--text-sub); background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; word-break: break-all; user-select: all; }
+    .sv-qr { width: 168px; height: 168px; margin: 12px auto 4px; padding: 8px; background: #fff; border-radius: 12px; }
+    .sv-qr svg { display: block; width: 100%; height: 100%; }
+    #qrPrintSheet { display: none; }
+    @media print {
+      body.printing-qr > *:not(#qrPrintSheet) { display: none !important; }
+      body.printing-qr { background: #fff !important; }
+      body.printing-qr #qrPrintSheet { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 95vh; color: #1a1209; font-family: 'Jost', 'Inter', sans-serif; }
+      #qrPrintSheet .qp-brand { font-size: 22px; letter-spacing: 8px; margin-bottom: 36px; }
+      #qrPrintSheet .qp-h { font-size: 34px; letter-spacing: 1px; margin-bottom: 14px; max-width: 520px; line-height: 1.2; }
+      #qrPrintSheet .qp-t { font-size: 17px; line-height: 1.5; max-width: 480px; margin-bottom: 36px; color: #4a3a28; }
+      #qrPrintSheet .qp-qr { width: 360px; height: 360px; }
+      #qrPrintSheet .qp-qr svg { width: 100%; height: 100%; display: block; }
+      #qrPrintSheet .qp-hint { margin-top: 28px; font-size: 14px; color: #7a6850; letter-spacing: 1px; }
+    }
+    .sv-range { width: 100%; accent-color: var(--accent); margin: 6px 0 2px; }
+    .sv-range-l { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); }
+    #screen-enps { position: relative; }
+    .enps-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; display: none; background: var(--bg); }
+    .enps-bg.on { display: block; }
+    .enps-bg .sv-prev-img { filter: none; }
+    .enps-bg .sv-prev-img.retouch { filter: blur(8px); }
+    #screen-enps > .header, #screen-enps > #enpsBody { position: relative; z-index: 1; }
     .enps-hero { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 18px; margin: 4px 0 22px; }
     .enps-hero-title { font-family: 'Jost', sans-serif; font-size: 20px; color: var(--text); }
     .enps-hero-text { font-size: 13px; color: var(--text-sub); line-height: 1.5; margin-top: 6px; }
@@ -1286,7 +1348,15 @@
        окне панели просто не показываем, чтобы не наезжали на контент. */
     @media (min-width: 1392px) {
       .desk-panel.role-ok { display: block; }
+      /* Когда справа видна боковая панель, «Управление» живёт в ней, а в главной колонке его не дублируем */
+      body:has(#deskRight.role-ok) .svc-main { display: none; }
     }
+    .desk-panel .dp-svc { display: flex; align-items: center; gap: 10px; padding: 9px 10px; margin: 0 -2px; border: 1px solid var(--border); border-radius: 12px; cursor: pointer; transition: background .15s; }
+    .desk-panel .dp-svc:hover { background: var(--bg-card-hover); }
+    .desk-panel .dp-svc-ic { width: 28px; height: 28px; border-radius: 8px; background: rgba(184,115,51,0.14); border: 1px solid rgba(184,115,51,0.3); display: flex; align-items: center; justify-content: center; color: var(--accent); flex-shrink: 0; }
+    .desk-panel .dp-svc-ic svg { width: 14px; height: 14px; }
+    .desk-panel .dp-svc-t { font-size: 13px; color: var(--text); }
+    .desk-panel .dp-svc-s { font-size: 10.5px; color: var(--text-muted); margin-top: 1px; line-height: 1.35; }
   </style>
 </head>
 <body>
@@ -1348,6 +1418,10 @@
       </button>
     </div>
     <div id="dpNotes"><div class="dp-loading">Загружаю...</div></div>
+  </div>
+  <div class="dp-section" id="dpServiceSec" style="display:none">
+    <div class="dp-label"><span>Управление</span></div>
+    <div id="dpService"></div>
   </div>
 </aside>
 
@@ -1779,6 +1853,12 @@
       <label class="form-label">Telegram ID (необязательно)</label>
       <input class="form-input" id="empTg" type="text" inputmode="numeric" maxlength="15" autocomplete="off" placeholder="Только цифры — для сообщений бота">
     </div>
+    <div class="form-group" id="empLoginsWrap" style="display:none">
+      <label class="form-label">Входы в приложение</label>
+      <div class="emp-hint" id="empLoginsSummary" style="margin:0 0 8px"></div>
+      <div id="empLoginsList"></div>
+      <button type="button" class="btn-ghost" id="empLoginsBtn" onclick="loadEmpLogins()">Показать журнал входов</button>
+    </div>
     <div class="form-group" id="empPermsWrap">
       <label class="form-label">Что видит и может</label>
       <div class="emp-hint" id="empPermsIntro" style="margin:0 0 4px"></div>
@@ -1803,6 +1883,113 @@
   <div style="padding:0 16px"><div id="serviceContent" style="margin-top:14px"></div></div>
 </div>
 
+<!-- СЕРВИС: СТОРИС. Фото, которые гости листают на экранах «Бар» и «ВИП-комнаты» -->
+<div class="screen" id="screen-stories-edit">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('service')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Сторис</h1><p>Фото бара и ВИП-комнат для гостей</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div class="st-empty" style="margin-top:14px">Гости листают фото по 5 секунд на весь экран, лучше вертикальные. Пока фото нет, они видят заглушку «Фото скоро».</div>
+    <div id="storiesContent"><div class="loading">Загружаю...</div></div>
+    <input type="file" id="storyFileInput" accept="image/*" multiple style="display:none" onchange="onStoryFiles(this.files); this.value='';">
+    <input type="file" id="storyReplaceInput" accept="image/*" style="display:none" onchange="onStoryReplaceFile(this.files[0]); this.value='';">
+  </div>
+</div>
+
+<!-- СЕРВИС: ОПРОСЫ. Оформление отзыва гостя (CSI + NPS) и опроса команды (eNPS) -->
+<div class="screen" id="screen-surveys-edit">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('service')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Опросы</h1><p>Фон, ретушь, тексты</p></div>
+  </div>
+  <div style="padding:0 16px"><div id="surveysContent" style="margin-top:14px"><div class="loading">Загружаю...</div></div></div>
+</div>
+
+<div class="screen" id="screen-survey-form">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('surveys-edit')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;" id="svFormTitle">Опрос</h1><p>Так он выглядит у гостей</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div class="sv-preview" id="svPreview">
+      <div class="sv-prev-img" id="svPrevImg"></div>
+      <div class="sv-prev-scrim" id="svPrevScrim"></div>
+      <div class="sv-prev-body">
+        <div class="sv-prev-h" id="svPrevH"></div>
+        <div class="sv-prev-t" id="svPrevT"></div>
+        <div class="sv-prev-scale"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+      <div class="sv-prev-note" id="svPrevNote"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Фон</label>
+      <div class="poster-actions" style="margin-top:0">
+        <button type="button" class="btn-primary" style="flex:1;" onclick="pickSurveyBg()" id="svPickBtn">Загрузить фон</button>
+        <button type="button" class="btn-primary" style="flex:1;background:transparent;border-color:rgba(239,68,68,0.45);color:#ef4444;" onclick="removeSurveyBg()" id="svRemoveBtn">Стандартный</button>
+      </div>
+      <div class="poster-note" id="svBgNote"></div>
+      <input type="file" id="svBgInput" accept="image/*" style="display:none" onchange="onSurveyBgFile(this.files[0]); this.value='';">
+    </div>
+    <div class="form-group">
+      <label class="perm-row" style="padding-left:0;padding-right:0">
+        <input type="checkbox" id="svRetouch" onchange="svChanged()">
+        <span class="perm-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 9 17 20 6"/></svg></span>
+        <span><span style="font-size:14px;color:var(--text);display:block">Ретушь фона</span><span style="font-size:11.5px;color:var(--text-muted);line-height:1.45;display:block;margin-top:2px">С галочкой фон слегка размыт, текст и оценки читаются лучше. Без галочки фото показывается как есть.</span></span>
+      </label>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Затемнение фона: <span id="svDimVal">70</span>%</label>
+      <input type="range" class="sv-range" id="svDim" min="0" max="95" step="5" oninput="svChanged()">
+      <div class="sv-range-l"><span>светлее</span><span>темнее</span></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Заголовок</label>
+      <input class="form-input" id="svHeading" maxlength="120" oninput="svChanged()">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Вступление</label>
+      <textarea class="form-input" id="svIntro" maxlength="400" oninput="svChanged()"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">После отправки: заголовок</label>
+      <input class="form-input" id="svThanksTitle" maxlength="120">
+    </div>
+    <div class="form-group">
+      <label class="form-label">После отправки: текст</label>
+      <textarea class="form-input" id="svThanksText" maxlength="400"></textarea>
+    </div>
+    <div class="form-group" id="svLinkBox">
+      <label class="form-label">Ссылка и QR-код для печати</label>
+      <div id="svLinkInner"></div>
+    </div>
+    <div class="poster-note" style="margin-bottom:12px">Пустое поле — стандартный текст. Сами вопросы и шкалы не меняются: от них зависят CSI, NPS и eNPS.</div>
+    <button class="btn-cta" id="svSubmitBtn" onclick="saveSurvey()">Сохранить</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- ОСНОВАТЕЛЬ: СОСТОЯНИЕ СИСТЕМЫ. Работает ли база, серверы, боты и когда была резервная копия -->
+<div class="screen" id="screen-system-status">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('service')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Состояние системы</h1><p id="ssChecked">Проверяю…</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div id="ssContent" style="margin-top:14px"><div class="loading">Проверяю…</div></div>
+    <button class="btn-ghost" onclick="loadSystemStatus()">Проверить снова</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
 <!-- АДМИН: МЕНЮ. Что видят гости на сайте и в приложении; стоп-лист — отдельный экран -->
 <div class="screen" id="screen-menu-edit">
   <div class="header">
@@ -1812,8 +1999,9 @@
     <div><h1 style="font-size:14px;letter-spacing:1px;">Меню</h1><p>Позиции, цены и фото — как у гостей</p></div>
   </div>
   <div style="padding:0 16px">
-    <div class="add-row" style="margin:14px 0 12px"><button type="button" class="btn-new-guest" onclick="openMenuItemForm()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Новая позиция</button></div>
+    <div class="add-row" style="margin:14px 0 12px;gap:8px"><button type="button" class="btn-new-guest" onclick="openMenuItemForm()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Новая позиция</button><button type="button" class="btn-primary" style="white-space:nowrap" onclick="exportMenuXlsx()">Скачать .xlsx</button></div>
     <input class="form-input sl-search" id="menuEditSearch" type="search" placeholder="Найти позицию" autocomplete="off" oninput="menuEditQuery=this.value;renderMenuEdit()">
+    <div class="chip-row" id="menuEditFilters" style="margin:0 0 4px"></div>
     <div id="menuEditContent"><div class="loading">Загружаю...</div></div>
   </div>
 </div>
@@ -1853,9 +2041,9 @@
     </div>
     <div class="form-group">
       <label class="form-label">Подраздел (необязательно)</label>
-      <input class="form-input" id="miSub" type="text" maxlength="100" autocomplete="off" list="miSubList" placeholder="Например: Пиццы, Салаты, Классика">
-      <datalist id="miSubList"></datalist>
-      <div class="emp-hint">Позиции с одним подразделом гость видит одним блоком.</div>
+      <div class="chip-row" id="miSubChips"></div>
+      <input class="form-input" id="miSub" type="text" maxlength="100" autocomplete="off" placeholder="Название нового подраздела, например: Пиццы" style="display:none;margin-top:10px">
+      <div class="emp-hint">Позиции с одним подразделом гость видит одним блоком. Подразделы у каждой категории свои.</div>
     </div>
     <div class="form-group">
       <label class="form-label">Цена, ₽ (необязательно)</label>
@@ -1874,6 +2062,7 @@
       <div class="emp-hint">«В стопе» — гость позицию не видит. Порядок позиций меняют стрелки ▲▼ в списке меню.</div>
     </div>
     <button class="btn-cta" id="miSubmitBtn" onclick="submitMenuItem()">Сохранить</button>
+    <button class="btn-ghost" id="miCopyBtn" onclick="copyMenuItem()" style="display:none;margin-top:10px;">Сделать копию позиции</button>
     <button class="btn-ghost danger" id="miDeleteBtn" onclick="deleteMenuItem()" style="display:none;margin-top:10px;">Удалить позицию</button>
   </div>
 </div>
@@ -2006,6 +2195,7 @@
 
 <!-- ENPS (скрытый экран — вход только по QR из служебного помещения, ?enps=1) -->
 <div class="screen" id="screen-enps">
+  <div class="enps-bg" id="enpsBg"><div class="sv-prev-img" id="enpsBgImg"></div><div class="sv-prev-scrim" id="enpsBgScrim"></div></div>
   <div class="header">
     <div class="back-btn" onclick="showScreen('home')">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
@@ -2014,8 +2204,8 @@
   </div>
   <div style="padding:0 16px" id="enpsBody">
     <div class="enps-hero">
-      <div class="enps-hero-title">Как тебе работается здесь?</div>
-      <div class="enps-hero-text">Ответ полностью анонимный: мы не видим, кто его оставил. Займёт минуту.</div>
+      <div class="enps-hero-title" id="enpsHeroTitle">Как тебе работается здесь?</div>
+      <div class="enps-hero-text" id="enpsHeroText">Ответ полностью анонимный: мы не видим, кто его оставил. Займёт минуту.</div>
     </div>
     <div class="enps-q">Насколько вероятно, что ты порекомендуешь нас как место работы?</div>
     <div class="enps-scale" id="enpsScale"></div>
@@ -2154,6 +2344,13 @@
   </div>
 </div>
 
+<div id="qrPrintSheet"><div class="qp-brand">НА КРЫШЕ</div><div class="qp-h" id="qpH"></div><div class="qp-t" id="qpT"></div><div class="qp-qr" id="qpQr"></div><div class="qp-hint" id="qpHint">Наведите камеру телефона на код</div></div>
+
+<script>
+/* qrcode-generator 2.0 (MIT), Kazuhiko Arase — рисует QR прямо в приложении, без внешних сервисов */
+var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],f={},c=function(t,r){o=function(t){for(var r=new Array(t),e=0;e<t;e+=1){r[e]=new Array(t);for(var n=0;n<t;n+=1)r[e][n]=null}return r}(i=4*e+17),l(0,0),l(i-7,0),l(0,i-7),s(),h(),d(t,r),e>=7&&v(t),null==a&&(a=p(e,n,u)),w(a,r)},l=function(t,r){for(var e=-1;e<=7;e+=1)if(!(t+e<=-1||i<=t+e))for(var n=-1;n<=7;n+=1)r+n<=-1||i<=r+n||(o[t+e][r+n]=0<=e&&e<=6&&(0==n||6==n)||0<=n&&n<=6&&(0==e||6==e)||2<=e&&e<=4&&2<=n&&n<=4)},h=function(){for(var t=8;t<i-8;t+=1)null==o[t][6]&&(o[t][6]=t%2==0);for(var r=8;r<i-8;r+=1)null==o[6][r]&&(o[6][r]=r%2==0)},s=function(){for(var t=B.getPatternPosition(e),r=0;r<t.length;r+=1)for(var n=0;n<t.length;n+=1){var i=t[r],a=t[n];if(null==o[i][a])for(var u=-2;u<=2;u+=1)for(var f=-2;f<=2;f+=1)o[i+u][a+f]=-2==u||2==u||-2==f||2==f||0==u&&0==f}},v=function(t){for(var r=B.getBCHTypeNumber(e),n=0;n<18;n+=1){var a=!t&&1==(r>>n&1);o[Math.floor(n/3)][n%3+i-8-3]=a}for(n=0;n<18;n+=1){a=!t&&1==(r>>n&1);o[n%3+i-8-3][Math.floor(n/3)]=a}},d=function(t,r){for(var e=n<<3|r,a=B.getBCHTypeInfo(e),u=0;u<15;u+=1){var f=!t&&1==(a>>u&1);u<6?o[u][8]=f:u<8?o[u+1][8]=f:o[i-15+u][8]=f}for(u=0;u<15;u+=1){f=!t&&1==(a>>u&1);u<8?o[8][i-u-1]=f:u<9?o[8][15-u-1+1]=f:o[8][15-u-1]=f}o[i-8][8]=!t},w=function(t,r){for(var e=-1,n=i-1,a=7,u=0,f=B.getMaskFunction(r),c=i-1;c>0;c-=2)for(6==c&&(c-=1);;){for(var g=0;g<2;g+=1)if(null==o[n][c-g]){var l=!1;u<t.length&&(l=1==(t[u]>>>a&1)),f(n,c-g)&&(l=!l),o[n][c-g]=l,-1==(a-=1)&&(u+=1,a=7)}if((n+=e)<0||i<=n){n-=e,e=-e;break}}},p=function(t,r,e){for(var n=A.getRSBlocks(t,r),o=b(),i=0;i<e.length;i+=1){var a=e[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var u=0;for(i=0;i<n.length;i+=1)u+=n[i].dataCount;if(o.getLengthInBits()>8*u)throw"code length overflow. ("+o.getLengthInBits()+">"+8*u+")";for(o.getLengthInBits()+4<=8*u&&o.put(0,4);o.getLengthInBits()%8!=0;)o.putBit(!1);for(;!(o.getLengthInBits()>=8*u||(o.put(236,8),o.getLengthInBits()>=8*u));)o.put(17,8);return function(t,r){for(var e=0,n=0,o=0,i=new Array(r.length),a=new Array(r.length),u=0;u<r.length;u+=1){var f=r[u].dataCount,c=r[u].totalCount-f;n=Math.max(n,f),o=Math.max(o,c),i[u]=new Array(f);for(var g=0;g<i[u].length;g+=1)i[u][g]=255&t.getBuffer()[g+e];e+=f;var l=B.getErrorCorrectPolynomial(c),h=k(i[u],l.getLength()-1).mod(l);for(a[u]=new Array(l.getLength()-1),g=0;g<a[u].length;g+=1){var s=g+h.getLength()-a[u].length;a[u][g]=s>=0?h.getAt(s):0}}var v=0;for(g=0;g<r.length;g+=1)v+=r[g].totalCount;var d=new Array(v),w=0;for(g=0;g<n;g+=1)for(u=0;u<r.length;u+=1)g<i[u].length&&(d[w]=i[u][g],w+=1);for(g=0;g<o;g+=1)for(u=0;u<r.length;u+=1)g<a[u].length&&(d[w]=a[u][g],w+=1);return d}(o,n)};f.addData=function(t,r){var e=null;switch(r=r||"Byte"){case"Numeric":e=M(t);break;case"Alphanumeric":e=x(t);break;case"Byte":e=m(t);break;case"Kanji":e=L(t);break;default:throw"mode:"+r}u.push(e),a=null},f.isDark=function(t,r){if(t<0||i<=t||r<0||i<=r)throw t+","+r;return o[t][r]},f.getModuleCount=function(){return i},f.make=function(){if(e<1){for(var t=1;t<40;t++){for(var r=A.getRSBlocks(t,n),o=b(),i=0;i<u.length;i++){var a=u[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var g=0;for(i=0;i<r.length;i++)g+=r[i].dataCount;if(o.getLengthInBits()<=8*g)break}e=t}c(!1,function(){for(var t=0,r=0,e=0;e<8;e+=1){c(!0,e);var n=B.getLostPoint(f);(0==e||t>n)&&(t=n,r=e)}return r}())},f.createTableTag=function(t,r){t=t||2;var e="";e+='<table style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: "+(r=void 0===r?4*t:r)+"px;",e+='">',e+="<tbody>";for(var n=0;n<f.getModuleCount();n+=1){e+="<tr>";for(var o=0;o<f.getModuleCount();o+=1)e+='<td style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: 0px;",e+=" width: "+t+"px;",e+=" height: "+t+"px;",e+=" background-color: ",e+=f.isDark(n,o)?"#000000":"#ffffff",e+=";",e+='"/>';e+="</tr>"}return e+="</tbody>",e+="</table>"},f.createSvgTag=function(t,r,e,n){var o={};"object"==typeof arguments[0]&&(t=(o=arguments[0]).cellSize,r=o.margin,e=o.alt,n=o.title),t=t||2,r=void 0===r?4*t:r,(e="string"==typeof e?{text:e}:e||{}).text=e.text||null,e.id=e.text?e.id||"qrcode-description":null,(n="string"==typeof n?{text:n}:n||{}).text=n.text||null,n.id=n.text?n.id||"qrcode-title":null;var i,a,u,c,g=f.getModuleCount()*t+2*r,l="";for(c="l"+t+",0 0,"+t+" -"+t+",0 0,-"+t+"z ",l+='<svg version="1.1" xmlns="http://www.w3.org/2000/svg"',l+=o.scalable?"":' width="'+g+'px" height="'+g+'px"',l+=' viewBox="0 0 '+g+" "+g+'" ',l+=' preserveAspectRatio="xMinYMin meet"',l+=n.text||e.text?' role="img" aria-labelledby="'+y([n.id,e.id].join(" ").trim())+'"':"",l+=">",l+=n.text?'<title id="'+y(n.id)+'">'+y(n.text)+"</title>":"",l+=e.text?'<description id="'+y(e.id)+'">'+y(e.text)+"</description>":"",l+='<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>',l+='<path d="',a=0;a<f.getModuleCount();a+=1)for(u=a*t+r,i=0;i<f.getModuleCount();i+=1)f.isDark(a,i)&&(l+="M"+(i*t+r)+","+u+c);return l+='" stroke="transparent" fill="black"/>',l+="</svg>"},f.createDataURL=function(t,r){t=t||2,r=void 0===r?4*t:r;var e=f.getModuleCount()*t+2*r,n=r,o=e-r;return I(e,e,function(r,e){if(n<=r&&r<o&&n<=e&&e<o){var i=Math.floor((r-n)/t),a=Math.floor((e-n)/t);return f.isDark(a,i)?0:1}return 1})},f.createImgTag=function(t,r,e){t=t||2,r=void 0===r?4*t:r;var n=f.getModuleCount()*t+2*r,o="";return o+="<img",o+=' src="',o+=f.createDataURL(t,r),o+='"',o+=' width="',o+=n,o+='"',o+=' height="',o+=n,o+='"',e&&(o+=' alt="',o+=y(e),o+='"'),o+="/>"};var y=function(t){for(var r="",e=0;e<t.length;e+=1){var n=t.charAt(e);switch(n){case"<":r+="&lt;";break;case">":r+="&gt;";break;case"&":r+="&amp;";break;case'"':r+="&quot;";break;default:r+=n}}return r};return f.createASCII=function(t,r){if((t=t||1)<2)return function(t){t=void 0===t?2:t;var r,e,n,o,i,a=1*f.getModuleCount()+2*t,u=t,c=a-t,g={"██":"█","█ ":"▀"," █":"▄","  ":" "},l={"██":"▀","█ ":"▀"," █":" ","  ":" "},h="";for(r=0;r<a;r+=2){for(n=Math.floor((r-u)/1),o=Math.floor((r+1-u)/1),e=0;e<a;e+=1)i="█",u<=e&&e<c&&u<=r&&r<c&&f.isDark(n,Math.floor((e-u)/1))&&(i=" "),u<=e&&e<c&&u<=r+1&&r+1<c&&f.isDark(o,Math.floor((e-u)/1))?i+=" ":i+="█",h+=t<1&&r+1>=c?l[i]:g[i];h+="\n"}return a%2&&t>0?h.substring(0,h.length-a-1)+Array(a+1).join("▀"):h.substring(0,h.length-1)}(r);t-=1,r=void 0===r?2*t:r;var e,n,o,i,a=f.getModuleCount()*t+2*r,u=r,c=a-r,g=Array(t+1).join("██"),l=Array(t+1).join("  "),h="",s="";for(e=0;e<a;e+=1){for(o=Math.floor((e-u)/t),s="",n=0;n<a;n+=1)i=1,u<=n&&n<c&&u<=e&&e<c&&f.isDark(o,Math.floor((n-u)/t))&&(i=0),s+=i?g:l;for(o=0;o<t;o+=1)h+=s+"\n"}return h.substring(0,h.length-1)},f.renderTo2dContext=function(t,r){r=r||2;for(var e=f.getModuleCount(),n=0;n<e;n++)for(var o=0;o<e;o++)t.fillStyle=f.isDark(n,o)?"black":"white",t.fillRect(o*r,n*r,r,r)},f};t.stringToBytes=(t.stringToBytesFuncs={default:function(t){for(var r=[],e=0;e<t.length;e+=1){var n=t.charCodeAt(e);r.push(255&n)}return r}}).default,t.createStringToBytes=function(t,r){var e=function(){for(var e=S(t),n=function(){var t=e.read();if(-1==t)throw"eof";return t},o=0,i={};;){var a=e.read();if(-1==a)break;var u=n(),f=n()<<8|n();i[String.fromCharCode(a<<8|u)]=f,o+=1}if(o!=r)throw o+" != "+r;return i}(),n="?".charCodeAt(0);return function(t){for(var r=[],o=0;o<t.length;o+=1){var i=t.charCodeAt(o);if(i<128)r.push(i);else{var a=e[t.charAt(o)];"number"==typeof a?(255&a)==a?r.push(a):(r.push(a>>>8),r.push(255&a)):r.push(n)}}return r}};var r,e,n,o,i,a=1,u=2,f=4,c=8,g={L:1,M:0,Q:3,H:2},l=0,h=1,s=2,v=3,d=4,w=5,p=6,y=7,B=(r=[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],e=1335,n=7973,i=function(t){for(var r=0;0!=t;)r+=1,t>>>=1;return r},(o={}).getBCHTypeInfo=function(t){for(var r=t<<10;i(r)-i(e)>=0;)r^=e<<i(r)-i(e);return 21522^(t<<10|r)},o.getBCHTypeNumber=function(t){for(var r=t<<12;i(r)-i(n)>=0;)r^=n<<i(r)-i(n);return t<<12|r},o.getPatternPosition=function(t){return r[t-1]},o.getMaskFunction=function(t){switch(t){case l:return function(t,r){return(t+r)%2==0};case h:return function(t,r){return t%2==0};case s:return function(t,r){return r%3==0};case v:return function(t,r){return(t+r)%3==0};case d:return function(t,r){return(Math.floor(t/2)+Math.floor(r/3))%2==0};case w:return function(t,r){return t*r%2+t*r%3==0};case p:return function(t,r){return(t*r%2+t*r%3)%2==0};case y:return function(t,r){return(t*r%3+(t+r)%2)%2==0};default:throw"bad maskPattern:"+t}},o.getErrorCorrectPolynomial=function(t){for(var r=k([1],0),e=0;e<t;e+=1)r=r.multiply(k([1,C.gexp(e)],0));return r},o.getLengthInBits=function(t,r){if(1<=r&&r<10)switch(t){case a:return 10;case u:return 9;case f:case c:return 8;default:throw"mode:"+t}else if(r<27)switch(t){case a:return 12;case u:return 11;case f:return 16;case c:return 10;default:throw"mode:"+t}else{if(!(r<41))throw"type:"+r;switch(t){case a:return 14;case u:return 13;case f:return 16;case c:return 12;default:throw"mode:"+t}}},o.getLostPoint=function(t){for(var r=t.getModuleCount(),e=0,n=0;n<r;n+=1)for(var o=0;o<r;o+=1){for(var i=0,a=t.isDark(n,o),u=-1;u<=1;u+=1)if(!(n+u<0||r<=n+u))for(var f=-1;f<=1;f+=1)o+f<0||r<=o+f||0==u&&0==f||a==t.isDark(n+u,o+f)&&(i+=1);i>5&&(e+=3+i-5)}for(n=0;n<r-1;n+=1)for(o=0;o<r-1;o+=1){var c=0;t.isDark(n,o)&&(c+=1),t.isDark(n+1,o)&&(c+=1),t.isDark(n,o+1)&&(c+=1),t.isDark(n+1,o+1)&&(c+=1),0!=c&&4!=c||(e+=3)}for(n=0;n<r;n+=1)for(o=0;o<r-6;o+=1)t.isDark(n,o)&&!t.isDark(n,o+1)&&t.isDark(n,o+2)&&t.isDark(n,o+3)&&t.isDark(n,o+4)&&!t.isDark(n,o+5)&&t.isDark(n,o+6)&&(e+=40);for(o=0;o<r;o+=1)for(n=0;n<r-6;n+=1)t.isDark(n,o)&&!t.isDark(n+1,o)&&t.isDark(n+2,o)&&t.isDark(n+3,o)&&t.isDark(n+4,o)&&!t.isDark(n+5,o)&&t.isDark(n+6,o)&&(e+=40);var g=0;for(o=0;o<r;o+=1)for(n=0;n<r;n+=1)t.isDark(n,o)&&(g+=1);return e+=Math.abs(100*g/r/r-50)/5*10},o),C=function(){for(var t=new Array(256),r=new Array(256),e=0;e<8;e+=1)t[e]=1<<e;for(e=8;e<256;e+=1)t[e]=t[e-4]^t[e-5]^t[e-6]^t[e-8];for(e=0;e<255;e+=1)r[t[e]]=e;var n={glog:function(t){if(t<1)throw"glog("+t+")";return r[t]},gexp:function(r){for(;r<0;)r+=255;for(;r>=256;)r-=255;return t[r]}};return n}();function k(t,r){if(void 0===t.length)throw t.length+"/"+r;var e=function(){for(var e=0;e<t.length&&0==t[e];)e+=1;for(var n=new Array(t.length-e+r),o=0;o<t.length-e;o+=1)n[o]=t[o+e];return n}(),n={getAt:function(t){return e[t]},getLength:function(){return e.length},multiply:function(t){for(var r=new Array(n.getLength()+t.getLength()-1),e=0;e<n.getLength();e+=1)for(var o=0;o<t.getLength();o+=1)r[e+o]^=C.gexp(C.glog(n.getAt(e))+C.glog(t.getAt(o)));return k(r,0)},mod:function(t){if(n.getLength()-t.getLength()<0)return n;for(var r=C.glog(n.getAt(0))-C.glog(t.getAt(0)),e=new Array(n.getLength()),o=0;o<n.getLength();o+=1)e[o]=n.getAt(o);for(o=0;o<t.getLength();o+=1)e[o]^=C.gexp(C.glog(t.getAt(o))+r);return k(e,0).mod(t)}};return n}var A=function(){var t=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12,7,37,13],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],r=function(t,r){var e={};return e.totalCount=t,e.dataCount=r,e},e={};return e.getRSBlocks=function(e,n){var o=function(r,e){switch(e){case g.L:return t[4*(r-1)+0];case g.M:return t[4*(r-1)+1];case g.Q:return t[4*(r-1)+2];case g.H:return t[4*(r-1)+3];default:return}}(e,n);if(void 0===o)throw"bad rs block @ typeNumber:"+e+"/errorCorrectionLevel:"+n;for(var i=o.length/3,a=[],u=0;u<i;u+=1)for(var f=o[3*u+0],c=o[3*u+1],l=o[3*u+2],h=0;h<f;h+=1)a.push(r(c,l));return a},e}(),b=function(){var t=[],r=0,e={getBuffer:function(){return t},getAt:function(r){var e=Math.floor(r/8);return 1==(t[e]>>>7-r%8&1)},put:function(t,r){for(var n=0;n<r;n+=1)e.putBit(1==(t>>>r-n-1&1))},getLengthInBits:function(){return r},putBit:function(e){var n=Math.floor(r/8);t.length<=n&&t.push(0),e&&(t[n]|=128>>>r%8),r+=1}};return e},M=function(t){var r=a,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+2<r.length;)t.put(o(r.substring(n,n+3)),10),n+=3;n<r.length&&(r.length-n==1?t.put(o(r.substring(n,n+1)),4):r.length-n==2&&t.put(o(r.substring(n,n+2)),7))}},o=function(t){for(var r=0,e=0;e<t.length;e+=1)r=10*r+i(t.charAt(e));return r},i=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);throw"illegal char :"+t};return n},x=function(t){var r=u,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+1<r.length;)t.put(45*o(r.charAt(n))+o(r.charAt(n+1)),11),n+=2;n<r.length&&t.put(o(r.charAt(n)),6)}},o=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);if("A"<=t&&t<="Z")return t.charCodeAt(0)-"A".charCodeAt(0)+10;switch(t){case" ":return 36;case"$":return 37;case"%":return 38;case"*":return 39;case"+":return 40;case"-":return 41;case".":return 42;case"/":return 43;case":":return 44;default:throw"illegal char :"+t}};return n},m=function(r){var e=f,n=t.stringToBytes(r),o={getMode:function(){return e},getLength:function(t){return n.length},write:function(t){for(var r=0;r<n.length;r+=1)t.put(n[r],8)}};return o},L=function(r){var e=c,n=t.stringToBytesFuncs.SJIS;if(!n)throw"sjis not supported.";!function(){var t=n("友");if(2!=t.length||38726!=(t[0]<<8|t[1]))throw"sjis not supported."}();var o=n(r),i={getMode:function(){return e},getLength:function(t){return~~(o.length/2)},write:function(t){for(var r=o,e=0;e+1<r.length;){var n=(255&r[e])<<8|255&r[e+1];if(33088<=n&&n<=40956)n-=33088;else{if(!(57408<=n&&n<=60351))throw"illegal char at "+(e+1)+"/"+n;n-=49472}n=192*(n>>>8&255)+(255&n),t.put(n,13),e+=2}if(e<r.length)throw"illegal char at "+(e+1)}};return i},D=function(){var t=[],r={writeByte:function(r){t.push(255&r)},writeShort:function(t){r.writeByte(t),r.writeByte(t>>>8)},writeBytes:function(t,e,n){e=e||0,n=n||t.length;for(var o=0;o<n;o+=1)r.writeByte(t[o+e])},writeString:function(t){for(var e=0;e<t.length;e+=1)r.writeByte(t.charCodeAt(e))},toByteArray:function(){return t},toString:function(){var r="";r+="[";for(var e=0;e<t.length;e+=1)e>0&&(r+=","),r+=t[e];return r+="]"}};return r},S=function(t){var r=t,e=0,n=0,o=0,i={read:function(){for(;o<8;){if(e>=r.length){if(0==o)return-1;throw"unexpected end of file./"+o}var t=r.charAt(e);if(e+=1,"="==t)return o=0,-1;t.match(/^\s$/)||(n=n<<6|a(t.charCodeAt(0)),o+=6)}var i=n>>>o-8&255;return o-=8,i}},a=function(t){if(65<=t&&t<=90)return t-65;if(97<=t&&t<=122)return t-97+26;if(48<=t&&t<=57)return t-48+52;if(43==t)return 62;if(47==t)return 63;throw"c:"+t};return i},I=function(t,r,e){for(var n=function(t,r){var e=t,n=r,o=new Array(t*r),i={setPixel:function(t,r,n){o[r*e+t]=n},write:function(t){t.writeString("GIF87a"),t.writeShort(e),t.writeShort(n),t.writeByte(128),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(255),t.writeByte(255),t.writeByte(255),t.writeString(","),t.writeShort(0),t.writeShort(0),t.writeShort(e),t.writeShort(n),t.writeByte(0);var r=a(2);t.writeByte(2);for(var o=0;r.length-o>255;)t.writeByte(255),t.writeBytes(r,o,255),o+=255;t.writeByte(r.length-o),t.writeBytes(r,o,r.length-o),t.writeByte(0),t.writeString(";")}},a=function(t){for(var r=1<<t,e=1+(1<<t),n=t+1,i=u(),a=0;a<r;a+=1)i.add(String.fromCharCode(a));i.add(String.fromCharCode(r)),i.add(String.fromCharCode(e));var f,c,g,l=D(),h=(f=l,c=0,g=0,{write:function(t,r){if(t>>>r!=0)throw"length over";for(;c+r>=8;)f.writeByte(255&(t<<c|g)),r-=8-c,t>>>=8-c,g=0,c=0;g|=t<<c,c+=r},flush:function(){c>0&&f.writeByte(g)}});h.write(r,n);var s=0,v=String.fromCharCode(o[s]);for(s+=1;s<o.length;){var d=String.fromCharCode(o[s]);s+=1,i.contains(v+d)?v+=d:(h.write(i.indexOf(v),n),i.size()<4095&&(i.size()==1<<n&&(n+=1),i.add(v+d)),v=d)}return h.write(i.indexOf(v),n),h.write(e,n),h.flush(),l.toByteArray()},u=function(){var t={},r=0,e={add:function(n){if(e.contains(n))throw"dup key:"+n;t[n]=r,r+=1},size:function(){return r},indexOf:function(r){return t[r]},contains:function(r){return void 0!==t[r]}};return e};return i}(t,r),o=0;o<r;o+=1)for(var i=0;i<t;i+=1)n.setPixel(i,o,e(i,o));var a=D();n.write(a);for(var u=function(){var t=0,r=0,e=0,n="",o={},i=function(t){n+=String.fromCharCode(a(63&t))},a=function(t){if(t<0);else{if(t<26)return 65+t;if(t<52)return t-26+97;if(t<62)return t-52+48;if(62==t)return 43;if(63==t)return 47}throw"n:"+t};return o.writeByte=function(n){for(t=t<<8|255&n,r+=8,e+=1;r>=6;)i(t>>>r-6),r-=6},o.flush=function(){if(r>0&&(i(t<<6-r),t=0,r=0),e%3!=0)for(var o=3-e%3,a=0;a<o;a+=1)n+="="},o.toString=function(){return n},o}(),f=a.toByteArray(),c=0;c<f.length;c+=1)u.writeByte(f[c]);return u.flush(),"data:image/gif;base64,"+u};return t}();qrcode.stringToBytesFuncs["UTF-8"]=function(t){return function(t){for(var r=[],e=0;e<t.length;e++){var n=t.charCodeAt(e);n<128?r.push(n):n<2048?r.push(192|n>>6,128|63&n):n<55296||n>=57344?r.push(224|n>>12,128|n>>6&63,128|63&n):(e++,n=65536+((1023&n)<<10|1023&t.charCodeAt(e)),r.push(240|n>>18,128|n>>12&63,128|n>>6&63,128|63&n))}return r}(t)},function(t){"function"==typeof define&&define.amd?define([],t):"object"==typeof exports&&(module.exports=t())}(function(){return qrcode});
+</script>
+
 <script>
   const tg = window.Telegram?.WebApp;
   if (tg) {
@@ -2212,8 +2409,8 @@
   function fallbackPerms(jobRole) {
     const base = ['guests.view', 'guests.create', 'guests.edit', 'tags.use', 'visits.record', 'guests.birthdays', 'guests.vip_list', 'checklist.use', 'schedule.view', 'menu.view', 'problems.view', 'problems.report', 'problems.work_own_role'];
     const own = { 'Бармен': ['menu.stoplist_drinks'], 'Повар': ['menu.stoplist_food'], 'КМ': ['menu.stoplist_hookah'] }[jobRole] || [];
-    const admin = ['guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage'];
-    const owner = ['founder_tasks.create', 'marketing.send', 'marketing.log', 'analytics.view', 'segments.view', 'feedback.view', 'guests.table', 'candidates.view'];
+    const admin = ['stories.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage'];
+    const owner = ['surveys.manage', 'founder_tasks.create', 'marketing.send', 'marketing.log', 'analytics.view', 'segments.view', 'feedback.view', 'guests.table', 'candidates.view'];
     if (jobRole === 'Основатель') return base.concat(admin, owner);
     if (jobRole === 'Администратор') return base.concat(admin);
     return base.concat(own);
@@ -2277,6 +2474,7 @@
         if (enpsMode) {
           renderEnpsScale();
           showScreen('enps');
+          applyEnpsConfig();
         } else {
           showScreen('home');
         }
@@ -2377,20 +2575,68 @@
   var homeIcons = {};
 
   // Что лежит в «Сервисе» у этого сотрудника: меню, дубли, сотрудники (только основатель), кандидаты
+  // Инструменты «Сервиса» по группам: что видят гости / гости / команда / система
   function serviceItemsFor() {
+    const G = { content: 'Контент для гостей', guests: 'Гости', team: 'Команда', system: 'Система' };
     const list = [];
-    if (can('menu.manage')) list.push({ icon: 'menu', short: 'меню', title: 'Меню', sub: 'Позиции, цены, фото', fn: 'openMenuEdit()' });
-    if (can('guests.merge')) list.push({ icon: 'duplicates', short: 'дубли', title: 'Дубли', sub: 'Одна карточка на гостя', fn: 'openDuplicates()' });
-    if (currentJobRole === 'Основатель') list.push({ icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'PIN-коды, роли и права', fn: 'openEmployees()' });
-    if (can('candidates.view')) list.push({ icon: 'candidates', short: 'кандидаты', title: 'Кандидаты', sub: 'Отклики на вакансии', fn: 'openCandidates()' });
+    if (can('menu.manage')) list.push({ group: G.content, icon: 'menu', short: 'меню', title: 'Меню', sub: 'Позиции, цены, фото', fn: 'openMenuEdit()' });
+    if (can('stories.manage')) list.push({ group: G.content, icon: 'stories', short: 'сторис', title: 'Сторис', sub: 'Фото бара и ВИП-комнат', fn: 'openStoriesEdit()' });
+    if (can('surveys.manage')) list.push({ group: G.content, icon: 'surveys', short: 'опросы', title: 'Опросы', sub: 'Фон, ретушь, тексты', fn: 'openSurveysEdit()' });
+    if (can('guests.merge')) list.push({ group: G.guests, icon: 'duplicates', short: 'дубли', title: 'Дубли', sub: 'Одна карточка на гостя', fn: 'openDuplicates()' });
+    if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'PIN-коды, роли и права', fn: 'openEmployees()' });
+    if (can('candidates.view')) list.push({ group: G.team, icon: 'candidates', short: 'кандидаты', title: 'Кандидаты', sub: 'Отклики на вакансии', fn: 'openCandidates()' });
+    if (currentJobRole === 'Основатель') list.push({ group: G.system, icon: 'status', short: 'состояние', title: 'Состояние', sub: 'База, боты, копии', fn: 'openSystemStatus()' });
     return list;
   }
-  function openService() {
+
+  // Плашки на плитках «Сервиса»: новые отклики, группы дублей, позиции меню без фото / без цены
+  var svcBadges = {};
+  function svcBadgeInfo(i) {
+    const b = svcBadges || {};
+    if (i.icon === 'candidates' && b.candidates > 0) return { n: b.candidates, sub: `Новых: ${b.candidates}` };
+    if (i.icon === 'duplicates' && b.duplicates > 0) return { n: b.duplicates, sub: `Групп: ${b.duplicates}` };
+    if (i.icon === 'menu' && b.menuAny > 0) {
+      const parts = [];
+      if (b.menuNoPhoto > 0) parts.push(`без фото ${b.menuNoPhoto}`);
+      if (b.menuNoPrice > 0) parts.push(`без цены ${b.menuNoPrice}`);
+      return { n: b.menuAny, sub: parts.join(' · ') };
+    }
+    return null;
+  }
+  async function loadServiceBadges() {
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/service-badges?pin=${getPin()}`);
+      if (!res.ok) return;
+      svcBadges = await res.json();
+      if (document.getElementById('screen-service')?.classList.contains('active')) renderService();
+    } catch { /* без плашек плитки работают как обычно */ }
+  }
+  // Инструменты «Сервиса» — плитки, как на главном экране
+  function serviceCardHtml(i) {
+    const b = svcBadgeInfo(i);
+    return `<div class="qcard" onclick="${i.fn}">
+        <div class="qcard-icon">${homeIcons[i.icon] || ''}</div>
+        ${b ? `<span class="qcard-badge">${b.n}</span>` : ''}
+        <div class="qcard-title">${i.title}</div>
+        <div class="qcard-sub${b ? ' warn' : ''}">${b ? escHtml(b.sub) : i.sub}</div>
+      </div>`;
+  }
+  function renderService() {
     const items = serviceItemsFor();
+    const groups = [];
+    for (const it of items) {
+      let g = groups.find(x => x.name === it.group);
+      if (!g) { g = { name: it.group, items: [] }; groups.push(g); }
+      g.items.push(it);
+    }
     document.getElementById('serviceContent').innerHTML = items.length
-      ? items.map(i => `<div class="qrow" onclick="${i.fn}"><div class="qrow-icon">${homeIcons[i.icon] || ''}</div><div class="qrow-t">${i.title}</div><div class="qrow-s">${i.sub}</div><div class="qrow-chev">›</div></div>`).join('')
+      ? groups.map(g => `<div class="svc-glabel">${escHtml(g.name)}</div><div class="grid-2">${g.items.map(serviceCardHtml).join('')}</div>`).join('')
       : '<div class="empty-state">Здесь пока ничего не открыто</div>';
+  }
+  function openService() {
+    renderService();
     showScreen('service');
+    loadServiceBadges();
   }
 
   function applyRoleUI() {
@@ -2407,7 +2653,7 @@
         <div class="qcard-sub">${sub}</div>
       </div>`;
     };
-    const qgroup = (label) => `<div class="qgroup-label">${label}</div>`;
+    const qgroup = (label, extraClass) => `<div class="qgroup-label${extraClass ? ' ' + extraClass : ''}">${label}</div>`;
 
     const icons = {
       birthday: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2c-1.5 2.5-3 4.5-3 7a3 3 0 006 0c0-2.5-1.5-4.5-3-7z"/><line x1="12" y1="14" x2="12" y2="22"/></svg>',
@@ -2429,6 +2675,9 @@
       duplicates: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2"/></svg>',
       menu: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h11a3 3 0 013 3v15H8a3 3 0 01-3-3V3z"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="12" y2="16"/></svg>',
       candidates: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="2.6"/><path d="M7.5 17c.8-2 2.4-3 4.5-3s3.7 1 4.5 3"/></svg>',
+      stories: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2.5"/><circle cx="12" cy="10" r="2.4"/><path d="M6.5 18l4-4 3 3 2-2 2.5 2.5"/></svg>',
+      surveys: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><path d="M8 13l2 2 4-4"/><line x1="8" y1="18" x2="12" y2="18"/></svg>',
+      status: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 12 7 12 10 5 14 19 17 12 21 12"/></svg>',
       service: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>',
       team: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.2a3.2 3.2 0 010 5.6"/><path d="M18 14.4c1.8.8 3 2.6 3 5.6"/></svg>'
     };
@@ -2495,7 +2744,15 @@
     // «Сервис» — отдельный экран: меню, дубли, сотрудники, кандидаты. На главной — одна строка.
     const serviceItems = serviceItemsFor();
     let serviceRows = '';
-    if (serviceItems.length) serviceRows = qrow(icons.service, 'Сервис', serviceItems.map(i => i.short).join(' · '), "openService()");
+    if (serviceItems.length) serviceRows = qrow(icons.service, 'Сервис', serviceItems.map(i => i.short).join(' · '), "openService()", { extraClass: 'svc-main' });
+    // На широком мониторе то же самое — в правой боковой панели (справа в углу)
+    const dpSvcSec = document.getElementById('dpServiceSec');
+    if (dpSvcSec) {
+      dpSvcSec.style.display = serviceItems.length ? '' : 'none';
+      document.getElementById('dpService').innerHTML = serviceItems.length
+        ? `<div class="dp-svc" onclick="openService()"><div class="dp-svc-ic">${icons.service}</div><div><div class="dp-svc-t">Сервис</div><div class="dp-svc-s">${serviceItems.map(i => escHtml(i.short)).join(' · ')}</div></div></div>`
+        : '';
+    }
 
     let html = '';
     if (attentionCards) html += qgroup('Внимание') + attentionCards;
@@ -2503,7 +2760,7 @@
     if (guestsCards) html += qgroup('Гости') + guestsCards;
     if (marketingRows) html += qgroup('Маркетинг') + marketingRows;
     if (analyticsRows) html += qgroup('Аналитика') + analyticsRows;
-    if (serviceRows) html += qgroup('Управление') + serviceRows;
+    if (serviceRows) html += qgroup('Управление', 'svc-main') + serviceRows;
     if (!html) html = '<div class="empty-state" style="grid-column:1/-1">Пока ничего не открыто. Попросите основателя выдать доступ.</div>';
 
     grid.innerHTML = html;
@@ -4930,11 +5187,13 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
   const MENU_EDIT_CATEGORIES = ['Еда', 'Коктейли', 'Алкоголь', 'Напитки', 'Кальян'];
   let menuEditItems = [];
   let menuEditQuery = '';
+  let menuEditFilter = 'all'; // all | nophoto | noprice
   let editingMenuItemId = null;
   const menuPhoto = { url: '', blob: null, preview: '', remove: false };
 
   function openMenuEdit() {
     menuEditQuery = '';
+    menuEditFilter = 'all';
     const inp = document.getElementById('menuEditSearch');
     if (inp) inp.value = '';
     showScreen('menu-edit');
@@ -4987,7 +5246,20 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       return;
     }
     const q = menuEditQuery.trim().toLowerCase().replace(/ё/g, 'е');
-    const items = menuEditItems.filter(it => !q || String(it.name || '').toLowerCase().replace(/ё/g, 'е').includes(q));
+    // фильтры «без фото» / «без цены» — чтобы быстро найти, что ещё не заполнено
+    const noPhotoN = menuEditItems.filter(it => !it.photo).length;
+    const noPriceN = menuEditItems.filter(it => it.price === null || it.price === undefined).length;
+    if (menuEditFilter === 'nophoto' && !noPhotoN) menuEditFilter = 'all';
+    if (menuEditFilter === 'noprice' && !noPriceN) menuEditFilter = 'all';
+    const fchip = (key, label) => `<div class="chip${menuEditFilter === key ? ' selected' : ''}" onclick="setMenuFilter('${key}')">${label}</div>`;
+    const filtersEl = document.getElementById('menuEditFilters');
+    if (filtersEl) filtersEl.innerHTML = (noPhotoN || noPriceN)
+      ? fchip('all', 'Все') + (noPhotoN ? fchip('nophoto', `Без фото · ${noPhotoN}`) : '') + (noPriceN ? fchip('noprice', `Без цены · ${noPriceN}`) : '')
+      : '';
+    const filtered = !!q || menuEditFilter !== 'all';
+    const items = menuEditItems.filter(it => (!q || String(it.name || '').toLowerCase().replace(/ё/g, 'е').includes(q))
+      && (menuEditFilter !== 'nophoto' || !it.photo)
+      && (menuEditFilter !== 'noprice' || it.price === null || it.price === undefined));
     if (!items.length) { el.innerHTML = '<div class="empty-state">Ничего не нашлось</div>'; return; }
     const byCategory = {};
     items.forEach(it => { (byCategory[it.category] = byCategory[it.category] || []).push(it); });
@@ -5000,11 +5272,90 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       grouped.forEach(it => { if (!subOrder.includes(it.subcategory)) subOrder.push(it.subcategory); });
       return `<div class="sec" style="margin-top:18px;">${escHtml(cat)} · ${catItems.length}</div>`
         + plain.map(menuEditRowHtml).join('')
-        + subOrder.map(sub => `<div class="menu-subsec">${escHtml(sub)}</div>${grouped.filter(it => it.subcategory === sub).map(menuEditRowHtml).join('')}`).join('');
+        + subOrder.map((sub, si) => {
+          // стрелки у подраздела двигают весь блок; при поиске и фильтре порядок не меняем (виден не весь список)
+          const mv = filtered ? '' : `<span class="mi-mv mi-mv-sub">
+            <button type="button" aria-label="Переименовать подраздел" title="Переименовать" onclick="renameMenuSub('${escJs(cat)}','${escJs(sub)}')">✎</button>
+            <button type="button" aria-label="Подраздел выше" ${si === 0 ? 'disabled' : ''} onclick="moveMenuSub('${escJs(cat)}','${escJs(sub)}','up')">▲</button>
+            <button type="button" aria-label="Подраздел ниже" ${si === subOrder.length - 1 ? 'disabled' : ''} onclick="moveMenuSub('${escJs(cat)}','${escJs(sub)}','down')">▼</button></span>`;
+          return `<div class="menu-subsec menu-subsec-edit"><span>${escHtml(sub)}</span>${mv}</div>${grouped.filter(it => it.subcategory === sub).map(menuEditRowHtml).join('')}`;
+        }).join('');
     }).join('');
     const y = window.scrollY;
     el.innerHTML = html;
     window.scrollTo(0, y);
+  }
+
+  function setMenuFilter(key) { menuEditFilter = key; renderMenuEdit(); }
+
+  // Переименовать подраздел целиком: все его блюда получают новое название, порядок не меняется
+  async function renameMenuSub(category, subcategory) {
+    if (menuMoveBusy) return;
+    const name = await askText(`Переименовать подраздел «${subcategory}»\n\nНовое название увидят и гости на сайте, и в приложении.`, { value: subcategory, ok: 'Переименовать', required: true });
+    if (name === null) return;
+    const next = String(name).trim();
+    if (!next || next === subcategory) return;
+    menuMoveBusy = true;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/menu/subcategory/rename?pin=${getPin()}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), category, subcategory, name: next })
+      });
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось переименовать подраздел'));
+      await fetchMenuEdit();
+      renderMenuEdit();
+      notify(`Подраздел переименован: «${next}»`, 'ok');
+    } catch (e) {
+      notify(e.message && e.message !== 'Failed to fetch' ? e.message : 'Не удалось переименовать — проверьте соединение');
+    } finally {
+      menuMoveBusy = false;
+    }
+  }
+
+  // Копия позиции: те же категория, подраздел, цена и описание; сразу открывается форма, чтобы поправить название
+  async function copyMenuItem() {
+    if (!editingMenuItemId) return;
+    const btn = document.getElementById('miCopyBtn');
+    if (btn.disabled) return;
+    btn.disabled = true;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/menu/${encodeURIComponent(editingMenuItemId)}/copy?pin=${getPin()}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pin: getPin() })
+      });
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось сделать копию'));
+      const { id } = await res.json();
+      await fetchMenuEdit();
+      renderMenuEdit();
+      openMenuItemForm(id);
+      notify('Копия создана — измените название и цену', 'ok');
+    } catch (e) {
+      notify(e.message && e.message !== 'Failed to fetch' ? e.message : 'Не удалось сделать копию — проверьте соединение');
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  // Меню в таблицу .xlsx (для печати, сверки цен, отправки поставщику)
+  async function exportMenuXlsx() {
+    try {
+      await ensureXlsxLib();
+      const rows = menuEditItems.map(it => ({
+        'Категория': it.category,
+        'Подраздел': it.subcategory || '',
+        'Название': it.name,
+        'Цена, ₽': it.price !== null && it.price !== undefined ? it.price : '',
+        'Описание': it.description || '',
+        'В наличии': it.available ? 'Да' : 'Нет (стоп)',
+        'Фото': it.photo ? 'Есть' : 'Нет'
+      }));
+      const ws = XLSX.utils.json_to_sheet(rows);
+      ws['!cols'] = [{ wch: 12 }, { wch: 16 }, { wch: 34 }, { wch: 9 }, { wch: 50 }, { wch: 12 }, { wch: 7 }];
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Меню');
+      XLSX.writeFile(wb, `na-kryishe-menu-${new Date().toISOString().split('T')[0]}.xlsx`);
+    } catch {
+      notify('Не удалось сформировать файл — проверьте соединение');
+    }
   }
 
   let menuMoveBusy = false;
@@ -5027,15 +5378,52 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     }
   }
 
-  // Подсказки подраздела — те, что уже есть в выбранной категории
-  function refreshMiSubList() {
-    const cat = (document.querySelector('#miCatChips .chip.selected') || {}).dataset?.value;
-    const subs = [...new Set(menuEditItems.filter(i => i.category === cat && i.subcategory).map(i => i.subcategory))];
-    document.getElementById('miSubList').innerHTML = subs.map(x => `<option value="${escHtml(x)}"></option>`).join('');
+  async function moveMenuSub(category, subcategory, dir) {
+    if (menuMoveBusy) return;
+    menuMoveBusy = true;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/menu/subcategory/move?pin=${getPin()}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), category, subcategory, dir })
+      });
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось сдвинуть подраздел'));
+      await fetchMenuEdit();
+      renderMenuEdit();
+    } catch (e) {
+      notify(e.message && e.message !== 'Failed to fetch' ? e.message : 'Не удалось сдвинуть — проверьте соединение');
+    } finally {
+      menuMoveBusy = false;
+    }
   }
+
+  // Подраздел выбирается кнопками, как категория: «Без подраздела», уже существующие в этой категории, «+ Новый»
+  var miSubSel = '';   // '' — без подраздела; название; '__new__' — вписывают новое
+  var MI_SUB_NEW = '__new__';
+  function menuSubsOf(cat) {
+    return [...new Set(menuEditItems.filter(i => i.category === cat && i.subcategory).map(i => i.subcategory))];
+  }
+  function renderMiSubChips() {
+    const cat = (document.querySelector('#miCatChips .chip.selected') || {}).dataset?.value;
+    const subs = menuSubsOf(cat);
+    const chip = (value, label) => `<div class="chip${miSubSel === value ? ' selected' : ''}" data-value="${escHtml(value)}" onclick="selectMiSub(this)">${escHtml(label)}</div>`;
+    document.getElementById('miSubChips').innerHTML = chip('', 'Без подраздела') + subs.map(x => chip(x, x)).join('') + chip(MI_SUB_NEW, '+ Новый');
+    document.getElementById('miSub').style.display = miSubSel === MI_SUB_NEW ? 'block' : 'none';
+  }
+  function selectMiSub(el) {
+    miSubSel = el.dataset.value;
+    renderMiSubChips();
+    if (miSubSel === MI_SUB_NEW) document.getElementById('miSub').focus();
+  }
+  function currentMiSub() {
+    return miSubSel === MI_SUB_NEW ? document.getElementById('miSub').value.trim() : miSubSel;
+  }
+  function refreshMiSubList() { renderMiSubChips(); }
   function selectMenuCat(el) {
     selectChip(el, 'miCatChips');
-    refreshMiSubList();
+    // у другой категории свои подразделы: выбранного там может не быть
+    if (miSubSel !== MI_SUB_NEW && miSubSel && !menuSubsOf(el.dataset.value).includes(miSubSel)) miSubSel = '';
+    renderMiSubChips();
   }
 
   function openMenuItemForm(id) {
@@ -5044,7 +5432,8 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     editingMenuItemId = it ? it.id : null;
     document.getElementById('miFormTitle').textContent = it ? 'Редактировать позицию' : 'Новая позиция';
     document.getElementById('miName').value = it ? it.name : '';
-    document.getElementById('miSub').value = it ? (it.subcategory || '') : '';
+    miSubSel = it ? (it.subcategory || '') : '';
+    document.getElementById('miSub').value = '';
     document.getElementById('miPrice').value = it && it.price !== null && it.price !== undefined ? String(it.price) : '';
     document.getElementById('miDesc').value = it ? (it.description || '') : '';
     const cur = it ? it.category : MENU_EDIT_CATEGORIES[0];
@@ -5054,6 +5443,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     document.querySelectorAll('#miAvailChips .chip').forEach(c => c.classList.toggle('selected', (c.dataset.value === 'true') === avail));
     document.getElementById('miSubmitBtn').textContent = 'Сохранить';
     document.getElementById('miDeleteBtn').style.display = it ? 'block' : 'none';
+    document.getElementById('miCopyBtn').style.display = it ? 'block' : 'none';
     resetMenuPhoto(it ? it.photo : '');
     refreshMiSubList();
     showScreen('menu-item-form');
@@ -5127,9 +5517,10 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     if (!name) { notify('Укажите название'); return; }
     if (!catChip) { notify('Выберите категорию'); return; }
     if (priceRaw && !(Number(priceRaw) >= 0 && Number.isFinite(Number(priceRaw)))) { notify('Цена — число, например 450'); return; }
+    if (miSubSel === MI_SUB_NEW && !currentMiSub()) { notify('Впишите название подраздела или выберите «Без подраздела»'); return; }
     const body = {
       pin: getPin(), name, category: catChip.dataset.value,
-      subcategory: document.getElementById('miSub').value.trim(),
+      subcategory: currentMiSub(),
       price: priceRaw === '' ? '' : priceRaw,
       description: document.getElementById('miDesc').value.trim(),
       available: document.querySelector('#miAvailChips .chip.selected')?.dataset.value !== 'false'
@@ -5201,6 +5592,430 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       btn.disabled = false;
       btn.textContent = 'Удалить позицию';
     }
+  }
+
+  // ─── СЕРВИС: СТОРИС (фото бара и ВИП-комнат в гостевом приложении) ───
+  var storySets = [];
+  var storyMax = 12;
+  var storyBusy = false;
+  var storyAddSet = '';
+  var storyReplaceId = '';
+
+  function openStoriesEdit() {
+    showScreen('stories-edit');
+    loadStories();
+  }
+  async function loadStories() {
+    const el = document.getElementById('storiesContent');
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/stories?pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить сторис'));
+      const data = await res.json();
+      storySets = Array.isArray(data.sets) ? data.sets : [];
+      storyMax = data.max || 12;
+      renderStories();
+    } catch (e) {
+      el.innerHTML = errorStateHtml(e.message || 'Не удалось загрузить сторис', 'loadStories()');
+    }
+  }
+  function renderStories() {
+    const el = document.getElementById('storiesContent');
+    const hint = { bar: 'Коктейли бара', vip: 'Комнаты: интерьер, диваны, вид. Подпись = название комнаты, оно попадёт в бронь' };
+    el.innerHTML = storySets.map(set => {
+      const n = set.slides.length;
+      const rows = set.slides.map((sl, i) => `
+        <div class="st-row">
+          <img class="st-thumb" src="${escHtml(sl.photo)}" alt="" loading="lazy">
+          <div class="st-main">
+            <input class="form-input" value="${escHtml(sl.title)}" maxlength="80" placeholder="${set.key === 'vip' ? 'Название комнаты — гость увидит его в брони' : 'Подпись (необязательно)'}" onchange="saveStoryTitle('${escJs(sl.id)}', this)">
+            <div class="st-btns">
+              <button type="button" class="st-btn" onclick="pickStoryReplace('${escJs(sl.id)}')">Заменить фото</button>
+              <button type="button" class="st-btn danger" onclick="deleteStory('${escJs(sl.id)}')">Удалить</button>
+            </div>
+          </div>
+          <span class="mi-mv">
+            <button type="button" aria-label="Выше" ${i === 0 ? 'disabled' : ''} onclick="moveStory('${escJs(sl.id)}','up')">▲</button>
+            <button type="button" aria-label="Ниже" ${i === n - 1 ? 'disabled' : ''} onclick="moveStory('${escJs(sl.id)}','down')">▼</button>
+          </span>
+        </div>`).join('');
+      return `<div class="st-set-head"><span class="st-set-title">${escHtml(set.title)}</span><span class="st-set-count">${n} из ${storyMax}</span></div>
+        ${set.key === 'vip' && n ? '<div class="st-empty" style="margin:0 0 10px">Подпись — это название комнаты. Гость нажмёт «Забронировать» и в брони увидит именно его.</div>' : ''}
+        ${n ? rows : `<div class="st-empty">Фото пока нет — гости видят заглушку. ${escHtml(hint[set.key] || '')}</div>`}
+        <button type="button" class="btn-primary st-add" ${n >= storyMax ? 'disabled' : ''} onclick="pickStoryFiles('${escJs(set.key)}')">+ Добавить фото</button>`;
+    }).join('');
+  }
+  function pickStoryFiles(set) { storyAddSet = set; document.getElementById('storyFileInput').click(); }
+  function pickStoryReplace(id) { storyReplaceId = id; document.getElementById('storyReplaceInput').click(); }
+
+  async function onStoryFiles(files) {
+    files = [...(files || [])];
+    if (!files.length || storyBusy || !storyAddSet) return;
+    const set = storySets.find(x => x.key === storyAddSet);
+    const room = storyMax - (set ? set.slides.length : 0);
+    if (files.length > room) { notify(`В наборе можно ещё ${room} фото — лишние не добавлены`); files = files.slice(0, Math.max(room, 0)); }
+    storyBusy = true;
+    let done = 0, problem = '';
+    for (const f of files) {
+      try {
+        if (f.type && !f.type.startsWith('image/')) throw new Error('Это не картинка — выберите фото (JPG, PNG)');
+        notify(`Загружаю фото ${done + 1} из ${files.length}…`);
+        const { blob } = await compressPoster(f, 1600);
+        const r = await fetch(`${PROXY_BASE}/api/admin/stories/${encodeURIComponent(storyAddSet)}?pin=${getPin()}`, {
+          method: 'POST', headers: { 'Content-Type': 'image/jpeg' }, body: blob
+        });
+        if (!r.ok) throw new Error(await responseError(r, 'Не удалось загрузить фото'));
+        done++;
+      } catch (e) {
+        problem = e.message && e.message !== 'Failed to fetch' ? e.message : 'Не удалось загрузить — проверьте соединение';
+        break;
+      }
+    }
+    storyBusy = false;
+    if (problem) notify(done ? `Загружено ${done}, дальше остановилось:\n${problem}` : problem);
+    else if (done) showSuccess(done === 1 ? 'Фото добавлено' : `Добавлено фото: ${done}`, 'Гости увидят его в приложении сразу');
+    await loadStories();
+  }
+
+  async function onStoryReplaceFile(file) {
+    if (!file || storyBusy || !storyReplaceId) return;
+    storyBusy = true;
+    try {
+      if (file.type && !file.type.startsWith('image/')) throw new Error('Это не картинка — выберите фото (JPG, PNG)');
+      notify('Заменяю фото…');
+      const { blob } = await compressPoster(file, 1600);
+      const r = await fetch(`${PROXY_BASE}/api/admin/stories/${encodeURIComponent(storyReplaceId)}/photo?pin=${getPin()}`, {
+        method: 'POST', headers: { 'Content-Type': 'image/jpeg' }, body: blob
+      });
+      if (!r.ok) throw new Error(await responseError(r, 'Не удалось заменить фото'));
+      showSuccess('Фото заменено', '');
+    } catch (e) {
+      notify(e.message && e.message !== 'Failed to fetch' ? e.message : 'Не удалось заменить — проверьте соединение');
+    }
+    storyBusy = false;
+    await loadStories();
+  }
+
+  async function saveStoryTitle(id, input) {
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/stories/${encodeURIComponent(id)}?pin=${getPin()}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: input.value })
+      });
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось сохранить подпись'));
+      for (const set of storySets) { const sl = set.slides.find(x => x.id === id); if (sl) sl.title = input.value.trim(); }
+    } catch (e) {
+      notify(e.message && e.message !== 'Failed to fetch' ? e.message : 'Не удалось сохранить — проверьте соединение');
+    }
+  }
+
+  async function moveStory(id, dir) {
+    if (storyBusy) return;
+    storyBusy = true;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/stories/${encodeURIComponent(id)}/move?pin=${getPin()}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dir })
+      });
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось сдвинуть фото'));
+      await loadStories();
+    } catch (e) {
+      notify(e.message && e.message !== 'Failed to fetch' ? e.message : 'Не удалось сдвинуть — проверьте соединение');
+    } finally {
+      storyBusy = false;
+    }
+  }
+
+  async function deleteStory(id) {
+    if (storyBusy) return;
+    if (!await askConfirm('Удалить это фото из сторис?\n\nГости перестанут его видеть. Вернуть можно только загрузив снова.', { danger: true, ok: 'Удалить' })) return;
+    storyBusy = true;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/stories/${encodeURIComponent(id)}?pin=${getPin()}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось удалить фото'));
+    } catch (e) {
+      notify(e.message && e.message !== 'Failed to fetch' ? e.message : 'Не удалось удалить — проверьте соединение');
+    }
+    storyBusy = false;
+    await loadStories();
+  }
+
+  // ─── СЕРВИС: СОСТОЯНИЕ СИСТЕМЫ (основатель) ───
+  function openSystemStatus() {
+    showScreen('system-status');
+    loadSystemStatus();
+  }
+  function ssUptime(sec) {
+    const m = Math.floor(sec / 60);
+    if (m < 60) return `${Math.max(m, 1)} мин`;
+    const h = Math.floor(m / 60);
+    return h < 48 ? `${h} ч` : `${Math.floor(h / 24)} дн.`;
+  }
+  async function loadSystemStatus() {
+    const el = document.getElementById('ssContent');
+    el.innerHTML = '<div class="loading">Проверяю…</div>';
+    document.getElementById('ssChecked').textContent = 'Проверяю…';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/founder/system-status?pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось проверить систему'));
+      const d = await res.json();
+      const row = (st, t, s) => `<div class="ss-row"><span class="ss-dot ${st}"></span><div><div class="ss-t">${escHtml(t)}</div><div class="ss-s">${escHtml(s)}</div></div></div>`;
+      const rows = [];
+      rows.push(d.database.ok
+        ? row('ok', 'База данных', `Работает · ответ ${d.database.ms} мс${d.database.migration ? ' · версия ' + d.database.migration.replace(/\.sql$/, '') : ''}`)
+        : row('bad', 'База данных', `Не отвечает: ${d.database.error || 'неизвестная ошибка'}`));
+      rows.push(row('ok', 'Сервер сотрудников', `Работает · без перезапуска ${ssUptime(d.staffServer.uptimeSec)} · сотрудников с доступом: ${d.staffServer.employees}`));
+      rows.push(d.guestServer.ok
+        ? row(d.guestServer.db === false ? 'bad' : 'ok', 'Гостевой сервер', d.guestServer.db === false ? 'Работает, но без связи с базой' : `Работает · ответ ${d.guestServer.ms} мс`)
+        : row('bad', 'Гостевой сервер', `Не отвечает: ${d.guestServer.error || 'неизвестная ошибка'}. Гости не смогут забронировать`));
+      if (d.staffBot.ok) {
+        const trouble = d.staffBot.lastError ? `Telegram сообщает об ошибке: ${d.staffBot.lastError}` : (d.staffBot.pending > 20 ? `Скопились необработанные сообщения: ${d.staffBot.pending}` : '');
+        rows.push(row(trouble || !d.staffBot.webhookSet ? 'warn' : 'ok', 'Бот сотрудников', `@${d.staffBot.username} · ${trouble || (d.staffBot.webhookSet ? 'принимает сообщения' : 'не подключён к серверу (вебхук не задан)')}`));
+      } else rows.push(row('bad', 'Бот сотрудников', `Не отвечает: ${d.staffBot.error || 'Telegram недоступен'}`));
+      rows.push(d.guestBot.ok
+        ? row('ok', 'Бот гостей', `@${d.guestBot.username} · отвечает`)
+        : row('bad', 'Бот гостей', `Не отвечает: ${d.guestBot.error || 'неизвестная ошибка'}`));
+      if (d.backup.lastAt) {
+        const ageDays = (Date.now() - new Date(d.backup.lastAt)) / 86400000;
+        rows.push(row(ageDays > 2 ? 'warn' : 'ok', 'Резервная копия базы', `Последняя: ${fmtDateTime(d.backup.lastAt)} (${timeAgo(d.backup.lastAt)})${ageDays > 2 ? ' — давно, проверьте' : ''}`));
+      } else {
+        rows.push(row('warn', 'Резервная копия базы', 'Нет данных. Автоматические копии ещё не настроены — это нужно сделать до открытия бара'));
+      }
+      el.innerHTML = rows.join('');
+      document.getElementById('ssChecked').textContent = `Проверено в ${new Date(d.checkedAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`;
+    } catch (e) {
+      document.getElementById('ssChecked').textContent = 'Не удалось проверить';
+      el.innerHTML = errorStateHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером сотрудников — возможно, он не запущен', 'loadSystemStatus()');
+    }
+  }
+
+  // ─── СЕРВИС: ОПРОСЫ (фон, ретушь, затемнение, тексты) ───
+  var svList = [];
+  var svKind = '';
+  var svBg = { url: '', blob: null, preview: '', remove: false };
+  const SV_DEFAULTS = {
+    guest_review: {
+      heading: 'Ваш отзыв', intro: 'Пара минут — и мы станем лучше. Честно, это правда читают.',
+      thanksTitle: 'Спасибо!', thanksText: 'Ваш отзыв реально помогает нам становиться лучше',
+      defaultBg: 'Стандартный фон — зал «На Крыше»'
+    },
+    staff_enps: {
+      heading: 'Как тебе работается здесь?', intro: 'Ответ полностью анонимный: мы не видим, кто его оставил. Займёт минуту.',
+      thanksTitle: 'Спасибо!', thanksText: 'Ответ анонимный — мы его получили и обязательно прочитаем.',
+      defaultBg: 'Стандартный фон — без фото'
+    }
+  };
+  // Затемнение: чем больше число, тем темнее; сверху и снизу чуть плотнее, чтобы читались заголовок и кнопка
+  function svScrimCss(dim) {
+    const a = k => Math.min(1, (Number(dim) || 0) / 100 * k).toFixed(2);
+    return `linear-gradient(180deg, rgba(20,10,2,${a(1.1)}) 0%, rgba(20,10,2,${a(0.83)}) 35%, rgba(20,10,2,${a(0.94)}) 70%, rgba(20,10,2,${a(1.28)}) 100%)`;
+  }
+
+  function openSurveysEdit() {
+    showScreen('surveys-edit');
+    loadSurveys();
+  }
+  async function loadSurveys() {
+    const el = document.getElementById('surveysContent');
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/surveys?pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить опросы'));
+      svList = (await res.json()).surveys || [];
+      el.innerHTML = svList.map(v => `<div class="qrow" onclick="openSurveyForm('${escJs(v.kind)}')"><div class="qrow-icon">${homeIcons.surveys || ''}</div><div class="qrow-t">${escHtml(v.title)}</div><div class="qrow-s">${v.background ? 'свой фон' : 'стандартный фон'} · ${v.retouch ? 'с ретушью' : 'без ретуши'}</div><div class="qrow-chev">›</div></div>`).join('')
+        + '<div class="poster-note" style="margin-top:12px">Фон, ретушь, затемнение и тексты. Вопросы и шкалы не меняются: от них зависят CSI, NPS и eNPS.</div>';
+    } catch (e) {
+      el.innerHTML = errorStateHtml(e.message || 'Не удалось загрузить опросы', 'loadSurveys()');
+    }
+  }
+
+  function openSurveyForm(kind) {
+    const v = svList.find(x => x.kind === kind);
+    if (!v) return;
+    svKind = kind;
+    const d = SV_DEFAULTS[kind];
+    document.getElementById('svFormTitle').textContent = v.title;
+    document.getElementById('svRetouch').checked = !!v.retouch;
+    document.getElementById('svDim').value = String(v.dim);
+    document.getElementById('svHeading').value = v.heading || '';
+    document.getElementById('svHeading').placeholder = d.heading;
+    document.getElementById('svIntro').value = v.intro || '';
+    document.getElementById('svIntro').placeholder = d.intro;
+    document.getElementById('svThanksTitle').value = v.thanksTitle || '';
+    document.getElementById('svThanksTitle').placeholder = d.thanksTitle;
+    document.getElementById('svThanksText').value = v.thanksText || '';
+    document.getElementById('svThanksText').placeholder = d.thanksText;
+    if (svBg.preview) URL.revokeObjectURL(svBg.preview);
+    svBg = { url: v.background || '', blob: null, preview: '', remove: false };
+    svChanged();
+    svRenderLink(v);
+    showScreen('survey-form');
+  }
+
+  // Ссылка на опрос через бота: Telegram откроет приложение сразу на опросе. QR с этой ссылкой печатают и ставят на стол / вешают в служебном помещении.
+  function qrSvg(text, margin) {
+    const q = qrcode(0, 'M');
+    q.addData(String(text));
+    q.make();
+    return q.createSvgTag({ scalable: true, margin: margin == null ? 2 : margin });
+  }
+  function svRenderLink(v) {
+    const box = document.getElementById('svLinkInner');
+    if (!v.link) {
+      box.innerHTML = '<div class="poster-note warn">Ссылка пока недоступна — не удалось узнать имя бота. Откройте экран позже.</div>';
+      return;
+    }
+    box.innerHTML = `<div class="sv-link" id="svLinkText">${escHtml(v.link)}</div>
+      <div class="sv-qr" id="svQr">${qrSvg(v.link)}</div>
+      <div class="poster-actions" style="margin-top:10px">
+        <button type="button" class="btn-primary" style="flex:1" onclick="copySurveyLink()">Скопировать ссылку</button>
+        <button type="button" class="btn-primary" style="flex:1" onclick="printSurveyQr()">Распечатать QR</button>
+      </div>
+      <div class="poster-note">${v.kind === 'staff_enps' ? 'Повесьте лист в служебном помещении: команда сканирует и отвечает анонимно.' : 'Поставьте лист на стол: гость наводит камеру и сразу попадает в отзыв.'} С телефона печать может не открыться — тогда сделайте скриншот QR или откройте приложение на компьютере.</div>`;
+  }
+  async function copyText(text, okMsg) {
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch {}
+    if (!ok) {
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;top:-1000px;opacity:0;';
+      document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, text.length);
+      try { ok = document.execCommand('copy'); } catch {}
+      ta.remove();
+    }
+    showToast(ok ? okMsg : 'Не удалось скопировать — зажмите ссылку и скопируйте вручную', !ok);
+    return ok;
+  }
+  function svCurrentLink() {
+    const v = svList.find(x => x.kind === svKind);
+    return v && v.link ? v : null;
+  }
+  function copySurveyLink() {
+    const v = svCurrentLink();
+    if (v) copyText(v.link, 'Ссылка скопирована');
+  }
+  function printSurveyQr() {
+    const v = svCurrentLink();
+    if (!v) return;
+    const d = SV_DEFAULTS[v.kind];
+    document.getElementById('qpH').textContent = document.getElementById('svHeading').value.trim() || d.heading;
+    document.getElementById('qpT').textContent = document.getElementById('svIntro').value.trim() || d.intro;
+    document.getElementById('qpQr').innerHTML = qrSvg(v.link, 1);
+    document.getElementById('qpHint').textContent = v.kind === 'staff_enps' ? 'Наведи камеру телефона на код — ответ анонимный' : 'Наведите камеру телефона на код';
+    document.body.classList.add('printing-qr');
+    const done = () => { document.body.classList.remove('printing-qr'); window.removeEventListener('afterprint', done); };
+    window.addEventListener('afterprint', done);
+    try { window.print(); } catch { done(); notify('Печать не открылась — сделайте скриншот QR-кода'); }
+    setTimeout(done, 60000); // на случай, если событие «печать закончена» не пришло
+  }
+
+  function svChanged() {
+    const d = SV_DEFAULTS[svKind] || SV_DEFAULTS.guest_review;
+    const retouch = document.getElementById('svRetouch').checked;
+    const dim = Number(document.getElementById('svDim').value);
+    document.getElementById('svDimVal').textContent = String(dim);
+    const src = svBg.preview || (!svBg.remove ? svBg.url : '');
+    const img = document.getElementById('svPrevImg');
+    img.style.backgroundImage = src ? `url("${src}")` : (svKind === 'guest_review' ? 'linear-gradient(160deg,#4a2e12 0%,#140B00 100%)' : 'none');
+    img.classList.toggle('retouch', retouch && !!src);
+    document.getElementById('svPrevScrim').style.background = svScrimCss(dim);
+    document.getElementById('svPrevH').textContent = document.getElementById('svHeading').value.trim() || d.heading;
+    document.getElementById('svPrevT').textContent = document.getElementById('svIntro').value.trim() || d.intro;
+    document.getElementById('svPrevNote').textContent = src ? '' : d.defaultBg;
+    document.getElementById('svRemoveBtn').style.display = src ? '' : 'none';
+    document.getElementById('svPickBtn').textContent = src ? 'Заменить фон' : 'Загрузить фон';
+    const note = document.getElementById('svBgNote');
+    note.classList.remove('warn');
+    note.textContent = svBg.blob ? 'Новый фон — сохранится кнопкой ниже' : (svBg.remove ? 'Вернётся стандартный фон после сохранения' : (svBg.url ? 'Свой фон' : d.defaultBg + (svKind === 'guest_review' ? '. Ретушь и затемнение действуют и на него' : '')));
+  }
+  function pickSurveyBg() { document.getElementById('svBgInput').click(); }
+  function removeSurveyBg() {
+    if (svBg.preview) URL.revokeObjectURL(svBg.preview);
+    svBg.blob = null; svBg.preview = ''; svBg.remove = !!svBg.url;
+    svChanged();
+  }
+  async function onSurveyBgFile(file) {
+    if (!file) return;
+    const note = document.getElementById('svBgNote');
+    if (file.type && !file.type.startsWith('image/')) { note.textContent = 'Это не картинка — выберите фото (JPG, PNG)'; note.classList.add('warn'); return; }
+    note.textContent = 'Готовлю фото…';
+    try {
+      const { blob } = await compressPoster(file, 1600);
+      if (svBg.preview) URL.revokeObjectURL(svBg.preview);
+      svBg.blob = blob; svBg.preview = URL.createObjectURL(blob); svBg.remove = false;
+      svChanged();
+    } catch {
+      note.textContent = 'Не получилось открыть это фото. Сохраните его как JPG или PNG и выберите снова.';
+      note.classList.add('warn');
+    }
+  }
+
+  async function saveSurvey() {
+    const btn = document.getElementById('svSubmitBtn');
+    if (btn.disabled || !svKind) return;
+    btn.disabled = true;
+    btn.textContent = 'Сохраняем...';
+    const body = {
+      retouch: document.getElementById('svRetouch').checked,
+      dim: Number(document.getElementById('svDim').value),
+      heading: document.getElementById('svHeading').value.trim(),
+      intro: document.getElementById('svIntro').value.trim(),
+      thanksTitle: document.getElementById('svThanksTitle').value.trim(),
+      thanksText: document.getElementById('svThanksText').value.trim()
+    };
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/surveys/${encodeURIComponent(svKind)}?pin=${getPin()}`, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+      });
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось сохранить опрос'));
+      if (svBg.blob) {
+        btn.textContent = 'Загружаем фон...';
+        const r = await fetch(`${PROXY_BASE}/api/admin/surveys/${encodeURIComponent(svKind)}/background?pin=${getPin()}`, {
+          method: 'POST', headers: { 'Content-Type': 'image/jpeg' }, body: svBg.blob
+        });
+        if (!r.ok) throw new Error('Настройки сохранены, но фон не загрузился: ' + await responseError(r, 'ошибка загрузки'));
+      } else if (svBg.remove) {
+        const r = await fetch(`${PROXY_BASE}/api/admin/surveys/${encodeURIComponent(svKind)}/background?pin=${getPin()}`, { method: 'DELETE' });
+        if (!r.ok) throw new Error('Настройки сохранены, но фон не убрался: ' + await responseError(r, 'ошибка'));
+      }
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = 'Сохранить';
+      notify(e.message && e.message !== 'Failed to fetch' ? e.message : 'Не удалось сохранить — проверьте соединение');
+      return;
+    }
+    btn.disabled = false;
+    btn.textContent = 'Сохранить';
+    showSuccess('Опрос сохранён', 'Новое оформление уже у гостей');
+    openSurveysEdit();
+  }
+
+  // Оформление опроса команды (eNPS): фон, ретушь, затемнение, тексты; без настроек — как было
+  async function applyEnpsConfig() {
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/enps-config?pin=${getPin()}`);
+      if (!res.ok) return;
+      const c = await res.json();
+      const bg = document.getElementById('enpsBg');
+      const img = document.getElementById('enpsBgImg');
+      if (c.background) {
+        img.style.backgroundImage = `url("${c.background}")`;
+        img.classList.toggle('retouch', !!c.retouch);
+        document.getElementById('enpsBgScrim').style.background = svScrimCss(c.dim);
+        bg.classList.add('on');
+      } else {
+        bg.classList.remove('on');
+      }
+      const set = (id, v) => { if (v) document.getElementById(id).textContent = v; };
+      set('enpsHeroTitle', c.heading);
+      set('enpsHeroText', c.intro);
+      window.enpsThanks = { title: c.thanksTitle || '', text: c.thanksText || '' };
+    } catch {}
   }
 
   // ─── КАНДИДАТЫ (только основатель) ───
@@ -6076,8 +6891,8 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
           <div class="overlay-icon" style="margin:0 auto 18px;">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 9 17 20 6"/></svg>
           </div>
-          <div class="enps-hero-title" style="text-align:center">Спасибо!</div>
-          <div class="enps-hero-text" style="text-align:center;margin-top:8px">Ответ анонимный — мы его получили и обязательно прочитаем.</div>
+          <div class="enps-hero-title" style="text-align:center">${escHtml((window.enpsThanks && window.enpsThanks.title) || 'Спасибо!')}</div>
+          <div class="enps-hero-text" style="text-align:center;margin-top:8px">${escHtml((window.enpsThanks && window.enpsThanks.text) || 'Ответ анонимный — мы его получили и обязательно прочитаем.')}</div>
           <button class="btn-cta" style="margin-top:26px" onclick="showScreen('home')">На главную</button>
         </div>
       `;
@@ -7535,12 +8350,23 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     }
   }
 
+  // «в сети» (обращался к серверу последние 5 минут) / «был 2 ч назад» / «ещё не входил»
+  function empSeenText(e) {
+    if (!e.hasPin) return '';
+    const at = e.lastSeenAt || e.lastLoginAt;
+    if (!at) return 'ещё не входил';
+    if (Date.now() - new Date(at) < 5 * 60 * 1000) return 'в сети';
+    return `был ${timeAgo(at)}`;
+  }
+
   function empRowHtml(e) {
     const meta = [];
     if (e.isSelf) meta.push('это вы');
     if (!e.hasPin) meta.push('нет PIN-кода');
     if (e.telegramId) meta.push('Telegram привязан');
     if (e.customPerms) meta.push('особые права');
+    const seen = empSeenText(e);
+    if (seen) meta.push(seen);
     return `
       <div class="emp-row${e.active ? '' : ' off'}" onclick="openEmployeeForm('${escJs(e.id)}')">
         <div class="emp-body">
@@ -7757,10 +8583,45 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       activeBtn.style.display = 'none';
       activeHint.style.display = 'none';
     }
+    // журнал входов — только у существующего сотрудника
+    const lw = document.getElementById('empLoginsWrap');
+    lw.style.display = e ? 'block' : 'none';
+    document.getElementById('empLoginsList').innerHTML = '';
+    document.getElementById('empLoginsBtn').style.display = e ? 'block' : 'none';
+    document.getElementById('empLoginsBtn').textContent = 'Показать журнал входов';
+    if (e) {
+      const parts = [];
+      parts.push(e.lastLoginAt ? `Последний вход: ${fmtDateTime(e.lastLoginAt)} (${timeAgo(e.lastLoginAt)})` : 'Ещё не входил по PIN-коду');
+      if (e.lastSeenAt) parts.push(Date.now() - new Date(e.lastSeenAt) < 5 * 60 * 1000 ? 'Сейчас в сети' : `Был в сети: ${timeAgo(e.lastSeenAt)}`);
+      document.getElementById('empLoginsSummary').textContent = parts.join(' · ');
+    }
     permState = null;
     permOpen = { boxes: true };
     renderEmpPerms(e ? true : 'fresh');
     showScreen('employee-form');
+  }
+
+  // Журнал входов: последние 30 — когда и с какого устройства (телефон / компьютер)
+  async function loadEmpLogins() {
+    if (!editingEmployeeId) return;
+    const list = document.getElementById('empLoginsList');
+    const btn = document.getElementById('empLoginsBtn');
+    btn.disabled = true;
+    list.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/founder/employees/${encodeURIComponent(editingEmployeeId)}/logins?pin=${getPin()}`);
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить журнал'));
+      const { logins } = await res.json();
+      list.innerHTML = logins.length
+        ? logins.map(l => `<div class="emp-row" style="cursor:default"><div class="emp-body"><div class="emp-name" style="font-size:13px">${escHtml(fmtDateTime(l.at))}</div></div><div class="emp-role">${escHtml(l.device || '—')}</div></div>`).join('')
+          + '<div class="emp-hint">Показаны последние входы за 90 дней. Повторный вход в течение получаса записывается один раз.</div>'
+        : '<div class="emp-hint">Входов в журнале пока нет</div>';
+      btn.textContent = 'Обновить журнал';
+    } catch (e) {
+      list.innerHTML = `<div class="emp-hint">${escHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Не удалось загрузить — проверьте соединение')}</div>`;
+    } finally {
+      btn.disabled = false;
+    }
   }
 
   // Список сотрудников в форме графика — сбрасываем, чтобы новые люди появились сразу
@@ -7835,7 +8696,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service'];
+  const screens = ['pin', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'system-status'];
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
 
@@ -7857,6 +8718,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       // точки на карточках — свежие при каждом возврате (не чаще раза в 20 с)
       if (prev && prev !== 'pin' && Date.now() - quickStatusAt > 20000) refreshQuickActionStatus();
     }
+    if (name === 'service' && prev && prev !== 'service' && prev !== 'pin') { renderService(); loadServiceBadges(); }
     if (name === 'bookings') {
       const addRow = document.getElementById('bkAddRow');
       if (addRow) addRow.style.display = can('bookings.create') ? 'flex' : 'none';
