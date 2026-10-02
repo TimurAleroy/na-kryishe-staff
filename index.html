@@ -987,7 +987,17 @@
     .arr-btn.big { padding: 14px 12px; font-size: 14px; font-weight: 600; border-radius: 14px; }
     .arr-btn.yes.big { flex: 2; }
     .arr-btn.arr-leave { flex: 1 1 100%; }
-    .arr-btn.link { flex: 1 1 100%; min-width: 0; border: none; background: none; padding: 8px 2px 2px; font-size: 12px; text-align: left; text-decoration: underline; text-underline-offset: 3px; color: var(--text-dim, var(--text-sub)); }
+    .arr-state.left { color: var(--text-sub); }
+    .arr-fix { margin-top: 12px; border-top: 1px solid var(--border); }
+    .arr-state + .arr-fix { margin-top: 0; }
+    .arr-fix-toggle { display: flex; align-items: center; gap: 8px; width: 100%; padding: 12px 2px 2px; border: none; background: none; color: var(--text-muted); font-family: 'Inter', sans-serif; font-size: 12.5px; text-align: left; cursor: pointer; }
+    .arr-fix-toggle .chev { margin-left: auto; transition: transform 0.2s; }
+    .arr-fix.open .arr-fix-toggle { color: var(--text-sub); }
+    .arr-fix.open .arr-fix-toggle .chev { transform: rotate(180deg); }
+    .arr-fix-body { display: grid; gap: 8px; margin-top: 12px; }
+    .arr-fix-item { border: 1px solid var(--border); border-radius: 12px; padding: 12px; background: rgba(240,223,192,0.03); }
+    .arr-fix-label { font-size: 11px; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 10px; }
+    .arr-btn.fix { flex: none; width: 100%; min-width: 0; border-radius: 12px; padding: 13px 14px; font-size: 13px; text-align: left; background: rgba(240,223,192,0.03); }
     .arr-box .arr-state:last-child { margin-bottom: 0; }
     .rc-box { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.3); border-radius: 14px; margin: 12px 0 4px; overflow: hidden; }
     .rc-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 14px; cursor: pointer; font-size: 13px; color: #f59e0b; }
@@ -4178,7 +4188,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       if (kindLine) metaParts.push(escHtml(kindLine));
       const arr = b.arrival?.status;
       const leftHm = arr === 'arrived' && b.arrival.leftAt ? mskHm(b.arrival.leftAt) : '';
-      const arrHtml = arr ? `<div class="bk-flags"><span class="bk-flag ${escCls(arr)}">${arr === 'arrived' ? (leftHm ? `✓ был · ушёл ${escHtml(leftHm)}` : '✓ пришёл') : '✗ не пришёл'}</span></div>` : '';
+      const arrHtml = arr ? `<div class="bk-flags"><span class="bk-flag ${escCls(arr)}">${arr === 'arrived' ? (leftHm ? `✓ был · ушёл ${escHtml(leftHm)}` : (bookingStage(b) === 'seated' ? '✓ за столом' : '✓ был')) : '✗ не пришёл'}</span></div>` : '';
       return `
         <div class="booking-chip${arr === 'noshow' ? ' noshow' : ''}" style="border-left-color:${st.color}" onclick="openBookingDetail(${idx})" title="${escHtml(st.label)}">
           <div class="bk-chip-main">
@@ -4583,7 +4593,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         const cls = ['tl-bar', b.status === 'pending' ? 'pending' : 'confirmed', conflict ? 'conflict' : ''].join(' ');
         const flags = bookingGuestFlags(b, true);
         const icons = [
-          b.arrival?.status === 'arrived' ? '<span class="tl-ic" title="Пришёл">✓</span>' : '',
+          b.arrival?.status === 'arrived' ? `<span class="tl-ic" title="${it.left ? 'Ушёл' : 'За столом'}">✓</span>` : '',
           flags.some(f => f.cls === 'danger') ? '<span class="tl-ic danger">⚠</span>' : '',
           flags.some(f => f.text === 'VIP') ? '<span class="tl-ic vip">★</span>' : '',
           flags.some(f => f.text === 'ДР') ? '<span class="tl-ic">🎂</span>' : ''
@@ -5068,6 +5078,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     bookingEditMode = false;
     bookingTableEditMode = false;
     bookingActionNotice = null;
+    arrFixOpen = false;
     showScreen('booking-detail');
     renderBookingDetail();
   }
@@ -5095,7 +5106,23 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // бронь закрыта: гость ушёл или не пришёл — стол, перенос и отмена уже не нужны
   function bookingClosed(b) { return ['left', 'noshow'].includes(bookingStage(b)); }
 
-  function renderArrivalBlock(b) {
+  // «Отметили по ошибке» — свёрнутый блок под главным действием: всё, чем исправляют ошибку
+  // (не тот стол, отметка поставлена зря), лежит в нём и не мешает на экране.
+  let arrFixOpen = false;
+  function toggleArrFix() { arrFixOpen = !arrFixOpen; renderBookingDetail(); }
+  const ARR_FIX_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 010 12h-3"/></svg>';
+  const ARR_FIX_CHEV = '<svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+  function arrFixHtml(items) {
+    const list = items.filter(Boolean);
+    if (!list.length) return '';
+    return `<div class="arr-fix${arrFixOpen ? ' open' : ''}">
+      <button type="button" class="arr-fix-toggle" onclick="toggleArrFix()">${ARR_FIX_ICON}<span>Отметили по ошибке</span>${ARR_FIX_CHEV}</button>
+      ${arrFixOpen ? `<div class="arr-fix-body">${list.join('')}</div>` : ''}
+    </div>`;
+  }
+
+  // tableInner — блок выбора стола (у сидящего гостя он переезжает в «Отметили по ошибке»)
+  function renderArrivalBlock(b, tableInner) {
     const day = bookingVenueDay(b.iso);
     if (!b.uid || !day || day > venueDayStr()) return '';
     const sameEvening = day === venueDayStr();
@@ -5104,8 +5131,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const uid = escJs(b.uid);
     const a = b.arrival;
     const short = who => who ? who.replace(/ \(.+\)$/, '') : '';
-    const row = (...parts) => { const h = parts.filter(Boolean).join(''); return h ? `<div class="arr-btns">${h}</div>` : ''; };
-    const undo = (label, call) => canMark ? `<button class="arr-btn link" onclick="${call}">${label}</button>` : '';
+    const fixBtn = (label, call) => canMark ? `<button class="arr-btn fix" onclick="${call}">${label}</button>` : '';
 
     if (stage === 'pending' || stage === 'confirmed') {
       // сегодняшнюю бронь сначала подтверждают (кнопка выше), потом отмечают приход;
@@ -5116,8 +5142,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const timeCame = !hasTime || String(b.iso).slice(0, 16) <= moscowNowIso();
       return `<div class="arr-box">
         <div class="arr-title">Гость пришёл?</div>
-        ${row(`<button class="arr-btn yes big" onclick="markArrival('${uid}', 'arrived')">✓ Пришёл</button>`,
-          timeCame ? `<button class="arr-btn no big" onclick="markArrival('${uid}', 'noshow')">✗ Не пришёл</button>` : '')}
+        <div class="arr-btns"><button class="arr-btn yes big" onclick="markArrival('${uid}', 'arrived')">✓ Пришёл</button>${timeCame ? `<button class="arr-btn no big" onclick="markArrival('${uid}', 'noshow')">✗ Не пришёл</button>` : ''}</div>
         ${timeCame ? '' : '<div class="note" style="margin-top:8px">«Не пришёл» появится, когда наступит время брони.</div>'}
       </div>`;
     }
@@ -5128,31 +5153,36 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const satTxt = sat !== null && sat >= 1 && sat <= 16 * 60 ? ` · уже ${escHtml(shDuration(sat))}` : '';
       return `<div class="arr-box">
         <div class="arr-state arrived">✓ За столом${cameHm ? ' с ' + escHtml(cameHm) : ''}${satTxt}${short(a.by) ? `<span class="note">отметил(а) ${escHtml(short(a.by))}</span>` : ''}</div>
-        ${row(canMark ? `<button class="arr-btn yes big arr-leave" onclick="markLeave('${uid}', 'leave')">Гость ушёл — стол свободен</button>` : '',
-          undo('Отметили по ошибке — гость не приходил', `markArrival('${uid}', 'clear')`))}
+        ${canMark ? `<div class="arr-btns"><button class="arr-btn yes big arr-leave" onclick="markLeave('${uid}', 'leave')">Гость ушёл — стол свободен</button></div>` : ''}
+        ${arrFixHtml([
+          tableInner ? `<div class="arr-fix-item"><div class="arr-fix-label">Не тот стол</div>${tableInner}</div>` : '',
+          fixBtn('Гость не приходил — убрать отметку', `markArrival('${uid}', 'clear')`)
+        ])}
       </div>`;
     }
 
     if (stage === 'was') {
       // вчерашняя бронь: гость был, но когда ушёл — не отметили
       return `<div class="arr-box">
-        <div class="arr-state arrived">✓ Пришёл${a.at ? ' в ' + escHtml(mskHm(a.at)) : ''}<span class="note">Время ухода не отмечено${short(a.by) ? ` · отметил(а) ${escHtml(short(a.by))}` : ''}</span></div>
-        ${row(undo('Отметили по ошибке', `markArrival('${uid}', 'clear')`))}
+        <div class="arr-state arrived">✓ Был${a.at ? ' · пришёл в ' + escHtml(mskHm(a.at)) : ''}<span class="note">Время ухода не отмечено${short(a.by) ? ` · отметил(а) ${escHtml(short(a.by))}` : ''}</span></div>
+        ${arrFixHtml([fixBtn('Гость не приходил — убрать отметку', `markArrival('${uid}', 'clear')`)])}
       </div>`;
     }
 
     if (stage === 'left') {
       const stay = stayMinutes(a);
       return `<div class="arr-box">
-        <div class="arr-state arrived">✓ Пришёл${a.at ? ' в ' + escHtml(mskHm(a.at)) : ''} · ушёл в ${escHtml(mskHm(a.leftAt))}${stay !== null ? ` · ${escHtml(shDuration(stay))}` : ''}<span class="note">Стол свободен${short(a.leftBy) ? ` · уход отметил(а) ${escHtml(short(a.leftBy))}` : ''}</span></div>
-        ${row(sameEvening ? undo('Отметили по ошибке — вернуть за стол', `markLeave('${uid}', 'undo')`) : undo('Отметили по ошибке', `markArrival('${uid}', 'clear')`))}
+        <div class="arr-state left">Был за столом${a.at ? ' с ' + escHtml(mskHm(a.at)) : ''} до ${escHtml(mskHm(a.leftAt))}${stay !== null ? ` · ${escHtml(shDuration(stay))}` : ''}<span class="note">Стол свободен${short(a.leftBy) ? ` · уход отметил(а) ${escHtml(short(a.leftBy))}` : ''}</span></div>
+        ${arrFixHtml([sameEvening
+          ? fixBtn('Гость ещё за столом — вернуть', `markLeave('${uid}', 'undo')`)
+          : fixBtn('Гость не приходил — убрать отметку', `markArrival('${uid}', 'clear')`)])}
       </div>`;
     }
 
     // не пришёл
     return `<div class="arr-box">
       <div class="arr-state noshow">✗ Не пришёл${short(a.by) ? `<span class="note">отметил(а) ${escHtml(short(a.by))}</span>` : ''}</div>
-      ${row(undo('Отметили по ошибке', `markArrival('${uid}', 'clear')`))}
+      ${arrFixHtml([fixBtn('Убрать отметку «Не пришёл»', `markArrival('${uid}', 'clear')`)])}
     </div>`;
   }
 
@@ -5179,7 +5209,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         return;
       }
       b.arrival = data.arrival || null;
-      let msg = status === 'arrived' ? `${b.name}: пришёл` : status === 'noshow' ? `${b.name}: не пришёл` : 'Отметка снята';
+      arrFixOpen = false;
+      let msg = status === 'arrived' ? (bookingStage(b) === 'seated' ? `${b.name}: за столом` : `${b.name}: пришёл`) : status === 'noshow' ? `${b.name}: не пришёл` : 'Отметка снята';
       if (data.cardCreated) msg += ' — создана карточка гостя, визит записан';
       else if (data.visitCreated) msg += ' — визит записан в карточку';
       else if (status === 'arrived') msg += ' — визит за этот день уже был в карточке';
@@ -5218,10 +5249,11 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         return;
       }
       b.arrival = data.arrival || null;
+      arrFixOpen = false;
       const tbl = b.table ? `стол «${b.table}»` : 'стол';
       if (action === 'undo' && data.tableWarning) showToast(`${b.name}: снова за столом. ${data.tableWarning}`, true);
       else if (action === 'leave') showUndoToast(`${b.name}: ушёл — ${tbl} свободен`, () => markLeave(uid, 'undo'), () => {});
-      else showToast(`${b.name}: снова за столом`);
+      else showToast(`${b.name}: за столом`);
     } catch {
       showToast('Нет связи — отметка не сохранилась', true);
     } finally {
@@ -5281,8 +5313,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
     // Стол: выбрал — сразу сохранилось, сменил — пересохранилось (без кнопки «Сохранить»).
     // Рядом крупный номер стола; «Выбрать на схеме» — посадить бронь, нажав на стол в зале.
-    const tableBlockHtml = `
-      <div class="visit-item" style="margin-top:14px;">
+    const tableInner = `
         <div class="bk-table-row">
           <div class="bk-table-big${b.table ? '' : ' none'}">${tableBadgeInner(b.table, 'нет стола')}</div>
           <div style="flex:1;min-width:0;">
@@ -5295,9 +5326,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
           </div>
         </div>
         ${tableConflictWarningHtml('tableConflictWarning')}
-        ${currentBookingSource === 'cur' && can('bookings.assign_table') ? `<button class="btn-ghost" style="margin-top:10px;" onclick="seatFromDetail()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><rect x="3" y="3" width="18" height="18" rx="3"/><rect x="7" y="7" width="4" height="4" rx="1"/><circle cx="16" cy="9" r="2"/><rect x="7" y="14" width="10" height="3.5" rx="1.5"/></svg>Выбрать стол на схеме</button>` : ''}
-      </div>
-    `;
+        ${currentBookingSource === 'cur' && can('bookings.assign_table') ? `<button class="btn-ghost" style="margin-top:10px;" onclick="seatFromDetail()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><rect x="3" y="3" width="18" height="18" rx="3"/><rect x="7" y="7" width="4" height="4" rx="1"/><circle cx="16" cy="9" r="2"/><rect x="7" y="14" width="10" height="3.5" rx="1.5"/></svg>Выбрать стол на схеме</button>` : ''}`;
+    const tableBlockHtml = `<div class="visit-item" style="margin-top:14px;">${tableInner}</div>`;
 
     // Что показывать — по этапу брони (см. bookingStage):
     //   ждёт подтверждения → «Подтвердить»; подтверждена → «Пришёл / Не пришёл»;
@@ -5307,6 +5337,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const closed = bookingClosed(b);
     const pill = BOOKING_STAGE_STYLE[stage] || st;
     const waiting = !b.past && (stage === 'pending' || stage === 'confirmed');
+    // гость сидит за своим столом — выбор стола нужен, только если ошиблись: он в «Отметили по ошибке».
+    // Сел без стола — стол назначают как обычно.
+    const tableInFix = !b.past && stage === 'seated' && !!b.table;
     const confirmHtml = !b.past && !closed && b.status === 'pending' && can('bookings.confirm')
       ? `<button class="btn-cta" id="bkConfirmBtn" onclick="confirmBookingAction()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><path d="M4 12l5 5L20 6"/></svg>Подтвердить</button>` : '';
     const manageHtml = waiting
@@ -5329,9 +5362,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       </div>
       ${confirmHtml}
 
-      ${renderArrivalBlock(b)}
+      ${renderArrivalBlock(b, tableInFix ? tableInner : '')}
 
-      ${b.past ? '<div class="note" style="margin-top:14px">Бронь уже прошла — подтверждать, переносить и отменять её не нужно.</div>' : closed ? '' : tableBlockHtml}
+      ${b.past ? '<div class="note" style="margin-top:14px">Бронь уже прошла — подтверждать, переносить и отменять её не нужно.</div>' : closed || tableInFix ? '' : tableBlockHtml}
 
       ${renderBookingGuestBlock(b)}
 
@@ -11087,7 +11120,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       ? guest.visits.map(v => `
           <div class="visit-item">
             <div class="visit-date"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>${escHtml(v.date ? capFirst(humanDay(v.date, { venue: true })) : '—')}</div>
-            ${v.stay ? `<div class="visit-detail">Пришёл ${escHtml(v.stay.arrived)} · ушёл ${escHtml(v.stay.left)} · ${escHtml(shDuration(v.stay.minutes))}</div>` : ''}
+            ${v.stay ? `<div class="visit-detail">За столом ${escHtml(v.stay.arrived)}–${escHtml(v.stay.left)} · ${escHtml(shDuration(v.stay.minutes))}</div>` : ''}
             ${hookahHtml(v.hookah)}
             ${v.notes ? `<div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>${escHtml(v.notes)}</div>` : ''}
           </div>
