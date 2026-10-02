@@ -984,7 +984,11 @@
     .arr-btn.yes { color: #4ade80; border-color: rgba(74,222,128,0.4); background: rgba(74,222,128,0.08); }
     .arr-btn.no { color: #f87171; border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.08); }
     .arr-btn:disabled { opacity: 0.5; cursor: default; }
-    .arr-btn.arr-leave { flex: 1 1 100%; padding: 12px; font-size: 13.5px; }
+    .arr-btn.big { padding: 14px 12px; font-size: 14px; font-weight: 600; border-radius: 14px; }
+    .arr-btn.yes.big { flex: 2; }
+    .arr-btn.arr-leave { flex: 1 1 100%; }
+    .arr-btn.link { flex: 1 1 100%; min-width: 0; border: none; background: none; padding: 8px 2px 2px; font-size: 12px; text-align: left; text-decoration: underline; text-underline-offset: 3px; color: var(--text-dim, var(--text-sub)); }
+    .arr-box .arr-state:last-child { margin-bottom: 0; }
     .rc-box { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.3); border-radius: 14px; margin: 12px 0 4px; overflow: hidden; }
     .rc-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 14px; cursor: pointer; font-size: 13px; color: #f59e0b; }
     .rc-head small { display: block; font-size: 11px; color: var(--text-muted); margin-top: 2px; }
@@ -5072,44 +5076,83 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
 
   // «Пришёл / Не пришёл» — в день брони и позже (за последние 2 недели)
+  // Этап брони — один на всю бронь: по нему и плашка вверху, и то, какие кнопки показывать.
+  //   pending → confirmed → seated → left      (обычный путь)
+  //             confirmed → noshow             (гость не пришёл)
+  // На каждом этапе — одно главное действие и одна тихая ссылка «отметили по ошибке».
+  const BOOKING_STAGE_STYLE = {
+    seated: { color: '#4ade80', label: 'За столом' },
+    was:    { color: '#4ade80', label: 'Был' },
+    left:   { color: '#9ca3af', label: 'Гость ушёл' },
+    noshow: { color: '#f87171', label: 'Не пришёл' }
+  };
+  function bookingStage(b) {
+    const a = b.arrival;
+    if (a?.status === 'arrived') return a.leftAt ? 'left' : (bookingVenueDay(b.iso) === venueDayStr() ? 'seated' : 'was');
+    if (a?.status === 'noshow') return 'noshow';
+    return b.status === 'pending' ? 'pending' : 'confirmed';
+  }
+  // бронь закрыта: гость ушёл или не пришёл — стол, перенос и отмена уже не нужны
+  function bookingClosed(b) { return ['left', 'noshow'].includes(bookingStage(b)); }
+
   function renderArrivalBlock(b) {
     const day = bookingVenueDay(b.iso);
     if (!b.uid || !day || day > venueDayStr()) return '';
-    // «Не пришёл» — только когда время брони уже наступило (чтобы случайно не освободить стол заранее)
-    const hasTime = /T\d{2}:\d{2}/.test(b.iso || '') && !/T00:00/.test(b.iso || '');
-    const timeCame = !hasTime || String(b.iso).slice(0, 16) <= moscowNowIso();
+    const sameEvening = day === venueDayStr();
+    const stage = bookingStage(b);
+    const canMark = can('bookings.mark_arrival');
     const uid = escJs(b.uid);
     const a = b.arrival;
-    const whoWhen = a ? [a.by ? a.by.replace(/ \(.+\)$/, '') : '', a.at ? new Date(a.at).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : ''].filter(Boolean).join(', ') : '';
-    let state = '';
-    let btns = '';
-    const noBtn = label => timeCame ? `<button class="arr-btn no" onclick="markArrival('${uid}', 'noshow')">${label}</button>` : '';
-    if (!a) {
-      btns = `<button class="arr-btn yes" onclick="markArrival('${uid}', 'arrived')">✓ Пришёл</button>${noBtn('✗ Не пришёл')}`;
-    } else if (a.status === 'arrived') {
-      // у брони есть конец: «Гость ушёл» — стол свободен с этой минуты. Отмечается только в тот же вечер.
-      const sameEvening = day === venueDayStr();
-      const cameHm = a.at ? mskHm(a.at) : '';
-      if (a.leftAt) {
-        const stay = stayMinutes(a);
-        const leftWho = a.leftBy ? a.leftBy.replace(/ \(.+\)$/, '') : '';
-        state = `<div class="arr-state arrived">✓ Пришёл${cameHm ? ' в ' + escHtml(cameHm) : ''} · ушёл в ${escHtml(mskHm(a.leftAt))}${stay !== null ? ` · ${escHtml(shDuration(stay))}` : ''}`
-          + `<span class="note">Стол свободен${leftWho ? ` · уход отметил(а) ${escHtml(leftWho)}` : ''}</span></div>`;
-        btns = `${sameEvening ? `<button class="arr-btn" onclick="markLeave('${uid}', 'undo')">Вернуть за стол</button>` : ''}<button class="arr-btn" onclick="markArrival('${uid}', 'clear')">Снять отметку</button>`;
-      } else {
-        state = `<div class="arr-state arrived">✓ Пришёл${whoWhen ? ` <span class="note">отметил(а) ${escHtml(whoWhen)}</span>` : ''}${sameEvening ? '' : '<span class="note">Время ухода не отмечено</span>'}</div>`;
-        btns = `${sameEvening ? `<button class="arr-btn yes arr-leave" onclick="markLeave('${uid}', 'leave')">Гость ушёл — стол свободен</button>` : ''}${noBtn('Не пришёл')}<button class="arr-btn" onclick="markArrival('${uid}', 'clear')">Снять отметку</button>`;
-      }
-    } else {
-      state = `<div class="arr-state noshow">✗ Не пришёл${whoWhen ? ` <span class="note">отметил(а) ${escHtml(whoWhen)}</span>` : ''}</div>`;
-      btns = `<button class="arr-btn yes" onclick="markArrival('${uid}', 'arrived')">Пришёл</button><button class="arr-btn" onclick="markArrival('${uid}', 'clear')">Снять отметку</button>`;
+    const short = who => who ? who.replace(/ \(.+\)$/, '') : '';
+    const row = (...parts) => { const h = parts.filter(Boolean).join(''); return h ? `<div class="arr-btns">${h}</div>` : ''; };
+    const undo = (label, call) => canMark ? `<button class="arr-btn link" onclick="${call}">${label}</button>` : '';
+
+    if (stage === 'pending' || stage === 'confirmed') {
+      // сегодняшнюю бронь сначала подтверждают (кнопка выше), потом отмечают приход;
+      // у вчерашних (сверка) подтверждать уже нечего — там сразу «пришёл / не пришёл»
+      if (!canMark || (stage === 'pending' && sameEvening && !b.past)) return '';
+      // «Не пришёл» — только когда время брони уже наступило (чтобы случайно не освободить стол заранее)
+      const hasTime = /T\d{2}:\d{2}/.test(b.iso || '') && !/T00:00/.test(b.iso || '');
+      const timeCame = !hasTime || String(b.iso).slice(0, 16) <= moscowNowIso();
+      return `<div class="arr-box">
+        <div class="arr-title">Гость пришёл?</div>
+        ${row(`<button class="arr-btn yes big" onclick="markArrival('${uid}', 'arrived')">✓ Пришёл</button>`,
+          timeCame ? `<button class="arr-btn no big" onclick="markArrival('${uid}', 'noshow')">✗ Не пришёл</button>` : '')}
+        ${timeCame ? '' : '<div class="note" style="margin-top:8px">«Не пришёл» появится, когда наступит время брони.</div>'}
+      </div>`;
     }
-    if (!can('bookings.mark_arrival')) btns = '';
+
+    if (stage === 'seated') {
+      const cameHm = a.at ? mskHm(a.at) : '';
+      const sat = a.at ? Math.round((Date.now() - new Date(a.at)) / 60000) : null;
+      const satTxt = sat !== null && sat >= 1 && sat <= 16 * 60 ? ` · уже ${escHtml(shDuration(sat))}` : '';
+      return `<div class="arr-box">
+        <div class="arr-state arrived">✓ За столом${cameHm ? ' с ' + escHtml(cameHm) : ''}${satTxt}${short(a.by) ? `<span class="note">отметил(а) ${escHtml(short(a.by))}</span>` : ''}</div>
+        ${row(canMark ? `<button class="arr-btn yes big arr-leave" onclick="markLeave('${uid}', 'leave')">Гость ушёл — стол свободен</button>` : '',
+          undo('Отметили по ошибке — гость не приходил', `markArrival('${uid}', 'clear')`))}
+      </div>`;
+    }
+
+    if (stage === 'was') {
+      // вчерашняя бронь: гость был, но когда ушёл — не отметили
+      return `<div class="arr-box">
+        <div class="arr-state arrived">✓ Пришёл${a.at ? ' в ' + escHtml(mskHm(a.at)) : ''}<span class="note">Время ухода не отмечено${short(a.by) ? ` · отметил(а) ${escHtml(short(a.by))}` : ''}</span></div>
+        ${row(undo('Отметили по ошибке', `markArrival('${uid}', 'clear')`))}
+      </div>`;
+    }
+
+    if (stage === 'left') {
+      const stay = stayMinutes(a);
+      return `<div class="arr-box">
+        <div class="arr-state arrived">✓ Пришёл${a.at ? ' в ' + escHtml(mskHm(a.at)) : ''} · ушёл в ${escHtml(mskHm(a.leftAt))}${stay !== null ? ` · ${escHtml(shDuration(stay))}` : ''}<span class="note">Стол свободен${short(a.leftBy) ? ` · уход отметил(а) ${escHtml(short(a.leftBy))}` : ''}</span></div>
+        ${row(sameEvening ? undo('Отметили по ошибке — вернуть за стол', `markLeave('${uid}', 'undo')`) : undo('Отметили по ошибке', `markArrival('${uid}', 'clear')`))}
+      </div>`;
+    }
+
+    // не пришёл
     return `<div class="arr-box">
-      <div class="arr-title">Гость пришёл?</div>
-      ${state}
-      <div class="arr-btns">${btns}</div>
-      ${!a && btns ? `<div class="note" style="margin-top:8px">«Пришёл» запишет визит в карточку гостя — так он попадёт в сегменты. Нет карточки — она создастся по брони.${timeCame ? '' : ' «Не пришёл» появится, когда наступит время брони.'}</div>` : ''}
+      <div class="arr-state noshow">✗ Не пришёл${short(a.by) ? `<span class="note">отметил(а) ${escHtml(short(a.by))}</span>` : ''}</div>
+      ${row(undo('Отметили по ошибке', `markArrival('${uid}', 'clear')`))}
     </div>`;
   }
 
@@ -5256,13 +5299,26 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       </div>
     `;
 
-    const isDone = !b.past && b.arrival?.status === 'arrived' && !!b.arrival.leftAt; // гость ушёл — бронь закрыта
+    // Что показывать — по этапу брони (см. bookingStage):
+    //   ждёт подтверждения → «Подтвердить»; подтверждена → «Пришёл / Не пришёл»;
+    //   за столом → «Гость ушёл» и стол (пересадить); ушёл / не пришёл → только итог.
+    // Перенос и отмена — пока гостя ещё ждут; у закрытой и прошедшей брони их нет.
+    const stage = bookingStage(b);
+    const closed = bookingClosed(b);
+    const pill = BOOKING_STAGE_STYLE[stage] || st;
+    const waiting = !b.past && (stage === 'pending' || stage === 'confirmed');
+    const confirmHtml = !b.past && !closed && b.status === 'pending' && can('bookings.confirm')
+      ? `<button class="btn-cta" id="bkConfirmBtn" onclick="confirmBookingAction()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><path d="M4 12l5 5L20 6"/></svg>Подтвердить</button>` : '';
+    const manageHtml = waiting
+      ? `<div class="btn-row">${can('bookings.edit') ? `<button class="btn-ghost" onclick="openBookingEdit()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:6px;display:inline-block"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Изменить</button>` : ''}
+      ${can('bookings.cancel') ? `<button class="btn-ghost danger" onclick="cancelBookingAction()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg>Отменить бронь</button>` : ''}</div>` : '';
+
     // имя, комментарий и т.п. вводит сам гость в гостевом приложении — экранируем
     el.innerHTML = `
       ${noticeHtml}
       <div class="guest-name">${escHtml(b.name || '')}</div>
       ${b.bookedName ? `<div class="note" style="margin:2px 0 8px">В брони записан как «${escHtml(b.bookedName)}»</div>` : ''}
-      <div class="status-pill" style="background:${st.color}22;color:${st.color};border:1px solid ${st.color}55;">${st.label}</div>
+      <div class="status-pill" style="background:${pill.color}22;color:${pill.color};border:1px solid ${pill.color}55;">${pill.label}</div>
 
       <div class="visit-item" style="margin-top:14px;">
         <div class="visit-date">${escHtml(b.display || '')}</div>
@@ -5271,16 +5327,15 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         ${b.comment ? `<div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>${escHtml(b.comment)}</div>` : ''}
         <div class="visit-detail"><a href="tel:${escHtml((b.phone || '').replace(/[^\d+]/g, ''))}" style="color:var(--text-sub);text-decoration:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="18" x2="14" y2="18"/></svg>${escHtml(b.phone || 'Телефон не указан')}</a>${b.phone ? ` <button type="button" class="copy-btn" onclick="copyPhone('${escJs(b.phone)}')" title="Скопировать номер">${COPY_ICON}Копировать</button>` : ''}</div>
       </div>
+      ${confirmHtml}
 
       ${renderArrivalBlock(b)}
 
+      ${b.past ? '<div class="note" style="margin-top:14px">Бронь уже прошла — подтверждать, переносить и отменять её не нужно.</div>' : closed ? '' : tableBlockHtml}
+
       ${renderBookingGuestBlock(b)}
 
-      ${b.past ? '<div class="note" style="margin-top:14px">Бронь уже прошла — подтверждать, переносить и отменять её не нужно.</div>' : isDone ? '<div class="note" style="margin-top:14px">Гость ушёл, стол закрыт — менять, переносить и отменять бронь не нужно. Если отметили по ошибке — «Вернуть за стол» выше.</div>' : tableBlockHtml}
-
-${(b.past || isDone) ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<button class="btn-cta" id="bkConfirmBtn" onclick="confirmBookingAction()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><path d="M4 12l5 5L20 6"/></svg>Подтвердить</button>` : ''}
-      <div class="btn-row">${can('bookings.edit') ? `<button class="btn-ghost" onclick="openBookingEdit()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:6px;display:inline-block"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Изменить</button>` : ''}
-      ${can('bookings.cancel') ? `<button class="btn-ghost danger" onclick="cancelBookingAction()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg>Отменить бронь</button>` : ''}</div>`}
+      ${manageHtml}
     `;
   }
 
