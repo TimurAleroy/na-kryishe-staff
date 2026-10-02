@@ -605,6 +605,17 @@
       min-width: 0;
     }
     .cal-day.outside { opacity: 0.28; }
+    /* Крупный календарь: у кого нет права ставить смены, он по умолчанию крупнее (кнопка «Крупнее / Мельче») */
+    #screen-schedule.cal-big .cal-grid, #screen-schedule.cal-big .cal-weekdays { gap: 6px; }
+    #screen-schedule.cal-big .cal-weekday { font-size: 13px; }
+    #screen-schedule.cal-big .cal-day { aspect-ratio: 0.78; border-radius: 15px; gap: 5px; }
+    #screen-schedule.cal-big .cal-day-num { font-size: 22px; }
+    #screen-schedule.cal-big .cal-day-time { font-size: 13px; }
+    #screen-schedule.cal-big .cal-day-tag { font-size: 10px; }
+    #screen-schedule.cal-big .cal-day-dot { width: 9px; height: 9px; }
+    #screen-schedule.cal-big .cal-day-badge { font-size: 12.5px; min-width: 21px; height: 21px; }
+    .cal-zoom { display: flex; justify-content: flex-end; margin: 0 0 8px; }
+    .cal-zoom button { background: none; border: 1px solid var(--border); border-radius: 100px; color: var(--text-sub); font-size: 12px; padding: 6px 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
     .cal-day.today { border-color: var(--accent); }
     .cal-day.selected { background: var(--accent-dim); border-color: rgba(184,115,51,0.5); }
     .cal-day-num { font-size: 16px; line-height: 1.15; color: var(--text); }
@@ -1825,6 +1836,7 @@
     </div>
 
     <div id="scheduleMine"></div>
+    <div class="cal-zoom"><button type="button" id="calZoomBtn" onclick="toggleCalZoom()"></button></div>
     <div class="cal-weekdays">
       <div class="cal-weekday">Пн</div><div class="cal-weekday">Вт</div><div class="cal-weekday">Ср</div>
       <div class="cal-weekday">Чт</div><div class="cal-weekday">Пт</div><div class="cal-weekday">Сб</div><div class="cal-weekday">Вс</div>
@@ -2123,6 +2135,8 @@
       <input type="range" class="sv-range" id="svDim" min="0" max="95" step="5" oninput="svChanged()">
       <div class="sv-range-l"><span>светлее</span><span>темнее</span></div>
     </div>
+    <!-- тексты опроса (заголовок, вступление, «спасибо») в приложении не правятся: поля скрыты, гости видят стандартные тексты -->
+    <div style="display:none">
     <div class="form-group">
       <label class="form-label">Заголовок</label>
       <input class="form-input" id="svHeading" maxlength="120" oninput="svChanged()">
@@ -2139,11 +2153,12 @@
       <label class="form-label">После отправки: текст</label>
       <textarea class="form-input" id="svThanksText" maxlength="400"></textarea>
     </div>
+    </div>
     <div class="form-group" id="svLinkBox">
       <label class="form-label">Ссылка и QR-код для печати</label>
       <div id="svLinkInner"></div>
     </div>
-    <div class="poster-note" style="margin-bottom:12px">Пустое поле — стандартный текст. Сами вопросы и шкалы не меняются: от них зависят CSI, NPS и eNPS.</div>
+    <div class="poster-note" style="margin-bottom:12px">Тексты опроса стандартные. Сами вопросы и шкалы не меняются: от них зависят CSI, NPS и eNPS.</div>
     <button class="btn-cta" id="svSubmitBtn" onclick="saveSurvey()">Сохранить</button>
     <div style="height:16px"></div>
   </div>
@@ -3296,7 +3311,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('problems.view')) attentionCards += qcard(icons.problem, 'Проблемы', 'Открытые · сообщить', "openProblems()", { dotId: 'qdotProblems' });
     // «Задачи»: видеть и отмечать готовыми; ставить новую — отдельное право
     if (can('founder_tasks.manage')) {
-      attentionCards += qcard(icons.tasks, 'Задачи', 'От основателя', "openFounderTasks()", { dotId: 'qdotFounderTasks' });
+      attentionCards += qcard(icons.tasks, 'Задачи', 'Что нужно сделать', "openFounderTasks()", { dotId: 'qdotFounderTasks' });
     }
     // «Дубли»: точка загорается, когда есть карточки, которые стоит объединить
     if (can('guests.merge')) attentionCards += qcard(icons.duplicates, 'Дубли', 'Одна карточка на гостя', "openDuplicates()", { dotId: 'qdotDuplicates' });
@@ -7234,9 +7249,28 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     return scheduleEmployeesCache;
   }
 
+  // Масштаб календаря: выбор запоминается; пока не выбирали — крупно у тех, кто смены не ставит (только смотрит)
+  function calIsBig() {
+    let v = null; try { v = localStorage.getItem('staff_cal_big'); } catch {}
+    return v === null ? !can('schedule.edit') : v === '1';
+  }
+  function applyCalZoom() {
+    const big = calIsBig();
+    document.getElementById('screen-schedule').classList.toggle('cal-big', big);
+    const b = document.getElementById('calZoomBtn');
+    if (b) b.innerHTML = big
+      ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>Мельче'
+      : '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>Крупнее';
+  }
+  function toggleCalZoom() {
+    try { localStorage.setItem('staff_cal_big', calIsBig() ? '0' : '1'); } catch {}
+    applyCalZoom();
+  }
+
   async function openSchedule(keepDate) {
     if (!keepDate || !selectedScheduleDate) selectedScheduleDate = todayISO();
     showScreen('schedule');
+    applyCalZoom();
     await loadSchedule();
   }
 
