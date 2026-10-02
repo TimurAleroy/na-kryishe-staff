@@ -4152,12 +4152,15 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
   function renderBookingsList(target) {
     const el = target || document.getElementById('bookingsContent');
-    if (!bookingsListData.length) {
+    // гость ушёл — бронь отработана: из рабочего списка пропадает (в базе, аналитике
+    // и карточке гостя остаётся); индекс сохраняем — по нему открывается бронь
+    const visible = bookingsListData.map((b, idx) => ({ b, idx })).filter(x => !(x.b.arrival?.status === 'arrived' && x.b.arrival.leftAt));
+    if (!visible.length) {
       el.innerHTML = '<div class="empty-state">Ближайших броней пока нет</div>';
       return;
     }
 
-    el.innerHTML = '<div class="booking-grid">' + bookingsListData.map((b, idx) => {
+    el.innerHTML = '<div class="booking-grid">' + visible.map(({ b, idx }) => {
       const st = BOOKING_STATUS_STYLE[b.status] || BOOKING_STATUS_STYLE.pending;
       // В компактном боксе год не нужен — дата и так текущая/близкая,
       // убираем его, чтобы уместить дату, время и имя в одну строку.
@@ -5174,7 +5177,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       b.arrival = data.arrival || null;
       const tbl = b.table ? `стол «${b.table}»` : 'стол';
       if (action === 'undo' && data.tableWarning) showToast(`${b.name}: снова за столом. ${data.tableWarning}`, true);
-      else showToast(action === 'leave' ? `${b.name}: ушёл — ${tbl} свободен` : `${b.name}: снова за столом`);
+      else if (action === 'leave') showUndoToast(`${b.name}: ушёл — ${tbl} свободен`, () => markLeave(uid, 'undo'), () => {});
+      else showToast(`${b.name}: снова за столом`);
     } catch {
       showToast('Нет связи — отметка не сохранилась', true);
     } finally {
