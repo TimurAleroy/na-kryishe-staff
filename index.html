@@ -3193,7 +3193,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const b = svcBadgeInfo(i);
     return `<div class="qcard" onclick="${i.fn}">
         <div class="qcard-icon">${homeIcons[i.icon] || ''}</div>
-        ${b ? `<span class="qcard-badge">${b.n}</span>` : ''}
+        ${b ? `<span class="qcard-badge">${escHtml(b.n)}</span>` : ''}
         <div class="qcard-title">${i.title}</div>
         <div class="qcard-sub${b ? ' warn' : ''}">${b ? escHtml(b.sub) : i.sub}</div>
       </div>`;
@@ -4063,7 +4063,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const metaParts = [];
       if (kindLine) metaParts.push(escHtml(kindLine));
       const arr = b.arrival?.status;
-      const arrHtml = arr ? `<div class="bk-flags"><span class="bk-flag ${arr}">${arr === 'arrived' ? '✓ пришёл' : '✗ не пришёл'}</span></div>` : '';
+      const arrHtml = arr ? `<div class="bk-flags"><span class="bk-flag ${escCls(arr)}">${arr === 'arrived' ? '✓ пришёл' : '✗ не пришёл'}</span></div>` : '';
       return `
         <div class="booking-chip${arr === 'noshow' ? ' noshow' : ''}" style="border-left-color:${st.color}" onclick="openBookingDetail(${idx})" title="${escHtml(st.label)}">
           <div class="bk-chip-main">
@@ -6499,7 +6499,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       if (day !== lastDay) { html += `<div class="au-day">${escHtml(auDayLabel(day))}</div>`; lastDay = day; }
       const time = new Date(it.at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', timeZone: AU_TZ });
       const guestLink = it.type === 'guest' && it.entityId && it.guestName;
-      html += `<div class="au-row${guestLink ? ' click' : ''}"${guestLink ? ` onclick="openGuestCard('${escHtml(escJs(it.entityId))}')"` : ''}>`
+      html += `<div class="au-row${guestLink ? ' click' : ''}"${guestLink ? ` onclick="openGuestCard('${escJs(it.entityId)}')"` : ''}>`
         + `<div class="au-time">${time}</div>`
         + `<div class="au-main"><div class="au-sum">${it.guestName ? `<span class="au-guest">${escHtml(it.guestName)}</span>: ` : ''}${escHtml(it.summary)}</div>`
         + `<div class="au-meta">${escHtml(it.actor)} · ${escHtml(it.typeLabel)}</div></div>`
@@ -6892,9 +6892,9 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
   }
   function tgRowHtml(t) {
     const meta = [TG_SPECIAL_LABEL[t.special], tgWho(t)].filter(Boolean).join(' · ');
-    return `<div class="qrow" onclick="openTagForm('${t.id}')"><span class="tg-dot ${t.color ? 'tg-c-' + t.color : 'none'}"></span>`
+    return `<div class="qrow" onclick="openTagForm('${escJs(t.id)}')"><span class="tg-dot ${t.color ? 'tg-c-' + escCls(t.color) : 'none'}"></span>`
       + `<div style="min-width:0;flex:1"><div class="qrow-t">${escHtml(t.name)}</div>${t.hint ? `<div class="tg-sub">${escHtml(t.hint)}</div>` : ''}${meta ? `<div class="tg-sub tg-meta">${escHtml(meta)}</div>` : ''}</div>`
-      + `<div class="qrow-s">${t.guests} ${ruPlural(t.guests, 'гость', 'гостя', 'гостей')}</div><div class="qrow-chev">›</div></div>`;
+      + `<div class="qrow-s">${Number(t.guests) || 0} ${ruPlural(t.guests, 'гость', 'гостя', 'гостей')}</div><div class="qrow-chev">›</div></div>`;
   }
   function renderTagsAdmin() {
     const el = document.getElementById('tagsContent');
@@ -7043,7 +7043,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     document.getElementById('tgMergeSub').textContent = `«${f.tag.name}» · ${tgGroupLabel(f.group)}`;
     document.getElementById('tgMergeContent').innerHTML = others.length
       ? `<div class="poster-note" style="margin:0 0 10px">Выберите тег, который останется. Все гости с «${escHtml(f.tag.name)}» получат его, а «${escHtml(f.tag.name)}» исчезнет.</div><div class="tg-list">`
-        + others.map(x => `<div class="qrow" onclick="doTagMerge('${x.id}')"><span class="tg-dot ${x.color ? 'tg-c-' + x.color : 'none'}"></span><div class="qrow-t">${escHtml(x.name)}</div><div class="qrow-s">${x.guests} ${ruPlural(x.guests, 'гость', 'гостя', 'гостей')}</div><div class="qrow-chev">›</div></div>`).join('') + '</div>'
+        + others.map(x => `<div class="qrow" onclick="doTagMerge('${escJs(x.id)}')"><span class="tg-dot ${x.color ? 'tg-c-' + escCls(x.color) : 'none'}"></span><div class="qrow-t">${escHtml(x.name)}</div><div class="qrow-s">${Number(x.guests) || 0} ${ruPlural(x.guests, 'гость', 'гостя', 'гостей')}</div><div class="qrow-chev">›</div></div>`).join('') + '</div>'
       : '<div class="empty-state">В этой группе нет других тегов</div>';
     showScreen('tag-merge');
   }
@@ -8985,7 +8985,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     const d = sgData;
     if (!d) return;
     let html = `<select class="form-input" style="margin-top:4px" onchange="sgSetMonth(this.value)">
-      ${d.months.map((m, i) => `<option value="${m.value}" ${m.value === d.month ? 'selected' : ''}>${escHtml(m.label)}${i === 0 ? ' — по сегодня' : ''}</option>`).join('')}
+      ${d.months.map((m, i) => `<option value="${escHtml(m.value)}" ${m.value === d.month ? 'selected' : ''}>${escHtml(m.label)}${i === 0 ? ' — по сегодня' : ''}</option>`).join('')}
     </select>`;
     html += `<div class="sg-period">Было на ${escHtml(fmtDayMonth(d.startAsOf))} → ${d.isCurrent ? 'сейчас' : 'стало на ' + escHtml(fmtDayMonth(d.endAsOf))}</div>`;
 
@@ -9003,14 +9003,14 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       const good = x.rank >= 3 ? x.delta > 0 : x.delta < 0;
       const deltaCls = x.delta === 0 ? '' : good ? 'up' : 'down';
       const deltaText = x.delta === 0 ? '±0' : x.delta > 0 ? `+${x.delta}` : `−${-x.delta}`;
-      return `<div class="sg-row rfm-${x.key}" onclick="openGuestList('${x.key}', { asOf: '${d.endAsOf}', back: 'segments' })">
+      return `<div class="sg-row rfm-${escCls(x.key)}" onclick="openGuestList('${escJs(x.key)}', { asOf: '${escJs(d.endAsOf)}', back: 'segments' })">
         <div class="sg-head"><span class="rfm-dot"></span><span class="sg-name">${escHtml(x.name)}</span><span class="sg-count">${x.end}</span><span class="sg-delta ${deltaCls}" title="Было ${x.start}">${deltaText}</span></div>
         <div class="sg-bar"><span style="width:${Math.round((x.end / max) * 100)}%"></span></div>
         <div class="sg-desc">${escHtml(x.description)}<span class="sg-was">· было ${x.start}</span></div>
       </div>`;
     }).join('');
     if (d.none.end) {
-      html += `<button class="link-btn" onclick="openGuestList('none', { asOf: '${d.endAsOf}', back: 'segments' })">Карточек без визитов: ${d.none.end} →</button>`;
+      html += `<button class="link-btn" onclick="openGuestList('none', { asOf: '${escJs(d.endAsOf)}', back: 'segments' })">Карточек без визитов: ${d.none.end} →</button>`;
     }
 
     html += '<div class="sec">Переходы за месяц</div>';
@@ -10003,8 +10003,8 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
   // Если бронировал 3+ раза — подсвечиваем: явный сигнал что пора завести карточку
   function renderGeneralGuestCard(g) {
     // имя приходит из гостевого приложения (его вводит сам гость) — экранируем и для JS, и для HTML
-    const nameEsc = escHtml(escJs(g.name || ''));
-    const phoneEsc = escHtml(escJs(g.phone || ''));
+    const nameEsc = escJs(g.name || '');
+    const phoneEsc = escJs(g.phone || '');
     const isFrequent = (g.bookingsCount || 0) >= 3;
 
     const borderColor = isFrequent ? 'rgba(184,115,51,0.7)' : 'rgba(184,115,51,0.35)';
@@ -10069,7 +10069,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
         return;
       }
 
-      const phoneEsc = escHtml(escJs(phone));
+      const phoneEsc = escJs(phone);
       resultsEl.innerHTML = `<div class="empty-state">Гостя с этим номером нет ни в карточках, ни в бронях.</div>
         <button class="btn-cta" onclick="openNewGuest('', '${phoneEsc}')">Создать карточку с этим номером</button>`;
     } catch {
@@ -10440,7 +10440,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
   }
   function tagColorCls(group, name) {
     const t = tagEntry(group, name);
-    return t && t.color ? ` tg-col tg-c-${t.color}` : '';
+    return t && t.color ? ` tg-col tg-c-${escCls(t.color)}` : '';
   }
   function tagHintFor(group, name) {
     if (tagCatalog) { const t = tagEntry(group, name); return t && t.hint ? t.hint : ''; }
@@ -10492,9 +10492,15 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
   function escHtml(s) {
     return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
+  // Значение для строки JS внутри атрибута: onclick="fn('${escJs(x)}')".
+  // Сначала экранируем для JS (обратная черта, кавычка, переводы строк), затем для HTML: иначе кавычка " или
+  // запись вида &#39; в названии (тега, подраздела меню) закрывала бы атрибут и в страницу попадал чужой код.
   function escJs(s) {
-    return String(s ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    return escHtml(String(s ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+      .replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029'));
   }
+  // Для имён CSS-классов из данных сервера: только буквы, цифры, дефис и подчёркивание
+  function escCls(s) { return String(s ?? '').replace(/[^A-Za-z0-9_-]/g, ''); }
 
   function openTagAdd(group) {
     tagAddGroup = (tagAddGroup === group) ? null : group;
