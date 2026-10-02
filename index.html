@@ -1090,6 +1090,30 @@
     .cl-bar { height: 4px; border-radius: 4px; background: rgba(240,223,192,0.08); margin-top: 7px; overflow: hidden; }
     .cl-bar i { display: block; height: 100%; background: var(--accent); border-radius: 4px; transition: width .2s; }
     .cl-sent { font-size: 12.5px; color: #4ade80; margin: 0 2px 12px; }
+    /* Смена: плашка с кнопкой на главном экране и экран «Кто на смене» (основатель, администратор) */
+    .shift-bar { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; }
+    .shift-bar.on { border-color: rgba(74,222,128,0.35); }
+    .shift-bar-t { min-width: 0; }
+    .shift-bar-h { font-size: 13.5px; color: var(--text); line-height: 1.35; }
+    .shift-bar-h i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #4ade80; margin-right: 7px; box-shadow: 0 0 8px rgba(74,222,128,0.6); vertical-align: 1px; }
+    .shift-bar-s { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+    .shift-btn { flex: 0 0 auto; border: 1px solid rgba(184,115,51,0.5); background: var(--accent-dim); color: var(--accent); border-radius: 100px; padding: 10px 16px; font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap; }
+    .shift-btn.primary { background: var(--accent); color: #140B00; border-color: var(--accent); font-weight: 500; }
+    .shift-btn:disabled { opacity: 0.5; cursor: default; }
+    #shDays { gap: 6px; flex-wrap: nowrap; margin-bottom: 4px; }
+    #shDays .chip { padding: 8px 11px; font-size: 12.5px; white-space: nowrap; flex: 1; text-align: center; }
+    .sh-sum { font-size: 12.5px; color: var(--text-sub); margin: 12px 2px 10px; line-height: 1.5; }
+    .sh-sum b { color: var(--text); font-weight: 500; }
+    .sh-row { display: flex; align-items: center; gap: 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 11px 12px; margin-bottom: 6px; }
+    .sh-time { flex: 0 0 42px; font-size: 14px; color: var(--accent); font-variant-numeric: tabular-nums; }
+    .sh-main { min-width: 0; flex: 1; }
+    .sh-name { font-size: 13.5px; color: var(--text); line-height: 1.35; }
+    .sh-role { font-size: 11.5px; color: var(--text-muted); margin-top: 1px; }
+    .sh-state { flex: 0 0 auto; text-align: right; font-size: 12px; line-height: 1.35; }
+    .sh-state small { display: block; font-size: 11px; color: var(--text-muted); }
+    .sh-state.on { color: #4ade80; }
+    .sh-state.closed { color: var(--text); }
+    .sh-state.forgot { color: #f59e0b; }
     .app-choice { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
     .app-choice-btn { text-align: left; padding: 13px 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; cursor: pointer; }
     .app-choice-btn:active { background: var(--accent-dim); }
@@ -2551,6 +2575,22 @@
   </div>
 </div>
 
+<!-- СМЕНА: кто и когда открыл и закрыл (основатель, администратор) -->
+<div class="screen" id="screen-shifts">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('home')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Кто на смене</h1><p>Когда открыли и закрыли</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div class="chip-row" id="shDays"></div>
+    <div id="shList"><div class="loading">Загружаю...</div></div>
+    <button class="btn-ghost" onclick="loadShifts()">Обновить</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
 <!-- GUEST CARD -->
 <div class="screen" id="screen-card">
   <div class="header">
@@ -2752,9 +2792,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     currentPerms = new Set(list);
   }
   function fallbackPerms(jobRole) {
-    const base = ['guests.view', 'guests.create', 'guests.edit', 'tags.use', 'visits.record', 'guests.birthdays', 'guests.vip_list', 'checklist.use', 'schedule.view', 'menu.view', 'problems.view', 'problems.report', 'problems.work_own_role'];
+    const base = ['guests.view', 'guests.create', 'guests.edit', 'tags.use', 'visits.record', 'guests.birthdays', 'guests.vip_list', 'checklist.use', 'shift.mark', 'schedule.view', 'menu.view', 'problems.view', 'problems.report', 'problems.work_own_role'];
     const own = { 'Бармен': ['menu.stoplist_drinks'], 'Повар': ['menu.stoplist_food'], 'КМ': ['menu.stoplist_hookah'] }[jobRole] || [];
-    const admin = ['stories.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage'];
+    const admin = ['shifts.review', 'stories.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage'];
     const owner = ['surveys.manage', 'tags.manage', 'audit.view', 'settings.manage', 'founder_tasks.create', 'marketing.send', 'marketing.log', 'analytics.view', 'segments.view', 'feedback.view', 'guests.table', 'candidates.view'];
     if (jobRole === 'Основатель') return base.concat(admin, owner);
     if (jobRole === 'Администратор') return base.concat(admin);
@@ -3171,6 +3211,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const sticky = document.getElementById('cardSticky');
     if (sticky) sticky.style.display = 'none';
 
+    myShift = { loaded: false, open: null, busy: false, err: false };
     // главный экран и боковые панели — пустые до следующего входа
     const grid = document.getElementById('quickActionsGrid');
     if (grid) grid.innerHTML = '';
@@ -3299,6 +3340,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       problem: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2L2 20h20L12 2z"/><line x1="12" y1="10" x2="12" y2="14"/><line x1="12" y1="17" x2="12" y2="17"/></svg>',
       events: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M12 3l1.3 5.7L19 10l-5.7 1.3L12 17l-1.3-5.7L5 10l5.7-1.3L12 3z"/></svg>',
       guestsTable: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="10" x2="9" y2="20"/></svg>',
+      shifts: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>',
       checklist: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>',
       schedule: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>',
       stoplist: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="9"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
@@ -3327,6 +3369,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     // Что показывать — решают права сотрудника (основатель выдаёт их галочками на экране «Сотрудники»)
     let shiftCards = '';
     if (can('checklist.use')) shiftCards += qcard(icons.checklist, 'Чек-лист', 'Смена', "openChecklist()");
+    if (can('shifts.review')) shiftCards += qcard(icons.shifts, 'Кто на смене', 'Открыл · закрыл', "openShifts()");
     if (can('schedule.view')) shiftCards += qcard(icons.schedule, 'График', 'Кто когда работает', "openSchedule()");
     // Стоп-лист: официант принимает заказы и должен знать, чего нет
     if (can('menu.view')) shiftCards += qcard(icons.stoplist, 'Стоп-лист', 'Чего нет в меню', "openStoplist()");
@@ -3395,6 +3438,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     }
 
     let html = '';
+    // Кнопки «Открыть смену» / «Закрыть смену» — наверху главного экрана (у основателя их нет: он только смотрит)
+    if (can('shift.mark') && currentJobRole !== 'Основатель') html += `<div class="shift-bar${myShift.open ? ' on' : ''}" id="shiftBar">${shiftBarHtml()}</div>`;
     if (attentionCards) html += qgroup('Внимание') + attentionCards;
     if (shiftCards) html += qgroup('Смена') + shiftCards;
     if (guestsCards) html += qgroup('Гости') + guestsCards;
@@ -3413,6 +3458,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   async function refreshQuickActionStatus() {
     quickStatusAt = Date.now();
     refreshPerms();
+    if (can('shift.mark') && currentJobRole !== 'Основатель') loadMyShift();
     if (can('problems.view')) try {
       const res = await fetch(`${PROXY_BASE}/api/staff/problems?pin=${getPin()}`);
       if (res.ok) {
@@ -8251,6 +8297,128 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
   }
 
 
+  // ─── СМЕНА: «открыл» и «закрыл» ───
+  // Сотрудник нажимает кнопку наверху главного экрана. Основатель и администратор на экране «Кто на смене»
+  // видят, кто и во сколько открыл и закрыл (сегодня и вчера; день заведения до 06:00 — ещё вчерашний).
+  var myShift = { loaded: false, open: null, busy: false, err: false };
+  function shiftBarHtml() {
+    if (!myShift.loaded) {
+      return myShift.err
+        ? `<div class="shift-bar-t"><div class="shift-bar-h">Не удалось проверить смену</div><div class="shift-bar-s">Нет связи с сервером</div></div><button type="button" class="shift-btn" onclick="loadMyShift()">Повторить</button>`
+        : `<div class="shift-bar-t"><div class="shift-bar-h">Смена</div><div class="shift-bar-s">Проверяю…</div></div>`;
+    }
+    if (myShift.open) {
+      return `<div class="shift-bar-t"><div class="shift-bar-h"><i></i>Вы на смене с ${escHtml(myShift.open.opened)}</div><div class="shift-bar-s">Уходя, нажмите «Закрыть смену»</div></div>`
+        + `<button type="button" class="shift-btn" ${myShift.busy ? 'disabled' : ''} onclick="shiftClose()">Закрыть смену</button>`;
+    }
+    return `<div class="shift-bar-t"><div class="shift-bar-h">Смена не открыта</div><div class="shift-bar-s">Нажмите, когда приступили к работе</div></div>`
+      + `<button type="button" class="shift-btn primary" ${myShift.busy ? 'disabled' : ''} onclick="shiftOpen()">Открыть смену</button>`;
+  }
+  function renderShiftBar() {
+    const el = document.getElementById('shiftBar');
+    if (!el) return;
+    el.className = 'shift-bar' + (myShift.open ? ' on' : '');
+    el.innerHTML = shiftBarHtml();
+  }
+  async function loadMyShift() {
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/shift?pin=${getPin()}`);
+      if (!res.ok) throw new Error('status ' + res.status);
+      const d = await res.json();
+      myShift.open = d.open || null;
+      myShift.loaded = true;
+      myShift.err = false;
+    } catch {
+      if (!myShift.loaded) myShift.err = true; // уже знаем состояние — при мигании связи его не затираем
+    }
+    renderShiftBar();
+  }
+  async function shiftAction(kind) {
+    if (myShift.busy) return;
+    myShift.busy = true; renderShiftBar();
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/shift/${kind}?pin=${getPin()}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pin: getPin() })
+      });
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 409) { myShift.open = null; myShift.loaded = true; notify(await responseError(res, 'Смена не открыта')); return; }
+      if (!res.ok) { notify(await responseError(res, kind === 'open' ? 'Смена не открылась — попробуйте ещё раз' : 'Смена не закрылась — попробуйте ещё раз')); return; }
+      const d = await res.json().catch(() => ({}));
+      myShift.open = d.open || null;
+      myShift.loaded = true;
+      showToast(kind === 'open' ? `Смена открыта${d.open ? ' · ' + d.open.opened : ''}` : `Смена закрыта${d.closed ? ' · ' + d.closed : ''}`);
+    } catch {
+      notify('Нет связи — отметка не сохранилась, попробуйте ещё раз');
+    } finally {
+      myShift.busy = false;
+      renderShiftBar();
+    }
+  }
+  function shiftOpen() { return shiftAction('open'); }
+  async function shiftClose() {
+    if (!await askConfirm('Закрыть смену? Время ухода запишется сейчас.', { ok: 'Закрыть смену' })) return;
+    return shiftAction('close');
+  }
+
+  // Экран для основателя и администратора
+  var sh = { days: [], sel: 0, seq: 0 };
+  function openShifts() {
+    sh.sel = 0;
+    showScreen('shifts');
+    loadShifts();
+  }
+  async function loadShifts(quiet) {
+    const seq = ++sh.seq;
+    const list = document.getElementById('shList');
+    if (!quiet) list.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/shifts?pin=${getPin()}`);
+      if (seq !== sh.seq) return;
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить смены'));
+      const d = await res.json();
+      if (seq !== sh.seq) return;
+      sh.days = Array.isArray(d.days) ? d.days : [];
+      renderShifts();
+    } catch (e) {
+      if (seq !== sh.seq || quiet) return;
+      list.innerHTML = errorStateHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером', 'loadShifts()');
+    }
+  }
+  function setShiftsDay(i) { sh.sel = i; renderShifts(); }
+  function shDuration(min) {
+    if (min == null) return '';
+    const h = Math.floor(min / 60), m = min % 60;
+    return h ? `${h} ч${m ? ' ' + m + ' мин' : ''}` : `${m} мин`;
+  }
+  function renderShifts() {
+    document.getElementById('shDays').innerHTML = sh.days.map((d, i) => `<div class="chip${i === sh.sel ? ' selected' : ''}" onclick="setShiftsDay(${i})">${escHtml(d.label)}</div>`).join('');
+    const day = sh.days[sh.sel];
+    const list = document.getElementById('shList');
+    if (!day) { list.innerHTML = '<div class="empty-state">Нет данных</div>'; return; }
+    if (!day.shifts.length) { list.innerHTML = `<div class="empty-state">${sh.sel === 0 ? 'Пока никто не открыл смену' : 'Вчера никто не отмечал смену'}</div>`; return; }
+    const onNow = day.shifts.filter(x => x.status === 'open').length;
+    const people = new Set(day.shifts.map(x => x.employee)).size;
+    const sum = sh.sel === 0
+      ? `Сейчас на смене: <b>${onNow}</b> · всего отметились: <b>${people}</b>`
+      : `Отметились: <b>${people}</b>`;
+    const row = (x) => {
+      let state;
+      if (x.status === 'open') state = `<div class="sh-state on">на смене</div>`;
+      else if (x.status === 'closed') state = `<div class="sh-state closed">закрыл ${escHtml(x.closed)}<small>${escHtml(shDuration(x.minutes))}</small></div>`;
+      else state = `<div class="sh-state forgot">не закрыта</div>`;
+      return `<div class="sh-row"><div class="sh-time">${escHtml(x.opened)}</div>`
+        + `<div class="sh-main"><div class="sh-name">${escHtml(x.employee)}</div><div class="sh-role">${escHtml(x.role)}</div></div>${state}</div>`;
+    };
+    list.innerHTML = `<div class="sh-sum">${sum}</div>` + day.shifts.map(row).join('');
+  }
+  // Пока экран открыт, обновляем его раз в минуту — основатель видит, как люди приходят и уходят
+  setInterval(() => {
+    const scr = document.getElementById('screen-shifts');
+    if (scr && scr.classList.contains('active') && !document.hidden) loadShifts(true);
+  }, 60000);
+
   // ─── ОБЩЕЕ ДЛЯ РАССЫЛОК / АНАЛИТИКИ / ОБРАТНОЙ СВЯЗИ ──
 
   function ruPlural(n, one, few, many) {
@@ -10087,7 +10255,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules'];
+  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules'];
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
 
