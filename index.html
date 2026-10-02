@@ -984,6 +984,7 @@
     .arr-btn.yes { color: #4ade80; border-color: rgba(74,222,128,0.4); background: rgba(74,222,128,0.08); }
     .arr-btn.no { color: #f87171; border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.08); }
     .arr-btn:disabled { opacity: 0.5; cursor: default; }
+    .arr-btn.arr-leave { flex: 1 1 100%; padding: 12px; font-size: 13.5px; }
     .rc-box { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.3); border-radius: 14px; margin: 12px 0 4px; overflow: hidden; }
     .rc-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 14px; cursor: pointer; font-size: 13px; color: #f59e0b; }
     .rc-head small { display: block; font-size: 11px; color: var(--text-muted); margin-top: 2px; }
@@ -1079,17 +1080,6 @@
     .undo-toast { display: flex; align-items: center; gap: 16px; pointer-events: auto; }
     .undo-toast:not(.show) { pointer-events: none; }
     .undo-toast button { background: none; border: none; color: var(--accent); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; padding: 4px 2px; }
-    .cl-row { cursor: pointer; }
-    .cl-box { width: 30px; height: 30px; border-radius: 10px; background: rgba(184,115,51,0.1); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .15s, border-color .15s; }
-    .cl-box svg { display: none; }
-    .cl-row.on .cl-box { background: var(--accent-dim); border-color: rgba(184,115,51,0.5); box-shadow: 0 0 10px rgba(184,115,51,0.25); }
-    .cl-row.on .cl-box svg { display: block; }
-    .cl-row.on .info-row-value { color: var(--text-sub); }
-    .cl-progress { font-size: 12.5px; color: var(--text-sub); margin: 0 2px 12px; }
-    .cl-progress b { color: var(--accent); font-weight: 500; }
-    .cl-bar { height: 4px; border-radius: 4px; background: rgba(240,223,192,0.08); margin-top: 7px; overflow: hidden; }
-    .cl-bar i { display: block; height: 100%; background: var(--accent); border-radius: 4px; transition: width .2s; }
-    .cl-sent { font-size: 12.5px; color: #4ade80; margin: 0 2px 12px; }
     /* Смена: плашка с кнопкой на главном экране и экран «Кто на смене» (основатель, администратор) */
     .shift-bar { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; }
     .shift-bar.on { border-color: rgba(74,222,128,0.35); }
@@ -2557,24 +2547,6 @@
   </div>
 </div>
 
-<!-- ЧЕК-ЛИСТ СМЕНЫ -->
-<div class="screen" id="screen-checklist">
-  <div class="header">
-    <div class="back-btn" onclick="showScreen('home')">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
-    </div>
-    <div><h1 style="font-size:14px;letter-spacing:1px;">Чек-лист смены</h1></div>
-  </div>
-  <div style="padding:0 16px">
-    <div class="chip-row" style="margin-bottom:16px;">
-      <div class="chip selected" data-value="Открытие" onclick="switchChecklistType(this)">Открытие</div>
-      <div class="chip" data-value="Закрытие" onclick="switchChecklistType(this)">Закрытие</div>
-    </div>
-    <div id="checklistItems"></div>
-    <button class="btn-cta" id="checklistSubmitBtn" onclick="completeChecklist()">Готово, отметить смену</button>
-  </div>
-</div>
-
 <!-- СМЕНА: кто и когда открыл и закрыл (основатель, администратор) -->
 <div class="screen" id="screen-shifts">
   <div class="header">
@@ -2792,7 +2764,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     currentPerms = new Set(list);
   }
   function fallbackPerms(jobRole) {
-    const base = ['guests.view', 'guests.create', 'guests.edit', 'tags.use', 'visits.record', 'guests.birthdays', 'guests.vip_list', 'checklist.use', 'shift.mark', 'schedule.view', 'menu.view', 'problems.view', 'problems.report', 'problems.work_own_role'];
+    const base = ['guests.view', 'guests.create', 'guests.edit', 'tags.use', 'visits.record', 'guests.birthdays', 'guests.vip_list', 'shift.mark', 'schedule.view', 'menu.view', 'problems.view', 'problems.report', 'problems.work_own_role'];
     const own = { 'Бармен': ['menu.stoplist_drinks'], 'Повар': ['menu.stoplist_food'], 'КМ': ['menu.stoplist_hookah'] }[jobRole] || [];
     const admin = ['shifts.review', 'stories.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage'];
     const owner = ['surveys.manage', 'tags.manage', 'audit.view', 'settings.manage', 'founder_tasks.create', 'marketing.send', 'marketing.log', 'analytics.view', 'segments.view', 'feedback.view', 'guests.table', 'candidates.view'];
@@ -3341,7 +3313,6 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       events: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M12 3l1.3 5.7L19 10l-5.7 1.3L12 17l-1.3-5.7L5 10l5.7-1.3L12 3z"/></svg>',
       guestsTable: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="10" x2="9" y2="20"/></svg>',
       shifts: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>',
-      checklist: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>',
       schedule: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>',
       stoplist: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="9"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
       bookings: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><path d="M8 14l2 2 4-4"/></svg>',
@@ -3368,7 +3339,6 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     homeIcons = icons;
     // Что показывать — решают права сотрудника (основатель выдаёт их галочками на экране «Сотрудники»)
     let shiftCards = '';
-    if (can('checklist.use')) shiftCards += qcard(icons.checklist, 'Чек-лист', 'Смена', "openChecklist()");
     if (can('shifts.review')) shiftCards += qcard(icons.shifts, 'Кто на смене', 'Открыл · закрыл', "openShifts()");
     if (can('schedule.view')) shiftCards += qcard(icons.schedule, 'График', 'Кто когда работает', "openSchedule()");
     // Стоп-лист: официант принимает заказы и должен знать, чего нет
@@ -3678,7 +3648,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   let bookingsPollBusy = false;
   let bookingsLoadedOnce = false;
   function bookingsSig(list) {
-    return JSON.stringify((list || []).map(b => [b.entry, b.status, b.table || '', b.arrival?.status || '', b.guests || '', b.iso || '', b.name || '']));
+    return JSON.stringify((list || []).map(b => [b.entry, b.status, b.table || '', b.arrival?.status || '', b.arrival?.leftAt || '', b.guests || '', b.iso || '', b.name || '']));
   }
   function bookingsUiBusy() {
     const active = id => document.getElementById('screen-' + id)?.classList.contains('active');
@@ -4071,6 +4041,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     for (const b of bookingsListData) {
       if (!b.table || !b.iso) continue;
       if (b.arrival?.status === 'noshow') continue; // не пришёл — стол свободен
+      if (b.arrival?.leftAt) continue;               // гость ушёл — стол свободен
       if (excludeEntry && b.entry === excludeEntry) continue;
       if (bookingVenueDay(b.iso) !== dateStr) continue;
       occupied[b.table] = { name: b.name, time: b.iso.slice(11, 16) || '' };
@@ -4199,7 +4170,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const metaParts = [];
       if (kindLine) metaParts.push(escHtml(kindLine));
       const arr = b.arrival?.status;
-      const arrHtml = arr ? `<div class="bk-flags"><span class="bk-flag ${escCls(arr)}">${arr === 'arrived' ? '✓ пришёл' : '✗ не пришёл'}</span></div>` : '';
+      const leftHm = arr === 'arrived' && b.arrival.leftAt ? mskHm(b.arrival.leftAt) : '';
+      const arrHtml = arr ? `<div class="bk-flags"><span class="bk-flag ${escCls(arr)}">${arr === 'arrived' ? (leftHm ? `✓ был · ушёл ${escHtml(leftHm)}` : '✓ пришёл') : '✗ не пришёл'}</span></div>` : '';
       return `
         <div class="booking-chip${arr === 'noshow' ? ' noshow' : ''}" style="border-left-color:${st.color}" onclick="openBookingDetail(${idx})" title="${escHtml(st.label)}">
           <div class="bk-chip-main">
@@ -4346,8 +4318,34 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     let day = m[1], start = hh * 60 + mm;
     if (hh < DAY_SPLIT_HOUR) { day = shiftDateStr(day, -1); start += 24 * 60; }
     // до закрытия; бронь уже после закрытия (редкость) — просто короткая полоса
-    const end = Math.max(VENUE_CLOSE_MIN, start + 30);
-    return { day, start, end };
+    let end = Math.max(VENUE_CLOSE_MIN, start + 30);
+    // гость ушёл («Гость ушёл» в брони) — стол занят только до этой минуты, дальше свободен
+    let left = false;
+    if (b.arrival?.status === 'arrived' && b.arrival.leftAt) {
+      const lm = venueMinOf(b.arrival.leftAt);
+      // Схема показывает время шагами по 15 минут («Сейчас» = начало текущего шага), поэтому конец округляем вниз
+      // до шага: ушёл в 21:07 — в 21:00 стол уже свободен. Иначе он оставался бы «занят» до 21:15.
+      // Ушёл раньше времени брони — конец не позже начала: такая бронь стол не занимает вовсе.
+      if (lm !== null) { end = Math.floor(lm / 15) * 15; left = true; }
+    }
+    return { day, start, end, left };
+  }
+  // Время по Москве «ЧЧ:ММ» и минуты от полуночи дня заведения (после полуночи до 06:00 — это ещё вчерашний вечер)
+  function mskHm(iso) {
+    const d = new Date(iso);
+    return isNaN(d) ? '' : d.toLocaleTimeString('ru-RU', { timeZone: 'Europe/Moscow', hour: '2-digit', minute: '2-digit' });
+  }
+  function venueMinOf(iso) {
+    const hm = mskHm(iso);
+    if (!hm) return null;
+    const h = Number(hm.slice(0, 2));
+    return h * 60 + Number(hm.slice(3, 5)) + (h < DAY_SPLIT_HOUR ? 24 * 60 : 0);
+  }
+  // Сколько гость просидел: от отметки «Пришёл» до «Гость ушёл»
+  function stayMinutes(a) {
+    if (!a || !a.at || !a.leftAt) return null;
+    const m = Math.round((new Date(a.leftAt) - new Date(a.at)) / 60000);
+    return isNaN(m) ? null : Math.max(0, m);
   }
 
   // Брони выбранного дня: { b, idx, start, end, table (стол схемы или null) }
@@ -4357,7 +4355,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       if (b.arrival?.status === 'noshow') return; // не пришёл — стол на схеме и графике свободен
       const slot = bookingSlot(b);
       if (!slot || slot.day !== day) return;
-      out.push({ b, idx, start: slot.start, end: slot.end, table: hallTableFor(b.table) });
+      out.push({ b, idx, start: slot.start, end: slot.end, left: !!slot.left, table: hallTableFor(b.table) });
     });
     return out.sort((a, c) => a.start - c.start);
   }
@@ -4484,7 +4482,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const minDay = venueNow().day;
     const day = hallDayBookings(hallDate);
     const guests = day.reduce((a, x) => a + (Number(x.b.guests) || 0), 0);
-    const noTable = day.filter(x => !x.b.table).length;
+    const noTable = day.filter(x => !x.b.table && !x.left).length; // кто уже ушёл, стола не ждёт
     const pending = day.filter(x => x.b.status === 'pending').length;
     el.innerHTML = `${tabs}
       <div class="hz-datebar">
@@ -4682,7 +4680,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function tableStateAt(tableKey, items, t) {
     const mine = items.filter(it => it.table && it.table.key === tableKey);
     const cur = mine.filter(it => it.start <= t && t < it.end);
-    const next = mine.find(it => it.start > t);
+    const next = mine.find(it => it.start > t && !it.left); // гость уже был и ушёл — такая бронь не «ожидается»
     let state = 'free';
     if (cur.length > 1) state = 'conflict';
     else if (cur.length === 1) state = cur[0].b.status === 'pending' ? 'pending' : 'busy';
@@ -4855,14 +4853,14 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     let svg = `<svg viewBox="0 0 ${zone.width} ${zone.height}" class="hz-svg${seating ? ' hz-seating' : ''}" data-w="${zone.width}" xmlns="http://www.w3.org/2000/svg">${zone.decor.join('')}`;
     for (const tb of zone.tables) {
       const st = states[tb.key];
-      const cls = ['hz-t', st.state, hallSelectedTable === tb.key ? 'sel' : '', seating && !st.mine.length ? 'seat-ok' : '', seating && hallSeatPick === tb.key ? 'seat-pick' : ''].join(' ');
+      const cls = ['hz-t', st.state, hallSelectedTable === tb.key ? 'sel' : '', seating && !st.mine.some(it => !it.left) ? 'seat-ok' : '', seating && hallSeatPick === tb.key ? 'seat-pick' : ''].join(' ');
       svg += `<g class="${cls}" data-table="${escHtml(tb.key)}" onclick="hallTableClick('${escJs(tb.key)}')">${tableTicksSvg(tb)}${tableShapeSvg(tb)}${tableTextSvg(tb)}</g>`;
     }
     for (const tb of zone.tables) svg += labelSvg(tb, tableLabelParts(states[tb.key], t, tb.labelMax || 100));
     svg += '</svg>';
 
     const offPlan = items.filter(it => !it.table && it.b.table); // стол назначен, но не на этой схеме
-    const waiting = items.filter(it => !it.b.table);             // брони без стола — посадить со схемы
+    const waiting = items.filter(it => !it.b.table && !it.left); // брони без стола — посадить со схемы (кто уже ушёл, стола не ждёт)
     const waitHtml = waiting.length ? `
       <div class="hz-wait-box">
         <div class="hz-wait-title">Ждут стола: ${waiting.length}<small>Нажмите на бронь, выберите стол на схеме и подтвердите кнопкой под схемой</small></div>
@@ -4934,11 +4932,13 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const rows = mine.length ? mine.map(it => {
       const b = it.b;
       const color = b.status === 'pending' ? '#f59e0b' : '#4ade80';
-      const nowTag = it.start <= t && t < it.end ? ' <span class="pill good">сейчас</span>' : '';
+      const nowTag = it.left ? ` <span class="pill">ушёл ${escHtml(mskHm(b.arrival.leftAt))}</span>` : (it.start <= t && t < it.end ? ' <span class="pill good">сейчас</span>' : '');
+      const canLeave = !it.left && b.arrival?.status === 'arrived' && b.uid && bookingVenueDay(b.iso) === venueDayStr() && can('bookings.mark_arrival');
       return `<div class="hz-item" onclick="openBookingDetail(${it.idx})">
         <span><span class="hz-dot" style="background:${color}"></span><b style="font-weight:500">с ${hhmm(it.start)}</b> ${escHtml(b.name)}${b.guests ? ` · ${escHtml(String(b.guests))}` : ''}${nowTag}</span>
         ${bookingFlagsHtml(b, 2)}
         ${b.status === 'pending' && can('bookings.confirm') ? `<button type="button" class="hz-mini-btn" onclick="event.stopPropagation();confirmFromPlan(${it.idx}, this)">✓ Подтвердить</button>` : ''}
+        ${canLeave ? `<button type="button" class="hz-mini-btn hz-leave-btn" onclick="event.stopPropagation();markLeave('${escJs(b.uid)}', 'leave')">Гость ушёл</button>` : ''}
       </div>`;
     }).join('') : '<div class="autotag-empty">На этот день броней нет</div>';
     return `<div class="hint-box" style="margin-top:12px">
@@ -5084,8 +5084,19 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (!a) {
       btns = `<button class="arr-btn yes" onclick="markArrival('${uid}', 'arrived')">✓ Пришёл</button>${noBtn('✗ Не пришёл')}`;
     } else if (a.status === 'arrived') {
-      state = `<div class="arr-state arrived">✓ Пришёл${whoWhen ? ` <span class="note">отметил(а) ${escHtml(whoWhen)}</span>` : ''}</div>`;
-      btns = `${noBtn('Не пришёл')}<button class="arr-btn" onclick="markArrival('${uid}', 'clear')">Снять отметку</button>`;
+      // у брони есть конец: «Гость ушёл» — стол свободен с этой минуты. Отмечается только в тот же вечер.
+      const sameEvening = day === venueDayStr();
+      const cameHm = a.at ? mskHm(a.at) : '';
+      if (a.leftAt) {
+        const stay = stayMinutes(a);
+        const leftWho = a.leftBy ? a.leftBy.replace(/ \(.+\)$/, '') : '';
+        state = `<div class="arr-state arrived">✓ Пришёл${cameHm ? ' в ' + escHtml(cameHm) : ''} · ушёл в ${escHtml(mskHm(a.leftAt))}${stay !== null ? ` · ${escHtml(shDuration(stay))}` : ''}`
+          + `<span class="note">Стол свободен${leftWho ? ` · уход отметил(а) ${escHtml(leftWho)}` : ''}</span></div>`;
+        btns = `${sameEvening ? `<button class="arr-btn" onclick="markLeave('${uid}', 'undo')">Вернуть за стол</button>` : ''}<button class="arr-btn" onclick="markArrival('${uid}', 'clear')">Снять отметку</button>`;
+      } else {
+        state = `<div class="arr-state arrived">✓ Пришёл${whoWhen ? ` <span class="note">отметил(а) ${escHtml(whoWhen)}</span>` : ''}${sameEvening ? '' : '<span class="note">Время ухода не отмечено</span>'}</div>`;
+        btns = `${sameEvening ? `<button class="arr-btn yes arr-leave" onclick="markLeave('${uid}', 'leave')">Гость ушёл — стол свободен</button>` : ''}${noBtn('Не пришёл')}<button class="arr-btn" onclick="markArrival('${uid}', 'clear')">Снять отметку</button>`;
+      }
     } else {
       state = `<div class="arr-state noshow">✗ Не пришёл${whoWhen ? ` <span class="note">отметил(а) ${escHtml(whoWhen)}</span>` : ''}</div>`;
       btns = `<button class="arr-btn yes" onclick="markArrival('${uid}', 'arrived')">Пришёл</button><button class="arr-btn" onclick="markArrival('${uid}', 'clear')">Снять отметку</button>`;
@@ -5130,6 +5141,40 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       if (data.visitKept) msg += ' — в визите уже записан кальян, визит оставлен';
       showToast(msg);
       refreshBookingsDot();
+    } catch {
+      showToast('Нет связи — отметка не сохранилась', true);
+    } finally {
+      arrivalBusy = false;
+      if (document.getElementById('screen-booking-detail')?.classList.contains('active')) renderBookingDetail();
+      else renderBookingsView();
+    }
+  }
+
+  // «Гость ушёл» / «Вернуть за стол»: у брони появляется конец — стол свободен с этой минуты
+  async function markLeave(uid, action) {
+    if (arrivalBusy) return;
+    if (!needPerm('bookings.mark_arrival', 'отмечать, что гость ушёл')) return;
+    const b = uid ? (bookingsListData.find(x => x.uid === uid) || bookingsPastData.find(x => x.uid === uid)) : null;
+    if (!b) { notify(BOOKING_GONE); return; }
+    arrivalBusy = true;
+    document.querySelectorAll('.arr-btn, .hz-leave-btn').forEach(x => { x.disabled = true; });
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/bookings/leave?pin=${getPin()}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), phone: b.phone, uid: b.uid, action })
+      });
+      if (res.status === 401) { showScreen('pin'); return; }
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        if (data.stale) b.arrival = data.arrival || null; // отметку прихода уже поменял кто-то другой — показываем актуальную
+        showToast(data.error || 'Отметка не сохранилась — попробуйте ещё раз', true);
+        return;
+      }
+      b.arrival = data.arrival || null;
+      const tbl = b.table ? `стол «${b.table}»` : 'стол';
+      if (action === 'undo' && data.tableWarning) showToast(`${b.name}: снова за столом. ${data.tableWarning}`, true);
+      else showToast(action === 'leave' ? `${b.name}: ушёл — ${tbl} свободен` : `${b.name}: снова за столом`);
     } catch {
       showToast('Нет связи — отметка не сохранилась', true);
     } finally {
@@ -8171,131 +8216,8 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     }
   }
 
-  // ─── ЧЕК-ЛИСТ СМЕНЫ ─────────────────────────────
-  // Свой список у каждой роли; администрация видит общий. Отметки сохраняются на
-  // устройстве до конца вечера — перезагрузка окна или переключение «Открытие /
-  // Закрытие» их не стирает.
-  const CHECKLIST_BY_ROLE = {
-    'Администратор': {
-      'Открытие': ['Кальяны заправлены', 'Музыка включена', 'Барная стойка готова', 'Заказ угля сделан', 'Столы протёрты'],
-      'Закрытие': ['Касса посчитана', 'Кальяны почищены', 'Уборка сделана', 'Свет и техника выключены', 'Двери закрыты']
-    },
-    'КМ': {
-      'Открытие': ['Кальяны заправлены', 'Заказ угля сделан', 'Табаки проверены, стоп-лист обновлён'],
-      'Закрытие': ['Кальяны почищены', 'Уголь потушен', 'Стоп-лист по табакам обновлён']
-    },
-    'Бармен': {
-      'Открытие': ['Барная стойка готова', 'Стоп-лист по напиткам проверен'],
-      'Закрытие': ['Бар убран', 'Стоп-лист по напиткам обновлён']
-    },
-    'Официант': {
-      'Открытие': ['Столы протёрты', 'Музыка включена'],
-      'Закрытие': ['Зал убран', 'Свет и техника выключены']
-    },
-    'Повар': {
-      'Открытие': ['Кухня готова', 'Стоп-лист по кухне проверен'],
-      'Закрытие': ['Кухня убрана', 'Стоп-лист по кухне обновлён']
-    }
-  };
-  function checklistItemsFor(type) {
-    const role = isAdminRole(currentJobRole) ? 'Администратор' : currentJobRole;
-    return (CHECKLIST_BY_ROLE[role] || CHECKLIST_BY_ROLE['Администратор'])[type] || [];
-  }
-  function checklistKey(type, suffix) {
-    return `checklist:${venueDayStr()}:${currentEmployeeName || ''}:${type}${suffix ? ':' + suffix : ''}`;
-  }
-  function checklistLoad(type) {
-    try { return JSON.parse(localStorage.getItem(checklistKey(type)) || '[]'); } catch { return []; }
-  }
-  function checklistSave(type, checked) {
-    try { localStorage.setItem(checklistKey(type), JSON.stringify(checked)); } catch {}
-  }
-  function currentChecklistType() {
-    return document.querySelector('#screen-checklist .chip-row .chip.selected')?.dataset.value || 'Открытие';
-  }
-
-  function openChecklist() {
-    // вечером по умолчанию открываем «Закрытие»
-    const hourNow = Number(moscowNowIso().slice(11, 13)); // по времени заведения, а не устройства
-    const type = hourNow >= 22 || hourNow < 6 ? 'Закрытие' : 'Открытие';
-    document.querySelectorAll('#screen-checklist .chip-row .chip').forEach(c => c.classList.toggle('selected', c.dataset.value === type));
-    renderChecklist(type);
-    showScreen('checklist');
-  }
-
-  function switchChecklistType(el) {
-    document.querySelectorAll('#screen-checklist .chip-row .chip').forEach(c => c.classList.remove('selected'));
-    el.classList.add('selected');
-    renderChecklist(el.dataset.value);
-  }
-
-  function renderChecklist(type) {
-    const items = checklistItemsFor(type);
-    const checked = new Set(checklistLoad(type));
-    const el = document.getElementById('checklistItems');
-    let sentInfo = '';
-    try {
-      const sent = localStorage.getItem(checklistKey(type, 'sent'));
-      if (sent) sentInfo = `<div class="cl-sent">✓ Сегодня уже отправлен в ${escHtml(new Date(sent).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }))}</div>`;
-    } catch {}
-    el.innerHTML = sentInfo + `<div class="cl-progress" id="clProgress"></div>` + items.map((item, i) => `
-      <div class="info-row cl-row${checked.has(item) ? ' on' : ''}" onclick="toggleChecklistItem(this)" data-item="${escHtml(item)}">
-        <div class="cl-box"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
-        <div class="info-row-value" style="font-size:14px;">${escHtml(item)}</div>
-      </div>
-    `).join('');
-    updateChecklistProgress();
-  }
-
-  function updateChecklistProgress() {
-    const rows = [...document.querySelectorAll('#checklistItems .cl-row')];
-    const done = rows.filter(r => r.classList.contains('on')).length;
-    const el = document.getElementById('clProgress');
-    if (el) el.innerHTML = `Отмечено <b>${done}</b> из ${rows.length}<div class="cl-bar"><i style="width:${rows.length ? Math.round(done / rows.length * 100) : 0}%"></i></div>`;
-  }
-
-  function toggleChecklistItem(row) {
-    row.classList.toggle('on');
-    const type = currentChecklistType();
-    checklistSave(type, [...document.querySelectorAll('#checklistItems .cl-row.on')].map(r => r.dataset.item));
-    updateChecklistProgress();
-  }
-
-  async function completeChecklist() {
-    const type = currentChecklistType();
-    const rows = [...document.querySelectorAll('#checklistItems .cl-row')];
-    const checked = rows.filter(r => r.classList.contains('on')).map(r => r.dataset.item);
-    const missed = rows.filter(r => !r.classList.contains('on')).map(r => r.dataset.item);
-
-    if (!checked.length) { notify('Отметьте, что сделано'); return; }
-    if (missed.length && !await askConfirm(`Отмечено ${checked.length} из ${rows.length}.\n\nНе отмечено: ${missed.join(', ')}.\nОтправить так? Администрация увидит, что не сделано.`, { ok: 'Отправить' })) return;
-
-    const btn = document.getElementById('checklistSubmitBtn');
-    btn.disabled = true;
-    btn.textContent = 'Отправляем...';
-
-    try {
-      const res = await fetch(`${PROXY_BASE}/api/staff/checklist-complete?pin=${getPin()}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: getPin(), type, items: checked, missed, total: rows.length })
-      });
-      btn.disabled = false;
-      btn.textContent = 'Готово, отметить смену';
-      if (res.status === 401) { showScreen('pin'); return; }
-      if (!res.ok) { notify(await responseError(res, 'Чек-лист не отправился — попробуйте ещё раз')); return; }
-      const data = await res.json().catch(() => ({}));
-      try { localStorage.setItem(checklistKey(type, 'sent'), new Date().toISOString()); } catch {}
-      showSuccess('Чек-лист отправлен', type);
-      showScreen('home');
-      if (data.warning) showToast(data.warning, true);
-    } catch {
-      btn.disabled = false;
-      btn.textContent = 'Готово, отметить смену';
-      notify('Нет связи — чек-лист не отправился');
-    }
-  }
-
+  // Чек-листов в приложении больше нет — стираем их отметки, оставшиеся на устройстве с прежних версий
+  try { Object.keys(localStorage).filter(k => k.startsWith('checklist:')).forEach(k => localStorage.removeItem(k)); } catch {}
 
   // ─── СМЕНА: «открыл» и «закрыл» ───
   // Сотрудник нажимает кнопку наверху главного экрана. Основатель и администратор на экране «Кто на смене»
@@ -8783,6 +8705,8 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     ['cancellations', 'Отмены броней'],
     ['arrivals', 'Пришли по брони'],
     ['noShows', 'Неявки по броням'],
+    ['stay', 'Среднее время визита'],
+    ['turnover', 'Оборот столов'],
     ['csi', 'CSI — средняя оценка'],
     ['nps', 'NPS гостей'],
     ['enps', 'eNPS команды']
@@ -8791,11 +8715,13 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
   const AN_METRIC_GROUPS = [
     ['Гости', ['visits', 'guests', 'newGuests', 'returning']],
     ['Брони', ['bookings', 'cancellations', 'arrivals', 'noShows']],
+    ['Столы', ['stay', 'turnover']],
     ['Оценки', ['csi', 'nps', 'enps']]
   ];
   const AN_CHIP_LABELS = {
     visits: 'Визиты', guests: 'Уникальные гости', newGuests: 'Новые гости', returning: 'Вернувшиеся',
     bookings: 'Брони', cancellations: 'Отмены', arrivals: 'Пришли по брони', noShows: 'Неявки',
+    stay: 'Время визита', turnover: 'Оборот столов',
     csi: 'CSI', nps: 'NPS гостей', enps: 'eNPS команды'
   };
   // Что значит показатель — простыми словами, показывается под кнопками
@@ -8808,6 +8734,8 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     cancellations: 'Сколько броней на даты периода отменили. Чем меньше, тем лучше.',
     arrivals: 'Брони с отметкой «Пришёл». Брони без отметки не считаются ни здесь, ни в неявках.',
     noShows: 'Брони с отметкой «Не пришёл». Чем меньше, тем лучше.',
+    stay: 'Сколько в среднем гость сидит за столом: от отметки «Пришёл» до отметки «Гость ушёл». Считаются только брони, где нажали обе кнопки.',
+    turnover: 'Сколько компаний в среднем проходит за вечер через один занятый стол. 1 — стол заняли один раз за вечер, 2 — дважды. Считаются брони с отметкой «Пришёл» и назначенным столом.',
     csi: 'Средняя оценка гостей из отзывов: вечер, кальян, напитки, еда, команда. Шкала до 10.',
     nps: 'Готовность рекомендовать нас: доля оценивших на 9–10 минус доля оценивших на 0–6. От −100 до +100, чем выше, тем лучше.',
     enps: 'То же самое, но для сотрудников: анонимный опрос команды. От −100 до +100.'
@@ -9030,13 +8958,20 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
 
   function anFormat(v, kind) {
     if (v === null || v === undefined) return '—';
-    if (kind === 'avg') return String(v).replace('.', ',');
+    if (kind === 'duration') return shDuration(v);
+    if (kind === 'avg' || kind === 'ratio') return String(v).replace('.', ',');
     if (kind === 'score') return signed(v);
     return String(v);
+  }
+  // Подписи на графике — короткие: время визита как «2:20», иначе не помещается над столбиком
+  function anChartVal(v, kind) {
+    if (kind === 'duration') return `${Math.floor(v / 60)}:${String(Math.round(v) % 60).padStart(2, '0')}`;
+    return anFormat(v, kind);
   }
   function anUnit(d, value) {
     if (value === null || value === undefined) return '';
     if (d.metric === 'csi') return ' / 10';
+    if (d.metric === 'turnover') return ' на стол за вечер';
     const u = AN_UNITS[d.metric];
     return u ? ' ' + ruPlural(Math.abs(value), u[0], u[1], u[2]) : '';
   }
@@ -9061,14 +8996,17 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     const cmpWhat = d.compare === 'year' ? 'чем в прошлом году' : 'чем в прошлом периоде';
     if (d.delta === 0) return d.compare === 'year' ? 'Столько же, сколько в прошлом году' : 'Столько же, сколько в прошлом периоде';
     const up = d.delta > 0, abs = Math.abs(d.delta);
-    if (d.kind === 'avg') return `На ${String(abs).replace('.', ',')} ${up ? 'выше' : 'ниже'}, ${cmpWhat}`;
+    if (d.kind === 'duration') return `На ${shDuration(abs)} ${up ? 'дольше' : 'короче'}, ${cmpWhat}`;
+    if (d.kind === 'avg' || d.kind === 'ratio') return `На ${String(abs).replace('.', ',')} ${up ? 'выше' : 'ниже'}, ${cmpWhat}`;
     if (d.kind === 'score') return `На ${abs} ${ruPlural(abs, 'пункт', 'пункта', 'пунктов')} ${up ? 'выше' : 'ниже'}, ${cmpWhat}`;
     return `На ${abs} ${up ? 'больше' : 'меньше'}, ${cmpWhat}`;
   }
   function anBucketDiff(d, b) {
     if (b.value === null || b.compareValue === null) return null;
     const delta = Math.round((b.value - b.compareValue) * 10) / 10;
-    return { delta, text: d.kind === 'avg' ? signed(delta).replace('.', ',') : signed(delta), cls: delta === 0 ? '' : anIsGood(d, delta) ? 'g' : 'b' };
+    const text = d.kind === 'duration' ? `${delta > 0 ? '+' : delta < 0 ? '−' : ''}${shDuration(Math.abs(delta))}` : (d.kind === 'avg' || d.kind === 'ratio') ? signed(delta).replace('.', ',') : signed(delta);
+    // время визита — ни «хорошо», ни «плохо»: дольше сидят — меньше оборот, поэтому без цвета
+    return { delta, text, cls: delta === 0 || d.kind === 'duration' ? '' : anIsGood(d, delta) ? 'g' : 'b' };
   }
 
   function anFactsHtml(d, vis) {
@@ -9084,8 +9022,8 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     const best = lower ? sorted[sorted.length - 1] : sorted[0];
     const worst = lower ? sorted[0] : sorted[sorted.length - 1];
     if (best.value !== worst.value) {
-      tiles.push(['Лучше всего', anFormat(best.value, d.kind), anBucketName(best.start, best.label, d.group)]);
-      tiles.push(['Слабее всего', anFormat(worst.value, d.kind), anBucketName(worst.start, worst.label, d.group)]);
+      tiles.push([d.kind === 'duration' ? 'Дольше всего' : 'Лучше всего', anFormat(best.value, d.kind), anBucketName(best.start, best.label, d.group)]);
+      tiles.push([d.kind === 'duration' ? 'Короче всего' : 'Слабее всего', anFormat(worst.value, d.kind), anBucketName(worst.start, worst.label, d.group)]);
     }
     if (!tiles.length) return '';
     return `<div class="an-facts">${tiles.map(([l, v, s]) => `<div class="an-fact"><div class="an-fact-l">${escHtml(l)}</div><div class="an-fact-v">${escHtml(v)}</div>${s ? `<div class="an-fact-s">${escHtml(s)}</div>` : ''}</div>`).join('')}</div>`;
@@ -9107,12 +9045,15 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       <div class="an-total"><span>${anFormat(d.total, d.kind)}</span><span class="an-unit">${escHtml(anUnit(d, d.total).trim())}</span></div>
       <div class="an-period">${fmtDMY(d.from)} — ${fmtDMY(d.to)}</div>`;
     if (d.metric === 'nps' || d.metric === 'enps') html += '<div class="an-period">Шкала от −100 до +100</div>';
-    if (noData) html += '<div class="an-empty-hint">За этот период нет данных. Попробуйте выбрать период побольше.</div>';
+    if (noData) html += `<div class="an-empty-hint">${d.metric === 'stay' ? 'За этот период нет броней с отметкой «Гость ушёл». Время визита появится, когда в бронях начнут отмечать уход.' : 'За этот период нет данных. Попробуйте выбрать период побольше.'}</div>`;
+    else if (d.samples != null) html += `<div class="an-period">${d.metric === 'stay'
+      ? `Посчитано по ${d.samples} ${ruPlural(d.samples, 'визиту', 'визитам', 'визитам')} с отметкой «Гость ушёл»`
+      : `Посчитано по ${d.samples} ${ruPlural(d.samples, 'занятому столу', 'занятым столам', 'занятым столам')} за вечер`}</div>`;
 
     if (hasCmp) {
       const cmpRange = `${fmtDMY(d.compareFrom)} — ${fmtDMY(d.compareTo)}`;
       if (d.delta !== null) {
-        const cls = d.delta === 0 ? 'flat' : anIsGood(d, d.delta) ? 'up' : 'down';
+        const cls = d.delta === 0 || d.kind === 'duration' ? 'flat' : anIsGood(d, d.delta) ? 'up' : 'down';
         const arrow = d.delta === 0 ? '→' : d.delta > 0 ? '↑' : '↓';
         html += `<div class="an-cmp ${cls}">
           <div class="an-cmp-main"><span class="an-arrow">${arrow}</span><span>${escHtml(anDeltaSentence(d))}</span>${d.deltaPct !== null ? `<span class="an-pct">${signed(d.deltaPct)}%</span>` : ''}</div>
@@ -9219,7 +9160,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     // Без подписей над столбиками шкалу не видно — пишем верхнее значение слева сверху
     if (!showValues && d.kind !== 'score') {
       svg += `<line x1="0" x2="${W}" y1="${top}" y2="${top}" stroke="rgba(240,223,192,0.07)" stroke-width="1" stroke-dasharray="3 4"/>`;
-      svg += `<text x="2" y="${top - 5}" font-size="9" fill="#8A6A52">${d.kind === 'avg' ? '10' : 'макс. ' + maxV}</text>`;
+      svg += `<text x="2" y="${top - 5}" font-size="9" fill="#8A6A52">${d.kind === 'avg' ? '10' : 'макс. ' + anChartVal(maxV, d.kind)}</text>`;
     }
     b.forEach((x, i) => {
       const x0 = left + i * (slot + gap) + gap / 2;
@@ -9235,7 +9176,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       svg += bar(x.value, x0, '#B87333');
       if (showValues && x.value !== null) {
         const ty = x.value >= 0 ? y(x.value) - 4 : y(x.value) + 11;
-        svg += `<text x="${x0 + barW / 2}" y="${ty}" text-anchor="middle" font-size="9" fill="#C9A880">${anFormat(x.value, d.kind)}</text>`;
+        svg += `<text x="${x0 + barW / 2}" y="${ty}" text-anchor="middle" font-size="9" fill="#C9A880">${anChartVal(x.value, d.kind)}</text>`;
       }
       if (i % labelEvery === 0) {
         const lbl = d.group === 'week' ? fmtDM(x.start) : d.group === 'day' ? fmtDM(x.start) : x.label;
@@ -10255,7 +10196,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'checklist', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules'];
+  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules'];
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
 
@@ -11086,6 +11027,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       ? guest.visits.map(v => `
           <div class="visit-item">
             <div class="visit-date"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>${escHtml(v.date ? capFirst(humanDay(v.date, { venue: true })) : '—')}</div>
+            ${v.stay ? `<div class="visit-detail">Пришёл ${escHtml(v.stay.arrived)} · ушёл ${escHtml(v.stay.left)} · ${escHtml(shDuration(v.stay.minutes))}</div>` : ''}
             ${hookahHtml(v.hookah)}
             ${v.notes ? `<div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>${escHtml(v.notes)}</div>` : ''}
           </div>
