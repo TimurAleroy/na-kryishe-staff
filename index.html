@@ -614,6 +614,8 @@
     #screen-schedule.cal-big .cal-day-tag { font-size: 10px; }
     #screen-schedule.cal-big .cal-day-dot { width: 9px; height: 9px; }
     #screen-schedule.cal-big .cal-day-badge { font-size: 12.5px; min-width: 21px; height: 21px; }
+    .dp-failed { color: #f59e0b; }
+    .dp-retry { background: none; border: none; color: var(--accent); font: inherit; text-decoration: underline; cursor: pointer; padding: 0 0 0 4px; }
     .cal-zoom { display: flex; justify-content: flex-end; margin: 0 0 8px; }
     .cal-zoom button { background: none; border: 1px solid var(--border); border-radius: 100px; color: var(--text-sub); font-size: 12px; padding: 6px 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
     .cal-day.today { border-color: var(--accent); }
@@ -1721,7 +1723,7 @@
       </div>
       <div>
         <label class="form-label">Время</label>
-        <input class="form-input" id="abTime" type="time" value="20:00">
+        <input class="form-input" id="abTime" type="time" value="20:00" onchange="refreshAddBookingTableOptions()">
       </div>
     </div>
     <div class="form-group">
@@ -2885,7 +2887,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function toggleAuthEye(id, btn) {
     const el = document.getElementById(id);
     el.type = el.type === 'password' ? 'text' : 'password';
-    btn.setAttribute('aria-label', el.type === 'password' ? 'Показать пароль' : 'Скрыть пароль');
+    const shown = el.type === 'text';
+    btn.setAttribute('aria-label', shown ? 'Скрыть пароль' : 'Показать пароль');
+    // Иконка меняется: открытый глаз — пароль скрыт, перечёркнутый — показан
+    btn.innerHTML = shown
+      ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 19c-7 0-11-7-11-7a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 7 11 7a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>'
+      : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>';
   }
 
   async function authPost(path, body) {
@@ -2977,6 +2984,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
   function sessionLost() {
     if (!authToken) return;
+    wipeSessionData(); // данные прошлого входа на экранах не оставляем
     if (activeScreenName() !== 'pin') showScreen('pin');
     authEnter('Вход истёк. Войдите снова');
   }
@@ -3058,8 +3066,13 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     try { localStorage.removeItem('staff_pin'); } catch {}  // прежний вход по PIN-коду больше не хранится
     if (!authToken && !getDeviceToken() && getSavedToken()) authToken = getSavedToken(); // «Сохранить пароль»: вход помнится, пока не нажмут «Выйти»
     if (authToken) {
+      // Вход стираем, только когда сервер прямо сказал, что он недействителен (401/403). Нет связи или сервер
+      // обновляется — вход остаётся, показываем «нет связи» и кнопку «Повторить». Раньше любой сбой при
+      // открытии приложения стирал сохранённый вход.
+      let status = 0;
       try {
         const res = await fetch(`${PROXY_BASE}/api/auth/me`);
+        status = res.status;
         const data = await res.json().catch(() => ({}));
         if (res.ok) {
           authSession = { ...data, token: authToken };
@@ -3068,9 +3081,21 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
           return;
         }
       } catch {}
+      if (status !== 401 && status !== 403) { authOffline(); return; }
       setToken('');
     }
     authSetView(getDeviceToken() ? 'quick' : 'password');
+  }
+  // Сервер не ответил при открытии приложения: вход цел, предлагаем повторить
+  function authOffline() {
+    authSetView(getDeviceToken() ? 'quick' : 'password');
+    const el = document.getElementById('pinError');
+    if (!el) return;
+    el.textContent = 'Нет связи с сервером. ';
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'auth-link'; b.textContent = 'Повторить';
+    b.onclick = () => { el.textContent = 'Подключаюсь…'; authInit(); };
+    el.appendChild(b);
   }
 
   // ─── ВЫХОД (кнопка «Выйти» на главном, только на компьютере) ──
@@ -3080,9 +3105,19 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function logout() {
     // сервер стирает ключ этого входа (быстрый вход на этом телефоне остаётся)
     if (authToken) { try { fetch(`${PROXY_BASE}/api/auth/logout`, { method: 'POST' }).catch(() => {}); } catch {} }
-    try { localStorage.removeItem('recent_guests'); } catch {}
     setToken('');
     authSession = null;
+    wipeSessionData();
+    showScreen('pin');
+  }
+
+  // Всё, что загрузил прошлый сотрудник, — и в памяти, и на экранах, которые сейчас не видны. Вызывается при
+  // выходе и когда вход истёк: на общем планшете следующий человек не должен увидеть чужие списки
+  // (сотрудники, отклики, отзывы, карточка гостя), даже открыв экран в обход кнопок.
+  function wipeSessionData() {
+    try { localStorage.removeItem('recent_guests'); } catch {}
+    deskPanelsGen++; // ответы на запросы прошлого сотрудника, которые ещё в пути, в панели не попадут
+    guestCardSeq++;
 
     currentRole = 'staff';
     currentEmployeeName = '';
@@ -3091,14 +3126,16 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     permsSig = '';
     tagCatalog = null; tagCatalogSig = ''; tagCatalogAt = 0;
 
-    // данные прошлого сотрудника — новый загрузит их заново под своим доступом
     bookingsListData = [];
     bookingsPastData = [];
     bookingsLoadedOnce = false;
     currentBookingIndex = null;
+    currentBookingKey = '';
     hallSeatIdx = null;
     hallSeatPick = null;
     hallSeatReturnToDetail = false;
+    hallDate = null;
+    hallTime = null;
     currentGuest = null;
     tagAddGroup = null;
     scheduleEmployeesCache = null;
@@ -3110,6 +3147,29 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     sgData = null;
     fbData = null;
     dupData = null;
+    empData = { employees: [], roles: [] };
+    permData = null;
+    candList = [];
+    stoplistItems = [];
+    problemsCache = [];
+    menuEditItems = [];
+    storySets = [];
+    svList = [];
+    tgAdmin = null;
+    au.items = []; au.actors = []; au.types = []; au.total = 0; au.hasMore = false; au.q = ''; au.who = ''; au.type = '';
+    try { window._eventsCache = null; } catch {}
+    anLast = null;
+    scheduleShiftsByDate = {};
+    ['analyticsResult', 'analyticsControls'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = ''; });
+    // набранное в формах (имя и телефон гостя в новой брони, текст рассылки и т. п.)
+    document.querySelectorAll('.screen:not(#screen-pin) input[type="text"], .screen:not(#screen-pin) input[type="tel"], .screen:not(#screen-pin) input[type="search"], .screen:not(#screen-pin) input:not([type]), .screen:not(#screen-pin) textarea')
+      .forEach(el => { el.value = ''; });
+
+    // экраны: всё содержимое, загруженное с сервера
+    document.querySelectorAll('.screen:not(#screen-pin) [id$="Content"]').forEach(el => { el.innerHTML = ''; });
+    ['auditList', 'calGrid', 'scheduleDayList', 'accSessions'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = ''; });
+    const sticky = document.getElementById('cardSticky');
+    if (sticky) sticky.style.display = 'none';
 
     // главный экран и боковые панели — пустые до следующего входа
     const grid = document.getElementById('quickActionsGrid');
@@ -3133,8 +3193,6 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     });
     const noteInput = document.getElementById('dpNoteInput');
     if (noteInput) noteInput.value = '';
-
-    showScreen('pin');
   }
 
   // На компьютере PIN можно набрать и с клавиатуры (цифры, Backspace)
@@ -3406,7 +3464,16 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // данные не протухали, если весь день не перезаходить в приложение.
   // Если панелей нет в разметке (например, при частичном обновлении файла) —
   // просто ничего не делает, остальной интерфейс не затрагивает.
+  let deskPanelsGen = 0;
+  const DP_FAILED = '<div class="dp-empty dp-failed">Не удалось загрузить <button type="button" class="dp-retry" onclick="loadDeskPanels()">повторить</button></div>';
+  // ответ панели: ошибка сервера — исключение (панель покажет «Не удалось загрузить»), а не пустой список
+  async function dpJson(res) {
+    if (!res.ok) throw new Error('dp ' + res.status);
+    return res.json();
+  }
   async function loadDeskPanels() {
+    const gen = ++deskPanelsGen;
+    const stale = () => gen !== deskPanelsGen; // панели перезапросили или сотрудник вышел — этот ответ уже не нужен
     const left = document.getElementById('deskLeft');
     const right = document.getElementById('deskRight');
     if (!left || !right) return;
@@ -3443,8 +3510,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
           fetch(`${PROXY_BASE}/api/staff/schedule?pin=${pin}&from=${today}&to=${today}`),
           fetch(`${PROXY_BASE}/api/staff/employees-list?pin=${pin}`)
         ]);
-        const shifts = shiftsRes.ok ? await shiftsRes.json() : [];
-        const employees = employeesRes.ok ? await employeesRes.json() : [];
+        const shifts = await dpJson(shiftsRes);
+        const employees = employeesRes.ok ? await employeesRes.json() : []; // без имён обойдёмся: покажем «Сотрудник»
+        if (stale()) return;
         const working = Array.isArray(shifts) ? shifts.filter(s => s.status === 'Работает') : [];
         if (!working.length) { el.innerHTML = '<div class="dp-empty">Никто не отмечен</div>'; return; }
         el.innerHTML = working.map(s => {
@@ -3452,7 +3520,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
           const name = emp ? emp.name : 'Сотрудник';
           return `<div class="dp-row" onclick="openSchedule()">${escHtml(name)}${emp?.role ? `<div class="dp-sub">${escHtml(emp.role)}</div>` : ''}</div>`;
         }).join('');
-      } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
+      } catch { if (!stale()) el.innerHTML = DP_FAILED; }
     })();
 
     (async () => {
@@ -3460,10 +3528,11 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       if (!can('guests.birthdays')) return;
       try {
         const res = await fetch(`${PROXY_BASE}/api/staff/birthdays?pin=${pin}`);
-        const list = res.ok ? await res.json() : [];
+        const list = await dpJson(res);
+        if (stale()) return;
         if (!Array.isArray(list) || !list.length) { el.innerHTML = '<div class="dp-empty">Сегодня никого нет</div>'; return; }
         el.innerHTML = list.map(g => `<div class="dp-row" onclick="openGuestCard('${escJs(g.id)}')">${escHtml(g.name || '')}</div>`).join('');
-      } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
+      } catch { if (!stale()) el.innerHTML = DP_FAILED; }
     })();
 
     // «Афиша» — лёгкий превью-список ближайших мероприятий, как и остальные
@@ -3477,14 +3546,15 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const MONTHS = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
       try {
         const res = await fetch(`${PROXY_BASE}/api/admin/events?pin=${pin}`);
-        const list = res.ok ? await res.json() : [];
+        const list = await dpJson(res);
+        if (stale()) return;
         if (countEl) countEl.textContent = Array.isArray(list) && list.length ? String(list.length) : '';
         if (!Array.isArray(list) || !list.length) { el.innerHTML = '<div class="dp-empty">Ближайших нет</div>'; return; }
         el.innerHTML = list.slice(0, 5).map(e => {
           const d = new Date(e.date);
           return `<div class="dp-row" onclick="openEvents()">${escHtml(e.name || 'Мероприятие')}<div class="dp-sub">${d.getDate()} ${MONTHS[d.getMonth()]} · ${escHtml(e.format || '')}</div></div>`;
         }).join('');
-      } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
+      } catch { if (!stale()) el.innerHTML = DP_FAILED; }
     })();
 
     (async () => {
@@ -3493,11 +3563,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const countEl = document.getElementById('dpProblemsCount');
       try {
         const res = await fetch(`${PROXY_BASE}/api/staff/problems?pin=${pin}`);
-        const list = res.ok ? await res.json() : [];
+        const list = await dpJson(res);
+        if (stale()) return;
         if (countEl) countEl.textContent = Array.isArray(list) && list.length ? String(list.length) : '';
         if (!Array.isArray(list) || !list.length) { el.innerHTML = '<div class="dp-empty">Открытых нет</div>'; return; }
         el.innerHTML = list.slice(0, 5).map(p => `<div class="dp-row" onclick="openProblems()">${escHtml(p.category || 'Проблема')}${p.responsible ? `<div class="dp-sub">${escHtml(p.responsible)}</div>` : ''}</div>`).join('');
-      } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
+      } catch { if (!stale()) el.innerHTML = DP_FAILED; }
     })();
 
     (async () => {
@@ -3506,9 +3577,10 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const countEl = document.getElementById('dpBookingsCount');
       try {
         const res = await fetch(`${PROXY_BASE}/api/staff/bookings?pin=${pin}`);
-        const list = res.ok ? await res.json() : [];
+        const list = await dpJson(res);
+        if (stale()) return;
         renderDpBookings(list);
-      } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
+      } catch { if (!stale()) el.innerHTML = DP_FAILED; }
     })();
 
     // «Задачи» — здесь, как и в «Проблемы»/«Ждут подтверждения» выше, только
@@ -3525,11 +3597,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const countEl = document.getElementById('dpFounderTasksCount');
       try {
         const res = await fetch(`${PROXY_BASE}/api/admin/founder-tasks?pin=${pin}`);
-        const list = res.ok ? await res.json() : [];
+        const list = await dpJson(res);
+        if (stale()) return;
         if (countEl) countEl.textContent = Array.isArray(list) && list.length ? String(list.length) : '';
         if (!Array.isArray(list) || !list.length) { el.innerHTML = '<div class="dp-empty">Задач нет</div>'; return; }
         el.innerHTML = list.slice(0, 5).map(t => `<div class="dp-row" onclick="openFounderTasks()">${escHtml(t.text || 'Задача')}${t.deadline ? `<div class="dp-sub${humanDeadline(t.deadline).overdue ? ' pb-overdue' : ''}">${escHtml(humanDeadline(t.deadline).text)}</div>` : ''}</div>`).join('');
-      } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
+      } catch { if (!stale()) el.innerHTML = DP_FAILED; }
     })();
 
     loadDpNotes();
@@ -3563,11 +3636,23 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
   function bookingsUiBusy() {
     const active = id => document.getElementById('screen-' + id)?.classList.contains('active');
-    if (hallSeatIdx !== null || seatingBusy || bookingActionBusy) return true;
+    if (hallSeatIdx !== null || seatingBusy || bookingActionBusy || arrivalBusy) return true;
     if (active('booking-detail') || active('add-booking')) return true;
     const f = document.activeElement;
     if (f && /^(INPUT|SELECT|TEXTAREA)$/.test(f.tagName) && document.getElementById('screen-bookings')?.contains(f)) return true;
     return false;
+  }
+  // Новый список броней с сервера. Бронь, которую сейчас сажают со схемы, находим в новом списке по её номеру
+  // (а не по месту): иначе после обновления списка «Подтвердить бронь» под схемой относилось бы к соседней.
+  function setBookingLists(cur, past) {
+    const seatKey = hallSeatIdx !== null ? bookingKey(bookingsListData[hallSeatIdx]) : '';
+    bookingsListData = cur;
+    bookingsPastData = past;
+    if (hallSeatIdx !== null) {
+      const i = seatKey ? cur.findIndex(x => bookingKey(x) === seatKey) : -1;
+      if (i >= 0) hallSeatIdx = i;
+      else { hallSeatIdx = null; hallSeatPick = null; hallSeatReturnToDetail = false; }
+    }
   }
   async function pollBookings() {
     if (bookingsPollBusy || document.hidden || !can('bookings.view') || !getPin()) return;
@@ -3585,8 +3670,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       if (!bookingsLoadedOnce) return; // раздел броней ещё не открывали — там нечего обновлять
       if (bookingsSig(cur) === bookingsSig(bookingsListData) && bookingsSig(past) === bookingsSig(bookingsPastData)) return;
       if (bookingsUiBusy()) return;    // сотрудник что-то делает — обновим в следующий раз
-      bookingsListData = cur;
-      bookingsPastData = past;
+      setBookingLists(cur, past);
       if (document.getElementById('screen-bookings')?.classList.contains('active')) {
         const y = window.scrollY;
         renderBookingsView();
@@ -3613,9 +3697,11 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const el = document.getElementById('dpNotes');
     const countEl = document.getElementById('dpNotesCount');
     if (!el || !can('notes.manage')) return;
+    const gen = deskPanelsGen;
     try {
       const res = await fetch(`${PROXY_BASE}/api/admin/notes?pin=${getPin()}`);
-      const list = res.ok ? await res.json() : [];
+      const list = await dpJson(res);
+      if (gen !== deskPanelsGen) return; // сотрудник вышел, пока шёл запрос
       if (countEl) countEl.textContent = Array.isArray(list) && list.length ? String(list.length) : '';
       if (!Array.isArray(list) || !list.length) { el.innerHTML = '<div class="dp-empty">Заметок нет</div>'; return; }
       el.innerHTML = list.map(n => `
@@ -3625,7 +3711,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
           </span>
         </div>`).join('');
-    } catch { el.innerHTML = '<div class="dp-empty">Не удалось загрузить</div>'; }
+    } catch { if (gen === deskPanelsGen) el.innerHTML = DP_FAILED; }
   }
 
   async function submitDpNote() {
@@ -3930,14 +4016,17 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // списку броней (bookingsListData), без похода на сервер. Для лаунжа не
   // делим по часам: если стол на эту дату уже за кем-то, для второй брони
   // в этот же вечер это почти всегда конфликт, поэтому смотрим по дате целиком.
-  function getOccupiedTablesForDate(dateStr, excludeEntry) {
+  // Вечер считаем как на схеме зала и на сервере: бронь на 00:30 относится к предыдущему дню.
+  // when — дата и время новой брони ('2026-10-03T00:30') или просто дата.
+  function getOccupiedTablesForDate(when, excludeEntry) {
     const occupied = {};
+    const dateStr = bookingVenueDay(when);
     if (!dateStr) return occupied;
     for (const b of bookingsListData) {
       if (!b.table || !b.iso) continue;
       if (b.arrival?.status === 'noshow') continue; // не пришёл — стол свободен
       if (excludeEntry && b.entry === excludeEntry) continue;
-      if (b.iso.slice(0, 10) !== dateStr) continue;
+      if (bookingVenueDay(b.iso) !== dateStr) continue;
       occupied[b.table] = { name: b.name, time: b.iso.slice(11, 16) || '' };
     }
     return occupied;
@@ -3981,6 +4070,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
 
   async function openBookings() {
+    // заходим в раздел заново — схема показывает «сейчас», а не время прошлого захода
+    if (!['bookings', 'add-booking', 'booking-detail'].includes(activeScreenName()) && hallSeatIdx === null) hallTime = null;
     showScreen('bookings');
     const el = document.getElementById('bookingsContent');
     el.innerHTML = '<div class="loading">Загружаю...</div>';
@@ -3990,8 +4081,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       if (!res.ok) throw new Error();
       const all = await res.json();
       if (!Array.isArray(all)) throw new Error();
-      bookingsListData = all.filter(b => !b.past);
-      bookingsPastData = all.filter(b => b.past).sort((a, b) => (b.iso || '').localeCompare(a.iso || ''));
+      setBookingLists(all.filter(b => !b.past), all.filter(b => b.past).sort((a, b) => (b.iso || '').localeCompare(a.iso || '')));
       bookingsLoadedOnce = true;
       refreshBookingsDot();
       renderBookingsView();
@@ -4181,11 +4271,13 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     return label ? HALL_TABLE_BY_NORM[normTableLabel(label)] || null : null;
   }
 
+  // «Сейчас» на схеме зала и графике — по времени заведения (Москва), а не по часам устройства
   function venueNow() {
-    const d = new Date();
-    let min = d.getHours() * 60 + d.getMinutes();
-    let day = localDateStr(d);
-    if (d.getHours() < DAY_SPLIT_HOUR) { day = shiftDateStr(day, -1); min += 24 * 60; }
+    const now = moscowNowIso();
+    const hh = Number(now.slice(11, 13));
+    let min = hh * 60 + Number(now.slice(14, 16));
+    let day = now.slice(0, 10);
+    if (hh < DAY_SPLIT_HOUR) { day = shiftDateStr(day, -1); min += 24 * 60; }
     return { day, min };
   }
   function hhmm(min) {
@@ -4320,8 +4412,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
           <div class="meta">${[b.guests ? `${b.guests} гост.` : '', b.table || '', b.status === 'pending' ? 'не подтверждали' : ''].filter(Boolean).map(escHtml).join(' · ')}</div>
         </div>
         <div class="rc-btns">
-          ${can('bookings.mark_arrival') ? `<button class="arr-btn yes" onclick="markArrival('past', ${i}, 'arrived')">Пришёл</button>
-          <button class="arr-btn no" onclick="markArrival('past', ${i}, 'noshow')">Нет</button>` : ''}
+          ${can('bookings.mark_arrival') ? `<button class="arr-btn yes" onclick="markArrival('${escJs(b.uid)}', 'arrived')">Пришёл</button>
+          <button class="arr-btn no" onclick="markArrival('${escJs(b.uid)}', 'noshow')">Нет</button>` : ''}
         </div>
       </div>`).join('') : '';
     return `<div class="rc-box">
@@ -4335,7 +4427,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function renderBookingsView() {
     const el = document.getElementById('bookingsContent');
     if (!el) return;
-    if (!hallDate) hallDate = venueNow().day;
+    // схему оставили открытой на ночь — утром начинаем с сегодняшнего дня и текущего времени
+    if (!hallDate || hallDate < venueNow().day) { hallDate = venueNow().day; hallTime = null; }
     const tabs = reconHtml() + segControl([['list', 'Список'], ['timeline', 'График'], ['plan', 'Схема']], bookingsView, 'setBookingsView', 'bk-views');
     if (bookingsView === 'list') {
       el.innerHTML = tabs + '<div id="bookingsViewBody"></div>';
@@ -4838,7 +4931,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const tableSelect = document.getElementById('abTable');
     const keepSelected = tableSelect.value;
     const dateVal = document.getElementById('abDate').value;
-    tableSelect.innerHTML = '<option value="">— не выбран —</option>' + tableOptionsHtml(keepSelected, getOccupiedTablesForDate(dateVal, null));
+    const timeVal = (document.getElementById('abTime') || {}).value || '';
+    tableSelect.innerHTML = '<option value="">— не выбран —</option>' + tableOptionsHtml(keepSelected, getOccupiedTablesForDate(dateVal && timeVal ? `${dateVal}T${timeVal}` : dateVal, null));
     onTableSelectChange('abTable', 'abTableConflictWarning');
   }
 
@@ -4852,14 +4946,16 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const commentVal = document.getElementById('abComment').value;
 
     if (!name) { notify('Укажите имя гостя'); return; }
-    if (!phone || phone.replace(/\D/g, '').length < 11) { notify('Укажите телефон гостя'); return; }
+    if (!phone || phone.replace(/\D/g, '').length !== 11) { notify('Телефон гостя — 11 цифр: +7 и ещё 10'); return; }
     if (!dateVal || !timeVal) { notify('Укажите дату и время'); return; }
+    let knownTableConflict = false;
 
     // Финальная проверка конфликта прямо перед созданием — не полагаемся
     // только на подсказку в списке (вдруг сотрудник не заметил, дата
     // сменилась после открытия формы и т.п.).
     if (tableVal) {
-      const occ = getOccupiedTablesForDate(dateVal, null)[tableVal];
+      const occ = getOccupiedTablesForDate(`${dateVal}T${timeVal}`, null)[tableVal];
+      knownTableConflict = !!occ;
       if (occ && !await askConfirm(`Стол «${tableVal}» уже занят бронью ${occ.name}${occ.time ? ' на ' + occ.time : ''}.\n\nВсё равно создать бронь на этот стол?`, { ok: 'Создать' })) {
         return;
       }
@@ -4880,6 +4976,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const data = await res.json();
       if (!res.ok) { notify(data.error || 'Не удалось создать бронь'); return; }
       await openBookings();
+      if (data.tableWarning && !knownTableConflict) showToast(data.tableWarning, true);
     } catch {
       notify('Не удалось создать бронь');
     } finally {
@@ -4893,9 +4990,28 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function bookingBySource(source, idx) {
     return (source === 'past' ? bookingsPastData : bookingsListData)[idx];
   }
+  // Открытая бронь запоминается по своему номеру, а не только по месту в списке. Список обновляется сам
+  // каждые 30 секунд (пришла новая бронь, кто-то отменил) — места сдвигаются, и «Отменить» или «Подтвердить»
+  // могли уйти в соседнюю бронь. Теперь бронь каждый раз находится заново; исчезла из списка — действия нет.
+  let currentBookingKey = '';
+  const bookingKey = b => (b ? (b.uid || `${b.phone || ''}|${b.entry || ''}`) : '');
+  function currentBooking() {
+    const here = bookingBySource(currentBookingSource, currentBookingIndex);
+    if (here && currentBookingKey && bookingKey(here) === currentBookingKey) return here;
+    if (!currentBookingKey) return here || null;
+    for (const [src, list] of [['cur', bookingsListData], ['past', bookingsPastData]]) {
+      const i = list.findIndex(x => bookingKey(x) === currentBookingKey);
+      if (i >= 0) { currentBookingSource = src; currentBookingIndex = i; return list[i]; }
+    }
+    return null;
+  }
+  // бронь без номера (старые записи): после правки её «запись» меняется — запоминаем заново
+  function rememberCurrentBooking(b) { if (b) currentBookingKey = bookingKey(b); }
+  const BOOKING_GONE = 'Этой брони уже нет в списке (её отменили или перенесли). Откройте брони заново.';
   function openBookingDetail(idx, source) {
     currentBookingSource = source === 'past' ? 'past' : 'cur';
     currentBookingIndex = idx;
+    currentBookingKey = bookingKey(bookingBySource(currentBookingSource, idx));
     bookingEditMode = false;
     bookingTableEditMode = false;
     bookingActionNotice = null;
@@ -4913,21 +5029,20 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     // «Не пришёл» — только когда время брони уже наступило (чтобы случайно не освободить стол заранее)
     const hasTime = /T\d{2}:\d{2}/.test(b.iso || '') && !/T00:00/.test(b.iso || '');
     const timeCame = !hasTime || String(b.iso).slice(0, 16) <= moscowNowIso();
-    const src = currentBookingSource;
-    const idx = currentBookingIndex;
+    const uid = escJs(b.uid);
     const a = b.arrival;
     const whoWhen = a ? [a.by ? a.by.replace(/ \(.+\)$/, '') : '', a.at ? new Date(a.at).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : ''].filter(Boolean).join(', ') : '';
     let state = '';
     let btns = '';
-    const noBtn = label => timeCame ? `<button class="arr-btn no" onclick="markArrival('${src}', ${idx}, 'noshow')">${label}</button>` : '';
+    const noBtn = label => timeCame ? `<button class="arr-btn no" onclick="markArrival('${uid}', 'noshow')">${label}</button>` : '';
     if (!a) {
-      btns = `<button class="arr-btn yes" onclick="markArrival('${src}', ${idx}, 'arrived')">✓ Пришёл</button>${noBtn('✗ Не пришёл')}`;
+      btns = `<button class="arr-btn yes" onclick="markArrival('${uid}', 'arrived')">✓ Пришёл</button>${noBtn('✗ Не пришёл')}`;
     } else if (a.status === 'arrived') {
       state = `<div class="arr-state arrived">✓ Пришёл${whoWhen ? ` <span class="note">отметил(а) ${escHtml(whoWhen)}</span>` : ''}</div>`;
-      btns = `${noBtn('Не пришёл')}<button class="arr-btn" onclick="markArrival('${src}', ${idx}, 'clear')">Снять отметку</button>`;
+      btns = `${noBtn('Не пришёл')}<button class="arr-btn" onclick="markArrival('${uid}', 'clear')">Снять отметку</button>`;
     } else {
       state = `<div class="arr-state noshow">✗ Не пришёл${whoWhen ? ` <span class="note">отметил(а) ${escHtml(whoWhen)}</span>` : ''}</div>`;
-      btns = `<button class="arr-btn yes" onclick="markArrival('${src}', ${idx}, 'arrived')">Пришёл</button><button class="arr-btn" onclick="markArrival('${src}', ${idx}, 'clear')">Снять отметку</button>`;
+      btns = `<button class="arr-btn yes" onclick="markArrival('${uid}', 'arrived')">Пришёл</button><button class="arr-btn" onclick="markArrival('${uid}', 'clear')">Снять отметку</button>`;
     }
     if (!can('bookings.mark_arrival')) btns = '';
     return `<div class="arr-box">
@@ -4939,11 +5054,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
 
   let arrivalBusy = false;
-  async function markArrival(source, idx, status) {
+  async function markArrival(uid, status) {
     if (arrivalBusy) return;
     if (!needPerm('bookings.mark_arrival', 'отмечать, пришёл ли гость')) return;
-    const b = bookingBySource(source, idx);
-    if (!b || !b.uid) return;
+    // бронь — по её номеру: список мог обновиться с тех пор, как нарисовали кнопку
+    const b = uid ? (bookingsListData.find(x => x.uid === uid) || bookingsPastData.find(x => x.uid === uid)) : null;
+    if (!b) { notify(BOOKING_GONE); return; }
     arrivalBusy = true;
     document.querySelectorAll('.arr-btn').forEach(x => { x.disabled = true; });
     try {
@@ -4998,9 +5114,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
 
   function renderBookingDetail() {
-    const b = bookingBySource(currentBookingSource, currentBookingIndex);
+    const b = currentBooking();
     const el = document.getElementById('bookingDetailContent');
-    if (!b) { el.innerHTML = '<div class="empty-state">Бронь не найдена</div>'; return; }
+    if (!b) { el.innerHTML = `<div class="empty-state">${BOOKING_GONE}<div><button type="button" class="btn-new-guest" style="margin-top:14px" onclick="openBookings()">К списку броней</button></div></div>`; return; }
 
     const st = BOOKING_STATUS_STYLE[b.status] || BOOKING_STATUS_STYLE.pending;
     const kindLine = b.eventName ? `${b.kind} · ${b.eventName}` : b.kind;
@@ -5019,7 +5135,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         <div class="form-group"><label class="form-label">Время</label><input class="form-input" type="time" id="bkEditTime" value="${escHtml(currentTime)}"></div>
         <div class="form-group"><label class="form-label">Гостей</label><div class="num-field"><input class="form-input" type="number" min="1" id="bkEditGuests" value="${escHtml(String(b.guests || ''))}"><div class="num-steps"><button type="button" tabindex="-1" aria-label="Больше" onclick="stepNum(this,1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 15 12 9 18 15"/></svg></button><button type="button" tabindex="-1" aria-label="Меньше" onclick="stepNum(this,-1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button></div></div></div>
         <div class="form-group"><label class="form-label">Комментарий</label><textarea class="form-input" id="bkEditComment">${escHtml(b.comment || '')}</textarea></div>
-        <button class="btn-cta" onclick="saveBookingEdit()">Сохранить</button>
+        <button class="btn-cta" id="bkEditSaveBtn" onclick="saveBookingEdit()">Сохранить</button>
         <button class="btn-ghost" onclick="bookingEditMode=false;renderBookingDetail();">Отмена</button>
       `;
       return;
@@ -5035,7 +5151,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
             <label class="form-label" style="margin-bottom:6px;">Стол</label>
             <select class="form-input" id="bkTableSelect" onchange="onTableSelectChange('bkTableSelect','tableConflictWarning'); saveTableAssign();">
               <option value="">— не выбран —</option>
-              ${tableOptionsHtml(b.table || '', getOccupiedTablesForDate((b.iso || '').slice(0, 10), b.entry))}
+              ${tableOptionsHtml(b.table || '', getOccupiedTablesForDate(b.iso || '', b.entry))}
             </select>
             <div class="bk-table-status" id="bkTableStatus"></div>
           </div>
@@ -5081,8 +5197,9 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
   async function confirmBookingAction() {
     if (bookingActionBusy) return;
     if (!needPerm('bookings.confirm', 'подтверждать брони')) return;
+    const b = currentBooking();
+    if (!b) { notify(BOOKING_GONE); return; }
     bookingActionBusy = true;
-    const b = bookingBySource(currentBookingSource, currentBookingIndex);
     const btn = document.getElementById('bkConfirmBtn');
     if (btn) { btn.disabled = true; btn.textContent = 'Подтверждаем...'; }
     try {
@@ -5095,7 +5212,8 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       if (!res.ok) { notify(data.error || 'Не удалось подтвердить'); return; }
       b.status = 'confirmed';
       refreshBookingsDot();
-      bookingActionNotice = data.notified ? null : 'Подтверждено, но гостя уведомить не удалось — свяжитесь сами.';
+      bookingActionNotice = data.already ? 'Эту бронь уже подтвердили раньше — гостю второе сообщение не отправлялось.'
+        : data.notified ? null : 'Подтверждено, но гостя уведомить не удалось — свяжитесь сами.';
     } catch {
       notify('Не удалось подтвердить');
     } finally {
@@ -5110,8 +5228,9 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
   async function assignTableToBooking(b, table, opts) {
     opts = opts || {};
     if (table) {
-      const occ = getOccupiedTablesForDate((b.iso || '').slice(0, 10), b.entry)[table];
+      const occ = getOccupiedTablesForDate(b.iso || '', b.entry)[table];
       if (occ && !await askConfirm(`Стол «${table}» уже занят бронью ${occ.name}${occ.time ? ' на ' + occ.time : ''}.\n\nВсё равно посадить сюда?`, { ok: 'Посадить' })) return false;
+      if (occ) opts.knownConflict = true; // сотрудник уже предупреждён и согласился — второй раз не напоминаем
       const hall = hallTableFor(table);
       const guests = Number(b.guests) || 0;
       if (opts.checkSeats && hall && hall.seats && guests > hall.seats &&
@@ -5126,13 +5245,16 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     if (!res.ok) { notify(data.error || 'Не удалось сохранить стол'); return false; }
     b.table = table;
     if (data.newEntry) b.entry = data.newEntry;
+    // сервер видит все брони (в том числе те, что другой администратор внёс секунду назад) — показываем его предупреждение
+    if (data.tableWarning && !opts.knownConflict) showToast(data.tableWarning, true);
     return true;
   }
 
   // Карточка брони: стол сохраняется сразу при выборе в списке
   async function saveTableAssign() {
     if (bookingActionBusy) return;
-    const b = bookingBySource(currentBookingSource, currentBookingIndex);
+    const b = currentBooking();
+    if (!b) { notify(BOOKING_GONE); return; }
     const select = document.getElementById('bkTableSelect');
     const status = document.getElementById('bkTableStatus');
     const table = select.value;
@@ -5306,9 +5428,13 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
   async function cancelBookingAction() {
     if (bookingActionBusy) return;
     if (!needPerm('bookings.cancel', 'отменять брони')) return;
-    if (!await askConfirm('Отменить эту бронь?\n\nГость получит уведомление об отмене.', { ok: 'Отменить бронь', cancel: 'Не отменять', danger: true })) return;
+    const b = currentBooking();
+    if (!b) { notify(BOOKING_GONE); return; }
+    const key = bookingKey(b);
+    const whose = `${b.name || 'Гость'}${b.display ? ', ' + b.display : ''}`;
+    if (!await askConfirm(`Отменить бронь?\n\n${whose}\n\nГость получит уведомление об отмене.`, { ok: 'Отменить бронь', cancel: 'Не отменять', danger: true })) return;
+    if (bookingActionBusy) return;
     bookingActionBusy = true;
-    const b = bookingBySource(currentBookingSource, currentBookingIndex);
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/bookings/cancel?pin=${getPin()}`, {
         method: 'POST',
@@ -5317,10 +5443,15 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       });
       const data = await res.json();
       if (!res.ok) { notify(data.error || 'Не удалось отменить'); return; }
-      (currentBookingSource === 'past' ? bookingsPastData : bookingsListData).splice(currentBookingIndex, 1);
+      // убираем именно эту бронь (по номеру): пока шёл запрос, список мог обновиться
+      for (const list of [bookingsListData, bookingsPastData]) {
+        const i = list.findIndex(x => bookingKey(x) === key);
+        if (i >= 0) list.splice(i, 1);
+      }
+      currentBookingKey = '';
       refreshBookingsDot();
       showScreen('bookings');
-      if (!data.notified) notify('Бронь отменена, но гостя уведомить не удалось — свяжитесь сами.');
+      if (!data.notified && !data.already) notify('Бронь отменена, но гостя уведомить не удалось — свяжитесь сами.');
     } catch {
       notify('Не удалось отменить');
     } finally {
@@ -5330,7 +5461,8 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
 
   async function saveBookingEdit() {
     if (bookingActionBusy) return;
-    const b = bookingBySource(currentBookingSource, currentBookingIndex);
+    const b = currentBooking();
+    if (!b) { notify(BOOKING_GONE); return; }
     const dateVal = document.getElementById('bkEditDate').value;
     const timeVal = document.getElementById('bkEditTime').value;
     const guestsVal = document.getElementById('bkEditGuests').value;
@@ -5338,6 +5470,8 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     if (!dateVal || !timeVal) { notify('Укажите дату и время'); return; }
 
     bookingActionBusy = true;
+    const saveBtn = document.getElementById('bkEditSaveBtn');
+    if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Сохраняем...'; }
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/bookings/edit?pin=${getPin()}`, {
         method: 'POST',
@@ -5346,14 +5480,19 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       });
       const data = await res.json();
       if (!res.ok) { notify(data.error || 'Не удалось сохранить'); return; }
+      const oldDay = bookingVenueDay(b.iso);
       b.entry = data.newEntry;
       b.display = data.newDisplayText;
       b.status = 'confirmed';
       b.iso = `${dateVal}T${timeVal}:00`;
       b.guests = guestsVal ? Number(guestsVal) : null;
       b.comment = commentVal || '';
+      // перенесли на другой вечер — отметка «не пришёл» относилась к старой дате (сервер её тоже снял)
+      if (b.arrival && b.arrival.status === 'noshow' && bookingVenueDay(b.iso) !== oldDay) b.arrival = null;
+      rememberCurrentBooking(b);
       refreshBookingsDot();
       bookingActionNotice = data.notified ? null : 'Изменено, но гостя уведомить не удалось — свяжитесь сами.';
+      if (data.tableWarning) bookingActionNotice = [bookingActionNotice, escHtml(data.tableWarning)].filter(Boolean).join('<br>');
       bookingEditMode = false;
     } catch {
       notify('Не удалось сохранить');
@@ -5547,7 +5686,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     return new Date(iso + 'T12:00:00').toLocaleDateString('ru-RU', { weekday: 'short', day: 'numeric', month: 'short' }).replace('.', '');
   }
   function renderEvWhen() {
-    const today = localDateStr(new Date());
+    const today = venueCalendarDay();
     const days = [];
     for (let i = 0; i < 8; i++) { const iso = shiftDateStr(today, i); days.push(`<div class="chip${evDay === iso ? ' selected' : ''}" data-day="${iso}" onclick="evSetDay('${iso}')">${escHtml(evDayLabel(i, iso))}</div>`); }
     document.getElementById('evDayChips').innerHTML = days.join('');
@@ -5791,9 +5930,11 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       editingEventId = null;
       openEvents();
     } catch {
+      notify('Не удалось удалить мероприятие');
+    } finally {
+      // кнопка одна на все мероприятия: возвращаем её в рабочий вид и после удачного удаления
       btn.disabled = false;
       btn.textContent = 'Удалить мероприятие';
-      notify('Не удалось удалить мероприятие');
     }
   }
 
@@ -5968,7 +6109,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       ws['!cols'] = [{ wch: 12 }, { wch: 16 }, { wch: 34 }, { wch: 9 }, { wch: 50 }, { wch: 12 }, { wch: 7 }];
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Меню');
-      XLSX.writeFile(wb, `na-kryishe-menu-${new Date().toISOString().split('T')[0]}.xlsx`);
+      XLSX.writeFile(wb, `na-kryishe-menu-${venueCalendarDay()}.xlsx`);
     } catch {
       notify('Не удалось сформировать файл — проверьте соединение');
     }
@@ -7200,10 +7341,8 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     'Больничный': '#8B4A3D'
   };
 
-  function todayISO() {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-  }
+  // «Сегодня» для графика смен — вечер заведения: смена до 02:00 относится к тому же дню, что и её начало
+  function todayISO() { return venueDayStr(); }
 
   function formatShDate(iso) {
     const [, m, d] = iso.split('-').map(Number);
@@ -7242,11 +7381,9 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/employees-list?pin=${getPin()}`);
       const data = await res.json();
-      scheduleEmployeesCache = (res.ok && Array.isArray(data)) ? data : [];
-    } catch {
-      scheduleEmployeesCache = [];
-    }
-    return scheduleEmployeesCache;
+      if (res.ok && Array.isArray(data)) { scheduleEmployeesCache = data; return data; }
+    } catch { /* нет связи */ }
+    return []; // не получилось — в следующий раз попробуем снова (раньше пустой список запоминался до перезагрузки)
   }
 
   // Масштаб календаря: выбор запоминается; пока не выбирали — крупно у тех, кто смены не ставит (только смотрит)
@@ -7538,11 +7675,12 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       }
       showSuccess('Смена удалена', '');
       editingShiftId = null;
-      openSchedule();
+      openSchedule(true);
     } catch {
+      notify('Не удалось удалить смену — проверьте соединение');
+    } finally {
       btn.disabled = false;
       btn.textContent = 'Удалить смену';
-      notify('Не удалось удалить смену — проверьте соединение');
     }
   }
 
@@ -7774,7 +7912,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       const ws = XLSX.utils.json_to_sheet(rows);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Гости');
-      const dateLabel = new Date().toISOString().split('T')[0];
+      const dateLabel = venueCalendarDay();
       XLSX.writeFile(wb, `na-kryishe-guests-${dateLabel}.xlsx`);
     } catch {
       notify('Не удалось сформировать файл — проверьте соединение');
@@ -7820,7 +7958,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       const data = await res.json();
       if (seq !== guestListSeq) return;
       const list = data.guests || [];
-      const onDate = opts.asOf && data.asOf !== localDateStr(new Date()) ? `на ${fmtDMY(data.asOf)}` : '';
+      const onDate = opts.asOf && data.asOf !== venueCalendarDay() ? `на ${fmtDMY(data.asOf)}` : '';
       subEl.textContent = [`${list.length} ${ruPlural(list.length, 'гость', 'гостя', 'гостей')}`, onDate].filter(Boolean).join(' · ');
 
       let html = '';
@@ -8032,7 +8170,8 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
 
   function openChecklist() {
     // вечером по умолчанию открываем «Закрытие»
-    const type = new Date().getHours() >= 22 || new Date().getHours() < 6 ? 'Закрытие' : 'Открытие';
+    const hourNow = Number(moscowNowIso().slice(11, 13)); // по времени заведения, а не устройства
+    const type = hourNow >= 22 || hourNow < 6 ? 'Закрытие' : 'Открытие';
     document.querySelectorAll('#screen-checklist .chip-row .chip').forEach(c => c.classList.toggle('selected', c.dataset.value === type));
     renderChecklist(type);
     showScreen('checklist');
@@ -8099,9 +8238,11 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       btn.textContent = 'Готово, отметить смену';
       if (res.status === 401) { showScreen('pin'); return; }
       if (!res.ok) { notify(await responseError(res, 'Чек-лист не отправился — попробуйте ещё раз')); return; }
+      const data = await res.json().catch(() => ({}));
       try { localStorage.setItem(checklistKey(type, 'sent'), new Date().toISOString()); } catch {}
       showSuccess('Чек-лист отправлен', type);
       showScreen('home');
+      if (data.warning) showToast(data.warning, true);
     } catch {
       btn.disabled = false;
       btn.textContent = 'Готово, отметить смену';
@@ -8538,7 +8679,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
   }
 
   function anRange() {
-    const today = localDateStr(new Date());
+    const today = venueDayStr();
     switch (anState.period) {
       case '7': return { from: shiftDateStr(today, -6), to: today };
       case '90': return { from: shiftDateStr(today, -89), to: today };
@@ -9970,6 +10111,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       if (prev && prev !== 'pin' && Date.now() - quickStatusAt > 20000) refreshQuickActionStatus();
     }
     if (name === 'service' && prev && prev !== 'service' && prev !== 'pin') { renderService(); loadServiceBadges(); }
+    if (name === 'booking-detail' && prev && prev !== 'booking-detail') renderBookingDetail();
     if (name === 'bookings') {
       const addRow = document.getElementById('bkAddRow');
       if (addRow) addRow.style.display = can('bookings.create') ? 'flex' : 'none';
@@ -10057,6 +10199,8 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/search-by-phone?phone=${encodeURIComponent(phone)}&pin=${getPin()}`);
       if (res.status === 401) { showScreen('pin'); return; }
+      // сбой сервера или нет доступа — говорим прямо: иначе «гостя нет, создайте карточку» плодило дубли
+      if (!res.ok) { resultsEl.innerHTML = searchFailedHtml(await responseError(res, ''), 'doSearch()'); return; }
       const data = await res.json();
 
       if (data.inCardDb) {
@@ -10073,7 +10217,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       resultsEl.innerHTML = `<div class="empty-state">Гостя с этим номером нет ни в карточках, ни в бронях.</div>
         <button class="btn-cta" onclick="openNewGuest('', '${phoneEsc}')">Создать карточку с этим номером</button>`;
     } catch {
-      resultsEl.innerHTML = '<div class="empty-state">Не удалось выполнить поиск</div>';
+      resultsEl.innerHTML = searchFailedHtml('', 'doSearch()');
     }
   }
 
@@ -10115,6 +10259,12 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     el.classList.toggle('on', c.kind !== 'empty');
   }
 
+  // Поиск не выполнился (нет связи, сбой сервера, нет доступа): отдельное сообщение с «Повторить» —
+  // без предложения создать карточку, потому что мы не знаем, есть ли такой гость
+  function searchFailedHtml(serverText, retryCall) {
+    return errorStateHtml(serverText && /[а-яё]/i.test(serverText) ? serverText : 'Поиск не выполнился — проверьте связь и попробуйте ещё раз. Пока поиск не сработал, новую карточку не создавайте: гость может уже быть в базе.', retryCall);
+  }
+
   async function runLast4Search(digits, resultsEl) {
     showResultsSection();
     resultsEl.innerHTML = '<div class="loading">Ищу по номеру...</div>';
@@ -10122,7 +10272,9 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/search-last4?digits=${digits}&pin=${getPin()}`);
       if (res.status === 401) { showScreen('pin'); return; }
+      if (!res.ok) { resultsEl.innerHTML = searchFailedHtml(await responseError(res, ''), 'doSearch()'); return; }
       const matches = await res.json();
+      if (!Array.isArray(matches)) { resultsEl.innerHTML = searchFailedHtml('', 'doSearch()'); return; }
 
       if (!matches.length) {
         resultsEl.innerHTML = `<div class="empty-state">Никого с номером на «···${digits}» не найдено.</div>`;
@@ -10141,7 +10293,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
         return renderGeneralGuestCard(g);
       }).join('');
     } catch {
-      resultsEl.innerHTML = '<div class="empty-state">Не удалось выполнить поиск</div>';
+      resultsEl.innerHTML = searchFailedHtml('', 'doSearch()');
     }
   }
 
@@ -10165,13 +10317,17 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/search?name=${encodeURIComponent(name)}&pin=${getPin()}`);
       if (res.status === 401) { showScreen('pin'); return; }
+      if (!res.ok) { resultsEl.innerHTML = searchFailedHtml(await responseError(res, ''), 'doSearch()'); return; }
       const results = await res.json();
+      if (!Array.isArray(results)) { resultsEl.innerHTML = searchFailedHtml('', 'doSearch()'); return; }
 
       if (!results.length) {
         resultsEl.innerHTML = '<div class="loading">Проверяю по броням в приложении...</div>';
         try {
           const genRes = await fetch(`${PROXY_BASE}/api/staff/check-general?name=${encodeURIComponent(name)}&pin=${getPin()}`);
-          const genResults = genRes.ok ? await genRes.json() : [];
+          // вторая проверка не прошла — «не найден» сказать нельзя: гость может быть в бронях
+          if (!genRes.ok) { resultsEl.innerHTML = searchFailedHtml('', 'doSearch()'); return; }
+          const genResults = await genRes.json();
 
           if (genResults.length) {
             resultsEl.innerHTML = genResults.map(g => renderGeneralGuestCard(g)).join('') + notFoundWithPhoneFallback();
@@ -10179,7 +10335,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
             resultsEl.innerHTML = `<div class="empty-state">Гость «${escHtml(name)}» не найден.<br>Можно создать новую карточку.</div>` + notFoundWithPhoneFallback();
           }
         } catch {
-          resultsEl.innerHTML = `<div class="empty-state">Гость «${escHtml(name)}» не найден.<br>Можно создать новую карточку.</div>` + notFoundWithPhoneFallback();
+          resultsEl.innerHTML = searchFailedHtml('', 'doSearch()');
         }
         return;
       }
@@ -10196,7 +10352,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       `;
       }).join('');
     } catch {
-      resultsEl.innerHTML = '<div class="empty-state">Не удалось выполнить поиск</div>';
+      resultsEl.innerHTML = searchFailedHtml('', 'doSearch()');
     }
   }
 
@@ -10205,7 +10361,9 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
   let currentGuest = null;
   let currentGuestPhotoUrl = null; // фото из Telegram для открытой карточки, если нашлось
 
+  let guestCardSeq = 0;
   async function openGuestCard(id, hops = 0) {
+    const seq = ++guestCardSeq; // на медленной связи ответ по прошлой карточке мог прийти позже и подменить эту
     const from = activeScreenName();
     if (from === 'new-guest' || from === 'pin' || !from) cardReturn = { screen: 'home' };
     else if (from !== 'card' && from !== 'visit') cardReturn = { screen: from };
@@ -10225,6 +10383,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
 
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/guest/${id}?pin=${getPin()}`);
+      if (seq !== guestCardSeq) return; // за это время открыли другую карточку
       if (res.status === 401) { showScreen('pin'); return; }
       // карточку объединили с другой — открываем главную, старую убираем из недавних
       if (res.status === 410) {
@@ -10243,13 +10402,15 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
         return;
       }
       const guest = await res.json();
+      if (seq !== guestCardSeq) return;
       currentGuest = guest;
       renderGuestCard(guest);
       if (sameGuest) window.scrollTo(0, keepY);
       trackRecentGuest(guest.id, guest.fullName || guest.name, guest.phone);
       if (!currentGuestPhotoUrl) loadGuestPhoto(id);
     } catch {
-      el.innerHTML = '<div class="empty-state">Не удалось загрузить карточку</div>';
+      if (seq !== guestCardSeq) return;
+      el.innerHTML = errorStateHtml('Не удалось загрузить карточку', `openGuestCard('${escJs(id)}')`);
     }
   }
 
@@ -10475,6 +10636,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
   }
 
   let tagAddGroup = null; // 'special' | 'allergy' | null — какая группа сейчас в режиме добавления тега
+  let tagBusy = false;    // идёт снятие тега: второе касание не отправляет второй запрос
   var cardTagsOpen = false; // раскрыт ли блок «Теги и вкусы» в открытой карточке
 
   // Кнопки «больше / меньше» у поля с числом (.num-field)
@@ -10522,14 +10684,16 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       notify(tagRulesText(group, name));
       return;
     }
+    const guestId = currentGuest.id;
     try {
-      const res = await fetch(`${PROXY_BASE}/api/staff/guest/${currentGuest.id}/tag?pin=${getPin()}`, {
+      const res = await fetch(`${PROXY_BASE}/api/staff/guest/${guestId}/tag?pin=${getPin()}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pin: getPin(), group, tag: name, action: 'add' })
       });
       if (!res.ok) { notify(await responseError(res, 'Не удалось добавить тег')); return; }
       const data = await res.json();
+      if (!currentGuest || currentGuest.id !== guestId) return; // пока шёл запрос, открыли другую карточку
       currentGuest[TAG_GROUP_FIELD[group]] = data.tags;
       if (data.history) currentGuest.history = data.history;
       refreshVipFlags(currentGuest);
@@ -10545,20 +10709,29 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       notify(tagRulesText(group, tagName));
       return;
     }
+    const guestId = currentGuest.id;
+    // Аллергии и «особые» теги — важные сведения о госте: случайное касание крестика не должно их стирать молча
+    if ((group === 'allergy' || group === 'special') &&
+        !await askConfirm(`Убрать ${group === 'allergy' ? 'аллергию' : 'тег'} «${tagName}»?`, { ok: 'Убрать', cancel: 'Оставить', danger: true })) return;
+    if (tagBusy) return;
+    tagBusy = true;
     try {
-      const res = await fetch(`${PROXY_BASE}/api/staff/guest/${currentGuest.id}/tag?pin=${getPin()}`, {
+      const res = await fetch(`${PROXY_BASE}/api/staff/guest/${guestId}/tag?pin=${getPin()}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pin: getPin(), group, tag: tagName, action: 'remove' })
       });
       if (!res.ok) { notify(await responseError(res, 'Не удалось удалить тег')); return; }
       const data = await res.json();
+      if (!currentGuest || currentGuest.id !== guestId) return; // пока шёл запрос, открыли другую карточку
       currentGuest[TAG_GROUP_FIELD[group]] = data.tags;
       if (data.history) currentGuest.history = data.history;
       refreshVipFlags(currentGuest);
       renderGuestCard(currentGuest);
     } catch {
       notify('Не удалось удалить тег');
+    } finally {
+      tagBusy = false;
     }
   }
 
@@ -10680,7 +10853,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
       cards.push(card('negative',
         '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 15s1.5-2 4-2 4 2 4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
         'Негативный отзыв',
-        `Низкая оценка${nr.category ? ` «${nr.category}»` : ''}${nr.score !== null && nr.score !== undefined ? `: ${nr.score}/10` : ''}${nr.date ? `, ${humanDay(nr.date)}` : ''}`));
+        `Низкая оценка${nr.category ? ` «${nr.category}»` : ''}${nr.score !== null && nr.score !== undefined ? `: ${nr.score}/10` : ''}${nr.date ? `, ${humanDay(nr.date, { venue: true })}` : ''}`));
     }
     // ДР сегодня — плашкой вверху; здесь — «скоро» и «недавно был»
     if (at.birthday && at.birthday.when !== 'today') {
@@ -10744,7 +10917,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     const visitsHtml = guest.visits.length
       ? guest.visits.map(v => `
           <div class="visit-item">
-            <div class="visit-date"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>${escHtml(v.date ? capFirst(humanDay(v.date)) : '—')}</div>
+            <div class="visit-date"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>${escHtml(v.date ? capFirst(humanDay(v.date, { venue: true })) : '—')}</div>
             ${hookahHtml(v.hookah)}
             ${v.notes ? `<div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>${escHtml(v.notes)}</div>` : ''}
           </div>
@@ -10929,7 +11102,7 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
   function dupSummaryLine(c) {
     const parts = [];
     parts.push(c.segment || 'визитов пока нет');
-    if (c.lastVisit) parts.push(`был ${daysAgoText(Math.round((Date.parse(venueCalendarDay()) - Date.parse(c.lastVisit)) / 86400000))}`);
+    if (c.lastVisit) parts.push(`был ${daysAgoText(Math.round((Date.parse(venueDayStr()) - Date.parse(c.lastVisit)) / 86400000))}`);
     if (c.visitsTotal) parts.push(`${c.visitsTotal} ${ruPlural(c.visitsTotal, 'визит', 'визита', 'визитов')}`);
     if (c.created) parts.push(`создана ${fmtDMY(c.created)}`);
     return parts.join(' · ');
@@ -11123,6 +11296,9 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
   }
 
   function openAppDialog(o) {
+    // Окно уже открыто (двойное касание кнопки) — второе не открываем: раньше они накладывались, и один Enter
+    // подтверждал оба, действие выполнялось дважды.
+    if (document.querySelector('.app-dialog-ov')) return Promise.resolve(null);
     return new Promise(resolve => {
       const [title, ...rest] = String(o.message || '').split('\n\n');
       const ov = document.createElement('div');
@@ -11174,15 +11350,19 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
   const RU_MON_GEN_SHORT = ['янв', 'фев', 'мар', 'апр', 'мая', 'июня', 'июля', 'авг', 'сент', 'окт', 'нояб', 'дек'];
   const RU_WD_SHORT = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
   function isoDateOnly(iso) { return String(iso || '').slice(0, 10); }
-  function dayDiffFromToday(iso) {
+  // venue: true — считать от «вечера заведения» (до 06:00 ещё вчера): так записаны визиты и отзывы.
+  // Иначе — от календарного дня по Москве (сроки задач, афиша, «создано»): так же считает сервер.
+  // В обоих случаях день берётся по времени заведения, а не по часам устройства.
+  function dayDiffFromToday(iso, venue) {
     const d = isoDateOnly(iso);
     if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return null;
-    return Math.round((new Date(d + 'T12:00:00') - new Date(localDateStr(new Date()) + 'T12:00:00')) / 86400000);
+    const base = venue ? venueDayStr() : venueCalendarDay();
+    return Math.round((new Date(d + 'T12:00:00') - new Date(base + 'T12:00:00')) / 86400000);
   }
   // «сегодня», «вчера», «завтра», «пт, 2 окт» (+ год, если не текущий)
   function humanDay(iso, opts = {}) {
     const d = isoDateOnly(iso);
-    const diff = dayDiffFromToday(d);
+    const diff = dayDiffFromToday(d, opts.venue);
     if (diff === null) return String(iso || '');
     if (!opts.noRelative) {
       if (diff === 0) return 'сегодня';
@@ -11214,8 +11394,9 @@ ${b.past ? '' : `      ${b.status === 'pending' && can('bookings.confirm') ? `<b
     if (min < 60) return `${min} мин назад`;
     const h = Math.round(min / 60);
     if (h < 12) return `${h} ч назад`;
-    const diff = dayDiffFromToday(localDateStr(t));
-    const hm = t.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    // день и время события — по Москве, как и «сегодня»
+    const diff = dayDiffFromToday(new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Moscow', year: 'numeric', month: '2-digit', day: '2-digit' }).format(t));
+    const hm = t.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Moscow' });
     if (diff === 0) return `сегодня в ${hm}`;
     if (diff === -1) return `вчера в ${hm}`;
     return `${-diff} ${ruPlural(-diff, 'день', 'дня', 'дней')} назад`;
