@@ -1994,6 +1994,7 @@
     </div>
     <div><h1 style="font-size:14px;letter-spacing:1px;">Стоп-лист</h1></div>
   </div>
+  <div style="padding:0 16px 0;font-size:12px;color:var(--text-muted,#8a7a66);line-height:1.4">Стоп-лист сам сбрасывается в 6 утра: на новый рабочий день все позиции снова в наличии.</div>
   <div style="padding:0 16px" id="stoplistContent"><div class="loading">Загружаю...</div></div>
 </div>
 
@@ -7467,6 +7468,19 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       rows.push(d.guestBot.ok
         ? row('ok', 'Бот гостей', `@${d.guestBot.username} · отвечает`)
         : row('bad', 'Бот гостей', `Не отвечает: ${d.guestBot.error || 'неизвестная ошибка'}`));
+      // сообщения гостям, которые не дошли за сутки: по брони — тревога (гостю надо позвонить), остальное — предупреждение
+      const sf = d.sendFailures;
+      if (sf) {
+        const KIND = { booking: 'по броням', broadcast: 'рассылки', birthday: 'поздравления', review: 'просьбы об отзыве' };
+        if (!sf.total) rows.push(row('ok', 'Сообщения гостям', 'За сутки все дошли'));
+        else {
+          const parts = Object.keys(sf.byKind).map(k => `${KIND[k] || k}: ${sf.byKind[k].failed}${sf.byKind[k].blocked ? ` (из них заблокировали бота: ${sf.byKind[k].blocked})` : ''}`);
+          const REASON = { blocked: 'гость заблокировал бота', limit: 'лимит Telegram', network: 'Telegram не ответил', error: 'Telegram отказал' };
+          const last = sf.last ? ` Последний: ${fmtDateTime(sf.last.at)}, ${REASON[sf.last.reason] || sf.last.reason}${sf.last.note ? ' — ' + sf.last.note : ''}.` : '';
+          const bk = sf.byKind.booking && sf.byKind.booking.failed;
+          rows.push(row(bk ? 'bad' : 'warn', 'Сообщения гостям', `Не дошло за сутки: ${sf.total}. ${parts.join('; ')}.${last}${bk ? ' По броням гостю нужно позвонить.' : ''}`));
+        }
+      }
       if (d.backup.lastAt) {
         const ageDays = (Date.now() - new Date(d.backup.lastAt)) / 86400000;
         rows.push(row(ageDays > 2 ? 'warn' : 'ok', 'Резервная копия базы', `Последняя: ${fmtDateTime(d.backup.lastAt)} (${timeAgo(d.backup.lastAt)})${ageDays > 2 ? ' — давно, проверьте' : ''}`));
