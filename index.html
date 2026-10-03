@@ -983,6 +983,11 @@
     .party-ctl b { min-width: 34px; text-align: center; font-size: 16px; font-weight: 600; color: var(--text); }
     .party-save { padding: 8px 14px; border-radius: 10px; border: 1px solid var(--accent); background: transparent; color: var(--accent); font-size: 12.5px; cursor: pointer; }
     .party-save[hidden] { display: none; }
+    .room-note { margin-top: 12px; border-radius: 12px; padding: 11px 14px; font-size: 12.5px; line-height: 1.5; border: 1px solid var(--border); color: var(--text-sub); }
+    .room-note b { display: block; font-weight: 600; margin-bottom: 2px; }
+    .room-note.warn { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.4); color: #f59e0b; }
+    .room-note.bad { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.45); color: #f87171; }
+    .room-note-call { display: block; width: max-content; max-width: 100%; margin-top: 8px; padding: 7px 12px; border-radius: 10px; border: 1px solid currentColor; color: inherit; text-decoration: none; font-size: 12.5px; }
     .bk-late-line { color: #fbbf24; }
     .bk-wait-line { color: #f59e0b; }
     .pill.late { color: #fbbf24; border-color: rgba(251,191,36,0.5); }
@@ -3690,7 +3695,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   let bookingsPollBusy = false;
   let bookingsLoadedOnce = false;
   function bookingsSig(list) {
-    return JSON.stringify((list || []).map(b => [b.entry, b.status, b.table || '', b.arrival?.status || '', b.arrival?.leftAt || '', b.guests || '', b.iso || '', b.name || '', b.lateAt || '']));
+    return JSON.stringify((list || []).map(b => [b.entry, b.status, b.table || '', b.arrival?.status || '', b.arrival?.leftAt || '', b.guests || '', b.iso || '', b.name || '', b.lateAt || '', b.roomNote ? JSON.stringify(b.roomNote) : '']));
   }
   function bookingsUiBusy() {
     const active = id => document.getElementById('screen-' + id)?.classList.contains('active');
@@ -4070,7 +4075,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   const TABLE_GROUPS = [
     { label: 'Общий зал', tables: [...Array.from({ length: 13 }, (_, i) => `Общий зал ${i + 1}`), 'Бар'] },
     { label: 'Терраса', tables: Array.from({ length: 7 }, (_, i) => `Терраса ${i + 1}`) },
-    { label: 'VIP', tables: Array.from({ length: 3 }, (_, i) => `VIP ${i + 1}`) }
+    { label: 'ВИП-комнаты', tables: Array.from({ length: 3 }, (_, i) => `VIP ${i + 1}`) }
   ];
   // Кто ещё занял стол в этот же день — считаем прямо по уже загруженному
   // списку броней (bookingsListData), без похода на сервер. Для лаунжа не
@@ -4098,13 +4103,16 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // просто предупреждаем — сотрудник может знать то, чего нет в системе).
   let lastOccupiedTables = {};
 
+  // Комнаты хранятся в брони как «VIP N», а называются везде одинаково: «ВИП-комната N»
+  function vipNo(label) { const m = /^(?:vip|вип|вип[- ]?комната)\s*№?\s*([1-3])$/i.exec(String(label || '').trim()); return m ? Number(m[1]) : 0; }
+  function tableTitle(label) { const n = vipNo(label); return n ? `ВИП-комната ${n}` : String(label || ''); }
   function tableOptionsHtml(selected, occupied) {
     lastOccupiedTables = occupied || {};
     return TABLE_GROUPS.map(g => {
       const opts = g.tables
         .map(v => {
           const occ = lastOccupiedTables[v];
-          const label = occ ? `${v} — занято (${occ.name}${occ.time ? ', ' + occ.time : ''})` : v;
+          const label = occ ? `${tableTitle(v)} — занято (${occ.name}${occ.time ? ', ' + occ.time : ''})` : tableTitle(v);
           const marker = occ ? '🔴 ' : '🟢 ';
           return `<option value="${escHtml(v)}" ${v === selected ? 'selected' : ''}>${marker}${escHtml(label)}</option>`;
         }).join('');
@@ -4276,6 +4284,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function tableParts(label) {
     const t = String(label || '').trim();
     if (!t) return null;
+    if (vipNo(t)) return { num: String(vipNo(t)), zone: 'ВИП-комната', word: false };
     const m = /^(.*?)\s*(\d+)$/.exec(t);
     if (m) return { num: m[2], zone: m[1].trim() || 'Общий зал', word: false };
     const hall = hallTableFor(t);
@@ -4325,6 +4334,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const eventFlags = [
         lateHm ? '<span class="bk-flag late">⏰ опаздывает</span>' : '',
         overdue !== null ? `<span class="bk-flag overdue">⌛ время прошло ${escHtml(shDuration(overdue))}</span>` : '',
+        roomNoteFlag(b),
         waitMin !== null && waitMin >= PENDING_WAIT_WARN_MIN ? `<span class="bk-flag wait">ждёт ${escHtml(shDuration(waitMin))}</span>` : ''
       ].join('');
       const eventHtml = eventFlags ? `<div class="bk-flags">${eventFlags}</div>` : '';
@@ -4432,15 +4442,24 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       { key: 'Общий зал 13', short: '13', seats: 2, shape: 'round', x: 118, y: 262, r: 18, ticks: 'tb', label: [118, 304, 'middle'], labelMax: 90 },
       { key: 'Бар', short: 'Бар', seats: 6, shape: 'bar', x: 36, ax: 'L', y: 120, w: 18, h: 180, ticks: '', label: [60, 214, 'start'], labelMax: 88 }
     ]
+  }, {
+    // ВИП-комнаты: три отдельные комнаты, каждая ведёт себя как стол (брони, «За столом», «Гость ушёл», накладки)
+    id: 'vip',
+    title: 'ВИП-комнаты',
+    baseWidth: 400,
+    height: 112,
+    decor: () => [],
+    tables: [1, 2, 3].map(n => ({ key: `VIP ${n}`, short: `ВИП ${n}`, seats: 5, shape: 'room', x: 70 + (n - 1) * 130, y: 40, w: 112, h: 60, ticks: '', label: [70 + (n - 1) * 130, 92, 'middle'], labelMax: 116 }))
   }];
 
   // Раскладка зоны под ширину контейнера (px): на телефоне — как есть (ширина 400),
   // на широком экране — вширь, чтобы схема заняла всю ширину и не стала слишком высокой.
-  function layoutZone(zone, containerPx) {
+  // forceW — ширина как у соседней зоны (комнаты рисуются в том же масштабе, что и зал)
+  function layoutZone(zone, containerPx, forceW) {
     const base = zone.baseWidth;
     const cw = Math.max(1, containerPx || 0);
     const targetHeightPx = Math.min(cw, 620);
-    const W = Math.max(base, Math.round(zone.height * (cw / targetHeightPx)));
+    const W = forceW || Math.max(base, Math.round(zone.height * (cw / targetHeightPx)));
     const k = (W - 4) / (base - 4);
     const S = x => Math.round((2 + (x - 2) * k) * 10) / 10;
     const pos = (x, a) => a === 'L' ? x : a === 'R' ? W - (base - x) : S(x);
@@ -4468,6 +4487,14 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   for (const t of HALL_TABLES) {
     HALL_TABLE_BY_NORM[normTableLabel(t.key)] = t;
     if (t.zone === 'main' && /^\d+$/.test(t.short)) HALL_TABLE_BY_NORM[t.short] = t;
+    if (t.zone === 'vip') { const n = t.key.slice(-1); for (const a of [`вип ${n}`, `вип-комната ${n}`, `вип комната ${n}`]) HALL_TABLE_BY_NORM[a] = t; }
+  }
+  // Как назвать место на экране: «Стол 7», «Бар», «ВИП-комната 2»
+  function hallPlaceName(tb, lower) {
+    if (!tb) return '';
+    if (tb.zone === 'vip') return `ВИП-комната ${tb.key.slice(-1)}`;
+    if (tb.shape === 'bar') return 'Бар';
+    return `${lower ? 'стол' : 'Стол'} ${tb.short}`;
   }
   function hallTableFor(label) {
     return label ? HALL_TABLE_BY_NORM[normTableLabel(label)] || null : null;
@@ -4710,7 +4737,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const px = min => ((min - axisStart) / 60) * PX;
 
     // строки: общий зал (столы схемы) → другие зоны (терраса, VIP…) → без стола
-    const rows = HALL_TABLES.map(t => ({ key: t.key, title: t.short, seats: t.seats, items: [], section: 'Общий зал' }));
+    const rows = HALL_TABLES.map(t => ({ key: t.key, title: t.short, seats: t.seats, items: [], section: t.zone === 'vip' ? 'ВИП-комнаты' : 'Общий зал', vip: t.zone === 'vip' }));
     const byKey = Object.fromEntries(rows.map(r => [r.key, r]));
     const others = {};
     const noTable = { key: '', title: 'Без стола', items: [], noTable: true, section: 'Без стола' };
@@ -4780,7 +4807,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       }).join('');
       const label = row.other || row.noTable
         ? `<div class="tl-rowlabel small"><div class="tl-rowtitle">${escHtml(row.title)}</div></div>`
-        : `<div class="tl-rowlabel"><div class="tl-rowtitle">${escHtml(row.title)}</div><div class="tl-rowsub">${TL_PERSON_ICON}${row.seats}</div></div>`;
+        : `<div class="tl-rowlabel"><div class="tl-rowtitle"${row.vip ? ' style="font-size:12.5px;letter-spacing:0"' : ''}>${escHtml(row.title)}</div><div class="tl-rowsub">${TL_PERSON_ICON}${row.seats}</div></div>`;
       rowsHtml += `<div class="tl-row${conflict ? ' conflict' : ''}${zebra++ % 2 ? ' odd' : ''}" style="height:${h}px;width:${TL_LABEL_W + W}px">${label}
         <div class="tl-track${row.noTable ? ' no-add' : ''}" style="width:${W}px;background-size:${PX}px 100%, ${PX / 2}px 100%" data-row="${ri}"
           onclick="tlTrackClick(event, ${ri})" onmousemove="tlTrackHover(event, ${ri})" onmouseleave="tlHideGhost()">${bars}</div></div>`;
@@ -5004,10 +5031,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const items = hallDayBookings(hallDate);
     hallLastWidth = body.clientWidth; // перерисовка по resize — только если ширина реально поменялась
     const zone = layoutZone(HALL_ZONES[0], body.clientWidth - 14);
+    const vipZone = layoutZone(HALL_ZONES[1], body.clientWidth - 14, zone.width);
 
     const states = {};
-    for (const tb of zone.tables) states[tb.key] = tableStateAt(tb.key, items, t);
-    const busyCount = zone.tables.filter(tb => ['busy', 'pending', 'conflict'].includes(states[tb.key].state)).length;
+    for (const tb of [...zone.tables, ...vipZone.tables]) states[tb.key] = tableStateAt(tb.key, items, t);
+    const busyOf = z => z.tables.filter(tb => ['busy', 'pending', 'conflict'].includes(states[tb.key].state)).length;
+    const busyCount = busyOf(zone);
 
     const times = [];
     for (let m = VENUE_OPEN_MIN; m < VENUE_CLOSE_MIN; m += 15) times.push(m);
@@ -5040,14 +5069,18 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const seatB = hallSeatIdx !== null ? bookingsListData[hallSeatIdx] : null;
     if (hallSeatIdx !== null && (!seatB || bookingSlot(seatB)?.day !== hallDate)) hallSeatIdx = null;
     const seating = hallSeatIdx !== null;
-    let svg = `<svg viewBox="0 0 ${zone.width} ${zone.height}" class="hz-svg${seating ? ' hz-seating' : ''}" data-w="${zone.width}" xmlns="http://www.w3.org/2000/svg">${zone.decor.join('')}`;
-    for (const tb of zone.tables) {
-      const st = states[tb.key];
-      const cls = ['hz-t', st.state, hallSelectedTable === tb.key ? 'sel' : '', seating && !st.mine.some(it => !it.left) ? 'seat-ok' : '', seating && hallSeatPick === tb.key ? 'seat-pick' : ''].join(' ');
-      svg += `<g class="${cls}" data-table="${escHtml(tb.key)}" onclick="hallTableClick('${escJs(tb.key)}')">${tableTicksSvg(tb)}${tableShapeSvg(tb)}${tableTextSvg(tb)}</g>`;
-    }
-    for (const tb of zone.tables) svg += labelSvg(tb, tableLabelParts(states[tb.key], t, tb.labelMax || 100));
-    svg += '</svg>';
+    const zoneSvg = (z) => {
+      let out = `<svg viewBox="0 0 ${z.width} ${z.height}" class="hz-svg${seating ? ' hz-seating' : ''}" data-w="${z.width}" xmlns="http://www.w3.org/2000/svg">${z.decor.join('')}`;
+      for (const tb of z.tables) {
+        const st = states[tb.key];
+        const cls = ['hz-t', st.state, hallSelectedTable === tb.key ? 'sel' : '', seating && !st.mine.some(it => !it.left) ? 'seat-ok' : '', seating && hallSeatPick === tb.key ? 'seat-pick' : ''].join(' ');
+        out += `<g class="${cls}" data-table="${escHtml(tb.key)}" onclick="hallTableClick('${escJs(tb.key)}')">${tableTicksSvg(tb)}${tableShapeSvg(tb)}${tableTextSvg(tb)}</g>`;
+      }
+      for (const tb of z.tables) out += labelSvg(tb, tableLabelParts(states[tb.key], t, tb.labelMax || 100));
+      return out + '</svg>';
+    };
+    const svg = zoneSvg(zone);
+    const vipSvg = zoneSvg(vipZone);
 
     const offPlan = items.filter(it => !it.table && it.b.table); // стол назначен, но не на этой схеме
     const waiting = items.filter(it => !it.b.table && !it.left); // брони без стола — посадить со схемы (кто уже ушёл, стола не ждёт)
@@ -5076,6 +5109,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       ${seatBar}
       <div class="hz-zonehead"><span>${escHtml(zone.title)}</span><span class="note">в ${hhmm(t)} занято ${busyCount} из ${zone.tables.length}</span></div>
       <div class="hz-wrap">${svg}</div>
+      <div class="hz-zonehead"><span>${escHtml(vipZone.title)}</span><span class="note">в ${hhmm(t)} занято ${busyOf(vipZone)} из ${vipZone.tables.length}</span></div>
+      <div class="hz-wrap">${vipSvg}</div>
       <div class="hz-legend">
         <span><i class="lg confirmed"></i>идёт бронь</span>
         <span><i class="lg pending"></i>ждёт подтверждения</span>
@@ -5118,7 +5153,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const tb = HALL_TABLES.find(x => x.key === hallSelectedTable);
     if (!tb) return '<div class="note" style="margin-top:10px">Нажмите на стол — появятся его брони на этот день и кнопка новой брони.</div>';
     const mine = items.filter(it => it.table && it.table.key === tb.key);
-    const title = tb.shape === 'bar' ? `Бар · ${tb.seats} мест` : `Стол ${tb.short} · ${tb.seats} чел`;
+    const title = tb.shape === 'bar' ? `Бар · ${tb.seats} мест` : `${hallPlaceName(tb)} · ${tb.seats} чел`;
     const rows = mine.length ? mine.map(it => {
       const b = it.b;
       const color = b.status === 'pending' ? '#f59e0b' : '#4ade80';
@@ -5136,7 +5171,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     return `<div class="hint-box" style="margin-top:12px">
       <div class="hint-title">${escHtml(title)}</div>
       ${rows}
-      <div class="add-row" style="justify-content:flex-start;margin:10px 0 0;${can('bookings.create') ? '' : 'display:none'}"><button type="button" class="btn-new-guest" onclick="openAddBookingAt(hallDate, ${t}, '${escJs(tb.key)}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Бронь на этот стол в ${hhmm(t)}</button></div>
+      <div class="add-row" style="justify-content:flex-start;margin:10px 0 0;${can('bookings.create') ? '' : 'display:none'}"><button type="button" class="btn-new-guest" onclick="openAddBookingAt(hallDate, ${t}, '${escJs(tb.key)}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Бронь на ${tb.zone === 'vip' ? 'эту комнату' : 'этот стол'} в ${hhmm(t)}</button></div>
     </div>`;
   }
 
@@ -5484,6 +5519,50 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     }
   }
 
+  // ─── ВИП-комната: «свободна до», накладка, другие заявки ─────
+  // У випки нет срока: гость сидит, пока не уйдёт. Поэтому, если позже в этот вечер комната уже подтверждена за
+  // другим гостем, администратор звонит и уточняет, устроит ли «до ЧЧ:ММ». Пометки считает сервер (roomNote).
+  function roomNoteOf(b) { return b && b.roomNote && !b.past && !bookingClosed(b) ? b.roomNote : null; }
+  function roomNoteFlag(b) {
+    const n = roomNoteOf(b);
+    if (!n) return '';
+    // подтверждённая бронь после другой подтверждённой — это уже договорённость («до ЧЧ:ММ»), а не накладка
+    if (n.busyFrom !== undefined) return b.status === 'pending' ? '<span class="bk-flag overdue">комната занята</span>' : `<span class="bk-flag wait">до неё бронь${n.busyFrom ? ' с ' + escHtml(n.busyFrom) : ''}</span>`;
+    if (n.until) return `<span class="bk-flag wait">до ${escHtml(n.until)}${b.status === 'pending' ? ' · уточнить' : ''}</span>`;
+    return n.pending ? '<span class="bk-flag">ещё заявка на комнату</span>' : '';
+  }
+  function roomNoteHtml(b) {
+    const n = roomNoteOf(b);
+    if (!n) return '';
+    const room = escHtml(tableTitle(b.table) || 'Комната');
+    const tel = (b.phone || '').replace(/[^\d+]/g, '');
+    const box = (cls, html) => `<div class="room-note ${cls}">${html}</div>`;
+    let out = '';
+    if (n.busyFrom !== undefined && b.status !== 'pending') {
+      const mine = (b.iso || '').slice(11, 16);
+      out += box('warn', `<b>До этой брони в комнате другой гость</b>${escHtml(n.busyBy || 'Гость')}${n.busyFrom ? ' с ' + escHtml(n.busyFrom) : ''}. ${room} должна освободиться к ${escHtml(mine)} — проследите заранее.`);
+    } else if (n.busyFrom !== undefined) {
+      out += box('bad', `<b>${room} уже занята</b>${n.busySeated ? `в ней сейчас сидит ${escHtml(n.busyBy || 'другой гость')}` : `в ней подтверждена бронь ${escHtml(n.busyBy || 'другого гостя')}${n.busyFrom ? ' на ' + escHtml(n.busyFrom) : ''}`}. Когда тот гость уйдёт, неизвестно — позвоните гостю и предложите другую комнату или стол.${tel ? `<a class="room-note-call" href="tel:${escHtml(tel)}">Позвонить ${escHtml(b.phone)}</a>` : ''}`);
+    } else if (n.until) {
+      out += b.status === 'pending'
+        ? box('warn', `<b>${room} свободна только до ${escHtml(n.until)}</b>дальше она подтверждена за бронью ${escHtml(n.untilBy || 'другого гостя')}. Позвоните гостю и уточните, устроит ли его до ${escHtml(n.until)}.${tel ? `<a class="room-note-call" href="tel:${escHtml(tel)}">Позвонить ${escHtml(b.phone)}</a>` : ''}`)
+        : box('warn', `<b>${room} за гостем до ${escHtml(n.until)}</b>дальше бронь ${escHtml(n.untilBy || 'другого гостя')} — напомните гостю заранее.`);
+    }
+    if (n.pending && n.pending.length) {
+      out += box('info', `На эту комнату есть ещё ${n.pending.length > 1 ? 'заявки' : 'заявка'} без подтверждения: ${n.pending.map(x => escHtml(`${x.time ? x.time + ' ' : ''}${x.name}`)).join(', ')}.`);
+    }
+    return out;
+  }
+  // Перед подтверждением: администратор уже уточнил у гостя? Комната занята — точно подтверждать?
+  async function roomConfirmOk(b) {
+    const n = roomNoteOf(b);
+    if (!n || b.status !== 'pending') return true;
+    const room = tableTitle(b.table) || 'Комната';
+    if (n.busyFrom !== undefined) return askConfirm(`${room} уже занята: подтверждена бронь ${n.busyBy || 'другого гостя'}${n.busyFrom ? ' на ' + n.busyFrom : ''}.\n\nВсё равно подтвердить?`, { ok: 'Подтвердить' });
+    if (n.until) return askConfirm(`${room} свободна только до ${n.until}.\n\nГость согласен освободить комнату к ${n.until}?`, { ok: 'Да, подтвердить' });
+    return true;
+  }
+
   // Блок «О госте» в брони: теги, вкусы, подсказки и кнопка открыть карточку.
   // Если по телефону брони карточки нет — ничего не показываем.
   function renderBookingGuestBlock(b) {
@@ -5584,6 +5663,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         ${b.comment ? `<div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>${escHtml(b.comment)}</div>` : ''}
         <div class="visit-detail"><a href="tel:${escHtml((b.phone || '').replace(/[^\d+]/g, ''))}" style="color:var(--text-sub);text-decoration:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="18" x2="14" y2="18"/></svg>${escHtml(b.phone || 'Телефон не указан')}</a>${b.phone ? ` <button type="button" class="copy-btn" onclick="copyPhone('${escJs(b.phone)}')" title="Скопировать номер">${COPY_ICON}Копировать</button>` : ''}</div>
       </div>
+      ${roomNoteHtml(b)}
       ${confirmHtml}
 
       ${renderArrivalBlock(b, tableInFix ? tableInner : '')}
@@ -5607,6 +5687,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (!needPerm('bookings.confirm', 'подтверждать брони')) return;
     const b = currentBooking();
     if (!b) { notify(BOOKING_GONE); return; }
+    if (!await roomConfirmOk(b)) return;
+    if (bookingActionBusy) return;
     bookingActionBusy = true;
     const btn = document.getElementById('bkConfirmBtn');
     if (btn) { btn.disabled = true; btn.textContent = 'Подтверждаем...'; }
@@ -5637,12 +5719,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     opts = opts || {};
     if (table) {
       const occ = getOccupiedTablesForDate(b.iso || '', b.entry)[table];
-      if (occ && !await askConfirm(`Стол «${table}» уже занят бронью ${occ.name}${occ.time ? ' на ' + occ.time : ''}.\n\nВсё равно посадить сюда?`, { ok: 'Посадить' })) return false;
+      if (occ && !await askConfirm(`${vipNo(table) ? tableTitle(table) + ' уже занята' : `Стол «${table}» уже занят`} бронью ${occ.name}${occ.time ? ' на ' + occ.time : ''}.\n\nВсё равно посадить сюда?`, { ok: 'Посадить' })) return false;
       if (occ) opts.knownConflict = true; // сотрудник уже предупреждён и согласился — второй раз не напоминаем
       const hall = hallTableFor(table);
       const guests = Number(b.guests) || 0;
       if (opts.checkSeats && hall && hall.seats && guests > hall.seats &&
-          !await askConfirm(`За столом ${hall.short} ${hall.seats} ${ruPlural(hall.seats, 'место', 'места', 'мест')}, а гостей ${guests}.\n\nВсё равно посадить сюда?`, { ok: 'Посадить' })) return false;
+          !await askConfirm(`${hall.zone === 'vip' ? 'В комнате ' + hall.short : 'За столом ' + hall.short} ${hall.seats} ${ruPlural(hall.seats, 'место', 'места', 'мест')}, а гостей ${guests}.\n\nВсё равно посадить сюда?`, { ok: 'Посадить' })) return false;
     }
     const res = await fetch(`${PROXY_BASE}/api/staff/bookings/table?pin=${getPin()}`, {
       method: 'POST',
@@ -5741,7 +5823,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (!b) return '';
     const pending = b.status === 'pending';
     const tb = HALL_TABLES.find(x => x.key === hallSeatPick);
-    const tableName = tb ? (tb.shape === 'bar' ? 'Бар' : `стол ${tb.short}`) : '';
+    const tableName = hallPlaceName(tb, true);
     const g = Number(b.guests) || 0;
     const warnSeats = tb && tb.seats && g > tb.seats ? ` · <span style="color:#f59e0b">мест ${tb.seats}, гостей ${g}</span>` : '';
     return `<div class="hz-seatpanel">
@@ -5762,6 +5844,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const tb = HALL_TABLES.find(x => x.key === key);
     if (!b || !tb) return;
     const wasPending = b.status === 'pending';
+    // комнату меняют на другую — пометки про прежнюю комнату уже не к месту; оставляют ту же — уточняем
+    if (wasPending && hallTableFor(b.table)?.key === key && !await roomConfirmOk(b)) return;
+    if (seatingBusy) return;
     const btn = document.getElementById('seatConfirmBtn');
     seatingBusy = true;
     if (btn) { btn.disabled = true; btn.textContent = wasPending ? 'Подтверждаем…' : 'Сохраняем…'; }
@@ -5798,7 +5883,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     hallSeatPick = null;
     hallSeatReturnToDetail = false;
     const first = String(b.name || 'Гость').trim().split(/\s+/)[0];
-    const where = tb.shape === 'bar' ? 'бар' : 'стол ' + tb.short;
+    const where = tb.shape === 'bar' ? 'бар' : hallPlaceName(tb, true);
     if (!wasPending) showToast(`${first} — ${where}`);
     else if (notified) showToast(`${first} — ${where}. Бронь подтверждена, гость уведомлён`);
     else showToast(`${first} — ${where}. Подтверждено, но гостя уведомить не удалось — свяжитесь сами`, true);
@@ -5812,6 +5897,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const b = bookingsListData[idx];
     if (!b || bookingActionBusy) return;
     if (!needPerm('bookings.confirm', 'подтверждать брони')) return;
+    if (!await roomConfirmOk(b)) return;
+    if (bookingActionBusy) return;
     bookingActionBusy = true;
     if (btn) { btn.disabled = true; btn.textContent = '…'; }
     try {
