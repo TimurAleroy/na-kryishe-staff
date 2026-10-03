@@ -988,6 +988,31 @@
     .room-note.warn { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.4); color: #f59e0b; }
     .room-note.bad { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.45); color: #f87171; }
     .room-note-call { display: block; width: max-content; max-width: 100%; margin-top: 8px; padding: 7px 12px; border-radius: 10px; border: 1px solid currentColor; color: inherit; text-decoration: none; font-size: 12.5px; }
+    .vn-closed { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 11px 14px; margin-bottom: 8px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-card); }
+    .vn-closed-main { display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
+    .vn-closed-main b { font-weight: 500; color: var(--text); }
+    .vn-closed-main span { color: var(--text-sub); font-size: 12px; }
+    .vn-closed-main .vn-warn { color: #f59e0b; }
+    .vn-del { flex-shrink: 0; width: 30px; height: 30px; border-radius: 9px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; }
+    .vn-add { margin-top: 10px; }
+    .vn-day { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    .vn-day:last-child { border-bottom: none; }
+    .vn-day-name { flex: 1 1 100%; font-size: 13px; color: var(--text); }
+    @media (min-width: 700px) { .vn-day-name { flex: 1 1 130px; } .vn-day .vn-time { flex: 0 0 110px; } }
+    .vn-day.off .vn-day-name { color: var(--text-muted); }
+    .vn-time { flex: 1 1 80px; min-width: 0; padding: 8px 10px; font-size: 13px; }
+    .vn-dash { color: var(--text-muted); }
+    .vn-off { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-sub); cursor: pointer; }
+    .bd-item { align-items: center; }
+    .bd-main { flex: 1; min-width: 0; }
+    .bd-st { font-size: 11.5px; margin-top: 3px; color: var(--text-sub); }
+    .bd-st.good { color: #4ade80; }
+    .bd-st.warn { color: #f59e0b; }
+    .bd-btn { flex-shrink: 0; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--accent); background: transparent; color: var(--accent); font-size: 12.5px; cursor: pointer; }
+    .bd-btn.undo { border-color: var(--border); color: var(--text-muted); }
+    .dp-sublabel { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin: 12px 0 2px; }
+    .pb-tabs { margin: 0 0 14px; }
+    .pb-status.done { color: #4ade80; border-color: rgba(74,222,128,0.45); }
     .bk-late-line { color: #fbbf24; }
     .bk-wait-line { color: #f59e0b; }
     .pill.late { color: #fbbf24; border-color: rgba(251,191,36,0.5); }
@@ -1541,7 +1566,7 @@
     <div id="dpShift"><div class="dp-loading">Загружаю...</div></div>
   </div>
   <div class="dp-section">
-    <div class="dp-label"><span>Именинники сегодня</span></div>
+    <div class="dp-label"><span>Именинники</span></div>
     <div id="dpBirthdays"><div class="dp-loading">Загружаю...</div></div>
   </div>
   <div class="dp-section">
@@ -1695,7 +1720,7 @@
     <div class="back-btn" onclick="showScreen('home')">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
-    <div><h1 style="font-size:14px;letter-spacing:1px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M12 2c-1.5 2.5-3 4.5-3 7a3 3 0 006 0c0-2.5-1.5-4.5-3-7z"/><line x1="12" y1="14" x2="12" y2="22"/></svg>Именинники сегодня</h1></div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M12 2c-1.5 2.5-3 4.5-3 7a3 3 0 006 0c0-2.5-1.5-4.5-3-7z"/><line x1="12" y1="14" x2="12" y2="22"/></svg>Именинники</h1></div>
   </div>
   <div style="padding:0 16px" id="birthdaysContent"><div class="loading">Загружаю...</div></div>
 </div>
@@ -1797,6 +1822,7 @@
         <input class="form-input" id="abTime" type="time" value="20:00" onchange="refreshAddBookingTableOptions()">
       </div>
     </div>
+    <div id="abVenueWarn" class="room-note warn" style="display:none;margin:-4px 0 14px"></div>
     <div class="form-group">
       <label class="form-label">Гостей (необязательно)</label>
       <div class="num-field"><input class="form-input" id="abGuests" type="number" min="1"><div class="num-steps"><button type="button" tabindex="-1" aria-label="Больше" onclick="stepNum(this,1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 15 12 9 18 15"/></svg></button><button type="button" tabindex="-1" aria-label="Меньше" onclick="stepNum(this,-1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button></div></div>
@@ -2342,6 +2368,32 @@
 </div>
 
 <!-- СЕРВИС → СИСТЕМА: ПРОСЬБЫ ОБ ОТЗЫВЕ. Когда и кому бот просит оценить визит (без правки кода) -->
+<div class="screen" id="screen-venue">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('service')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Режим работы</h1><p>Часы, закрытые даты, терраса</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div id="venueContent" style="margin-top:6px"><div class="loading">Загружаю...</div></div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<div class="screen" id="screen-birthday-text">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('service')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Поздравления</h1><p>Что бот пишет именинникам</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div id="bdTextContent" style="margin-top:6px"><div class="loading">Загружаю...</div></div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
 <div class="screen" id="screen-review-rules">
   <div class="header">
     <div class="back-btn" onclick="showScreen('service')">
@@ -3291,6 +3343,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'Логины, роли и права', fn: 'openEmployees()' });
     if (can('candidates.view')) list.push({ group: G.team, icon: 'candidates', short: 'кандидаты', title: 'Кандидаты', sub: 'Отклики на вакансии', fn: 'openCandidates()' });
     if (can('settings.manage')) list.push({ group: G.system, icon: 'reviews', short: 'отзывы', title: 'Просьбы об отзыве', sub: 'Когда и кому бот пишет', fn: 'openReviewRules()' });
+    if (can('settings.manage') || can('events.manage')) list.push({ group: G.system, icon: 'venue', short: 'режим работы', title: 'Режим работы', sub: 'Часы, закрытые даты, терраса', fn: 'openVenue()' });
+    if (can('settings.manage') || can('marketing.send')) list.push({ group: G.guests, icon: 'birthday', short: 'поздравления', title: 'Поздравления', sub: 'Что бот пишет именинникам', fn: 'openBirthdayText()' });
     if (can('audit.view')) list.push({ group: G.system, icon: 'audit', short: 'журнал', title: 'Журнал', sub: 'Кто и что менял', fn: 'openAudit()' });
     if (currentJobRole === 'Основатель') list.push({ group: G.system, icon: 'status', short: 'состояние', title: 'Состояние', sub: 'База, боты, копии', fn: 'openSystemStatus()' });
     return list;
@@ -3395,6 +3449,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     // Группы — по тому, как часто ими пользуются за смену: «Внимание» → «Смена» →
     // «Гости» → редкие разделы компактными строками (маркетинг, аналитика, сервис).
 
+    icons.venue = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>';
     homeIcons = icons;
     // Что показывать — решают права сотрудника (основатель выдаёт их галочками на экране «Сотрудники»)
     let shiftCards = '';
@@ -3604,11 +3659,18 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const el = document.getElementById('dpBirthdays');
       if (!can('guests.birthdays')) return;
       try {
-        const res = await fetch(`${PROXY_BASE}/api/staff/birthdays?pin=${pin}`);
-        const list = await dpJson(res);
+        const res = await fetch(`${PROXY_BASE}/api/staff/birthdays?days=2&pin=${pin}`);
+        const raw = await dpJson(res);
         if (stale()) return;
-        if (!Array.isArray(list) || !list.length) { el.innerHTML = '<div class="dp-empty">Сегодня никого нет</div>'; return; }
-        el.innerHTML = list.map(g => `<div class="dp-row" onclick="openGuestCard('${escJs(g.id)}')">${escHtml(g.name || '')}</div>`).join('');
+        const d = Array.isArray(raw) ? { today: raw.map(g => ({ ...g, greeted: null })), tomorrow: [], botOn: false, old: true } : raw;
+        if (!d || (!d.today.length && !d.tomorrow.length)) { el.innerHTML = '<div class="dp-empty">Сегодня и завтра никого нет</div>'; return; }
+        birthdaysData = d;
+        const line = (g, isToday) => {
+          const st = d.old ? null : bdStatus(g, isToday, d.botOn);
+          return `<div class="dp-row" onclick="openBirthdays()">${escHtml(g.name || '')}${st ? `<div class="dp-sub"${st.todo && isToday ? ' style="color:#f59e0b"' : st.done ? ' style="color:#4ade80"' : ''}>${st.done ? '✓ ' : ''}${escHtml(st.text)}</div>` : ''}</div>`;
+        };
+        el.innerHTML = (d.today.length ? d.today.map(g => line(g, true)).join('') : '<div class="dp-empty">Сегодня никого нет</div>')
+          + (d.tomorrow.length ? `<div class="dp-sublabel">Завтра</div>${d.tomorrow.map(g => line(g, false)).join('')}` : '');
       } catch { if (!stale()) el.innerHTML = DP_FAILED; }
     })();
 
@@ -4029,30 +4091,298 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
   // ─── ИМЕНИННИКИ ────────────────────────────────
 
+  // ─── РЕЖИМ РАБОТЫ: часы по дням, закрытые даты, терраса ─────
+  // Настройки лежат на сервере (settings → venue.config); гостевое приложение и сайт читают их же.
+  let venueCfg = null;   // последняя загруженная версия (для выбора стола и предупреждений)
+  let venueDraft = null; // то, что правят на экране «Режим работы»
+  const VENUE_DAYS = [['1', 'Понедельник'], ['2', 'Вторник'], ['3', 'Среда'], ['4', 'Четверг'], ['5', 'Пятница'], ['6', 'Суббота'], ['7', 'Воскресенье']];
+  function terraceOn() { return !venueCfg || venueCfg.terrace !== false; }
+  async function loadVenueConfig() {
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/venue-config?pin=${getPin()}`);
+      if (res.ok) {
+        venueCfg = await res.json();
+        // форма брони могла открыться раньше ответа — обновляем в ней столы (терраса) и предупреждение
+        if (document.getElementById('screen-add-booking')?.classList.contains('active')) refreshAddBookingTableOptions();
+      }
+    } catch {}
+    return venueCfg;
+  }
+  // Предупреждение для формы брони: дата закрыта или время вне часов работы ('' — всё в порядке)
+  function venueWarnText(dateStr, time) {
+    if (!venueCfg || !dateStr) return '';
+    let day = dateStr;
+    const mins = /^\d{2}:\d{2}$/.test(time || '') ? Number(time.slice(0, 2)) * 60 + Number(time.slice(3, 5)) : null;
+    if (mins !== null && mins < 6 * 60) day = shiftDateStr(dateStr, -1); // после полуночи — вечер предыдущего дня
+    const closed = (venueCfg.closed || []).find(c => c.date === day);
+    if (closed) return `${capFirst(humanDay(day))} заведение закрыто для гостей — причина: «${closed.reason}». Гости на эту дату бронировать не могут.`;
+    const h = (venueCfg.hours || {})[String(new Date(day + 'T00:00:00Z').getUTCDay() || 7)];
+    if (!h) return '';
+    if (h.closed) return `${capFirst(humanDay(day))} — выходной по режиму работы.`;
+    if (mins === null) return '';
+    const m = x => Number(x.slice(0, 2)) * 60 + Number(x.slice(3, 5));
+    const o = m(h.open), c = m(h.close);
+    const inside = c > o ? (mins >= o && mins <= c) : (mins >= o || mins <= c);
+    return inside ? '' : `В этот день заведение работает с ${h.open} до ${h.close}.`;
+  }
+  async function openVenue() {
+    showScreen('venue');
+    const el = document.getElementById('venueContent');
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/venue-config?pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить режим работы'));
+      venueCfg = await res.json();
+      venueDraft = JSON.parse(JSON.stringify(venueCfg));
+      renderVenue();
+    } catch (e) {
+      el.innerHTML = errorStateHtml(e.message || 'Не удалось загрузить режим работы', 'openVenue()');
+    }
+  }
+  function venueDirty() {
+    const pick = c => JSON.stringify({ h: c.hours, c: (c.closed || []).map(x => [x.date, x.reason]), t: c.terrace !== false });
+    return !!venueCfg && !!venueDraft && pick(venueCfg) !== pick(venueDraft);
+  }
+  function renderVenue() {
+    const el = document.getElementById('venueContent');
+    const d = venueDraft;
+    if (!el || !d) return;
+    const reasons = d.reasons || ['Закрыто на частное мероприятие', 'Выходной', 'Санитарный день'];
+    const closedRows = (d.closed || []).map((c, i) => `
+      <div class="vn-closed">
+        <div class="vn-closed-main"><b>${escHtml(capFirst(humanDay(c.date)))}</b><span>${escHtml(c.reason)}</span>
+          ${c.bookings ? `<span class="vn-warn">На эту дату уже ${c.bookings} ${ruPlural(c.bookings, 'бронь', 'брони', 'броней')} — свяжитесь с гостями</span>` : ''}</div>
+        <button type="button" class="vn-del" onclick="venueRemoveClosed(${i})" aria-label="Убрать">✕</button>
+      </div>`).join('');
+    const hoursRows = VENUE_DAYS.map(([k, name]) => {
+      const h = d.hours[k];
+      return `<div class="vn-day${h.closed ? ' off' : ''}">
+        <span class="vn-day-name">${name}</span>
+        <input class="form-input vn-time" type="time" value="${escHtml(h.open)}" ${h.closed ? 'disabled' : ''} onchange="venueSetHour('${k}', 'open', this.value)" aria-label="Открытие, ${name}">
+        <span class="vn-dash">—</span>
+        <input class="form-input vn-time" type="time" value="${escHtml(h.close)}" ${h.closed ? 'disabled' : ''} onchange="venueSetHour('${k}', 'close', this.value)" aria-label="Закрытие, ${name}">
+        <label class="vn-off"><input type="checkbox" ${h.closed ? 'checked' : ''} onchange="venueSetHour('${k}', 'closed', this.checked)"> выходной</label>
+      </div>`;
+    }).join('');
+    el.innerHTML = `
+      <div class="sec" style="margin-top:0">Закрытые даты</div>
+      <div class="note" style="margin-bottom:10px">В закрытую дату гости не могут забронировать ни стол, ни ВИП-комнату — в приложении и на сайте они увидят причину. Действующие брони сами не отменяются.</div>
+      ${closedRows || '<div class="empty-state" style="padding:14px 10px">Закрытых дат нет</div>'}
+      <div class="visit-item vn-add">
+        <div class="form-group" style="margin-bottom:10px"><label class="form-label">Дата</label><input class="form-input" type="date" id="vnDate" min="${escHtml(venueDayStr())}"></div>
+        <div class="form-group" style="margin-bottom:10px"><label class="form-label">Причина — её увидит гость</label>
+          <select class="form-input" id="vnReason" onchange="document.getElementById('vnReasonOwn').style.display = this.value === '__own' ? 'block' : 'none'">
+            ${reasons.map(r => `<option value="${escHtml(r)}">${escHtml(r)}</option>`).join('')}<option value="__own">Свой текст…</option>
+          </select>
+          <input class="form-input" id="vnReasonOwn" maxlength="80" placeholder="Например: закрыто на ремонт" style="display:none;margin-top:8px">
+        </div>
+        <button type="button" class="btn-ghost" onclick="venueAddClosed()">+ Закрыть дату</button>
+      </div>
+
+      <div class="sec">Терраса</div>
+      <label class="perm-row"><input type="checkbox" id="vnTerrace" ${d.terrace !== false ? 'checked' : ''} onchange="venueSetTerrace(this.checked)"><span class="perm-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 9 17 20 6"/></svg></span><span><span class="rr-t">Терраса работает</span><span class="rr-h">Выключите на холодный сезон — столы террасы пропадут из выбора стола в брони</span></span></label>
+      ${d.terrace === false && d.terraceBookings ? `<div class="room-note warn">На столах террасы ${d.terraceBookings} ${ruPlural(d.terraceBookings, 'будущая бронь', 'будущие брони', 'будущих броней')} — пересадите гостей в зал.</div>` : ''}
+
+      <div class="sec">Часы работы</div>
+      <div class="note" style="margin-bottom:10px">Гости могут бронировать только на это время. Закрытие после полуночи относится к тому же вечеру.</div>
+      <div class="visit-item" style="padding:6px 14px">${hoursRows}</div>
+
+      <button class="btn-cta" id="vnSaveBtn" style="margin-top:16px" onclick="saveVenue()" ${venueDirty() ? '' : 'disabled'}>Сохранить</button>
+      <div class="note" id="vnSaveNote" style="margin-top:8px;text-align:center">${venueDirty() ? 'Есть несохранённые изменения' : ''}</div>`;
+  }
+  function venueSetHour(k, field, value) {
+    if (!venueDraft) return;
+    if (field === 'closed') venueDraft.hours[k].closed = !!value;
+    else if (/^\d{2}:\d{2}$/.test(value)) venueDraft.hours[k][field] = value;
+    renderVenue();
+  }
+  function venueSetTerrace(on) { if (venueDraft) { venueDraft.terrace = !!on; renderVenue(); } }
+  function venueAddClosed() {
+    const date = document.getElementById('vnDate').value;
+    const sel = document.getElementById('vnReason').value;
+    const reason = (sel === '__own' ? document.getElementById('vnReasonOwn').value : sel).trim();
+    if (!date) { showToast('Выберите дату', true); return; }
+    if (date < venueDayStr()) { showToast('Эта дата уже прошла', true); return; }
+    if (!reason) { showToast('Напишите причину — её увидит гость', true); return; }
+    if (venueDraft.closed.some(c => c.date === date)) { showToast('Эта дата уже закрыта', true); return; }
+    venueDraft.closed.push({ date, reason, bookings: 0 });
+    venueDraft.closed.sort((a, b) => a.date.localeCompare(b.date));
+    renderVenue();
+  }
+  function venueRemoveClosed(i) { if (venueDraft) { venueDraft.closed.splice(i, 1); renderVenue(); } }
+  let venueSaving = false;
+  async function saveVenue() {
+    if (venueSaving || !venueDraft) return;
+    venueSaving = true;
+    const btn = document.getElementById('vnSaveBtn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Сохраняем...'; }
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/venue-config?pin=${getPin()}`, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), version: venueCfg && venueCfg.version, hours: venueDraft.hours, closed: venueDraft.closed.map(c => ({ date: c.date, reason: c.reason })), terrace: venueDraft.terrace !== false })
+      });
+      if (res.status === 401) { showScreen('pin'); return; }
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 409) { await notify(data.error || 'Режим работы уже изменил другой сотрудник'); openVenue(); return; }
+      if (!res.ok) { showToast(data.error || 'Не сохранилось — попробуйте ещё раз', true); return; }
+      venueCfg = data;
+      venueDraft = JSON.parse(JSON.stringify(data));
+      const withBookings = (data.closed || []).filter(c => c.bookings).length;
+      showToast(withBookings ? 'Сохранено. На закрытые даты есть брони — свяжитесь с гостями' : 'Режим работы сохранён', !!withBookings);
+    } catch {
+      showToast('Нет связи — не сохранилось', true);
+    } finally {
+      venueSaving = false;
+      renderVenue();
+    }
+  }
+
+  // ─── ИМЕНИННИКИ: сегодня и завтра, кто поздравлен ─────
+  // У кого есть Telegram — поздравляет бот (в 12:00, если текст заполнен). Остальных поздравляют сами
+  // (звонок, WhatsApp) и нажимают «Поздравили» — чтобы двое не поздравили одного гостя и никто не остался без поздравления.
+  let birthdaysData = null;
+  function bdStatus(g, isToday, botOn) {
+    const gr = g.greeted;
+    if (gr && gr.via === 'bot') return { cls: 'good', text: `поздравил бот${gr.at ? ' в ' + mskHm(gr.at) : ''}`, done: true };
+    if (gr && gr.via === 'manual') return { cls: 'good', text: `поздравил(а) ${String(gr.by || '').replace(/ \(.+\)$/, '')}${gr.at ? ' в ' + mskHm(gr.at) : ''}`, done: true, manual: true };
+    if (g.nonGrata) return { cls: '', text: 'нон-грата — не поздравляем', skip: true };
+    if (gr && gr.via === 'failed') return { cls: 'warn', text: gr.maybe ? 'бот мог не доставить (сбой связи) — лучше поздравить вручную' : 'бот не смог доставить — поздравить вручную', todo: true };
+    // бот взялся отправлять: обычно это секунды; если отметка висит дольше 15 минут — отправка сорвалась
+    if (gr && gr.via === 'sending') return Date.now() - new Date(gr.at) > 15 * 60 * 1000 ? { cls: 'warn', text: 'бот не закончил отправку — поздравить вручную', todo: true } : { cls: '', text: 'бот отправляет поздравление…', bot: true };
+    if (g.telegram && botOn) return { cls: '', text: isToday ? `бот поздравит в ${birthdaysData.botHour || 12}:00` : 'поздравит бот', bot: true };
+    return { cls: 'warn', text: isToday ? (g.telegram ? 'поздравить вручную (текст для бота не заполнен)' : 'нет Telegram — поздравить вручную') : (g.telegram ? 'поздравить вручную' : 'нет Telegram — вручную'), todo: true };
+  }
+  async function fetchBirthdays() {
+    const res = await fetch(`${PROXY_BASE}/api/staff/birthdays?days=2&pin=${getPin()}`);
+    if (res.status === 401) { showScreen('pin'); return null; }
+    if (!res.ok) throw new Error();
+    const d = await res.json();
+    // сервер прежней версии отдаёт просто список на сегодня
+    return Array.isArray(d) ? { today: d.map(g => ({ ...g, greeted: null })), tomorrow: [], botOn: false, old: true } : d;
+  }
   async function openBirthdays() {
     showScreen('birthdays');
     const el = document.getElementById('birthdaysContent');
     el.innerHTML = '<div class="loading">Загружаю...</div>';
     try {
-      const res = await fetch(`${PROXY_BASE}/api/staff/birthdays?pin=${getPin()}`);
-      if (res.status === 401) { showScreen('pin'); return; }
-      if (!res.ok) throw new Error();
-      const list = await res.json();
-      if (!Array.isArray(list) || !list.length) {
-        el.innerHTML = '<div class="empty-state">Сегодня именинников нет</div>';
-        return;
-      }
-      el.innerHTML = list.map(g => `
-        <div class="result-item" onclick="openGuestCard('${escJs(g.id)}')" style="cursor:pointer">
-          <div class="result-avatar">${escHtml((g.name||'?').charAt(0).toUpperCase())}</div>
-          <div>
-            <div style="font-size:14px;color:var(--text);">${escHtml(g.name || '')}</div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">${[g.vip ? 'VIP' : '', g.segment || 'Без визитов', g.phone || ''].filter(Boolean).map(escHtml).join(' · ')}</div>
-          </div>
-        </div>
-      `).join('');
+      const d = await fetchBirthdays();
+      if (!d) return;
+      birthdaysData = d;
+      renderBirthdays();
     } catch {
-      el.innerHTML = '<div class="empty-state">Не удалось загрузить список</div>';
+      el.innerHTML = errorStateHtml('Не удалось загрузить список', 'openBirthdays()');
+    }
+  }
+  function renderBirthdays() {
+    const el = document.getElementById('birthdaysContent');
+    const d = birthdaysData;
+    if (!el || !d) return;
+    const row = (g, isToday) => {
+      const st = bdStatus(g, isToday, d.botOn);
+      const id = escJs(g.id);
+      const tel = (g.phone || '').replace(/[^\d+]/g, '');
+      const btn = !isToday || d.old ? ''
+        : st.todo ? `<button type="button" class="bd-btn" onclick="event.stopPropagation();greetBirthday('${id}', false)">Поздравили</button>`
+        : st.manual ? `<button type="button" class="bd-btn undo" onclick="event.stopPropagation();greetBirthday('${id}', true)">Снять отметку</button>` : '';
+      return `<div class="result-item bd-item${st.done ? ' done' : ''}" onclick="openGuestCard('${id}')" style="cursor:pointer">
+          <div class="result-avatar">${escHtml((g.name || '?').charAt(0).toUpperCase())}</div>
+          <div class="bd-main">
+            <div style="font-size:14px;color:var(--text);">${escHtml(g.name || '')}</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">${[g.vip ? 'VIP' : '', g.segment || 'Без визитов'].filter(Boolean).map(escHtml).join(' · ')}${tel && st.todo ? ` · <a href="tel:${escHtml(tel)}" onclick="event.stopPropagation()" style="color:var(--accent);text-decoration:none">${escHtml(g.phone)}</a>` : (g.phone ? ' · ' + escHtml(g.phone) : '')}</div>
+            <div class="bd-st ${st.cls}">${st.done ? '✓ ' : ''}${escHtml(st.text)}</div>
+          </div>
+          ${btn}
+        </div>`;
+    };
+    const left = d.today.filter(g => bdStatus(g, true, d.botOn).todo).length;
+    el.innerHTML = `
+      ${d.old ? '' : `<div class="note" style="margin:0 2px 12px">${d.botOn ? `Гостей с Telegram бот поздравляет сам в ${d.botHour || 12}:00. Остальных поздравьте сами и нажмите «Поздравили».` : 'Текст поздравления для бота не заполнен («Сервис» → «Поздравления») — пока всех поздравляем сами.'}</div>`}
+      <div class="sec" style="margin-top:0">Сегодня${d.today.length ? ` · ${d.today.length}${left ? ` · осталось поздравить: ${left}` : ''}` : ''}</div>
+      ${d.today.length ? d.today.map(g => row(g, true)).join('') : '<div class="empty-state" style="padding:14px 10px">Сегодня именинников нет</div>'}
+      ${d.old ? '' : `<div class="sec">Завтра${d.tomorrow.length ? ` · ${d.tomorrow.length}` : ''}</div>
+      ${d.tomorrow.length ? d.tomorrow.map(g => row(g, false)).join('') : '<div class="empty-state" style="padding:14px 10px">Завтра именинников нет</div>'}`}`;
+  }
+  let greetBusy = false;
+  async function greetBirthday(id, undo) {
+    if (greetBusy) return;
+    greetBusy = true;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/birthdays/greet?pin=${getPin()}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pin: getPin(), id, undo: !!undo })
+      });
+      if (res.status === 401) { showScreen('pin'); return; }
+      const data = await res.json().catch(() => ({}));
+      const g = birthdaysData && birthdaysData.today.find(x => x.id === id);
+      if (g && 'greeted' in data) g.greeted = data.greeted;
+      if (!res.ok) { showToast(data.error || 'Отметка не сохранилась', true); return; }
+      if (data.already && data.greeted) showToast(`Уже поздравил(а) ${String(data.greeted.by || '').replace(/ \(.+\)$/, '')}`);
+      else showToast(undo ? 'Отметка снята' : `${g ? g.name : 'Гость'}: поздравили`);
+    } catch {
+      showToast('Нет связи — отметка не сохранилась', true);
+    } finally {
+      greetBusy = false;
+      renderBirthdays();
+      loadDeskPanels();
+    }
+  }
+
+  // Текст поздравления от бота («Сервис» → «Поздравления»)
+  let bdText = null;
+  async function openBirthdayText() {
+    showScreen('birthday-text');
+    const el = document.getElementById('bdTextContent');
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/birthday-text?pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить текст'));
+      bdText = await res.json();
+      renderBirthdayText();
+    } catch (e) {
+      el.innerHTML = errorStateHtml(e.message || 'Не удалось загрузить текст', 'openBirthdayText()');
+    }
+  }
+  function renderBirthdayText() {
+    const el = document.getElementById('bdTextContent');
+    const t = bdText || { text: '', enabled: true, hour: 12 };
+    el.innerHTML = `
+      <div class="note" style="margin-bottom:12px">В день рождения в ${t.hour || 12}:00 бот пишет это гостям, у которых есть Telegram. Гостей с тегом «Нон-грата» не поздравляет. Тех, у кого Telegram нет, поздравляете сами — они видны в «Именинниках» с пометкой «поздравить вручную».</div>
+      <div class="form-group"><label class="form-label">Текст поздравления</label>
+        <textarea class="form-input" id="bdTextArea" rows="6" maxlength="1500" placeholder="{имя}, с днём рождения! …" oninput="bdTextPreview()">${escHtml(t.text || '')}</textarea>
+        <div class="note" style="margin-top:6px">{имя} — подставится имя гостя.</div>
+      </div>
+      <label class="perm-row"><input type="checkbox" id="bdEnabled" ${t.enabled !== false ? 'checked' : ''}><span class="perm-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 9 17 20 6"/></svg></span><span><span class="rr-t">Бот поздравляет сам</span><span class="rr-h">Выключено или текст пустой — бот никого не поздравляет</span></span></label>
+      <div class="sec">Как увидит гость</div>
+      <div class="visit-item" id="bdPreview" style="white-space:pre-wrap;font-size:13px;line-height:1.5"></div>
+      <button class="btn-cta" id="bdSaveBtn" style="margin-top:16px" onclick="saveBirthdayText()">Сохранить</button>`;
+    bdTextPreview();
+  }
+  function bdTextPreview() {
+    const v = document.getElementById('bdTextArea').value.trim();
+    const p = document.getElementById('bdPreview');
+    p.textContent = v ? v.replace(/\{имя\}/gi, 'Анна') : 'Текст не заполнен — бот не поздравляет.';
+    p.style.color = v ? '' : 'var(--text-muted)';
+  }
+  async function saveBirthdayText() {
+    const btn = document.getElementById('bdSaveBtn');
+    if (btn.disabled) return;
+    btn.disabled = true; btn.textContent = 'Сохраняем...';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/birthday-text?pin=${getPin()}`, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), text: document.getElementById('bdTextArea').value, enabled: document.getElementById('bdEnabled').checked })
+      });
+      if (res.status === 401) { showScreen('pin'); return; }
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) { showToast(data.error || 'Не сохранилось — попробуйте ещё раз', true); return; }
+      bdText = data;
+      showToast(data.text && data.enabled ? 'Сохранено — бот будет поздравлять этим текстом' : 'Сохранено — бот не поздравляет');
+    } catch {
+      showToast('Нет связи — не сохранилось', true);
+    } finally {
+      const bb = document.getElementById('bdSaveBtn');
+      if (bb) { bb.disabled = false; bb.textContent = 'Сохранить'; }
     }
   }
 
@@ -4122,7 +4452,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function tableTitle(label) { const n = vipNo(label); return n ? `ВИП-комната ${n}` : String(label || ''); }
   function tableOptionsHtml(selected, occupied) {
     lastOccupiedTables = occupied || {};
-    return TABLE_GROUPS.map(g => {
+    // терраса закрыта («Сервис» → «Режим работы») — её столов в выборе нет (уже выбранный стол брони остаётся виден)
+    return TABLE_GROUPS.filter(g => g.label !== 'Терраса' || terraceOn() || g.tables.includes(selected)).map(g => {
       const opts = g.tables
         .map(v => {
           const occ = lastOccupiedTables[v];
@@ -5244,6 +5575,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const timeVal = (document.getElementById('abTime') || {}).value || '';
     tableSelect.innerHTML = '<option value="">— не выбран —</option>' + tableOptionsHtml(keepSelected, getOccupiedTablesForDate(dateVal && timeVal ? `${dateVal}T${timeVal}` : dateVal, null));
     onTableSelectChange('abTable', 'abTableConflictWarning');
+    // закрытая дата или время вне часов работы — предупреждаем (не запрещаем: администратор может знать больше)
+    const warn = document.getElementById('abVenueWarn');
+    if (warn) { const w = venueWarnText(dateVal, timeVal); warn.textContent = w; warn.style.display = w ? 'block' : 'none'; }
   }
 
   async function submitAddBooking() {
@@ -6038,25 +6372,51 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   const PROBLEM_SEV_COLOR = { 'Высокая': '#ef4444', 'Средняя': '#f0b429', 'Низкая': 'var(--text-muted)' };
   let problemsCache = [];
 
-  async function openProblems() {
+  // Вкладки: «Открытые» (как раньше) и «Решённые» — причина, кто и когда закрыл, и «Вернуть в работу»,
+  // если закрыли по ошибке. Раньше решённая проблема пропадала совсем.
+  let problemsTab = 'open';
+  function setProblemsTab(t) { problemsTab = t === 'resolved' ? 'resolved' : 'open'; openProblems(true); }
+  async function openProblems(keepTab) {
+    if (!keepTab) problemsTab = 'open';
     showScreen('problems');
     const el = document.getElementById('problemsContent');
-    el.innerHTML = '<div class="loading">Загружаю...</div>';
-    const reportBtn = !can('problems.report') ? '' : `<div class="add-row" style="margin:0 0 14px"><button type="button" class="btn-new-guest" onclick="openReportProblem()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Сообщить о проблеме</button></div>`;
+    const resolved = problemsTab === 'resolved';
+    const tabs = segControl([['open', 'Открытые'], ['resolved', 'Решённые']], problemsTab, 'setProblemsTab', 'seg-sm pb-tabs');
+    el.innerHTML = tabs + '<div class="loading">Загружаю...</div>';
+    const reportBtn = resolved || !can('problems.report') ? '' : `<div class="add-row" style="margin:0 0 14px"><button type="button" class="btn-new-guest" onclick="openReportProblem()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Сообщить о проблеме</button></div>`;
     try {
-      const res = await fetch(`${PROXY_BASE}/api/staff/problems?pin=${getPin()}`);
+      const res = await fetch(`${PROXY_BASE}/api/staff/problems${resolved ? '/resolved' : ''}?pin=${getPin()}`);
       if (res.status === 401) { showScreen('pin'); return; }
       if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить проблемы'));
       const list = await res.json();
       if (!Array.isArray(list)) throw new Error('Не удалось загрузить проблемы');
+      if ((problemsTab === 'resolved') !== resolved) return; // пока грузили, переключили вкладку
       problemsCache = list;
       if (!list.length) {
-        el.innerHTML = reportBtn + '<div class="empty-state">Открытых проблем нет</div>';
+        el.innerHTML = tabs + reportBtn + `<div class="empty-state">${resolved ? 'За последние два месяца решённых проблем нет' : 'Открытых проблем нет'}</div>`;
         return;
       }
-      el.innerHTML = reportBtn + list.map(renderProblemItem).join('');
+      el.innerHTML = tabs + reportBtn + (resolved ? '<div class="note" style="margin:0 2px 12px">Решённые за последние два месяца. Закрыли по ошибке или проблема повторилась — верните в работу.</div>' : '') + list.map(renderProblemItem).join('');
     } catch (e) {
-      el.innerHTML = reportBtn + errorStateHtml(e.message || 'Не удалось загрузить проблемы', 'openProblems()');
+      el.innerHTML = tabs + reportBtn + errorStateHtml(e.message || 'Не удалось загрузить проблемы', 'openProblems(true)');
+    }
+  }
+  let reopenBusy = false;
+  async function reopenProblem(id) {
+    if (reopenBusy) return;
+    if (!await askConfirm('Вернуть проблему в работу?\n\nОна снова появится в «Открытых» со статусом «В работе».', { ok: 'Вернуть' })) return;
+    reopenBusy = true;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/problem/${encodeURIComponent(id)}/reopen?pin=${getPin()}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pin: getPin() }) });
+      if (res.status === 401) { showScreen('pin'); return; }
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) { showToast(data.error || 'Не получилось — попробуйте ещё раз', true); return; }
+      showToast('Проблема возвращена в работу');
+    } catch {
+      showToast('Нет связи — попробуйте ещё раз', true);
+    } finally {
+      reopenBusy = false;
+      openProblems(true);
     }
   }
 
@@ -6077,8 +6437,11 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       action = canAct
         ? `<button class="btn-primary pb-act" onclick="resolveProblem('${id}')">Отметить решённой</button>`
         : `<div class="pb-note">Закрыть может: ${escHtml(p.responsible || 'администратор')}</div>`;
+    } else if (p.status === 'Решена') {
+      action = canAct ? `<button class="btn-ghost pb-act" onclick="reopenProblem('${id}')">Вернуть в работу</button>` : '';
     }
-    const reassign = can('problems.manage_all')
+    const isResolved = p.status === 'Решена';
+    const reassign = !isResolved && can('problems.manage_all')
       ? `<button type="button" class="pb-link" onclick="reassignProblem('${id}')">Переназначить</button>`
       : '';
 
@@ -6090,12 +6453,13 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       <div class="pb-text">${escHtml(p.comment || (p.fromReview ? 'Гость не оставил комментарий — только оценку' : '—'))}</div>
       ${problemGuestHtml(p)}
       <div class="pb-meta">
-        <span class="pb-status ${p.status === 'В работе' ? 'work' : 'new'}">${escHtml(statusLabel)}</span>
+        <span class="pb-status ${isResolved ? 'done' : p.status === 'В работе' ? 'work' : 'new'}">${escHtml(statusLabel)}</span>
         ${p.responsible ? `<span>· ${escHtml(p.responsible)}</span>` : ''}
-        ${dl ? `<span class="${dl.overdue ? 'pb-overdue' : dl.soon ? 'pb-soon' : ''}">· ${escHtml(dl.text)}</span>` : ''}
+        ${dl && !isResolved ? `<span class="${dl.overdue ? 'pb-overdue' : dl.soon ? 'pb-soon' : ''}">· ${escHtml(dl.text)}</span>` : ''}
       </div>
       ${when ? `<div class="pb-when">Сообщили ${escHtml(when)}</div>` : ''}
-      ${p.rootCause ? `<div class="pb-cause"><b>Причина:</b> ${escHtml(p.rootCause)}</div>` : ''}
+      ${isResolved && p.resolvedAt ? `<div class="pb-when">Закрыл(а) ${escHtml(String(p.resolvedBy || 'сотрудник').replace(/ \(.+\)$/, ''))} · ${escHtml(timeAgo(p.resolvedAt))}</div>` : ''}
+      ${p.rootCause ? `<div class="pb-cause"><b>Причина:</b> ${escHtml(p.rootCause)}</div>` : (isResolved ? '<div class="pb-cause"><b>Причина:</b> не указана</div>' : '')}
       <div class="pb-actions">${action}${reassign}</div>
     </div>`;
   }
@@ -10675,7 +11039,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules'];
+  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'venue', 'birthday-text'];
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
 
@@ -10694,6 +11058,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     try { if (tg?.BackButton) (name === 'home' || name === 'pin') ? tg.BackButton.hide() : tg.BackButton.show(); } catch {}
     // Боковые панели десктопа обновляем при каждом возврате на главный —
     // так они не протухают за весь день без перезахода в приложение.
+    if (name === 'home' || name === 'bookings' || name === 'add-booking') loadVenueConfig(); // закрытые даты и терраса — свежие
     if (name === 'home') {
       loadDeskPanels();
       // точки на карточках — свежие при каждом возврате (не чаще раза в 20 с)
