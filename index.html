@@ -975,6 +975,14 @@
     .booking-chip.noshow { opacity: 0.55; }
     .bk-flag.late { color: #fbbf24; border-color: rgba(251,191,36,0.5); background: rgba(251,191,36,0.12); }
     .bk-flag.wait { color: #f59e0b; border-color: rgba(245,158,11,0.45); background: rgba(245,158,11,0.1); }
+    .bk-flag.overdue { color: #f87171; border-color: rgba(248,113,113,0.5); background: rgba(248,113,113,0.1); }
+    .bk-overdue-line { color: #f87171; }
+    .party-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; font-size: 13px; color: var(--text-sub); }
+    .party-ctl { display: inline-flex; align-items: center; gap: 4px; }
+    .party-ctl button { width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--text); font-size: 18px; line-height: 1; cursor: pointer; }
+    .party-ctl b { min-width: 34px; text-align: center; font-size: 16px; font-weight: 600; color: var(--text); }
+    .party-save { padding: 8px 14px; border-radius: 10px; border: 1px solid var(--accent); background: transparent; color: var(--accent); font-size: 12.5px; cursor: pointer; }
+    .party-save[hidden] { display: none; }
     .bk-late-line { color: #fbbf24; }
     .bk-wait-line { color: #f59e0b; }
     .pill.late { color: #fbbf24; border-color: rgba(251,191,36,0.5); }
@@ -4166,11 +4174,26 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (isNaN(at) || bookingVenueDay(new Date(at.getTime() + 3 * 3600e3).toISOString().slice(0, 16)) !== venueDayStr()) return '';
     return mskHm(b.lateAt);
   }
+  // Время брони наступило, а гостя всё нет и его никто не отметил: сколько минут прошло (null — не наш случай).
+  // Гостю в приложении обещано, что стол ждёт 15 минут; раньше бронь весь вечер выглядела так же, как до прихода.
+  // Не считаем, если гость предупредил, что опаздывает (это отдельная пометка), и если у брони нет точного времени.
+  const BOOKING_HOLD_MIN = 15;
+  function bookingOverdueMin(b) {
+    if (!b || b.past || b.cancelled || b.arrival || bookingLate(b)) return null;
+    const iso = String(b.iso || '');
+    if (!/T\d{2}:\d{2}/.test(iso) || /T00:00/.test(iso)) return null;
+    if (bookingVenueDay(iso) !== venueDayStr()) return null;
+    const m = Math.floor((Date.parse(moscowNowIso() + ':00Z') - Date.parse(iso.slice(0, 16) + ':00Z')) / 60000);
+    return Number.isFinite(m) && m >= BOOKING_HOLD_MIN ? m : null;
+  }
   // Пометки «ждёт N мин» в том виде, как они сейчас нарисованы: время идёт, а сами брони не меняются —
   // по этой строке проверка раз в 30 секунд понимает, что список пора перерисовать
   let bkWaitShown = '';
   function bookingsWaitSig(list) {
-    return (list || []).map(b => { const w = pendingWaitMin(b); return w !== null && w >= PENDING_WAIT_WARN_MIN ? `${b.uid}:${w}` : ''; }).filter(Boolean).join(',');
+    return (list || []).map(b => {
+      const w = pendingWaitMin(b), o = bookingOverdueMin(b);
+      return (w !== null && w >= PENDING_WAIT_WARN_MIN ? `${b.uid}:${w}` : '') + (o !== null ? `${b.uid}:o${o}` : '');
+    }).filter(Boolean).join(',');
   }
   // Сколько минут бронь ждёт подтверждения (null — не ждёт)
   function pendingWaitMin(b) {
@@ -4235,6 +4258,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const flags = [];
     if (hasNonGrata(g)) flags.push({ cls: 'danger', text: 'Нон-грата' });
     if ((g.tagsAllergy || []).length) flags.push({ cls: 'danger', text: short ? 'Аллергия' : `Аллергия: ${g.tagsAllergy.join(', ')}` });
+    const ns = g.bookingStats && g.bookingStats.noShows;
+    if (ns > 0) flags.push({ cls: 'noshow', text: short ? `не приходил ×${ns}` : `Не приходил на бронь: ${ns} раз${ns >= 2 && ns <= 4 ? 'а' : ''}` });
     const vip = g.vip || isVipTagList(g.tagsSpecial);
     if (vip) flags.push({ cls: 'vip', text: 'VIP' });
     const bd = g.birthday;
@@ -4296,8 +4321,10 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const leftHm = arr === 'arrived' && b.arrival.leftAt ? mskHm(b.arrival.leftAt) : '';
       const lateHm = bookingLate(b);
       const waitMin = pendingWaitMin(b);
+      const overdue = bookingOverdueMin(b);
       const eventFlags = [
         lateHm ? '<span class="bk-flag late">⏰ опаздывает</span>' : '',
+        overdue !== null ? `<span class="bk-flag overdue">⌛ время прошло ${escHtml(shDuration(overdue))}</span>` : '',
         waitMin !== null && waitMin >= PENDING_WAIT_WARN_MIN ? `<span class="bk-flag wait">ждёт ${escHtml(shDuration(waitMin))}</span>` : ''
       ].join('');
       const eventHtml = eventFlags ? `<div class="bk-flags">${eventFlags}</div>` : '';
@@ -4739,6 +4766,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         const icons = [
           b.arrival?.status === 'arrived' ? `<span class="tl-ic" title="${it.left ? 'Ушёл' : 'За столом'}">✓</span>` : '',
           bookingLate(b) ? '<span class="tl-ic" title="Опаздывает">⏰</span>' : '',
+          bookingOverdueMin(b) !== null ? '<span class="tl-ic" title="Время брони прошло, гостя нет">⌛</span>' : '',
           flags.some(f => f.cls === 'danger') ? '<span class="tl-ic danger">⚠</span>' : '',
           flags.some(f => f.text === 'VIP') ? '<span class="tl-ic vip">★</span>' : '',
           flags.some(f => f.text === 'ДР') ? '<span class="tl-ic">🎂</span>' : ''
@@ -5095,7 +5123,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const b = it.b;
       const color = b.status === 'pending' ? '#f59e0b' : '#4ade80';
       const nowTag = (it.left ? ` <span class="pill">ушёл ${escHtml(mskHm(b.arrival.leftAt))}</span>` : (it.start <= t && t < it.end ? ' <span class="pill good">сейчас</span>' : ''))
-        + (bookingLate(b) ? ' <span class="pill late">⏰ опаздывает</span>' : '');
+        + (bookingLate(b) ? ' <span class="pill late">⏰ опаздывает</span>' : '')
+        + (bookingOverdueMin(b) !== null ? ` <span class="pill late">⌛ время прошло ${escHtml(shDuration(bookingOverdueMin(b)))}</span>` : '');
       const canLeave = !it.left && b.arrival?.status === 'arrived' && b.uid && bookingVenueDay(b.iso) === venueDayStr() && can('bookings.mark_arrival');
       return `<div class="hz-item" onclick="openBookingDetail(${it.idx})">
         <span><span class="hz-dot" style="background:${color}"></span><b style="font-weight:500">с ${hhmm(it.start)}</b> ${escHtml(b.name)}${b.guests ? ` · ${escHtml(String(b.guests))}` : ''}${nowTag}</span>
@@ -5267,6 +5296,51 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     </div>`;
   }
 
+  // «Гостей за столом»: пришло больше или меньше, чем в брони — поправить число, пока гость за столом (в цифры идёт уже настоящее)
+  let partyDraft = null; // { uid, n }
+  function partyBase(b) { return Number(b.guests) > 0 ? Number(b.guests) : 2; }
+  function partyRowHtml(b) {
+    if (!b.uid) return '';
+    if (!partyDraft || partyDraft.uid !== b.uid) partyDraft = { uid: b.uid, n: partyBase(b) };
+    const uid = escJs(b.uid);
+    return `<div class="party-row"><span>Гостей за столом</span>
+      <span class="party-ctl"><button type="button" aria-label="Меньше" onclick="partyStep('${uid}', -1)">−</button><b id="partyVal">${partyDraft.n}</b><button type="button" aria-label="Больше" onclick="partyStep('${uid}', 1)">+</button></span>
+      <button type="button" class="party-save" id="partySave" onclick="saveParty('${uid}')" ${partyDraft.n === partyBase(b) ? 'hidden' : ''}>Сохранить</button></div>`;
+  }
+  function partyStep(uid, d) {
+    const b = bookingsListData.find(x => x.uid === uid);
+    if (!b || !partyDraft || partyDraft.uid !== uid) return;
+    partyDraft.n = Math.min(99, Math.max(1, partyDraft.n + d));
+    const v = document.getElementById('partyVal'); if (v) v.textContent = String(partyDraft.n);
+    const sv = document.getElementById('partySave'); if (sv) sv.hidden = partyDraft.n === partyBase(b);
+  }
+  async function saveParty(uid) {
+    if (arrivalBusy) return;
+    if (!needPerm('bookings.mark_arrival', 'менять число гостей за столом')) return;
+    const b = bookingsListData.find(x => x.uid === uid);
+    if (!b || !partyDraft || partyDraft.uid !== uid) { notify(BOOKING_GONE); return; }
+    arrivalBusy = true;
+    const sv = document.getElementById('partySave'); if (sv) sv.disabled = true;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/bookings/party?pin=${getPin()}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), phone: b.phone, uid, guests: partyDraft.n })
+      });
+      if (res.status === 401) { showScreen('pin'); return; }
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) { showToast(data.error || 'Не сохранилось — попробуйте ещё раз', true); return; }
+      b.guests = data.guests;
+      partyDraft = null;
+      showToast(`${b.name}: за столом ${data.guests} чел.`);
+    } catch {
+      showToast('Нет связи — число не сохранилось', true);
+    } finally {
+      arrivalBusy = false;
+      if (document.getElementById('screen-booking-detail')?.classList.contains('active')) renderBookingDetail();
+      else renderBookingsView();
+    }
+  }
+
   // tableInner — блок выбора стола (у сидящего гостя он переезжает в «Отметили по ошибке»)
   function renderArrivalBlock(b, tableInner) {
     const day = bookingVenueDay(b.iso);
@@ -5299,6 +5373,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const satTxt = sat !== null && sat >= 1 && sat <= 16 * 60 ? ` · уже ${escHtml(shDuration(sat))}` : '';
       return `<div class="arr-box">
         <div class="arr-state arrived">✓ За столом${cameHm ? ' с ' + escHtml(cameHm) : ''}${satTxt}${short(a.by) ? `<span class="note">отметил(а) ${escHtml(short(a.by))}</span>` : ''}</div>
+        ${canMark ? partyRowHtml(b) : ''}
         ${canMark ? `<div class="arr-btns"><button class="arr-btn yes big arr-leave" onclick="markLeave('${uid}', 'leave')">Гость ушёл — стол свободен</button></div>` : ''}
         ${arrFixHtml([
           tableInner ? `<div class="arr-fix-item"><div class="arr-fix-label">Не тот стол</div>${tableInner}</div>` : '',
@@ -5504,6 +5579,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         <div class="visit-detail">${escHtml(kindLine || '')}</div>
         ${b.guests ? `<div class="visit-detail">Гостей: ${escHtml(String(b.guests))}</div>` : ''}
         ${bookingLate(b) ? `<div class="visit-detail bk-late-line">⏰ Гость предупредил, что опаздывает · в ${escHtml(bookingLate(b))}</div>` : ''}
+        ${bookingOverdueMin(b) !== null ? `<div class="visit-detail bk-overdue-line">⌛ Время брони прошло ${escHtml(shDuration(bookingOverdueMin(b)))} назад, гостя ещё нет — отметьте ниже, пришёл он или нет</div>` : ''}
         ${!b.past && pendingWaitMin(b) !== null && pendingWaitMin(b) >= PENDING_WAIT_WARN_MIN ? `<div class="visit-detail bk-wait-line">Ждёт подтверждения уже ${escHtml(shDuration(pendingWaitMin(b)))}</div>` : ''}
         ${b.comment ? `<div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>${escHtml(b.comment)}</div>` : ''}
         <div class="visit-detail"><a href="tel:${escHtml((b.phone || '').replace(/[^\d+]/g, ''))}" style="color:var(--text-sub);text-decoration:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="18" x2="14" y2="18"/></svg>${escHtml(b.phone || 'Телефон не указан')}</a>${b.phone ? ` <button type="button" class="copy-btn" onclick="copyPhone('${escJs(b.phone)}')" title="Скопировать номер">${COPY_ICON}Копировать</button>` : ''}</div>
@@ -11193,6 +11269,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const h = tagHintFor('special', t);
       if (h) hints.push({ level: 'normal', text: `${t} — ${lower(h)}` });
     }
+    const bs = guest.bookingStats;
+    if (bs && bs.noShows > 0) {
+      const n = bs.noShows, ld = bs.lastNoShow ? ` (последний раз ${bs.lastNoShow.slice(8, 10)}.${bs.lastNoShow.slice(5, 7)})` : '';
+      hints.push({ level: n >= 2 ? 'danger' : 'normal', text: `Не пришёл на бронь ${n} раз${n >= 2 && n <= 4 ? 'а' : ''}${ld}${n >= 2 ? ' — при подтверждении уточнить, что придёт' : ''}` });
+    }
+    if (bs && bs.guestCancels >= 2) hints.push({ level: 'normal', text: `Сам отменял бронь ${bs.guestCancels} раз${bs.guestCancels <= 4 ? 'а' : ''}` });
     const bdHint = birthdayHint(guest.autoTags?.birthday);
     if (bdHint) hints.push({ level: 'good', text: bdHint });
     if ((guest.tastesDislike || []).length) hints.push({ level: 'normal', text: `Не предлагать: ${guest.tastesDislike.join(', ')}` });
