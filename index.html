@@ -973,6 +973,22 @@
     .bk-flag.arrived { color: #4ade80; border-color: rgba(74,222,128,0.4); background: rgba(74,222,128,0.1); }
     .bk-flag.noshow { color: #f87171; border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.1); }
     .booking-chip.noshow { opacity: 0.55; }
+    .bk-flag.late { color: #fbbf24; border-color: rgba(251,191,36,0.5); background: rgba(251,191,36,0.12); }
+    .bk-flag.wait { color: #f59e0b; border-color: rgba(245,158,11,0.45); background: rgba(245,158,11,0.1); }
+    .bk-late-line { color: #fbbf24; }
+    .bk-wait-line { color: #f59e0b; }
+    .pill.late { color: #fbbf24; border-color: rgba(251,191,36,0.5); }
+    .bk-cancelled-title { margin: 22px 0 10px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
+    .booking-chip.cancelled { opacity: 0.7; cursor: default; border-left-color: #f87171 !important; }
+    .booking-chip.cancelled .booking-chip-name { text-decoration: line-through; text-decoration-color: rgba(248,113,113,0.6); }
+    .bk-chip-table.freed .n { text-decoration: line-through; opacity: 0.6; }
+    .pb-guest { margin-top: 8px; font-size: 12.5px; color: var(--text-sub); line-height: 1.5; }
+    .pb-guest b { color: var(--text); font-weight: 500; }
+    .enps-month { margin: 14px 0 8px; font-size: 12.5px; color: var(--accent); }
+    .enps-answer { position: relative; }
+    .enps-line { font-size: 13px; line-height: 1.5; color: var(--text-sub); margin-top: 4px; }
+    .enps-line b { color: var(--text); font-weight: 500; }
+
     .arr-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-top: 14px; }
     .arr-title { font-size: 11px; color: var(--accent); letter-spacing: 0.5px; margin-bottom: 8px; }
     .arr-state { font-size: 13px; line-height: 1.5; margin-bottom: 10px; }
@@ -3154,6 +3170,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
     bookingsListData = [];
     bookingsPastData = [];
+    bookingsCancelledData = [];
+    bkAnnounced.clear();
     bookingsLoadedOnce = false;
     currentBookingIndex = null;
     currentBookingKey = '';
@@ -3455,11 +3473,13 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
     {
       if (can('bookings.view')) try {
-        const res = await fetch(`${PROXY_BASE}/api/staff/bookings?past=${BOOKINGS_PAST_DAYS}&pin=${getPin()}`);
+        const res = await fetch(`${PROXY_BASE}/api/staff/bookings?past=${BOOKINGS_PAST_DAYS}&cancelled=1&pin=${getPin()}`);
         if (res.ok) {
           const list = await res.json();
-          const needsAttention = Array.isArray(list) && list.some(b => b.past ? (b.uid && !b.arrival) : b.status === 'pending');
-          setQuickActionDot('qdotBookings', needsAttention);
+          if (Array.isArray(list)) {
+            const parts = splitBookings(list);
+            setQuickActionDot('qdotBookings', bookingsNeedAttention(parts.cur, parts.past, parts.cancelled));
+          }
         }
       } catch {}
 
@@ -3647,7 +3667,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (countEl) countEl.textContent = pending.length ? String(pending.length) : '';
     if (!pending.length) { el.innerHTML = '<div class="dp-empty">Все подтверждены</div>'; return; }
     // имя брони вводит сам гость в гостевом приложении — экранируем
-    el.innerHTML = pending.slice(0, 5).map(b => `<div class="dp-row" onclick="openBookings()">${escHtml(b.name || 'Гость')}<div class="dp-sub">${escHtml(b.display || '')}</div></div>`).join('');
+    el.innerHTML = pending.slice(0, 5).map(b => `<div class="dp-row" onclick="openBookings()">${escHtml(b.name || 'Гость')}<div class="dp-sub">${escHtml(b.display || '')}${pendingWaitMin(b) !== null && pendingWaitMin(b) >= PENDING_WAIT_WARN_MIN ? ` · <span style="color:#f59e0b">ждёт ${escHtml(shDuration(pendingWaitMin(b)))}</span>` : ''}</div></div>`).join('');
   }
 
   // ─── АВТООБНОВЛЕНИЕ БРОНЕЙ ─────────────────────
@@ -3662,7 +3682,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   let bookingsPollBusy = false;
   let bookingsLoadedOnce = false;
   function bookingsSig(list) {
-    return JSON.stringify((list || []).map(b => [b.entry, b.status, b.table || '', b.arrival?.status || '', b.arrival?.leftAt || '', b.guests || '', b.iso || '', b.name || '']));
+    return JSON.stringify((list || []).map(b => [b.entry, b.status, b.table || '', b.arrival?.status || '', b.arrival?.leftAt || '', b.guests || '', b.iso || '', b.name || '', b.lateAt || '']));
   }
   function bookingsUiBusy() {
     const active = id => document.getElementById('screen-' + id)?.classList.contains('active');
@@ -3674,10 +3694,11 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
   // Новый список броней с сервера. Бронь, которую сейчас сажают со схемы, находим в новом списке по её номеру
   // (а не по месту): иначе после обновления списка «Подтвердить бронь» под схемой относилось бы к соседней.
-  function setBookingLists(cur, past) {
+  function setBookingLists(cur, past, cancelled) {
     const seatKey = hallSeatIdx !== null ? bookingKey(bookingsListData[hallSeatIdx]) : '';
     bookingsListData = cur;
     bookingsPastData = past;
+    if (cancelled) bookingsCancelledData = cancelled;
     if (hallSeatIdx !== null) {
       const i = seatKey ? cur.findIndex(x => bookingKey(x) === seatKey) : -1;
       if (i >= 0) hallSeatIdx = i;
@@ -3689,18 +3710,19 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (document.getElementById('screen-pin')?.classList.contains('active')) return;
     bookingsPollBusy = true;
     try {
-      const res = await fetch(`${PROXY_BASE}/api/staff/bookings?past=${BOOKINGS_PAST_DAYS}&pin=${getPin()}`);
+      const res = await fetch(`${PROXY_BASE}/api/staff/bookings?past=${BOOKINGS_PAST_DAYS}&cancelled=1&pin=${getPin()}`);
       if (!res.ok) return;
       const all = await res.json();
       if (!Array.isArray(all)) return;
-      const cur = all.filter(b => !b.past);
-      const past = all.filter(b => b.past).sort((a, b) => (b.iso || '').localeCompare(a.iso || ''));
-      setQuickActionDot('qdotBookings', cur.some(b => b.status === 'pending') || past.some(b => b.uid && !b.arrival));
+      const { cur, past, cancelled } = splitBookings(all);
+      setQuickActionDot('qdotBookings', bookingsNeedAttention(cur, past, cancelled));
       renderDpBookings(cur);
+      announceBookingEvents(cur, cancelled); // «опаздывает» и «отменил гость» — всплывающим сообщением, где бы сотрудник ни был
       if (!bookingsLoadedOnce) return; // раздел броней ещё не открывали — там нечего обновлять
-      if (bookingsSig(cur) === bookingsSig(bookingsListData) && bookingsSig(past) === bookingsSig(bookingsPastData)) return;
+      if (bookingsSig(cur) === bookingsSig(bookingsListData) && bookingsSig(past) === bookingsSig(bookingsPastData)
+        && bookingsSig(cancelled) === bookingsSig(bookingsCancelledData) && bookingsWaitSig(cur) === bkWaitShown) return;
       if (bookingsUiBusy()) return;    // сотрудник что-то делает — обновим в следующий раз
-      setBookingLists(cur, past);
+      setBookingLists(cur, past, cancelled);
       if (document.getElementById('screen-bookings')?.classList.contains('active')) {
         const y = window.scrollY;
         renderBookingsView();
@@ -3975,7 +3997,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // только после перезахода в приложение.
   // Красная точка на «Бронях»: есть неподтверждённые или прошлые брони без отметки «пришёл / не пришёл»
   function refreshBookingsDot() {
-    setQuickActionDot('qdotBookings', bookingsListData.some(b => b.status === 'pending') || bookingsPastData.some(b => b.uid && !b.arrival));
+    setQuickActionDot('qdotBookings', bookingsNeedAttention(bookingsListData, bookingsPastData, bookingsCancelledData));
   }
 
   // ─── ИМЕНИННИКИ ────────────────────────────────
@@ -4107,18 +4129,102 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const el = document.getElementById('bookingsContent');
     el.innerHTML = '<div class="loading">Загружаю...</div>';
     try {
-      const res = await fetch(`${PROXY_BASE}/api/staff/bookings?past=${BOOKINGS_PAST_DAYS}&pin=${getPin()}`);
+      const res = await fetch(`${PROXY_BASE}/api/staff/bookings?past=${BOOKINGS_PAST_DAYS}&cancelled=1&pin=${getPin()}`);
       if (res.status === 401) { showScreen('pin'); return; }
       if (!res.ok) throw new Error();
       const all = await res.json();
       if (!Array.isArray(all)) throw new Error();
-      setBookingLists(all.filter(b => !b.past), all.filter(b => b.past).sort((a, b) => (b.iso || '').localeCompare(a.iso || '')));
+      const parts = splitBookings(all);
+      setBookingLists(parts.cur, parts.past, parts.cancelled);
       bookingsLoadedOnce = true;
       refreshBookingsDot();
       renderBookingsView();
     } catch {
       el.innerHTML = '<div class="empty-state">Не удалось загрузить брони</div>';
     }
+  }
+
+  // ─── СОБЫТИЯ ОТ ГОСТЯ: «ОПАЗДЫВАЮ» И ОТМЕНА ─────
+  // Раньше оба события жили только сообщением в Telegram: в приложении опоздания не было видно вовсе, а отменённая
+  // гостем бронь молча пропадала из списка. Теперь: пометка «опаздывает» на брони, раздел «Отменены гостем» в списке,
+  // всплывающее сообщение и точка на «Бронях», пока сотрудник не открыл список.
+  let bookingsCancelledData = [];
+  // Ответ сервера → действующие брони, прошедшие (для сверки) и отменённые гостем
+  function splitBookings(all) {
+    return {
+      cur: all.filter(b => !b.past && !b.cancelled),
+      past: all.filter(b => b.past && !b.cancelled).sort((a, b) => (b.iso || '').localeCompare(a.iso || '')),
+      cancelled: all.filter(b => b.cancelled)
+    };
+  }
+  // Гость предупредил, что опаздывает: время отметки («20:45») или '' — пока гостя не посадили и только в день брони
+  function bookingLate(b) {
+    if (!b || !b.lateAt || b.cancelled || b.arrival?.status === 'arrived') return '';
+    if (bookingVenueDay(b.iso) !== venueDayStr()) return '';
+    // предупреждение относится к тому вечеру, когда его отправили (бронь могли перенести на другой день)
+    const at = new Date(b.lateAt);
+    if (isNaN(at) || bookingVenueDay(new Date(at.getTime() + 3 * 3600e3).toISOString().slice(0, 16)) !== venueDayStr()) return '';
+    return mskHm(b.lateAt);
+  }
+  // Пометки «ждёт N мин» в том виде, как они сейчас нарисованы: время идёт, а сами брони не меняются —
+  // по этой строке проверка раз в 30 секунд понимает, что список пора перерисовать
+  let bkWaitShown = '';
+  function bookingsWaitSig(list) {
+    return (list || []).map(b => { const w = pendingWaitMin(b); return w !== null && w >= PENDING_WAIT_WARN_MIN ? `${b.uid}:${w}` : ''; }).filter(Boolean).join(',');
+  }
+  // Сколько минут бронь ждёт подтверждения (null — не ждёт)
+  function pendingWaitMin(b) {
+    if (!b || b.status !== 'pending' || !b.createdAt) return null;
+    const m = Math.floor((Date.now() - new Date(b.createdAt)) / 60000);
+    return Number.isFinite(m) && m >= 0 ? m : null;
+  }
+  const PENDING_WAIT_WARN_MIN = 15; // с этого времени пишем на брони «ждёт N мин» — столько же ждёт и напоминание в Telegram
+  // Какие события сотрудник уже видел (на этом устройстве): чтобы точка гасла, а сообщение не повторялось
+  const BK_SEEN_KEY = 'bookings_events_seen';
+  function bkSeenSet() {
+    try { const a = JSON.parse(localStorage.getItem(BK_SEEN_KEY) || '[]'); return new Set(Array.isArray(a) ? a : []); } catch { return new Set(); }
+  }
+  function bookingEventKeys(cur, cancelled) {
+    const keys = [];
+    for (const b of cur || []) if (b.uid && bookingLate(b)) keys.push('late:' + b.uid);
+    for (const b of cancelled || []) if (b.uid) keys.push('cancel:' + b.uid);
+    return keys;
+  }
+  function markBookingEventsSeen() {
+    const keys = bookingEventKeys(bookingsListData, bookingsCancelledData);
+    if (!keys.length) return;
+    const seen = bkSeenSet();
+    let added = false;
+    for (const k of keys) if (!seen.has(k)) { seen.add(k); added = true; }
+    if (!added) return;
+    try { localStorage.setItem(BK_SEEN_KEY, JSON.stringify([...seen].slice(-200))); } catch {}
+    refreshBookingsDot();
+  }
+  // Точка на «Бронях»: ждут подтверждения, прошлые без отметки, либо гость опаздывает / отменил — и это ещё не видели
+  function bookingsNeedAttention(cur, past, cancelled) {
+    if ((cur || []).some(b => b.status === 'pending') || (past || []).some(b => b.uid && !b.arrival)) return true;
+    const seen = bkSeenSet();
+    return bookingEventKeys(cur, cancelled).some(k => !seen.has(k));
+  }
+  // Всплывающее сообщение о новом событии — один раз за сеанс на событие
+  const bkAnnounced = new Set();
+  function announceBookingEvents(cur, cancelled) {
+    const seen = bkSeenSet();
+    const fresh = k => !seen.has(k) && !bkAnnounced.has(k);
+    const whenOf = b => (b.display || '').replace(/\.\d{4}(?=\s)/, '');
+    const msgs = [];
+    for (const b of cur || []) {
+      if (!b.uid || !bookingLate(b) || !fresh('late:' + b.uid)) continue;
+      bkAnnounced.add('late:' + b.uid);
+      msgs.push(`${b.name || 'Гость'} опаздывает — бронь ${whenOf(b)}${b.table ? `, стол «${b.table}»` : ''}`);
+    }
+    for (const b of cancelled || []) {
+      if (!b.uid || !fresh('cancel:' + b.uid)) continue;
+      bkAnnounced.add('cancel:' + b.uid);
+      msgs.push(`${b.name || 'Гость'} отменил бронь ${whenOf(b)}${b.table ? ` — стол «${b.table}» свободен` : ''}`);
+    }
+    if (!msgs.length) return;
+    showToast(msgs.length === 1 ? msgs[0] : `${msgs[0]} · и ещё ${msgs.length - 1} — откройте «Брони»`, true);
   }
 
   // Короткие пометки о госте для брони (из его карточки): что важно знать хостес
@@ -4188,6 +4294,13 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       if (kindLine) metaParts.push(escHtml(kindLine));
       const arr = b.arrival?.status;
       const leftHm = arr === 'arrived' && b.arrival.leftAt ? mskHm(b.arrival.leftAt) : '';
+      const lateHm = bookingLate(b);
+      const waitMin = pendingWaitMin(b);
+      const eventFlags = [
+        lateHm ? '<span class="bk-flag late">⏰ опаздывает</span>' : '',
+        waitMin !== null && waitMin >= PENDING_WAIT_WARN_MIN ? `<span class="bk-flag wait">ждёт ${escHtml(shDuration(waitMin))}</span>` : ''
+      ].join('');
+      const eventHtml = eventFlags ? `<div class="bk-flags">${eventFlags}</div>` : '';
       const arrHtml = arr ? `<div class="bk-flags"><span class="bk-flag ${escCls(arr)}">${arr === 'arrived' ? (leftHm ? `✓ был · ушёл ${escHtml(leftHm)}` : (bookingStage(b) === 'seated' ? '✓ за столом' : '✓ был')) : '✗ не пришёл'}</span></div>` : '';
       return `
         <div class="booking-chip${arr === 'noshow' ? ' noshow' : ''}" style="border-left-color:${st.color}" onclick="openBookingDetail(${idx})" title="${escHtml(st.label)}">
@@ -4196,11 +4309,38 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
             <div class="booking-chip-name">${nameHtml}</div>
             <div class="booking-chip-meta">${metaParts.join(' · ')}</div>
             ${arrHtml}
+            ${eventHtml}
             ${bookingFlagsHtml(b, 3)}
           </div>
           <div class="bk-chip-table${b.table ? '' : ' none'}">${tableBadgeInner(b.table, 'без стола')}</div>
         </div>
       `;
+    }).join('') + '</div>';
+  }
+
+  // Раздел «Отменены гостем» под бронями (в любом виде — список, график, схема): гость отменил сам — стол свободен, подтверждать и ждать его не нужно.
+  // Бронь на сегодня видна до конца вечера, на другой день — сутки после отмены (так отдаёт сервер).
+  function guestCancelledHtml() {
+    if (!bookingsCancelledData.length) return '';
+    return `<div class="bk-cancelled-title">Отменены гостем</div><div class="booking-grid">` + bookingsCancelledData.map(b => {
+      const shortDate = (b.display || '').replace(/\.\d{4}(?=\s)/, '');
+      const whenM = /^(\S+)\s+(\d{1,2}:\d{2})/.exec(shortDate);
+      const chipWhen = whenM ? `${escHtml(whenM[2])} <small>${escHtml(whenM[1])}</small>` : escHtml(shortDate);
+      const kindLine = b.eventName ? `${b.kind} · ${b.eventName}` : b.kind;
+      const at = b.cancelledAt ? new Date(b.cancelledAt) : null;
+      const sameDay = at && venueDayStr() === bookingVenueDay(new Date(at.getTime() + 3 * 3600e3).toISOString().slice(0, 19));
+      const atTxt = at ? (sameDay ? `в ${mskHm(b.cancelledAt)}` : at.toLocaleString('ru-RU', { timeZone: 'Europe/Moscow', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })) : '';
+      const open = b.guestCard && b.guestCard.cardId && can('guests.view') ? ` onclick="openGuestCard('${escJs(b.guestCard.cardId)}')" style="cursor:pointer"` : '';
+      return `
+        <div class="booking-chip cancelled"${open}>
+          <div class="bk-chip-main">
+            <div class="booking-chip-time">${chipWhen}</div>
+            <div class="booking-chip-name">${escHtml(b.name || 'Гость')}${b.guests ? ` · ${escHtml(String(b.guests))} гост.` : ''}</div>
+            <div class="booking-chip-meta">${escHtml(kindLine || '')}${b.phone ? ` · ${escHtml(b.phone)}` : ''}</div>
+            <div class="bk-flags"><span class="bk-flag noshow">✗ отменил${atTxt ? ' ' + escHtml(atTxt) : ''}</span>${b.table ? '<span class="bk-flag">стол свободен</span>' : ''}</div>
+          </div>
+          <div class="bk-chip-table${b.table ? ' freed' : ' none'}">${tableBadgeInner(b.table, 'без стола')}</div>
+        </div>`;
     }).join('') + '</div>';
   }
 
@@ -4491,8 +4631,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     // схему оставили открытой на ночь — утром начинаем с сегодняшнего дня и текущего времени
     if (!hallDate || hallDate < venueNow().day) { hallDate = venueNow().day; hallTime = null; }
     const tabs = reconHtml() + segControl([['list', 'Список'], ['timeline', 'График'], ['plan', 'Схема']], bookingsView, 'setBookingsView', 'bk-views');
+    bkWaitShown = bookingsWaitSig(bookingsListData);
+    // раздел броней открыт — «опаздывает» и «отменил гость» считаются увиденными: точка гаснет, сообщение не повторится
+    if (document.getElementById('screen-bookings')?.classList.contains('active')) setTimeout(markBookingEventsSeen, 0);
+    const cancelledBox = `<div id="bookingsCancelledBox">${guestCancelledHtml()}</div>`;
     if (bookingsView === 'list') {
-      el.innerHTML = tabs + '<div id="bookingsViewBody"></div>';
+      el.innerHTML = tabs + '<div id="bookingsViewBody"></div>' + cancelledBox;
       renderBookingsList(document.getElementById('bookingsViewBody'));
       return;
     }
@@ -4508,7 +4652,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         <button class="hz-nav" onclick="shiftHallDate(1)">›</button>
       </div>
       <div class="hz-summary">Броней: ${day.length} · гостей: ${guests}${pending ? ` · <span style="color:#f59e0b">ждут подтверждения: ${pending}</span>` : ''}${noTable ? ` · без стола: ${noTable}` : ''}</div>
-      <div id="bookingsViewBody"></div>`;
+      <div id="bookingsViewBody"></div>${cancelledBox}`;
     if (bookingsView === 'timeline') renderTimeline();
     else renderHallPlan();
   }
@@ -4594,6 +4738,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         const flags = bookingGuestFlags(b, true);
         const icons = [
           b.arrival?.status === 'arrived' ? `<span class="tl-ic" title="${it.left ? 'Ушёл' : 'За столом'}">✓</span>` : '',
+          bookingLate(b) ? '<span class="tl-ic" title="Опаздывает">⏰</span>' : '',
           flags.some(f => f.cls === 'danger') ? '<span class="tl-ic danger">⚠</span>' : '',
           flags.some(f => f.text === 'VIP') ? '<span class="tl-ic vip">★</span>' : '',
           flags.some(f => f.text === 'ДР') ? '<span class="tl-ic">🎂</span>' : ''
@@ -4949,7 +5094,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const rows = mine.length ? mine.map(it => {
       const b = it.b;
       const color = b.status === 'pending' ? '#f59e0b' : '#4ade80';
-      const nowTag = it.left ? ` <span class="pill">ушёл ${escHtml(mskHm(b.arrival.leftAt))}</span>` : (it.start <= t && t < it.end ? ' <span class="pill good">сейчас</span>' : '');
+      const nowTag = (it.left ? ` <span class="pill">ушёл ${escHtml(mskHm(b.arrival.leftAt))}</span>` : (it.start <= t && t < it.end ? ' <span class="pill good">сейчас</span>' : ''))
+        + (bookingLate(b) ? ' <span class="pill late">⏰ опаздывает</span>' : '');
       const canLeave = !it.left && b.arrival?.status === 'arrived' && b.uid && bookingVenueDay(b.iso) === venueDayStr() && can('bookings.mark_arrival');
       return `<div class="hz-item" onclick="openBookingDetail(${it.idx})">
         <span><span class="hz-dot" style="background:${color}"></span><b style="font-weight:500">с ${hhmm(it.start)}</b> ${escHtml(b.name)}${b.guests ? ` · ${escHtml(String(b.guests))}` : ''}${nowTag}</span>
@@ -5357,6 +5503,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         <div class="visit-date">${escHtml(b.display || '')}</div>
         <div class="visit-detail">${escHtml(kindLine || '')}</div>
         ${b.guests ? `<div class="visit-detail">Гостей: ${escHtml(String(b.guests))}</div>` : ''}
+        ${bookingLate(b) ? `<div class="visit-detail bk-late-line">⏰ Гость предупредил, что опаздывает · в ${escHtml(bookingLate(b))}</div>` : ''}
+        ${!b.past && pendingWaitMin(b) !== null && pendingWaitMin(b) >= PENDING_WAIT_WARN_MIN ? `<div class="visit-detail bk-wait-line">Ждёт подтверждения уже ${escHtml(shDuration(pendingWaitMin(b)))}</div>` : ''}
         ${b.comment ? `<div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>${escHtml(b.comment)}</div>` : ''}
         <div class="visit-detail"><a href="tel:${escHtml((b.phone || '').replace(/[^\d+]/g, ''))}" style="color:var(--text-sub);text-decoration:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="18" x2="14" y2="18"/></svg>${escHtml(b.phone || 'Телефон не указан')}</a>${b.phone ? ` <button type="button" class="copy-btn" onclick="copyPhone('${escJs(b.phone)}')" title="Скопировать номер">${COPY_ICON}Копировать</button>` : ''}</div>
       </div>
@@ -5739,7 +5887,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         <span class="pb-cat">${escHtml(p.category || 'Общее')}${p.score !== null && p.score !== undefined ? ` · оценка ${escHtml(p.score)}` : ''}</span>
         ${p.severity ? `<span class="pb-sev" style="color:${sevColor};border-color:${sevColor}">${escHtml(p.severity)}</span>` : ''}
       </div>
-      <div class="pb-text">${escHtml(p.comment || '—')}</div>
+      <div class="pb-text">${escHtml(p.comment || (p.fromReview ? 'Гость не оставил комментарий — только оценку' : '—'))}</div>
+      ${problemGuestHtml(p)}
       <div class="pb-meta">
         <span class="pb-status ${p.status === 'В работе' ? 'work' : 'new'}">${escHtml(statusLabel)}</span>
         ${p.responsible ? `<span>· ${escHtml(p.responsible)}</span>` : ''}
@@ -5749,6 +5898,42 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       ${p.rootCause ? `<div class="pb-cause"><b>Причина:</b> ${escHtml(p.rootCause)}</div>` : ''}
       <div class="pb-actions">${action}${reassign}</div>
     </div>`;
+  }
+
+  // Что сотрудники написали в анонимном опросе («что нравится» и «что улучшить»). Видит только основатель.
+  // Без дня ответа и в случайном порядке; месяц открывается, когда в нём набралось достаточно ответов, —
+  // иначе по единственному ответу понятно, чей он.
+  const RU_MONTHS_NOM = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+  function enpsTextsHtml(t) {
+    if (!t || !Array.isArray(t.months)) return '';
+    let html = '<div class="sec">Что пишут сотрудники</div>';
+    if (!t.months.length) return html + '<div class="empty-state" style="padding:18px 10px">За последние полгода ответов нет</div>';
+    html += `<div class="note" style="margin-bottom:10px">Опрос анонимный, поэтому ответы месяца открываются все сразу, когда месяц закончился, — без даты, без оценки и в случайном порядке. Месяц, где меньше ${escHtml(String(t.minAnswers))} ответов, не открывается.</div>`;
+    for (const m of t.months) {
+      const [y, mo] = String(m.month || '').split('-');
+      const title = `${RU_MONTHS_NOM[Number(mo) - 1] || m.month} ${y || ''}`.trim();
+      html += `<div class="enps-month">${escHtml(title)} · ${escHtml(String(m.count))} ${ruPlural(m.count, 'ответ', 'ответа', 'ответов')}</div>`;
+      if (m.hidden) {
+        html += `<div class="visit-item enps-answer"><div class="note">${m.current
+          ? 'Месяц ещё идёт — ответы откроются, когда он закончится.'
+          : `Ответов меньше ${escHtml(String(t.minAnswers))} — тексты не показываются, чтобы опрос оставался анонимным.`}</div></div>`;
+        continue;
+      }
+      html += m.answers.map(a => `<div class="visit-item enps-answer">
+          <div class="enps-line"><b>Нравится:</b> ${escHtml(a.likes || '—')}</div>
+          <div class="enps-line"><b>Улучшить:</b> ${escHtml(a.improve || '—')}</div>
+        </div>`).join('');
+    }
+    return html;
+  }
+
+  // Гость, оставивший отзыв: имя, телефон и переход в карточку — чтобы было понятно, с кем связаться.
+  // Приходит только тем, кто может открывать карточки гостей (решает сервер).
+  function problemGuestHtml(p) {
+    const g = p.guest;
+    if (!g) return '';
+    const who = [g.name, g.phone, g.telegramUsername ? '@' + g.telegramUsername : ''].filter(Boolean).map(escHtml).join(' · ');
+    return `<div class="pb-guest">Гость: <b>${who || 'без карточки'}</b>${g.id && can('guests.view') ? ` <button type="button" class="link-btn" onclick="openGuestCard('${escJs(g.id)}')">Открыть карточку →</button>` : ''}</div>`;
   }
 
   async function problemPost(id, action, body, okText) {
@@ -9702,6 +9887,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         html += '<div class="empty-state">Нет опросов за этот месяц</div>';
       }
     }
+    html += enpsTextsHtml(d.enpsTexts);
 
     html += '<div class="sec">Отзывы</div>';
     html += anChips([['all', 'Все'], ['negative', 'Негативные'], ['comment', 'С комментарием']], fbState.filter, 'fbSetFilter');
