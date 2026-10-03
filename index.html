@@ -1295,18 +1295,27 @@
     .hz-svg { display: block; width: 100%; height: auto; font-family: 'Inter', sans-serif; user-select: none; -webkit-user-select: none; }
     .hz-wall { fill: none; stroke: none; }
     .hz-window { stroke: rgba(125,180,230,0.55); stroke-width: 3; stroke-linecap: round; }
-    .hz-note { fill: rgba(240,223,192,0.32); font-size: 8px; letter-spacing: 1px; }
-    .hz-counter { fill: rgba(184,115,51,0.16); stroke: rgba(184,115,51,0.4); }
-    .hz-sofa { fill: rgba(240,223,192,0.06); stroke: rgba(240,223,192,0.15); }
-    .hz-sofa-line { stroke: rgba(240,223,192,0.15); }
-    .hz-pillar { fill: rgba(240,223,192,0.2); }
-    .hz-seat { fill: rgba(240,223,192,0.18); }
+    .hz-note { fill: rgba(240,223,192,0.3); font-size: 7px; letter-spacing: 2.2px; font-family: 'Jost', sans-serif; }
+    .hz-counter { fill: url(#hzWoodG); opacity: 0.55; stroke: rgba(184,115,51,0.7); stroke-width: 0.8; }
+    .hz-counter-top { fill: rgba(20,11,0,0.35); stroke: rgba(240,223,192,0.12); stroke-width: 0.6; }
+    .hz-bar-word { fill: rgba(240,223,192,0.6); font-family: 'Jost', sans-serif; font-size: 8.5px; font-weight: 500; letter-spacing: 4px; }
+    .hz-sofa { fill: url(#hzSofaG); stroke: rgba(240,223,192,0.16); stroke-width: 0.8; }
+    .hz-sofa-back { fill: rgba(184,115,51,0.28); stroke: rgba(184,115,51,0.45); stroke-width: 0.6; }
+    .hz-sofa-line { stroke: rgba(0,0,0,0.45); stroke-width: 1; }
+    .hz-pillar { fill: rgba(240,223,192,0.16); stroke: rgba(240,223,192,0.2); stroke-width: 0.6; }
+    .hz-seat { fill: rgba(240,223,192,0.2); }
     .hz-t { cursor: pointer; }
-    .hz-shape { fill: #2A1C12; stroke: rgba(240,223,192,0.24); stroke-width: 1.2; }
-    .hz-barpill { fill: rgba(240,223,192,0.03); }
-    .hz-stool { fill: rgba(240,223,192,0.12); stroke: rgba(240,223,192,0.28); }
-    .hz-num { fill: var(--text); font-size: 15px; font-weight: 500; font-family: 'Jost', sans-serif; }
-    .hz-seats { fill: var(--text-muted); font-size: 8px; }
+    .hz-shape { fill: #2A1C12; stroke: rgba(240,223,192,0.26); stroke-width: 1.2; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5)); }
+    .hz-barpill { fill: rgba(240,223,192,0.02); stroke: rgba(240,223,192,0.1); filter: none; }
+    .hz-stool { fill: #2A1C12; stroke: rgba(240,223,192,0.3); }
+    .hz-stool-in { fill: rgba(240,223,192,0.1); pointer-events: none; }
+    /* номер стола — тем же шрифтом и цветом, что в карточке брони */
+    .hz-num { fill: var(--accent); font-size: 17px; font-weight: 500; font-family: 'Jost', sans-serif; }
+    .hz-num.sm { font-size: 14px; }
+    .hz-t.busy .hz-num, .hz-t.pending .hz-num, .hz-t.conflict .hz-num { fill: var(--text); }
+    .hz-seats { color: var(--text-muted); }
+    .hz-seats text { fill: currentColor; font-size: 8.5px; font-family: 'Jost', sans-serif; }
+    .hz-seats circle, .hz-seats path { fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; }
     .hz-t.busy .hz-shape { fill: rgba(74,222,128,0.26); stroke: #4ade80; }
     .hz-t.busy .hz-stool { fill: rgba(74,222,128,0.45); stroke: #4ade80; }
     .hz-t.pending .hz-shape { fill: rgba(245,158,11,0.24); stroke: #f59e0b; }
@@ -1316,7 +1325,8 @@
     .hz-t.later .hz-stool { fill: rgba(184,115,51,0.3); stroke: rgba(184,115,51,0.75); }
     .hz-t.conflict .hz-shape { fill: rgba(239,68,68,0.22); stroke: #ef4444; stroke-width: 2; }
     .hz-t.conflict .hz-stool { fill: rgba(239,68,68,0.4); stroke: #ef4444; }
-    .hz-t.busy .hz-seats, .hz-t.pending .hz-seats, .hz-t.conflict .hz-seats { fill: var(--text-sub); }
+    .hz-t.busy .hz-seats, .hz-t.pending .hz-seats, .hz-t.conflict .hz-seats { color: var(--text-sub); }
+    .hz-t.busy .hz-stool-in { fill: rgba(74,222,128,0.5); }
     .hz-t.sel .hz-shape { stroke: var(--accent); stroke-width: 2.8; stroke-dasharray: none; }
     .hz-label rect { fill: rgba(20,11,0,0.92); stroke: rgba(240,223,192,0.14); }
     .hz-label text { fill: var(--text); font-size: 10.5px; }
@@ -1505,6 +1515,10 @@
       .desk-panel.role-ok { display: block; }
       /* Когда справа видна боковая панель, «Управление» живёт в ней, а в главной колонке его не дублируем */
       body:has(#deskRight.role-ok) .svc-main { display: none; }
+      /* В разделе «Брони» правая панель прячется, а колонка расширяется на её место: схеме и графику нужна ширина.
+         Левый край колонки остаётся там же (левая панель на месте), правый — доходит до края бывшей панели. */
+      body.bk-wide #deskRight { display: none; }
+      body.bk-wide:has(#deskLeft.role-ok) { max-width: 1146px; margin-left: calc(50vw - 450px); margin-right: 0; }
     }
     .desk-panel .dp-svc { display: flex; align-items: center; gap: 10px; padding: 9px 10px; margin: 0 -2px; border: 1px solid var(--border); border-radius: 12px; cursor: pointer; transition: background .15s; }
     .desk-panel .dp-svc:hover { background: var(--bg-card-hover); }
@@ -4401,30 +4415,51 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // вширь (см. layoutZone): столы и мебель того же размера, а расстояния между ними
   // по горизонтали больше. ax — к чему привязана координата x: 'S' — растягивается,
   // 'L' — к левой стене (барная стойка), 'R' — к правой стене (банкетка и столы 4–6).
+  // Градиенты схемы (обивка диванов, дерево стойки)
+  const HZ_DEFS = `<defs>
+    <linearGradient id="hzSofaG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a2a1d"/><stop offset="1" stop-color="#2a1d13"/></linearGradient>
+    <linearGradient id="hzWoodG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7a4a22"/><stop offset="0.5" stop-color="#b87333"/><stop offset="1" stop-color="#6e421e"/></linearGradient>
+  </defs>`;
+  // Диван: сиденье, спинка с одной стороны (l / r / t / b) и швы между подушками (n секций)
+  function hzSofa(x, y, w, h, back, n) {
+    const bt = 5; // толщина спинки
+    const vertical = back === 'l' || back === 'r';
+    const backRect = back === 'l' ? [x, y, bt, h] : back === 'r' ? [x + w - bt, y, bt, h] : back === 't' ? [x, y, w, bt] : [x, y + h - bt, w, bt];
+    let seams = '';
+    for (let i = 1; i < n; i++) {
+      seams += vertical
+        ? `<line x1="${back === 'l' ? x + bt : x + 2}" y1="${y + (h * i) / n}" x2="${back === 'l' ? x + w - 2 : x + w - bt}" y2="${y + (h * i) / n}" class="hz-sofa-line"/>`
+        : `<line x1="${x + (w * i) / n}" y1="${back === 't' ? y + bt : y + 2}" x2="${x + (w * i) / n}" y2="${back === 't' ? y + h - 2 : y + h - bt}" class="hz-sofa-line"/>`;
+    }
+    return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" class="hz-sofa"/><rect x="${backRect[0]}" y="${backRect[1]}" width="${backRect[2]}" height="${backRect[3]}" rx="2.5" class="hz-sofa-back"/>${seams}`;
+  }
+
   const HALL_ZONES = [{
     id: 'main',
     title: 'Общий зал',
     baseWidth: 400,
     height: 394,
     decor: (W, S) => [
+      HZ_DEFS,
       `<rect x="2" y="2" width="${W - 4}" height="388" rx="10" class="hz-wall"/>`,
       // окно — только вдоль столов 2 и 3, под столом 1 глухая стена
       `<line x1="${S(205) - 37}" y1="390" x2="${W - 4}" y2="390" class="hz-window"/>`,
-      `<text x="${(S(205) - 37 + W - 4) / 2}" y="386" text-anchor="middle" class="hz-note">окна</text>`,
-      // барная стойка
-      '<path d="M10 118 H30 V302 H10 Z" class="hz-counter"/>',
-      '<text x="20" y="214" text-anchor="middle" class="hz-note" transform="rotate(-90 20 214)">бар</text>',
-      // диваны кабинок у дальней стены
+      `<text x="${(S(205) - 37 + W - 4) / 2}" y="385" text-anchor="middle" class="hz-note">ОКНА</text>`,
+      // барная стойка: столешница с кромкой
+      '<rect x="8" y="116" width="22" height="188" rx="5" class="hz-counter"/>',
+      '<rect x="11" y="119" width="16" height="182" rx="3" class="hz-counter-top"/>',
+      '<text x="19" y="210" text-anchor="middle" class="hz-bar-word" transform="rotate(-90 19 210)">БАР</text>',
+      // диваны кабинок у дальней стены: спинка — с внешней стороны от стола
       ...[131, 235, 339].flatMap(c => [
-        `<rect x="${S(c) - 47}" y="10" width="22" height="60" rx="6" class="hz-sofa"/>`,
-        `<rect x="${S(c) + 25}" y="10" width="22" height="60" rx="6" class="hz-sofa"/>`
+        hzSofa(S(c) - 47, 10, 22, 60, 'l', 2),
+        hzSofa(S(c) + 25, 10, 22, 60, 'r', 2)
       ]),
-      // колонна и двусторонний диван между овальными столами
-      `<rect x="${S(159) - 7}" y="178" width="14" height="56" rx="2" class="hz-pillar"/>`,
-      `<rect x="${S(208) - 26}" y="171" width="52" height="70" rx="8" class="hz-sofa"/>`,
-      `<line x1="${S(208) - 26}" y1="206" x2="${S(208) + 26}" y2="206" class="hz-sofa-line"/>`,
-      // банкетка вдоль правой стены
-      `<rect x="${W - 26}" y="118" width="18" height="192" rx="6" class="hz-sofa"/>`
+      // колонна и двусторонний диван между овальными столами (общая спинка посередине)
+      `<rect x="${S(159) - 7}" y="178" width="14" height="56" rx="3" class="hz-pillar"/>`,
+      hzSofa(S(208) - 26, 171, 52, 32, 'b', 2),
+      hzSofa(S(208) - 26, 209, 52, 32, 't', 2),
+      // банкетка вдоль правой стены: спинка у стены, три секции
+      hzSofa(W - 26, 118, 18, 192, 'r', 3)
     ],
     tables: [
       { key: 'Общий зал 1', short: '1', seats: 2, shape: 'round', x: 100, y: 356, r: 18, ticks: 'lr', label: [100, 330, 'middle'], labelMax: 100 },
@@ -4988,7 +5023,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (t.shape === 'bar') {
       const stools = Array.from({ length: t.seats }, (_, i) => {
         const cy = t.y + 12 + i * ((t.h - 24) / (t.seats - 1));
-        return `<circle cx="${t.x + t.w / 2}" cy="${cy}" r="7" class="hz-stool"/>`;
+        return `<circle cx="${t.x + t.w / 2}" cy="${cy}" r="7.5" class="hz-stool"/><circle cx="${t.x + t.w / 2}" cy="${cy}" r="4" class="hz-stool-in"/>`;
       }).join('');
       return `<rect x="${t.x}" y="${t.y}" width="${t.w}" height="${t.h}" rx="${t.w / 2}" class="hz-shape hz-barpill"/>${stools}`;
     }
@@ -4998,8 +5033,10 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function tableTextSvg(t) {
     if (t.shape === 'bar') return '';
     const oval = t.shape === 'oval';
-    return `<text x="${t.x}" y="${t.y + (oval ? 1 : 2)}" text-anchor="middle" class="hz-num">${escHtml(t.short)}</text>
-      <text x="${t.x}" y="${t.y + (oval ? 11 : 14)}" text-anchor="middle" class="hz-seats">${t.seats} чел</text>`;
+    // число мест — цифра и значок человека (как в сторис ВИП-комнат), а не «4 чел»
+    const sy = t.y + (oval ? 11 : t.shape === 'room' ? 17 : 14);
+    return `<text x="${t.x}" y="${t.y + (oval ? 1 : t.shape === 'room' ? 3 : 2)}" text-anchor="middle" class="hz-num${oval ? ' sm' : ''}">${escHtml(t.short)}</text>
+      <g class="hz-seats" transform="translate(${t.x},${sy})"><text x="-1" y="0" text-anchor="end">${t.seats}</text><g transform="translate(1,-6.8) scale(0.31)"><circle cx="12" cy="8" r="4.2"/><path d="M4 21c1.2-4.4 4.3-6.4 8-6.4s6.8 2 8 6.4"/></g></g>`;
   }
 
   let labelMeasureCtx = null;
@@ -10651,6 +10688,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (prev) screenScroll[prev] = window.scrollY;
     screens.forEach(s => document.getElementById('screen-' + s)?.classList.remove('active'));
     document.getElementById('screen-' + name)?.classList.add('active');
+    document.body.classList.toggle('bk-wide', name === 'bookings'); // на широком экране «Брони» занимают и место правой панели
     if (name === 'pin' && prev !== 'pin' && !opts.keepAuth) authEnter(); // вход истёк или вышли: экран входа
     window.scrollTo(0, opts.restoreScroll ? (screenScroll[name] || 0) : 0);
     try { if (tg?.BackButton) (name === 'home' || name === 'pin') ? tg.BackButton.hide() : tg.BackButton.show(); } catch {}
