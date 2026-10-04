@@ -1312,6 +1312,7 @@
     .hz-nav:disabled { opacity: 0.3; cursor: default; }
     .hz-date { flex: 1; text-align: center; font-size: 14px; color: var(--text); }
     .hz-summary { font-size: 12px; color: var(--text-muted); text-align: center; margin-bottom: 10px; line-height: 1.5; }
+    .hz-closed { margin: 0 0 10px; padding: 9px 12px; border-radius: 10px; border: 1px solid rgba(245,158,11,0.45); background: rgba(245,158,11,0.09); color: #f5c06b; font-size: 12.5px; line-height: 1.4; }
     .hz-times { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 6px; scrollbar-width: none; }
     .hz-times::-webkit-scrollbar { display: none; }
     .hz-time { flex-shrink: 0; font-size: 11.5px; padding: 6px 9px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); cursor: pointer; }
@@ -4143,9 +4144,13 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/venue-config?pin=${getPin()}`);
       if (res.ok) {
+        const before = venueCfg ? JSON.stringify([venueCfg.hours, venueCfg.closed]) : '';
         venueCfg = await res.json();
         // форма брони могла открыться раньше ответа — обновляем в ней столы (терраса) и предупреждение
         if (document.getElementById('screen-add-booking')?.classList.contains('active')) refreshAddBookingTableOptions();
+        // график и схема рисуются по часам работы: часы или закрытые даты поменялись — перерисовываем открытый экран броней
+        if (before !== JSON.stringify([venueCfg.hours, venueCfg.closed]) && bookingsView !== 'list'
+          && document.getElementById('screen-bookings')?.classList.contains('active')) renderBookingsView();
       }
     } catch {}
     return venueCfg;
@@ -4772,11 +4777,32 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // Три вида броней: «Список» (как было), «График» (столы × время) и «Схема» (зал сверху).
   // Время за столом не ограничено: бронь держит стол с начала и до закрытия.
   // Поэтому две брони на один стол в один вечер — пересечение (красным), как и при
-  // выборе стола в форме брони. Заведение работает с 13:00 до 01:00, брони
+  // выборе стола в форме брони. Часы работы дня берутся из «Режима работы» (venueDayRange), брони
   // с 00:00 до 06:00 относятся к вечеру предыдущего дня.
-  const VENUE_OPEN_MIN = 13 * 60;
+  const VENUE_OPEN_MIN = 13 * 60;      // запасные часы: пока «Режим работы» не загрузился или день в нём не задан
   const VENUE_CLOSE_MIN = 25 * 60;     // 01:00 следующего дня
   const DAY_SPLIT_HOUR = 6;
+  // Часы работы дня заведения из «Режима работы» (Сервис → Режим работы), в минутах от полуночи этого дня:
+  // закрытие после полуночи — больше 24 часов (03:00 = 27 * 60). По ним рисуются график и шкала схемы и считается
+  // «стол занят до закрытия». closed — причина, если в этот день заведение закрыто (дата или выходной по неделе).
+  function venueDayRange(day) {
+    let open = VENUE_OPEN_MIN, close = VENUE_CLOSE_MIN, closed = '';
+    if (venueCfg && day) {
+      const off = (venueCfg.closed || []).find(c => c.date === day);
+      const h = (venueCfg.hours || {})[String(new Date(day + 'T00:00:00Z').getUTCDay() || 7)];
+      if (off) closed = `Закрыто для гостей: ${off.reason || 'причина не указана'}`;
+      else if (h && h.closed) closed = 'Выходной по режиму работы';
+      const ok = v => /^\d{2}:\d{2}$/.test(v || '');
+      if (h && !h.closed && ok(h.open) && ok(h.close)) {
+        const m = v => Number(v.slice(0, 2)) * 60 + Number(v.slice(3, 5));
+        let o = Math.max(m(h.open), DAY_SPLIT_HOUR * 60), c = m(h.close);
+        if (c <= o) c += 24 * 60;                       // закрытие после полуночи
+        c = Math.min(c, (24 + DAY_SPLIT_HOUR) * 60);    // день заведения кончается в 06:00
+        if (c > o) { open = o; close = c; }
+      }
+    }
+    return { open, close, closed };
+  }
   const SOON_MIN = 60;                 // «скоро бронь» — в ближайший час
 
   // Общий зал — по плану (не в масштабе: столы крупнее, чтобы попадать пальцем).
@@ -4937,7 +4963,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     let day = m[1], start = hh * 60 + mm;
     if (hh < DAY_SPLIT_HOUR) { day = shiftDateStr(day, -1); start += 24 * 60; }
     // до закрытия; бронь уже после закрытия (редкость) — просто короткая полоса
-    let end = Math.max(VENUE_CLOSE_MIN, start + 30);
+    let end = Math.max(venueDayRange(day).close, start + 30);
     // гость ушёл («Гость ушёл» в брони) — стол занят только до этой минуты, дальше свободен
     let left = false;
     if (b.arrival?.status === 'arrived' && b.arrival.leftAt) {
@@ -5026,10 +5052,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
   function defaultHallTime() {
     const now = venueNow();
-    if (hallDate === now.day && now.min >= VENUE_OPEN_MIN && now.min < VENUE_CLOSE_MIN) {
+    const r = venueDayRange(hallDate);
+    if (hallDate === now.day && now.min >= r.open && now.min < r.close) {
       return Math.floor(now.min / 15) * 15;
     }
-    return 20 * 60;
+    // другой день или заведение сейчас закрыто — вечер (20:00), если он попадает в часы работы, иначе открытие
+    return 20 * 60 >= r.open && 20 * 60 < r.close ? 20 * 60 : Math.floor(r.open / 15) * 15;
   }
 
   function hallDateLabel(day) {
@@ -5107,13 +5135,15 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const guests = day.reduce((a, x) => a + (Number(x.b.guests) || 0), 0);
     const noTable = day.filter(x => !x.b.table && !x.left).length; // кто уже ушёл, стола не ждёт
     const pending = day.filter(x => x.b.status === 'pending').length;
+    const dayRange = venueDayRange(hallDate);
     el.innerHTML = `${tabs}
       <div class="hz-datebar">
         <button class="hz-nav" ${hallDate <= minDay ? 'disabled' : ''} onclick="shiftHallDate(-1)">‹</button>
         <div class="hz-date">${escHtml(hallDateLabel(hallDate))}</div>
         <button class="hz-nav" onclick="shiftHallDate(1)">›</button>
       </div>
-      <div class="hz-summary">Броней: ${day.length} · гостей: ${guests}${pending ? ` · <span style="color:#f59e0b">ждут подтверждения: ${pending}</span>` : ''}${noTable ? ` · без стола: ${noTable}` : ''}</div>
+      <div class="hz-summary">Броней: ${day.length} · гостей: ${guests}${pending ? ` · <span style="color:#f59e0b">ждут подтверждения: ${pending}</span>` : ''}${noTable ? ` · без стола: ${noTable}` : ''}${venueCfg && !dayRange.closed ? ` · работаем ${hhmm(dayRange.open)}–${hhmm(dayRange.close)}` : ''}</div>
+      ${dayRange.closed ? `<div class="hz-closed">${escHtml(dayRange.closed)}. Гости на этот день бронировать не могут.</div>` : ''}
       <div id="bookingsViewBody"></div>${cancelledBox}`;
     if (bookingsView === 'timeline') renderTimeline();
     else renderHallPlan();
@@ -5133,7 +5163,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function renderTimeline() {
     const body = document.getElementById('bookingsViewBody');
     const items = hallDayBookings(hallDate);
-    let axisStart = VENUE_OPEN_MIN, axisEnd = VENUE_CLOSE_MIN;
+    const range = venueDayRange(hallDate);
+    let axisStart = Math.floor(range.open / 60) * 60, axisEnd = Math.ceil(range.close / 60) * 60;
     for (const it of items) {
       axisStart = Math.min(axisStart, Math.floor(it.start / 60) * 60);
       axisEnd = Math.max(axisEnd, Math.ceil(it.end / 60) * 60);
@@ -5448,8 +5479,16 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const busyOf = z => z.tables.filter(tb => ['busy', 'pending', 'conflict'].includes(states[tb.key].state)).length;
     const busyCount = busyOf(zone);
 
+    // шкала времени — по часам работы этого дня; бронь вне часов (записали раньше открытия) тоже попадает на шкалу
+    const range = venueDayRange(hallDate);
+    let scaleStart = Math.floor(range.open / 15) * 15, scaleEnd = Math.ceil(range.close / 15) * 15;
+    for (const it of items) {
+      const s0 = Math.floor(it.start / 15) * 15;
+      scaleStart = Math.min(scaleStart, s0);
+      scaleEnd = Math.max(scaleEnd, s0 + 15);
+    }
     const times = [];
-    for (let m = VENUE_OPEN_MIN; m < VENUE_CLOSE_MIN; m += 15) times.push(m);
+    for (let m = scaleStart; m < scaleEnd; m += 15) times.push(m);
     const now = venueNow();
     // Подсветка на шкале: точка — в это время начинается бронь (жёлтая — если какая-то
     // из них ждёт подтверждения), фон — в это время идут брони (любой стол, и не на схеме тоже)
