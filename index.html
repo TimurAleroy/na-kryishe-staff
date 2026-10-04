@@ -1011,6 +1011,21 @@
     .bd-btn { flex-shrink: 0; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--accent); background: transparent; color: var(--accent); font-size: 12.5px; cursor: pointer; }
     .bd-btn.undo { border-color: var(--border); color: var(--text-muted); }
     .dp-sublabel { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin: 12px 0 2px; }
+    .gm-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 10px; }
+    .gm-card.is-new { border-color: rgba(184,115,51,0.5); }
+    .gm-head { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; margin-bottom: 8px; }
+    .gm-name { font-size: 14px; font-weight: 500; }
+    .gm-meta { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+    .gm-text { font-size: 14px; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+    .gm-reply { margin-top: 10px; padding: 9px 11px; border-left: 2px solid var(--accent); background: rgba(184,115,51,0.08); border-radius: 0 10px 10px 0; font-size: 13px; line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
+    .gm-reply small { display: block; color: var(--text-muted); font-size: 11px; margin-bottom: 3px; }
+    .gm-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .gm-actions button { flex: 1 1 auto; min-width: 120px; padding: 11px 12px; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--text); font-size: 13px; font-family: inherit; cursor: pointer; }
+    .gm-actions button.primary { background: var(--accent); border-color: var(--accent); color: #1E1004; font-weight: 500; }
+    .gm-actions button:disabled { opacity: 0.5; }
+    .gm-compose { margin-top: 12px; }
+    .gm-compose textarea { width: 100%; min-height: 90px; resize: vertical; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; color: var(--text); padding: 10px 12px; font-family: inherit; font-size: 14px; outline: none; }
+    .gm-compose textarea:focus { border-color: rgba(184,115,51,0.5); }
     .pb-tabs { margin: 0 0 14px; }
     .pb-status.done { color: #4ade80; border-color: rgba(74,222,128,0.45); }
     .bk-late-line { color: #fbbf24; }
@@ -2034,6 +2049,17 @@
   <div style="padding:0 16px" id="feedbackContent"><div class="loading">Загружаю...</div></div>
 </div>
 
+<!-- ОБРАЩЕНИЯ ГОСТЕЙ -->
+<div class="screen" id="screen-messages">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('home')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Обращения</h1><p>Гости пишут управляющему</p></div>
+  </div>
+  <div style="padding:0 16px" id="messagesContent"><div class="loading">Загружаю...</div></div>
+</div>
+
 <!-- ADMIN: ДУБЛИ КАРТОЧЕК -->
 <div class="screen" id="screen-duplicates">
   <div class="header">
@@ -2483,8 +2509,17 @@
       <input class="form-input" id="miPrice" type="text" inputmode="decimal" maxlength="10" autocomplete="off" placeholder="450">
     </div>
     <div class="form-group">
+      <label class="form-label">Состав (необязательно)</label>
+      <input class="form-input" id="miComp" maxlength="300" placeholder="Ром, лайм, мята, содовая">
+      <div style="font-size:11px;color:var(--text-muted);margin-top:6px;line-height:1.4">Короткая строка: гость видит её под названием в списке меню. У коктейля — из чего он, у блюда — ингредиенты, у алкоголя — страна.</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Объём (необязательно)</label>
+      <input class="form-input" id="miVol" maxlength="40" placeholder="50 мл или 250 / 500 мл">
+    </div>
+    <div class="form-group">
       <label class="form-label">Описание (необязательно)</label>
-      <textarea class="form-input" id="miDesc" maxlength="1500" placeholder="Состав, объём, вкус"></textarea>
+      <textarea class="form-input" id="miDesc" maxlength="1500" placeholder="Подробный рассказ о позиции — виден гостю после нажатия на неё"></textarea>
     </div>
     <div class="form-group">
       <label class="form-label">Наличие</label>
@@ -2876,7 +2911,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function fallbackPerms(jobRole) {
     const base = ['guests.view', 'guests.create', 'guests.edit', 'tags.use', 'visits.record', 'guests.birthdays', 'guests.vip_list', 'shift.mark', 'schedule.view', 'menu.view', 'problems.view', 'problems.report', 'problems.work_own_role'];
     const own = { 'Бармен': ['menu.stoplist_drinks'], 'Повар': ['menu.stoplist_food'], 'КМ': ['menu.stoplist_hookah'] }[jobRole] || [];
-    const admin = ['shifts.review', 'stories.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage'];
+    const admin = ['shifts.review', 'stories.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage', 'messages.view'];
     const owner = ['surveys.manage', 'tags.manage', 'audit.view', 'settings.manage', 'founder_tasks.create', 'marketing.send', 'marketing.log', 'analytics.view', 'segments.view', 'feedback.view', 'guests.table', 'candidates.view'];
     if (jobRole === 'Основатель') return base.concat(admin, owner);
     if (jobRole === 'Администратор') return base.concat(admin);
@@ -3493,6 +3528,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('bookings.view')) {
       attentionCards += qcard(icons.bookings, 'Брони', 'Столы и мероприятия', "openBookings()", { dotId: 'qdotBookings' });
     }
+    if (can('messages.view')) attentionCards += qcard(icons.feedback, 'Обращения', 'Гости пишут управляющему', "openMessages()", { dotId: 'qdotMessages' });
     // Одна карточка: список проблем, а «Сообщить» — кнопкой внутри
     if (can('problems.view')) attentionCards += qcard(icons.problem, 'Проблемы', 'Открытые · сообщить', "openProblems()", { dotId: 'qdotProblems' });
     // «Задачи»: видеть и отмечать готовыми; ставить новую — отдельное право
@@ -3572,6 +3608,11 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
           const list = await res.json();
           setQuickActionDot('qdotFounderTasks', Array.isArray(list) && list.length > 0);
         }
+      } catch {}
+
+      if (can('messages.view')) try {
+        const res = await fetch(`${PROXY_BASE}/api/staff/messages/count?pin=${getPin()}`);
+        if (res.ok) setQuickActionDot('qdotMessages', ((await res.json()).newCount || 0) > 0);
       } catch {}
 
       if (can('guests.merge')) try {
@@ -6376,6 +6417,86 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // Вкладки: «Открытые» (как раньше) и «Решённые» — причина, кто и когда закрыл, и «Вернуть в работу»,
   // если закрыли по ошибке. Раньше решённая проблема пропадала совсем.
   let problemsTab = 'open';
+  // ─── ОБРАЩЕНИЯ ГОСТЕЙ ───
+  var gmTab = 'new', gmItems = [], gmOpenReply = null, gmBusy = false;
+  function setMessagesTab(t) { gmTab = t === 'done' ? 'done' : 'new'; gmOpenReply = null; openMessages(true); }
+  async function openMessages(keepTab) {
+    if (!keepTab) { gmTab = 'new'; gmOpenReply = null; }
+    showScreen('messages');
+    const el = document.getElementById('messagesContent');
+    const tabs = segControl([['new', 'Новые'], ['done', 'Обработанные']], gmTab, 'setMessagesTab', 'seg-sm pb-tabs');
+    el.innerHTML = tabs + '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/messages?status=${gmTab}&pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить обращения'));
+      const d = await res.json();
+      gmItems = d.items || [];
+      setQuickActionDot('qdotMessages', (d.newCount || 0) > 0);
+      renderMessages();
+    } catch (e) {
+      el.innerHTML = tabs + errorStateHtml(e.message || 'Не удалось загрузить обращения', 'openMessages(true)');
+    }
+  }
+  function renderMessages() {
+    const el = document.getElementById('messagesContent');
+    const tabs = segControl([['new', 'Новые'], ['done', 'Обработанные']], gmTab, 'setMessagesTab', 'seg-sm pb-tabs');
+    if (!gmItems.length) { el.innerHTML = tabs + `<div class="empty-state">${gmTab === 'new' ? 'Новых обращений нет' : 'Обработанных обращений пока нет'}</div>`; return; }
+    el.innerHTML = tabs + gmItems.map(m => {
+      const who = m.name || (m.username ? '@' + m.username : 'Гость');
+      const replies = (m.replies || []).map(r => `<div class="gm-reply"><small>${escHtml(r.by || 'Сотрудник')} · ${escHtml(fmtDateTime(r.at))}${r.delivered === false ? ' · НЕ ДОСТАВЛЕНО гостю' : ''}</small>${escHtml(r.text)}</div>`).join('');
+      const compose = gmOpenReply === m.id
+        ? `<div class="gm-compose"><textarea id="gmText" maxlength="3500" placeholder="Ответ гостю. Придёт в Telegram от бота «На Крыше»"></textarea>
+             <div class="gm-actions"><button type="button" class="primary" id="gmSend" onclick="sendMessageReply('${m.id}')">Отправить</button><button type="button" onclick="toggleMessageReply('${m.id}')">Отмена</button></div></div>`
+        : `<div class="gm-actions"><button type="button" class="primary" onclick="toggleMessageReply('${m.id}')">Ответить</button>${m.status === 'new'
+            ? `<button type="button" onclick="setMessageStatus('${m.id}','done')">Обработано</button>`
+            : `<button type="button" onclick="setMessageStatus('${m.id}','new')">Вернуть в новые</button>`}</div>`;
+      return `<div class="gm-card${m.status === 'new' ? ' is-new' : ''}">
+        <div class="gm-head"><div class="gm-name">${escHtml(who)}${m.username && m.name ? ` <span class="gm-meta">@${escHtml(m.username)}</span>` : ''}</div><div class="gm-meta">${escHtml(fmtDateTime(m.createdAt))}</div></div>
+        <div class="gm-text">${escHtml(m.text)}</div>${replies}
+        ${m.status === 'done' && m.doneBy ? `<div class="gm-meta" style="margin-top:8px">Обработал: ${escHtml(m.doneBy)}</div>` : ''}
+        ${compose}</div>`;
+    }).join('');
+    if (gmOpenReply) { const t = document.getElementById('gmText'); if (t) t.focus(); }
+  }
+  function toggleMessageReply(id) { gmOpenReply = gmOpenReply === id ? null : id; renderMessages(); }
+  async function sendMessageReply(id) {
+    if (gmBusy) return;
+    const text = (document.getElementById('gmText') || {}).value || '';
+    if (!text.trim()) { showToast('Напишите ответ', true); return; }
+    gmBusy = true;
+    const btn = document.getElementById('gmSend'); if (btn) { btn.disabled = true; btn.textContent = 'Отправляю...'; }
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/messages/${encodeURIComponent(id)}/reply?pin=${getPin()}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pin: getPin(), text: text.trim() }) });
+      if (res.status === 401) { showScreen('pin'); return; }
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) { showToast(data.error || 'Не получилось — попробуйте ещё раз', true); return; }
+      showToast(data.delivered ? 'Ответ отправлен гостю' : 'Записали, но гостю не доставлено: свяжитесь с ним сами', !data.delivered);
+      gmOpenReply = null;
+      await openMessages(true);
+    } catch {
+      showToast('Нет связи — попробуйте ещё раз', true);
+    } finally {
+      gmBusy = false;
+    }
+  }
+  async function setMessageStatus(id, status) {
+    if (gmBusy) return;
+    gmBusy = true;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/messages/${encodeURIComponent(id)}/status?pin=${getPin()}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pin: getPin(), status }) });
+      if (res.status === 401) { showScreen('pin'); return; }
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) { showToast(data.error || 'Не получилось — попробуйте ещё раз', true); return; }
+      await openMessages(true);
+    } catch {
+      showToast('Нет связи — попробуйте ещё раз', true);
+    } finally {
+      gmBusy = false;
+    }
+  }
+
   function setProblemsTab(t) { problemsTab = t === 'resolved' ? 'resolved' : 'open'; openProblems(true); }
   async function openProblems(keepTab) {
     if (!keepTab) problemsTab = 'open';
@@ -7127,6 +7248,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     document.getElementById('miSub').value = '';
     document.getElementById('miPrice').value = it && it.price !== null && it.price !== undefined ? String(it.price) : '';
     document.getElementById('miDesc').value = it ? (it.description || '') : '';
+    document.getElementById('miComp').value = it ? (it.composition || '') : '';
+    document.getElementById('miVol').value = it ? (it.volume || '') : '';
     const cur = it ? it.category : MENU_EDIT_CATEGORIES[0];
     document.getElementById('miCatChips').innerHTML = MENU_EDIT_CATEGORIES
       .map(c => `<div class="chip${c === cur ? ' selected' : ''}" data-value="${escHtml(c)}" onclick="selectMenuCat(this)">${escHtml(c)}</div>`).join('');
@@ -7214,6 +7337,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       subcategory: currentMiSub(),
       price: priceRaw === '' ? '' : priceRaw,
       description: document.getElementById('miDesc').value.trim(),
+      composition: document.getElementById('miComp').value.trim(),
+      volume: document.getElementById('miVol').value.trim(),
       available: document.querySelector('#miAvailChips .chip.selected')?.dataset.value !== 'false'
     };
     const btn = document.getElementById('miSubmitBtn');
@@ -11053,7 +11178,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'venue', 'birthday-text'];
+  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'venue', 'birthday-text', 'messages'];
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
 
