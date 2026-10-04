@@ -814,6 +814,14 @@
     .an-panel-body { display: none; padding: 0 14px 16px; }
     .an-panel.open .an-panel-body { display: block; }
     .an-panel-body > .an-step:first-child { margin-top: 4px; }
+    .an-deck { margin-top: 14px; padding: 14px; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border); }
+    .an-deck-t, .an-deck-ready-t { font-size: 13px; color: var(--text); margin-bottom: 10px; }
+    .an-deck-ready-s { font-size: 11px; color: var(--text-muted); margin: -6px 0 10px; word-break: break-all; }
+    .an-deck-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    .an-deck-btn { flex: 1 1 140px; text-align: center; padding: 11px 12px; border-radius: 12px; border: 1px solid rgba(184,115,51,0.4); color: var(--accent); font-size: 13px; cursor: pointer; }
+    .an-deck-btn.primary { background: var(--accent-dim); }
+    .an-deck-btn.off { opacity: 0.5; pointer-events: none; }
+    .an-deck-err { margin-top: 8px; font-size: 12px; color: #E07A5F; }
     .an-done { margin-top: 22px; text-align: center; padding: 12px; border-radius: 12px; background: var(--accent-dim); border: 1px solid rgba(184,115,51,0.4); color: var(--accent); font-size: 13px; cursor: pointer; }
     @media (max-width: 699px) {
       .an-panel-body .chip:not(.selected), .an-panel-body .an-seg, .an-panel-body .an-fold { background: rgba(255,255,255,0.03); }
@@ -9952,6 +9960,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
   async function loadAnalytics() {
     const out = document.getElementById('analyticsResult');
+    anDeck.ready = null; // настройки изменились — готовый файл уже не тот
     // Прошлый результат остаётся на экране приглушённым — страница не «прыгает»
     if (out.querySelector('.an-hero')) out.classList.add('an-loading');
     else out.innerHTML = '<div class="loading">Считаю...</div>';
@@ -10030,21 +10039,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
 
   function anFactsHtml(d, vis) {
-    const vals = vis.filter(b => b.value !== null);
-    if (vals.length < 2) return '';
-    const tiles = [];
-    if (d.kind === 'count' || d.kind === 'unique') {
-      const avg = Math.round(vals.reduce((s, b) => s + b.value, 0) / vals.length * 10) / 10;
-      tiles.push(['В среднем за ' + AN_AVG_WORD[d.group], String(avg).replace('.', ','), '']);
-    }
-    const sorted = [...vals].sort((a, b) => b.value - a.value);
-    const lower = AN_LOWER_BETTER.includes(d.metric);
-    const best = lower ? sorted[sorted.length - 1] : sorted[0];
-    const worst = lower ? sorted[0] : sorted[sorted.length - 1];
-    if (best.value !== worst.value) {
-      tiles.push([d.kind === 'duration' ? 'Дольше всего' : 'Лучше всего', anFormat(best.value, d.kind), anBucketName(best.start, best.label, d.group)]);
-      tiles.push([d.kind === 'duration' ? 'Короче всего' : 'Слабее всего', anFormat(worst.value, d.kind), anBucketName(worst.start, worst.label, d.group)]);
-    }
+    const tiles = anFactTiles(d, vis);
     if (!tiles.length) return '';
     return `<div class="an-facts">${tiles.map(([l, v, s]) => `<div class="an-fact"><div class="an-fact-l">${escHtml(l)}</div><div class="an-fact-v">${escHtml(v)}</div>${s ? `<div class="an-fact-s">${escHtml(s)}</div>` : ''}</div>`).join('')}</div>`;
   }
@@ -10088,6 +10083,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     }
     html += anFactsHtml(d, vis);
     html += '</div>';
+    html += `<div class="an-deck" id="anDeckRow">${anDeckRowHtml()}</div>`;
 
     // График
     const groupWord = { day: 'по дням', week: 'по неделям', month: 'по месяцам' }[d.group];
@@ -10121,6 +10117,337 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     html += '</div>';
 
     return html;
+  }
+
+  // ── ВЫГРУЗКА В ПРЕЗЕНТАЦИЮ (.pptx) ──────────────────────
+  // «Текущий» — показатель, который сейчас на экране: итог, динамика, таблица, кальяны.
+  // «Полный» — все показатели за выбранный период: сводка и по слайду на каждый.
+  // Файл собирается прямо в приложении (модуль PptxGenJS подгружается при первом нажатии).
+  const AN_ALL_METRICS = AN_METRIC_GROUPS.flatMap(g => g[1]);
+  const ANDK = { bg: '140B00', card: '241709', line: '4A3420', acc: 'B87333', txt: 'F0DFC0', soft: 'C9A880', muted: '8A6A52', cmp: '8F7757', good: '7BC47F', bad: 'E07A5F' };
+  const AN_DECK_FONT = 'Arial';
+  let anDeck = { busy: '', ready: null, error: '' };
+
+  function anLoadPptx() {
+    if (window.PptxGenJS) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundle.js';
+      s.onload = () => window.PptxGenJS ? resolve() : reject(new Error('Модуль презентаций не загрузился'));
+      s.onerror = () => reject(new Error('Не удалось загрузить модуль презентаций. Проверьте интернет'));
+      document.head.appendChild(s);
+    });
+  }
+
+  async function anFetchMetric(metric) {
+    const r = anRange();
+    const q = new URLSearchParams({ metric, group: anState.group, compare: anState.compare, from: r.from, to: r.to });
+    if (anState.dow) q.set('dow', anState.dow);
+    if (anState.segment && AN_VISIT_METRICS.includes(metric)) q.set('segment', anState.segment);
+    const res = await fetch(`${PROXY_BASE}/api/admin/analytics?${q.toString()}&pin=${getPin()}`);
+    if (res.status === 401) { showScreen('pin'); throw new Error('Войдите заново'); }
+    if (res.status === 403) throw new Error('Нет доступа к аналитике');
+    if (!res.ok) throw new Error(await responseError(res, 'Не удалось посчитать'));
+    return res.json();
+  }
+
+  // Достаём все показатели небольшими пачками, чтобы не заваливать сервер
+  async function anFetchAll() {
+    const out = {};
+    const list = [...AN_ALL_METRICS];
+    for (let i = 0; i < list.length; i += 4) {
+      const part = list.slice(i, i + 4);
+      const got = await Promise.all(part.map(anFetchMetric));
+      part.forEach((m, j) => { out[m] = got[j]; });
+    }
+    return AN_ALL_METRICS.map(m => out[m]);
+  }
+
+  // Подписи «Лучше всего / В среднем / Слабее всего» — те же, что на экране
+  function anFactTiles(d, vis) {
+    const vals = vis.filter(b => b.value !== null);
+    if (vals.length < 2) return [];
+    const tiles = [];
+    if (d.kind === 'count' || d.kind === 'unique') {
+      const avg = Math.round(vals.reduce((s, b) => s + b.value, 0) / vals.length * 10) / 10;
+      tiles.push(['В среднем за ' + AN_AVG_WORD[d.group], String(avg).replace('.', ','), '']);
+    }
+    const sorted = [...vals].sort((a, b) => b.value - a.value);
+    const lower = AN_LOWER_BETTER.includes(d.metric);
+    const best = lower ? sorted[sorted.length - 1] : sorted[0];
+    const worst = lower ? sorted[0] : sorted[sorted.length - 1];
+    if (best.value !== worst.value) {
+      tiles.push([d.kind === 'duration' ? 'Дольше всего' : 'Лучше всего', anFormat(best.value, d.kind), anBucketName(best.start, best.label, d.group)]);
+      tiles.push([d.kind === 'duration' ? 'Короче всего' : 'Слабее всего', anFormat(worst.value, d.kind), anBucketName(worst.start, worst.label, d.group)]);
+    }
+    return tiles;
+  }
+
+  function anDeckFilters(d) {
+    const f = [];
+    if (d.dow) f.push(AN_DOW.find(x => x[0] === String(d.dow))?.[1]);
+    if (d.segment) f.push(AN_SEGMENT.find(x => x[0] === d.segment)?.[1]);
+    return f.filter(Boolean).join(' · ');
+  }
+  function anDeckDeltaColor(d, delta) {
+    if (delta === null || delta === 0 || d.kind === 'duration') return ANDK.soft;
+    return anIsGood(d, delta) ? ANDK.good : ANDK.bad;
+  }
+  function anDeckDeltaShort(d) {
+    if (d.delta === null) return '—';
+    if (d.kind === 'duration') return (d.delta > 0 ? '+' : d.delta < 0 ? '−' : '') + shDuration(Math.abs(d.delta));
+    const base = (d.kind === 'avg' || d.kind === 'ratio') ? signed(d.delta).replace('.', ',') : signed(d.delta);
+    return d.deltaPct !== null ? `${base} (${signed(d.deltaPct)}%)` : base;
+  }
+  function anChartNumFmt(kind) { return kind === 'avg' || kind === 'ratio' ? '0.0' : '0'; }
+
+  function anDeckBase(pptx, title, sub, d0) {
+    const s = pptx.addSlide();
+    s.background = { color: ANDK.bg };
+    s.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 0.12, h: 7.5, fill: { color: ANDK.acc }, line: { color: ANDK.acc, width: 0 } });
+    if (title) s.addText(title, { x: 0.7, y: 0.35, w: 11.9, h: 0.7, fontFace: AN_DECK_FONT, fontSize: 26, color: ANDK.txt, bold: true, valign: 'middle', fit: 'shrink' });
+    if (sub) s.addText(sub, { x: 0.7, y: 1.02, w: 11.9, h: 0.35, fontFace: AN_DECK_FONT, fontSize: 13, color: ANDK.muted, valign: 'middle' });
+    s.addText(`На Крыше · Аналитика · ${fmtDMY(d0.from)} — ${fmtDMY(d0.to)}`, { x: 0.7, y: 7.0, w: 9, h: 0.3, fontFace: AN_DECK_FONT, fontSize: 10, color: ANDK.muted });
+    s.slideNumber = { x: 12.2, y: 7.0, w: 0.6, h: 0.3, fontFace: AN_DECK_FONT, fontSize: 10, color: ANDK.muted, align: 'right' };
+    return s;
+  }
+
+  function anDeckChart(pptx, s, d, vis, box) {
+    const hasCmp = d.compare !== 'none' && d.compareFrom;
+    const labels = vis.map(b => anBucketName(b.start, b.label, d.group));
+    const num = v => (v === null || v === undefined ? 0 : v);
+    const data = [{ name: `Сейчас · ${fmtDM(d.from)}–${fmtDM(d.to)}`, labels, values: vis.map(b => num(b.value)) }];
+    if (hasCmp) data.push({ name: `Было · ${fmtDM(d.compareFrom)}–${fmtDM(d.compareTo)}`, labels, values: vis.map(b => num(b.compareValue)) });
+    if (!vis.some(b => b.value !== null || (hasCmp && b.compareValue !== null))) {
+      s.addText('Нет данных за этот период', { ...box, fontFace: AN_DECK_FONT, fontSize: 16, color: ANDK.muted, align: 'center', valign: 'middle' });
+      return;
+    }
+    s.addChart(pptx.charts.BAR, data, {
+      ...box, barDir: 'col', barGrouping: 'clustered', barGapWidthPct: 45,
+      chartColors: hasCmp ? [ANDK.acc, ANDK.cmp] : [ANDK.acc],
+      catAxisLabelColor: ANDK.soft, catAxisLabelFontSize: 10, catAxisLabelFontFace: AN_DECK_FONT,
+      catAxisLabelRotate: vis.length > 9 ? 315 : 0,
+      valAxisLabelColor: ANDK.muted, valAxisLabelFontSize: 10, valAxisLabelFontFace: AN_DECK_FONT,
+      valAxisLabelFormatCode: anChartNumFmt(d.kind),
+      valGridLine: { color: ANDK.line, size: 0.5 }, catGridLine: { style: 'none' },
+      showLegend: !!hasCmp, legendPos: 'b', legendColor: ANDK.soft, legendFontSize: 11, legendFontFace: AN_DECK_FONT,
+      showValue: vis.length <= 16, dataLabelColor: ANDK.txt, dataLabelFontSize: 10, dataLabelFontFace: AN_DECK_FONT,
+      dataLabelPosition: 'outEnd', dataLabelFormatCode: anChartNumFmt(d.kind),
+      valAxisMaxVal: d.kind === 'avg' ? 10 : undefined
+    });
+  }
+
+  function anDeckHero(pptx, s, d, x, y, w, big) {
+    const noData = d.total === null;
+    const unit = anUnit(d, d.total).trim();
+    s.addText([
+      { text: noData ? '—' : anFormat(d.total, d.kind), options: { fontSize: big ? 88 : 60, bold: true, color: ANDK.acc } },
+      ...(unit && !noData ? [{ text: '  ' + unit, options: { fontSize: big ? 26 : 18, color: ANDK.soft } }] : [])
+    ], { x, y, w, h: big ? 1.6 : 1.1, fontFace: AN_DECK_FONT, valign: 'middle', fit: 'shrink' });
+    const hasCmp = d.compare !== 'none' && d.compareFrom;
+    let yy = y + (big ? 1.7 : 1.2);
+    if (noData) {
+      s.addText('За этот период нет данных', { x, y: yy, w, h: 0.4, fontFace: AN_DECK_FONT, fontSize: 14, color: ANDK.muted });
+      return yy + 0.5;
+    }
+    if (hasCmp) {
+      s.addShape(pptx.ShapeType.roundRect, { x, y: yy, w, h: 1.15, rectRadius: 0.1, fill: { color: ANDK.card }, line: { color: ANDK.line, width: 0.75 } });
+      if (d.delta !== null) {
+        const col = anDeckDeltaColor(d, d.delta);
+        const arrow = d.delta === 0 ? '→' : d.delta > 0 ? '↑' : '↓';
+        s.addText(`${arrow}  ${anDeltaSentence(d)}`, { x: x + 0.2, y: yy + 0.08, w: w - 0.4, h: 0.6, fontFace: AN_DECK_FONT, fontSize: 15, bold: true, color: col, valign: 'middle', fit: 'shrink' });
+        s.addText(`Было: ${anFormat(d.compareTotal, d.kind)}${anUnit(d, d.compareTotal)} · ${fmtDMY(d.compareFrom)} — ${fmtDMY(d.compareTo)}`, { x: x + 0.2, y: yy + 0.68, w: w - 0.4, h: 0.38, fontFace: AN_DECK_FONT, fontSize: 11, color: ANDK.muted, valign: 'middle', fit: 'shrink' });
+      } else {
+        s.addText('Сравнить не с чем', { x: x + 0.2, y: yy + 0.1, w: w - 0.4, h: 0.5, fontFace: AN_DECK_FONT, fontSize: 15, bold: true, color: ANDK.soft, valign: 'middle' });
+        s.addText(d.compareTotal === null ? `За ${fmtDMY(d.compareFrom)} — ${fmtDMY(d.compareTo)} данных нет` : `Было: ${anFormat(d.compareTotal, d.kind)}`, { x: x + 0.2, y: yy + 0.65, w: w - 0.4, h: 0.4, fontFace: AN_DECK_FONT, fontSize: 11, color: ANDK.muted, valign: 'middle' });
+      }
+      yy += 1.35;
+    }
+    return yy;
+  }
+
+  function anDeckFacts(pptx, s, d, vis, x, y, w) {
+    const tiles = anFactTiles(d, vis);
+    if (!tiles.length) return;
+    const gap = 0.2, tw = (w - gap * (tiles.length - 1)) / tiles.length;
+    tiles.forEach(([l, v, sub], i) => {
+      const tx = x + i * (tw + gap);
+      s.addShape(pptx.ShapeType.roundRect, { x: tx, y, w: tw, h: 1.3, rectRadius: 0.1, fill: { color: ANDK.card }, line: { color: ANDK.line, width: 0.75 } });
+      s.addText(l, { x: tx + 0.15, y: y + 0.08, w: tw - 0.3, h: 0.3, fontFace: AN_DECK_FONT, fontSize: 10, color: ANDK.muted, fit: 'shrink' });
+      s.addText(v, { x: tx + 0.15, y: y + 0.38, w: tw - 0.3, h: 0.55, fontFace: AN_DECK_FONT, fontSize: 22, bold: true, color: ANDK.txt, fit: 'shrink' });
+      if (sub) s.addText(sub, { x: tx + 0.15, y: y + 0.93, w: tw - 0.3, h: 0.3, fontFace: AN_DECK_FONT, fontSize: 10, color: ANDK.soft, fit: 'shrink' });
+    });
+  }
+
+  function anDeckTitleSlide(pptx, d0, heading, sub) {
+    const s = pptx.addSlide();
+    s.background = { color: ANDK.bg };
+    s.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 0.12, h: 7.5, fill: { color: ANDK.acc }, line: { color: ANDK.acc, width: 0 } });
+    s.addText('НА КРЫШЕ', { x: 0.9, y: 1.5, w: 11, h: 0.5, fontFace: AN_DECK_FONT, fontSize: 18, bold: true, color: ANDK.acc, charSpacing: 8 });
+    s.addText(heading, { x: 0.9, y: 2.1, w: 11.5, h: 1.5, fontFace: AN_DECK_FONT, fontSize: 48, bold: true, color: ANDK.txt, valign: 'top', fit: 'shrink' });
+    const lines = [sub, `${fmtDMY(d0.from)} — ${fmtDMY(d0.to)}`];
+    if (d0.compare !== 'none' && d0.compareFrom) lines.push(`${d0.compare === 'year' ? 'Сравнение с тем же отрезком год назад' : 'Сравнение с предыдущим отрезком'}: ${fmtDMY(d0.compareFrom)} — ${fmtDMY(d0.compareTo)}`);
+    else lines.push('Без сравнения');
+    const f = anDeckFilters(d0);
+    if (f) lines.push(f);
+    s.addText(lines.filter(Boolean).join('\n'), { x: 0.9, y: 3.9, w: 11.5, h: 2, fontFace: AN_DECK_FONT, fontSize: 16, color: ANDK.soft, valign: 'top', paraSpaceAfter: 6 });
+    s.addText(`Сформировано ${fmtDMY(venueDayStr())}`, { x: 0.9, y: 6.8, w: 8, h: 0.3, fontFace: AN_DECK_FONT, fontSize: 11, color: ANDK.muted });
+  }
+
+  function anDeckHookahs(pptx, d0) {
+    const s = anDeckBase(pptx, 'Топ кальянов за период', 'По записанным заказам за те же даты', d0);
+    const top = d0.topHookahs || [];
+    if (!top.length) {
+      s.addText('За этот период заказы кальянов не записаны', { x: 0.7, y: 2.5, w: 11.9, h: 1, fontFace: AN_DECK_FONT, fontSize: 18, color: ANDK.muted, align: 'center' });
+      return;
+    }
+    s.addChart(pptx.charts.BAR, [{ name: 'Заказов', labels: top.map(h => h.flavor), values: top.map(h => h.count) }], {
+      x: 0.7, y: 1.6, w: 11.9, h: 5.2, barDir: 'bar', barGapWidthPct: 40, chartColors: [ANDK.acc],
+      catAxisOrientation: 'maxMin', catAxisLabelColor: ANDK.txt, catAxisLabelFontSize: 14, catAxisLabelFontFace: AN_DECK_FONT,
+      valAxisHidden: true, valGridLine: { style: 'none' }, catGridLine: { style: 'none' },
+      showValue: true, dataLabelColor: ANDK.txt, dataLabelFontSize: 14, dataLabelFontFace: AN_DECK_FONT, dataLabelPosition: 'outEnd', dataLabelFormatCode: '0',
+      showLegend: false
+    });
+  }
+
+  function anDeckSingle(pptx, d) {
+    const vis = anVisibleBuckets(d);
+    const hasCmp = d.compare !== 'none' && d.compareFrom;
+    const filters = anDeckFilters(d);
+    anDeckTitleSlide(pptx, d, d.title, 'Аналитика' + (filters ? ' · ' + filters : ''));
+    // Итог
+    const s1 = anDeckBase(pptx, d.title, filters, d);
+    const yEnd = anDeckHero(pptx, s1, d, 0.7, 1.7, 11.9, true);
+    anDeckFacts(pptx, s1, d, vis, 0.7, Math.min(yEnd + 0.1, 5.5), 11.9);
+    if (d.metric === 'nps' || d.metric === 'enps') s1.addText('Шкала от −100 до +100', { x: 0.7, y: 6.55, w: 8, h: 0.3, fontFace: AN_DECK_FONT, fontSize: 11, color: ANDK.muted });
+    else if (d.samples != null) s1.addText(d.metric === 'stay' ? `Посчитано по ${d.samples} визитам с отметкой «Гость ушёл»` : `Посчитано по ${d.samples} занятым столам за вечер`, { x: 0.7, y: 6.55, w: 10, h: 0.3, fontFace: AN_DECK_FONT, fontSize: 11, color: ANDK.muted });
+    // График
+    const groupWord = { day: 'по дням', week: 'по неделям', month: 'по месяцам' }[d.group];
+    const s2 = anDeckBase(pptx, `Динамика · ${groupWord}`, d.title + (d.kind === 'duration' ? ' (в минутах)' : ''), d);
+    anDeckChart(pptx, s2, d, vis, { x: 0.5, y: 1.5, w: 12.3, h: 5.4 });
+    // Таблица (по 12 строк на слайд)
+    const PER = 12;
+    const pages = Math.max(1, Math.ceil(vis.length / PER));
+    for (let p = 0; p < pages; p++) {
+      const s3 = anDeckBase(pptx, 'Таблица по периодам' + (pages > 1 ? ` (${p + 1}/${pages})` : ''), d.title, d);
+      const hdr = (t, right) => ({ text: t, options: { bold: true, color: ANDK.acc, fill: { color: ANDK.card }, align: right ? 'right' : 'left' } });
+      const rows = [[hdr('Период'), hdr('Значение', true), ...(hasCmp ? [hdr('Было', true), hdr('Разница', true)] : [])]];
+      vis.slice(p * PER, p * PER + PER).forEach(b => {
+        const diff = hasCmp ? anBucketDiff(d, b) : null;
+        const cell = (t, o = {}) => ({ text: String(t), options: { color: ANDK.txt, ...o } });
+        rows.push([
+          cell(anBucketName(b.start, b.label, d.group)),
+          cell(anFormat(b.value, d.kind), { align: 'right', bold: true }),
+          ...(hasCmp ? [
+            cell(anFormat(b.compareValue, d.kind), { align: 'right', color: ANDK.soft }),
+            cell(diff ? diff.text : '—', { align: 'right', color: diff ? (diff.cls === 'g' ? ANDK.good : diff.cls === 'b' ? ANDK.bad : ANDK.soft) : ANDK.muted })
+          ] : [])
+        ]);
+      });
+      const colW = hasCmp ? [4.6, 2.5, 2.5, 2.3] : [6.5, 5.4];
+      s3.addTable(rows, { x: 0.7, y: 1.55, w: 11.9, colW, rowH: 0.38, fontFace: AN_DECK_FONT, fontSize: 13, border: { type: 'solid', pt: 0.5, color: ANDK.line }, fill: { color: ANDK.bg }, valign: 'middle', margin: [0, 0.12, 0, 0.12] });
+    }
+    anDeckHookahs(pptx, d);
+  }
+
+  function anDeckFull(pptx, list) {
+    const d0 = list[0];
+    const filters = anDeckFilters(d0);
+    anDeckTitleSlide(pptx, d0, 'Полная сводка', 'Все показатели' + (filters ? ' · ' + filters : ''));
+    // Сводная таблица
+    const hasCmp = d0.compare !== 'none' && d0.compareFrom;
+    const s = anDeckBase(pptx, 'Сводка по показателям', hasCmp ? `Сравнение: ${fmtDMY(d0.compareFrom)} — ${fmtDMY(d0.compareTo)}` : 'Без сравнения', d0);
+    const hdr = (t, right) => ({ text: t, options: { bold: true, color: ANDK.acc, fill: { color: ANDK.card }, align: right ? 'right' : 'left' } });
+    const rows = [[hdr('Показатель'), hdr('Сейчас', true), ...(hasCmp ? [hdr('Было', true), hdr('Изменение', true)] : [])]];
+    AN_METRIC_GROUPS.forEach(([group, keys]) => {
+      rows.push([{ text: group.toUpperCase(), options: { bold: true, color: ANDK.muted, fontSize: 10, colspan: hasCmp ? 4 : 2 } }]);
+      keys.forEach(k => {
+        const d = list.find(x => x.metric === k);
+        if (!d) return;
+        const cell = (t, o = {}) => ({ text: String(t), options: { color: ANDK.txt, ...o } });
+        rows.push([
+          cell(AN_CHIP_LABELS[k]),
+          cell(d.total === null ? '—' : anFormat(d.total, d.kind) + (d.kind === 'count' || d.kind === 'unique' ? '' : d.metric === 'csi' ? ' / 10' : ''), { align: 'right', bold: true }),
+          ...(hasCmp ? [
+            cell(d.compareTotal === null ? '—' : anFormat(d.compareTotal, d.kind), { align: 'right', color: ANDK.soft }),
+            cell(anDeckDeltaShort(d), { align: 'right', color: anDeckDeltaColor(d, d.delta) })
+          ] : [])
+        ]);
+      });
+    });
+    s.addTable(rows, { x: 0.7, y: 1.5, w: 11.9, colW: hasCmp ? [4.6, 2.3, 2.3, 2.7] : [7, 4.9], rowH: 0.3, fontFace: AN_DECK_FONT, fontSize: 12, border: { type: 'solid', pt: 0.5, color: ANDK.line }, fill: { color: ANDK.bg }, valign: 'middle', margin: [0, 0.12, 0, 0.12] });
+    // По слайду на показатель
+    list.forEach(d => {
+      const vis = anVisibleBuckets(d);
+      const sl = anDeckBase(pptx, d.title, AN_HELP[d.metric] ? '' : '', d);
+      const yEnd = anDeckHero(pptx, sl, d, 0.7, 1.35, 4.9, false);
+      anDeckFacts(pptx, sl, d, vis.slice(0), 0.7, Math.min(yEnd, 5.3), 4.9);
+      anDeckChart(pptx, sl, d, vis, { x: 5.9, y: 1.3, w: 7.0, h: 5.5 });
+    });
+    anDeckHookahs(pptx, d0);
+  }
+
+  async function anSaveDeckFile(blob, name) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  }
+  async function anShareDeckFile() {
+    const f = anDeck.ready;
+    if (!f) return;
+    const file = new File([f.blob], f.name, { type: f.blob.type });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: f.name }); return; }
+      catch (e) { if (e && e.name === 'AbortError') return; }
+    }
+    await anSaveDeckFile(f.blob, f.name);
+  }
+
+  function anDeckRowHtml() {
+    const busy = anDeck.busy;
+    if (anDeck.ready) {
+      return `<div class="an-deck-ready"><div class="an-deck-ready-t">Презентация готова</div><div class="an-deck-ready-s">${escHtml(anDeck.ready.name)}</div>
+        <div class="an-deck-btns"><div class="an-deck-btn primary" onclick="anShareDeckFile()">Сохранить файл</div><div class="an-deck-btn" onclick="anDeck.ready=null;anRenderDeckRow()">Закрыть</div></div></div>`;
+    }
+    return `<div class="an-deck-t">Выгрузить в презентацию</div>
+      <div class="an-deck-btns">
+        <div class="an-deck-btn${busy ? ' off' : ''}" onclick="anExportDeck('current')">${busy === 'current' ? 'Готовлю…' : 'Текущий показатель'}</div>
+        <div class="an-deck-btn${busy ? ' off' : ''}" onclick="anExportDeck('full')">${busy === 'full' ? 'Собираю все показатели…' : 'Полный отчёт'}</div>
+      </div>
+      ${anDeck.error ? `<div class="an-deck-err">${escHtml(anDeck.error)}</div>` : '<div class="an-note" style="margin-top:8px">Файл .pptx откроется в PowerPoint, Keynote и Google Презентациях. Берутся текущие период, сравнение и фильтры.</div>'}`;
+  }
+  function anRenderDeckRow() {
+    const el = document.getElementById('anDeckRow');
+    if (el) el.innerHTML = anDeckRowHtml();
+  }
+
+  async function anExportDeck(mode) {
+    if (anDeck.busy) return;
+    if (mode === 'current' && !anLast) { showToast('Сначала дождитесь результата'); return; }
+    anDeck = { busy: mode, ready: null, error: '' };
+    anRenderDeckRow();
+    try {
+      await anLoadPptx();
+      let list, d0;
+      if (mode === 'full') { list = await anFetchAll(); d0 = list[0]; }
+      else { d0 = anLast.d; }
+      const pptx = new window.PptxGenJS();
+      pptx.layout = 'LAYOUT_WIDE';
+      pptx.title = mode === 'full' ? 'На Крыше — аналитика, полный отчёт' : `На Крыше — ${d0.title}`;
+      pptx.company = 'На Крыше';
+      if (mode === 'full') anDeckFull(pptx, list); else anDeckSingle(pptx, d0);
+      const blob = await pptx.write({ outputType: 'blob' });
+      const name = `na-kryshe-analytics-${mode === 'full' ? 'full' : d0.metric}-${d0.from}_${d0.to}.pptx`;
+      const mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      anDeck = { busy: '', ready: null, error: '' };
+      if (mobile) anDeck.ready = { blob, name }; // на телефоне сохранение — отдельным нажатием, иначе браузер его блокирует
+      else { await anSaveDeckFile(blob, name); showToast('Презентация сохранена'); }
+    } catch (e) {
+      anDeck = { busy: '', ready: null, error: (e && e.message) || 'Не удалось собрать презентацию' };
+    }
+    anRenderDeckRow();
   }
 
   // Нажатие на столбик: подсвечиваем колонку и показываем значение словами
