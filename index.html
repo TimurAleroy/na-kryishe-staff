@@ -2761,7 +2761,10 @@
     </div>
     <div class="form-group">
       <label class="form-label">День рождения (необязательно)</label>
-      <input class="form-input" id="ngBirthday" type="date">
+      <div style="display:flex;gap:8px">
+        <select class="form-input" id="ngBirthDay" style="flex:1"></select>
+        <select class="form-input" id="ngBirthMonth" style="flex:2"></select>
+      </div>
     </div>
     <div class="form-group">
       <label class="form-label">Что важно для гостя (необязательно)</label>
@@ -10702,7 +10705,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const vals = [];
     for (const c of cards) {
       const v = dupFieldValue(c, field);
-      if (v && !vals.some(x => x.value === v)) vals.push({ value: v, label: field === 'birthday' ? fmtDMY(v) : v });
+      if (v && !vals.some(x => x.value === v)) vals.push({ value: v, label: field === 'birthday' ? fmtDM(v) : v });
     }
     if (field === 'important' && vals.length > 1) vals.push({ value: vals.map(x => x.value).join(' / '), label: 'Оставить всё' });
     return vals;
@@ -10722,7 +10725,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     return `
       <div class="dup-name">${escHtml(c.name || 'Без имени')}${c.vip ? '<span class="vip-star">★ VIP</span>' : ''} ${segmentPillHtml(c.segmentKey, c.segment, true)}${opts.role ? `<span class="dup-role">${escHtml(opts.role)}</span>` : ''}</div>
       <div class="dup-meta">${escHtml(c.phone || 'без телефона')} · ${escHtml(dupSummaryLine(c))}${c.sharedPhone ? ' · общий номер' : ''}</div>
-      ${c.birthday ? `<div class="dup-meta">ДР: ${escHtml(fmtDMY(c.birthday))}</div>` : ''}
+      ${c.birthday ? `<div class="dup-meta">ДР: ${escHtml(fmtDM(c.birthday))}</div>` : ''}
       ${c.important ? `<div class="dup-meta">Важно: ${escHtml(c.important)}</div>` : ''}
       ${(c.tagsAllergy || []).length ? `<div class="dup-meta"><span class="danger">Аллергия: ${escHtml(c.tagsAllergy.join(', '))}</span></div>` : ''}
       ${tags.length ? `<div class="dup-meta">Теги: ${escHtml(tags.join(', '))}</div>` : ''}
@@ -12366,7 +12369,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const editIcon = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
 
     const birthdayDisplay = guest.birthday
-      ? new Date(guest.birthday).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
+      ? new Date(guest.birthday + 'T12:00:00').toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })
       : 'Не указан';
 
     const HOOKAH_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M8 3v7a2 2 0 002 2v9M8 3v7"/><path d="M17 3c-1.5 0-2.5 1.5-2.5 4s1 4 2.5 4v10"/></svg>';
@@ -12492,14 +12495,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const monthOpts = ['<option value="">Месяц</option>'].concat(
         months.map((m,i) => { const v=String(i+1).padStart(2,'0'); return `<option value="${v}" ${v===bm?'selected':''}>${m}</option>`; })
       ).join('');
-      const currentYear = new Date().getFullYear();
-      const yearOpts = ['<option value="">Год</option>'].concat(
-        Array.from({length:80}, (_,i) => { const y=currentYear-i; return `<option value="${y}" ${String(y)===by?'selected':''}>${y}</option>`; })
-      ).join('');
       body.innerHTML = `
         <div class="form-group"><select class="form-input" id="editBirthDay">${dayOpts}</select></div>
         <div class="form-group"><select class="form-input" id="editBirthMonth">${monthOpts}</select></div>
-        <div class="form-group"><select class="form-input" id="editBirthYear">${yearOpts}</select></div>
       `;
     } else if (field === 'phone') {
       body.innerHTML = `<input class="form-input" id="editInput" type="tel" value="${escHtml(currentGuest.phone || '+7')}" oninput="formatRuPhone(this)">`;
@@ -12530,9 +12528,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     } else if (editingField === 'birthday') {
       const d = document.getElementById('editBirthDay').value;
       const m = document.getElementById('editBirthMonth').value;
-      const y = document.getElementById('editBirthYear').value;
-      if (!d || !m || !y) { notify('Укажите день, месяц и год'); return; }
-      value = `${y}-${m}-${d}`;
+      if (!d || !m) { notify('Укажите день и месяц'); return; }
+      // год не собираем: храним условный 2000-й (у кого уже есть настоящий — оставляем)
+      value = `${(currentGuest.birthday || '').slice(0, 4) || '2000'}-${m}-${d}`;
     } else {
       value = document.getElementById('editInput').value.trim();
     }
@@ -12607,7 +12605,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (!needPerm('guests.create', 'создавать карточки гостей')) return;
     document.getElementById('ngName').value = prefillName || '';
     document.getElementById('ngSurname').value = '';
-    document.getElementById('ngBirthday').value = '';
+    fillNgBirthSelects();
     const phoneInput = document.getElementById('ngPhone');
     phoneInput.value = prefillPhone || '+7';
     if (prefillPhone) formatRuPhone(phoneInput); // из общей базы номер приходит без пробелов
@@ -12615,12 +12613,20 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     showScreen('new-guest');
   }
 
+  function fillNgBirthSelects() {
+    const months = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+    document.getElementById('ngBirthDay').innerHTML = '<option value="">День</option>' + Array.from({ length: 31 }, (_, i) => `<option value="${String(i + 1).padStart(2, '0')}">${i + 1}</option>`).join('');
+    document.getElementById('ngBirthMonth').innerHTML = '<option value="">Месяц</option>' + months.map((m, i) => `<option value="${String(i + 1).padStart(2, '0')}">${m}</option>`).join('');
+  }
+
   async function submitNewGuest(force) {
     const name = document.getElementById('ngName').value.trim();
     const surname = document.getElementById('ngSurname').value.trim();
     if (!name) { notify('Укажите имя гостя'); return; }
 
-    const birthday = document.getElementById('ngBirthday').value;
+    const bDay = document.getElementById('ngBirthDay').value, bMonth = document.getElementById('ngBirthMonth').value;
+    if (!!bDay !== !!bMonth) { notify('Укажите и день, и месяц рождения — или оставьте оба пустыми'); return; }
+    const birthday = bDay && bMonth ? `2000-${bMonth}-${bDay}` : ''; // год не собираем
     const phone = document.getElementById('ngPhone').value.trim();
     // без телефона карточку не создаём: по нему связываются брони, бот, отзывы и ловятся дубли
     if (!isPhoneComplete(phone)) { notify('Укажите телефон гостя полностью — без телефона карточку не создаём'); return; }
