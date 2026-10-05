@@ -4603,15 +4603,24 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
   // Время брони наступило, а гостя всё нет и его никто не отметил: сколько минут прошло (null — не наш случай).
   // Гостю в приложении обещано, что стол ждёт 15 минут; раньше бронь весь вечер выглядела так же, как до прихода.
-  // Не считаем, если гость предупредил, что опаздывает (это отдельная пометка), и если у брони нет точного времени.
+  // Если гость предупредил, что опаздывает, подсветка включается позже (см. BOOKING_LATE_GRACE_MIN); не считаем и если у брони нет точного времени.
   const BOOKING_HOLD_MIN = 15;
+  const BOOKING_LATE_GRACE_MIN = 30; // «Опаздываю» продлевает ожидание на столько минут от нажатия кнопки
   function bookingOverdueMin(b) {
-    if (!b || b.past || b.cancelled || b.arrival || bookingLate(b)) return null;
+    if (!b || b.past || b.cancelled || b.arrival) return null;
     const iso = String(b.iso || '');
     if (!/T\d{2}:\d{2}/.test(iso) || /T00:00/.test(iso)) return null;
     if (bookingVenueDay(iso) !== venueDayStr()) return null;
-    const m = Math.floor((Date.parse(moscowNowIso() + ':00Z') - Date.parse(iso.slice(0, 16) + ':00Z')) / 60000);
-    return Number.isFinite(m) && m >= BOOKING_HOLD_MIN ? m : null;
+    const nowMs = Date.parse(moscowNowIso() + ':00Z');
+    const m = Math.floor((nowMs - Date.parse(iso.slice(0, 16) + ':00Z')) / 60000);
+    if (!Number.isFinite(m) || m < BOOKING_HOLD_MIN) return null;
+    // Гость предупредил, что опаздывает: даём ему ещё BOOKING_LATE_GRACE_MIN минут от его сообщения —
+    // но не навсегда: не пришёл и после этого, значит, «время прошло» снова подсвечивается.
+    if (bookingLate(b)) {
+      const lateMs = Date.parse(b.lateAt) + 3 * 3600e3; // Москва
+      if (!Number.isFinite(lateMs) || nowMs < lateMs + BOOKING_LATE_GRACE_MIN * 60000) return null;
+    }
+    return m;
   }
   // Пометки «ждёт N мин» в том виде, как они сейчас нарисованы: время идёт, а сами брони не меняются —
   // по этой строке проверка раз в 30 секунд понимает, что список пора перерисовать
