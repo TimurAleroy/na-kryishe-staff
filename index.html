@@ -3878,6 +3878,22 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     }
   }
   setInterval(pollBookings, BOOKINGS_POLL_MS);
+  // Схема зала, открытая с режимом «Сейчас», идёт за часами: раз в минуту смотрим, сдвинулась ли четверть часа.
+  function tickHallTime() {
+    if (document.hidden || !hallTimeAuto || hallTime === null || bookingsView !== 'plan') return;
+    if (!document.getElementById('screen-bookings')?.classList.contains('active') || bookingsUiBusy()) return;
+    const now = venueNow();
+    if (hallDate !== now.day) { hallTime = null; renderBookingsView(); return; } // наступил следующий день заведения
+    const prev = hallTime;
+    hallTime = null; // defaultHallTime заново посчитает «сейчас» (и выключит режим, если бар закрылся)
+    const next = defaultHallTime();
+    if (next === prev) { hallTime = prev; return; }
+    const y = window.scrollY;
+    renderBookingsView();
+    window.scrollTo(0, y);
+  }
+  setInterval(tickHallTime, 60000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) tickHallTime(); });
   document.addEventListener('visibilitychange', () => { if (!document.hidden) pollBookings(); });
   window.addEventListener('focus', () => pollBookings());
   try { tg?.onEvent?.('activated', () => pollBookings()); } catch {}
@@ -5029,6 +5045,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   let hallMode = 'guest';          // guest | day | time
   let hallDate = null;             // день заведения, YYYY-MM-DD
   let hallTime = null;             // выбранное время на схеме, минуты от полуночи дня
+  let hallTimeAuto = false;        // true — время «сейчас» (никто не выбирал вручную): идёт вместе с часами
   let hallSelectedTable = null;    // key стола
   try {
     const v = localStorage.getItem('bookings_view');
@@ -5058,13 +5075,16 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
   function setHallTime(min) {
     hallTime = min;
+    hallTimeAuto = false;
     renderHallPlan();
   }
 
   function defaultHallTime() {
     const now = venueNow();
     const r = venueDayRange(hallDate);
+    hallTimeAuto = false;
     if (hallDate === now.day && now.min >= r.open && now.min < r.close) {
+      hallTimeAuto = true; // это «сейчас» — дальше время подтягивается само
       return Math.floor(now.min / 15) * 15;
     }
     // другой день или заведение сейчас закрыто — вечер (20:00), если он попадает в часы работы, иначе открытие
@@ -6248,7 +6268,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     hallSeatReturnToDetail = !!fromDetail;
     hallSelectedTable = null;
     const slot = bookingSlot(b);
-    if (slot) { hallDate = slot.day; hallTime = Math.floor(slot.start / 15) * 15; }
+    if (slot) { hallDate = slot.day; hallTime = Math.floor(slot.start / 15) * 15; hallTimeAuto = false; }
   }
   function toggleSeating(idx) {
     if (!needPerm('bookings.assign_table', 'назначать стол')) return;
