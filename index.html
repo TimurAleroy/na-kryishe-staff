@@ -12748,6 +12748,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
       <div class="sec">История изменений</div>
       ${renderHistory(guest)}
+      ${can('guests.delete') ? `<button type="button" class="btn-ghost danger" style="margin-top:22px" onclick="deleteGuestCard()">Удалить карточку гостя</button>
+      <div class="note" style="margin-top:6px">Карточка пропадёт из поиска, списков и рассылок. Визиты и брони останутся в аналитике.</div>` : ''}
     `;
 
     // закреплённая кнопка: визит уже есть сегодня — «добавить кальян», иначе «добавить визит»
@@ -12755,6 +12757,34 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const vb = document.getElementById('cardVisitBtn');
     if (vb) vb.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" style="vertical-align:-2px;margin-right:7px;display:inline-block"><path d="M8 3v7a2 2 0 002 2v9M8 3v7"/><path d="M17 3c-1.5 0-2.5 1.5-2.5 4s1 4 2.5 4v10"/></svg>${hasToday ? 'Добавить кальян к сегодняшнему визиту' : 'Добавить визит'}`;
     document.getElementById('cardSticky').style.display = can('visits.record') ? '' : 'none';
+  }
+
+  // Удалить карточку гостя (только основатель). Сервер не даст, пока у гостя есть действующие брони.
+  let guestDeleteBusy = false;
+  async function deleteGuestCard() {
+    if (guestDeleteBusy || !currentGuest || !currentGuest.id) return;
+    if (!needPerm('guests.delete', 'удалять карточки гостей')) return;
+    const g = currentGuest;
+    const label = g.fullName || g.name || 'Гость';
+    if (!await askConfirm(`Удалить карточку «${label}»${g.phone ? ' · ' + g.phone : ''}?\n\nОна пропадёт из поиска, списков и рассылок. Визиты и брони останутся в аналитике. Вернуть карточку можно только через разработчика.`, { ok: 'Удалить' })) return;
+    guestDeleteBusy = true;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/guests/delete?pin=${getPin()}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), id: g.id })
+      });
+      if (res.status === 401) { showScreen('pin'); return; }
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) { showToast(data.error || 'Не удалось удалить карточку — попробуйте ещё раз', true); return; }
+      forgetRecentGuest(g.id);
+      currentGuest = null;
+      showToast(`Карточка «${label}» удалена`);
+      goBackFromCard();
+    } catch {
+      showToast('Нет связи — карточка не удалена, попробуйте ещё раз', true);
+    } finally {
+      guestDeleteBusy = false;
+    }
   }
 
   // ─── EDIT FIELD ────────────────────────────────
