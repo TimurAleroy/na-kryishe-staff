@@ -4677,7 +4677,13 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     refreshBookingsDot();
   }
   // Точка на «Бронях»: ждут подтверждения, прошлые без отметки, либо гость опаздывает / отменил — и это ещё не видели
+  // Тот, кто только смотрит брони (официант, бармен, повар, КМ), не получает ни точек, ни всплывающих сообщений:
+  // они нужны тому, кто подтверждает, отменяет и отмечает приход
+  function bkWorker() {
+    return ['bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival'].some(k => can(k));
+  }
   function bookingsNeedAttention(cur, past, cancelled) {
+    if (!bkWorker()) return false;
     if ((cur || []).some(b => b.status === 'pending') || (past || []).some(b => b.uid && !b.arrival)) return true;
     const seen = bkSeenSet();
     return bookingEventKeys(cur, cancelled).some(k => !seen.has(k));
@@ -4685,6 +4691,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // Всплывающее сообщение о новом событии — один раз за сеанс на событие
   const bkAnnounced = new Set();
   function announceBookingEvents(cur, cancelled) {
+    if (!bkWorker()) return;
     const seen = bkSeenSet();
     const fresh = k => !seen.has(k) && !bkAnnounced.has(k);
     const whenOf = b => (b.display || '').replace(/\.\d{4}(?=\s)/, '');
@@ -4755,7 +4762,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     // и карточке гостя остаётся); индекс сохраняем — по нему открывается бронь
     const visible = bookingsListData.map((b, idx) => ({ b, idx })).filter(x => !(x.b.arrival?.status === 'arrived' && x.b.arrival.leftAt));
     if (!visible.length) {
-      el.innerHTML = '<div class="empty-state">Ближайших броней пока нет</div>';
+      el.innerHTML = `<div class="empty-state">${bkWorker() ? 'Ближайших броней пока нет' : 'На сегодня броней нет'}</div>`;
       return;
     }
 
@@ -4777,7 +4784,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const lateHm = bookingLate(b);
       const waitMin = pendingWaitMin(b);
       const overdue = bookingOverdueMin(b);
-      const eventFlags = [
+      // метки «опаздывает / время прошло / ждёт» — для того, кто отмечает и подтверждает; смотрящему они не нужны
+      const eventFlags = !bkWorker() ? '' : [
         lateHm ? '<span class="bk-flag late">⏰ опаздывает</span>' : '',
         overdue !== null ? `<span class="bk-flag overdue">⌛ время прошло ${escHtml(shDuration(overdue))}</span>` : '',
         roomNoteFlag(b),
@@ -5196,9 +5204,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const dayRange = venueDayRange(hallDate);
     el.innerHTML = `${tabs}
       <div class="hz-datebar">
-        <button class="hz-nav" ${hallDate <= minDay ? 'disabled' : ''} onclick="shiftHallDate(-1)">‹</button>
+        ${bkWorker() ? `<button class="hz-nav" ${hallDate <= minDay ? 'disabled' : ''} onclick="shiftHallDate(-1)">‹</button>` : ''}
         <div class="hz-date">${escHtml(hallDateLabel(hallDate))}</div>
-        <button class="hz-nav" onclick="shiftHallDate(1)">›</button>
+        ${bkWorker() ? `<button class="hz-nav" onclick="shiftHallDate(1)">›</button>` : ''}
       </div>
       <div class="hz-summary">Броней: ${day.length} · гостей: ${guests}${pending ? ` · <span style="color:#f59e0b">ждут подтверждения: ${pending}</span>` : ''}${noTable ? ` · без стола: ${noTable}` : ''}${venueCfg && !dayRange.closed ? ` · работаем ${hhmm(dayRange.open)}–${hhmm(dayRange.close)}` : ''}</div>
       ${dayRange.closed ? `<div class="hz-closed">${escHtml(dayRange.closed)}. Гости на этот день бронировать не могут.</div>` : ''}
@@ -9563,6 +9571,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   }
   // После закрытия смены: что за этот вечер осталось без отметки (сервер присылает список, только если можно смотреть брони)
   async function showDayCloseNotice(dc) {
+    if (!can('bookings.mark_arrival')) return;
     const un = dc.unmarked || [], op = dc.open || [];
     if (!un.length && !op.length) return;
     const list = (arr, fmt) => arr.slice(0, 10).map(fmt).join('\n') + (arr.length > 10 ? `\nи ещё ${arr.length - 10}` : '');
