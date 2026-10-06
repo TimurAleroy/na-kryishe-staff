@@ -681,6 +681,7 @@
     .sl-search { margin: 4px 0 12px; }
     .sl-stop { display: inline-block; font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; color: #f87171; border: 1px solid rgba(239,68,68,0.45); border-radius: 100px; padding: 1px 7px; margin-left: 6px; text-decoration: none; vertical-align: 1px; }
     .menu-item-name.unavailable .sl-stop { text-decoration: none; }
+    .sl-stop.hid { color: var(--text-muted); border-color: var(--border); }
     .sl-stopbox { background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.25); border-radius: 14px; padding: 12px 14px 4px; }
     .sl-stopbox-t { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #f87171; margin-bottom: 2px; }
     .sl-none { font-size: 13px; color: var(--text-sub); padding: 8px 0 10px; }
@@ -2536,7 +2537,7 @@
         <div class="chip selected" data-value="true" onclick="selectChip(this,'miAvailChips')">В наличии</div>
         <div class="chip" data-value="false" onclick="selectChip(this,'miAvailChips')">В стопе</div>
       </div>
-      <div class="emp-hint">«В стопе» — гость позицию не видит. Порядок позиций меняют стрелки ▲▼ в списке меню.</div>
+      <div class="emp-hint">«В стопе» — гость позицию не видит, и сама она не вернётся: так убирают позицию из меню. Если нужно закрыть её только на смену, переключите её на экране «Стоп-лист» — утром вернётся сама. Порядок позиций меняют стрелки ▲▼ в списке меню.</div>
     </div>
     <button class="btn-cta" id="miSubmitBtn" onclick="submitMenuItem()">Сохранить</button>
     <button class="btn-ghost" id="miCopyBtn" onclick="copyMenuItem()" style="display:none;margin-top:10px;">Сделать копию позиции</button>
@@ -6497,26 +6498,42 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // если закрыли по ошибке. Раньше решённая проблема пропадала совсем.
   let problemsTab = 'open';
   // ─── ОБРАЩЕНИЯ ГОСТЕЙ ───
-  var gmTab = 'new', gmItems = [], gmOpenReply = null, gmBusy = false;
+  var gmTab = 'new', gmItems = [], gmOpenReply = null, gmBusy = false, gmSeq = 0;
+  // Черновики ответов по номеру обращения: не пропадают при обновлении списка, смене вкладки и «Отмене»; уходят только после отправки
+  var gmDrafts = {};
+  function gmDraft(id, v) { if (v) gmDrafts[id] = v; else delete gmDrafts[id]; }
   function setMessagesTab(t) { gmTab = t === 'done' ? 'done' : 'new'; gmOpenReply = null; openMessages(true); }
   async function openMessages(keepTab) {
     if (!keepTab) { gmTab = 'new'; gmOpenReply = null; }
+    const my = ++gmSeq; // запрос, устаревший к моменту ответа (быстро переключили вкладку), экран не перерисует
     showScreen('messages');
     const el = document.getElementById('messagesContent');
     const tabs = segControl([['new', 'Новые'], ['done', 'Обработанные']], gmTab, 'setMessagesTab', 'seg-sm pb-tabs');
     el.innerHTML = tabs + '<div class="loading">Загружаю...</div>';
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/messages?status=${gmTab}&pin=${getPin()}`);
+      if (my !== gmSeq) return;
       if (res.status === 401) { showScreen('pin'); return; }
       if (res.status === 403) { accessDenied(); return; }
       if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить обращения'));
       const d = await res.json();
+      if (my !== gmSeq) return;
       gmItems = d.items || [];
       setQuickActionDot('qdotMessages', (d.newCount || 0) > 0);
       renderMessages();
     } catch (e) {
+      if (my !== gmSeq) return;
       el.innerHTML = tabs + errorStateHtml(e.message || 'Не удалось загрузить обращения', 'openMessages(true)');
     }
+  }
+  function gmReplyState(r) {
+    if (r.delivered === false) return ' · НЕ ДОСТАВЛЕНО гостю';
+    if (r.delivered === null || r.delivered === undefined) {
+      // null: ответ записан, но итог неизвестен. unconfirmed — сервер сам пометил (связь оборвалась на отправке);
+      // без пометки это отправка «прямо сейчас» (сервер ждёт бота до 20 секунд), а если дольше — сервер перезапускался
+      return !r.unconfirmed && Date.now() - Date.parse(r.at) < 30000 ? ' · отправляется…' : ' · ОТПРАВКА НЕ ПОДТВЕРЖДЕНА, гость мог получить';
+    }
+    return '';
   }
   function renderMessages() {
     const el = document.getElementById('messagesContent');
@@ -6524,11 +6541,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (!gmItems.length) { el.innerHTML = tabs + `<div class="empty-state">${gmTab === 'new' ? 'Новых обращений нет' : 'Обработанных обращений пока нет'}</div>`; return; }
     el.innerHTML = tabs + gmItems.map(m => {
       const who = m.name || (m.username ? '@' + m.username : 'Гость');
-      const replies = (m.replies || []).map(r => `<div class="gm-reply"><small>${escHtml(r.by || 'Сотрудник')} · ${escHtml(fmtDateTime(r.at))}${r.delivered === false ? ' · НЕ ДОСТАВЛЕНО гостю' : ''}</small>${escHtml(r.text)}</div>`).join('');
+      const replies = (m.replies || []).map(r => `<div class="gm-reply"><small>${escHtml(r.by || 'Сотрудник')} · ${escHtml(fmtDateTime(r.at))}${gmReplyState(r)}</small>${escHtml(r.text)}</div>`).join('');
       const compose = gmOpenReply === m.id
-        ? `<div class="gm-compose"><textarea id="gmText" maxlength="3500" placeholder="Ответ гостю. Придёт в Telegram от бота «На Крыше»"></textarea>
+        ? `<div class="gm-compose"><textarea id="gmText" maxlength="3500" placeholder="Ответ гостю. Придёт в Telegram от бота «На Крыше»" oninput="gmDraft('${m.id}', this.value)">
+${escHtml(gmDrafts[m.id] || '')}</textarea>
              <div class="gm-actions"><button type="button" class="primary" id="gmSend" onclick="sendMessageReply('${m.id}')">Отправить</button><button type="button" onclick="toggleMessageReply('${m.id}')">Отмена</button></div></div>`
-        : `<div class="gm-actions"><button type="button" class="primary" onclick="toggleMessageReply('${m.id}')">Ответить</button>${m.status === 'new'
+        : `<div class="gm-actions"><button type="button" class="primary" onclick="toggleMessageReply('${m.id}')">${gmDrafts[m.id] ? 'Ответить · есть черновик' : 'Ответить'}</button>${m.status === 'new'
             ? `<button type="button" onclick="setMessageStatus('${m.id}','done')">Обработано</button>`
             : `<button type="button" onclick="setMessageStatus('${m.id}','new')">Вернуть в новые</button>`}</div>`;
       return `<div class="gm-card${m.status === 'new' ? ' is-new' : ''}">
@@ -6537,28 +6555,80 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         ${m.status === 'done' && m.doneBy ? `<div class="gm-meta" style="margin-top:8px">Обработал: ${escHtml(m.doneBy)}</div>` : ''}
         ${compose}</div>`;
     }).join('');
-    if (gmOpenReply) { const t = document.getElementById('gmText'); if (t) t.focus(); }
+    if (gmOpenReply) { const t = document.getElementById('gmText'); if (t) { t.focus(); t.setSelectionRange(t.value.length, t.value.length); } }
   }
-  function toggleMessageReply(id) { gmOpenReply = gmOpenReply === id ? null : id; renderMessages(); }
+  function toggleMessageReply(id) {
+    // текст из открытого окна ответа сохраняем сразу, чтобы «Отмена» и переход к другому обращению его не стёрли
+    const t = document.getElementById('gmText');
+    if (t && gmOpenReply) gmDraft(gmOpenReply, t.value);
+    gmOpenReply = gmOpenReply === id ? null : id;
+    renderMessages();
+  }
+  // Записан ли ответ с этим ключом: сама запись (с итогом delivered) — записан; false — нет; null — выяснить не удалось (нет связи)
+  async function gmWasSent(id, key) {
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/messages?status=all&pin=${getPin()}`);
+      if (!res.ok) return null;
+      const d = await res.json();
+      const m = (d.items || []).find(x => x.id === id);
+      if (!m) return null;
+      return (m.replies || []).find(r => r.key === key) || false;
+    } catch { return null; }
+  }
+  function gmNewKey() {
+    try { if (window.crypto && crypto.randomUUID) return crypto.randomUUID(); } catch {}
+    return 'k' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+  }
   async function sendMessageReply(id) {
     if (gmBusy) return;
-    const text = (document.getElementById('gmText') || {}).value || '';
+    const ta = document.getElementById('gmText');
+    const text = (ta && ta.value) || '';
     if (!text.trim()) { showToast('Напишите ответ', true); return; }
+    gmDraft(id, text);
+    // сколько ответов сотрудник видит сейчас: если сервер знает больше, значит, кто-то уже ответил — второй раз гостю не пишем
+    const cur = gmItems.find(x => x.id === id);
+    const seen = cur ? (cur.replies || []).length : undefined;
+    const key = gmNewKey();
     gmBusy = true;
     const btn = document.getElementById('gmSend'); if (btn) { btn.disabled = true; btn.textContent = 'Отправляю...'; }
+    let reload = false;
     try {
-      const res = await fetch(`${PROXY_BASE}/api/staff/messages/${encodeURIComponent(id)}/reply?pin=${getPin()}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pin: getPin(), text: text.trim() }) });
+      const res = await fetch(`${PROXY_BASE}/api/staff/messages/${encodeURIComponent(id)}/reply?pin=${getPin()}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pin: getPin(), text: text.trim(), seen, key }) });
       if (res.status === 401) { showScreen('pin'); return; }
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) { showToast(data.error || 'Не получилось — попробуйте ещё раз', true); return; }
-      showToast(data.delivered ? 'Ответ отправлен гостю' : 'Записали, но гостю не доставлено: свяжитесь с ним сами', !data.delivered);
-      gmOpenReply = null;
-      await openMessages(true);
+      if (res.status === 409) {
+        showToast(data.error || 'На это обращение уже ответили — обновил историю', true);
+        reload = true; // черновик остаётся: после прочтения ответа можно отправить свой
+      } else if (!res.ok) {
+        showToast(data.error || 'Не получилось — попробуйте ещё раз', true);
+      } else {
+        gmDraft(id, '');
+        gmOpenReply = null;
+        reload = true;
+        if (data.uncertain) showToast('Связь оборвалась: неизвестно, дошёл ли ответ гостю. Он записан в обращении — прежде чем писать снова, уточните у гостя', true);
+        else showToast(data.delivered ? 'Ответ отправлен гостю' : 'Записали, но гостю не доставлено: свяжитесь с ним сами', !data.delivered);
+      }
     } catch {
-      showToast('Нет связи — попробуйте ещё раз', true);
+      // подтверждение могло потеряться по дороге, хотя сервер ответ принял: проверяем по ключу, а не отправляем вслепую
+      const sent = await gmWasSent(id, key);
+      if (sent) {
+        gmDraft(id, '');
+        gmOpenReply = null;
+        reload = true;
+        if (sent.delivered === false) showToast('Связь прерывалась. Ответ записан, но гостю не доставлено: свяжитесь с ним сами', true);
+        else if (sent.delivered === null || sent.delivered === undefined) showToast('Связь прерывалась. Ответ записан, но неизвестно, дошёл ли он гостю — прежде чем писать снова, уточните у гостя', true);
+        else showToast('Связь прерывалась, но ответ уже записан в обращении — отправлять ещё раз не нужно');
+      } else if (sent === false) {
+        showToast('Нет связи — ответ не отправился. Нажмите «Отправить» ещё раз', true);
+      } else {
+        showToast('Нет связи. Ответ мог уйти: обновите «Обращения» и проверьте историю, прежде чем отправлять ещё раз', true);
+      }
     } finally {
       gmBusy = false;
+      const b = document.getElementById('gmSend'); // не осталось «Отправляю...» после сбоя
+      if (b && b.disabled) { b.disabled = false; b.textContent = 'Отправить'; }
     }
+    if (reload) await openMessages(true);
   }
   async function setMessageStatus(id, status) {
     if (gmBusy) return;
@@ -6568,6 +6638,10 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       if (res.status === 401) { showScreen('pin'); return; }
       const data = await res.json().catch(() => ({}));
       if (!res.ok) { showToast(data.error || 'Не получилось — попробуйте ещё раз', true); return; }
+      // окно ответа у другого обращения остаётся открытым: его текст в черновике, список перерисуется вместе с ним
+      const t = document.getElementById('gmText');
+      if (t && gmOpenReply) gmDraft(gmOpenReply, t.value);
+      if (gmOpenReply === id) gmOpenReply = null;
       await openMessages(true);
     } catch {
       showToast('Нет связи — попробуйте ещё раз', true);
@@ -7080,6 +7154,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   let menuEditQuery = '';
   let menuEditFilter = 'all'; // all | nophoto | noprice
   let editingMenuItemId = null;
+  let miInitialAvail = true; // наличие в тот момент, когда открыли форму: отправляем его, только если сотрудник сам переключил
   const menuPhoto = { url: '', blob: null, preview: '', remove: false };
 
   function openMenuEdit() {
@@ -7111,6 +7186,11 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     }
   }
 
+  // «стоп» — позиция в стопе на смену, утром сама вернётся; «скрыто» — убрана из меню в редакторе, сама не вернётся
+  function stopBadge(it) {
+    return it.hidden ? ' <span class="sl-stop hid" title="Убрана из меню: сама не вернётся">скрыто</span>' : ' <span class="sl-stop">стоп</span>';
+  }
+
   function menuEditRowHtml(it) {
     const id = escJs(it.id);
     const thumb = it.photo
@@ -7119,7 +7199,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     return `<div class="emp-row${it.available ? '' : ' off'}" onclick="openMenuItemForm('${id}')">
         ${thumb}
         <div class="emp-body">
-          <div class="emp-name">${escHtml(it.name)}${it.available ? '' : ' <span class="sl-stop">стоп</span>'}</div>
+          <div class="emp-name">${escHtml(it.name)}${it.available ? '' : stopBadge(it)}</div>
         </div>
         <div class="mi-price">${it.price !== null && it.price !== undefined ? escHtml(String(it.price)) + ' ₽' : ''}</div>
         <div class="mi-mv">
@@ -7333,6 +7413,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     document.getElementById('miCatChips').innerHTML = MENU_EDIT_CATEGORIES
       .map(c => `<div class="chip${c === cur ? ' selected' : ''}" data-value="${escHtml(c)}" onclick="selectMenuCat(this)">${escHtml(c)}</div>`).join('');
     const avail = it ? it.available : true;
+    miInitialAvail = avail;
     document.querySelectorAll('#miAvailChips .chip').forEach(c => c.classList.toggle('selected', (c.dataset.value === 'true') === avail));
     document.getElementById('miSubmitBtn').textContent = 'Сохранить';
     document.getElementById('miDeleteBtn').style.display = it ? 'block' : 'none';
@@ -7411,17 +7492,20 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (!catChip) { notify('Выберите категорию'); return; }
     if (priceRaw && !(Number(priceRaw) >= 0 && Number.isFinite(Number(priceRaw)))) { notify('Цена — число, например 450'); return; }
     if (miSubSel === MI_SUB_NEW && !currentMiSub()) { notify('Впишите название подраздела или выберите «Без подраздела»'); return; }
+    const isEdit = !!editingMenuItemId;
     const body = {
       pin: getPin(), name, category: catChip.dataset.value,
       subcategory: currentMiSub(),
       price: priceRaw === '' ? '' : priceRaw,
       description: document.getElementById('miDesc').value.trim(),
       composition: document.getElementById('miComp').value.trim(),
-      volume: document.getElementById('miVol').value.trim(),
-      available: document.querySelector('#miAvailChips .chip.selected')?.dataset.value !== 'false'
+      volume: document.getElementById('miVol').value.trim()
     };
+    // Наличие отправляем только у новой позиции или если сотрудник его сам переключил. Иначе форма, открытая до того,
+    // как позицию поставили в стоп (или вернули из стопа) на другом телефоне, затирала бы это старым значением.
+    const availNow = document.querySelector('#miAvailChips .chip.selected')?.dataset.value !== 'false';
+    if (!isEdit || availNow !== miInitialAvail) body.available = availNow;
     const btn = document.getElementById('miSubmitBtn');
-    const isEdit = !!editingMenuItemId;
     btn.disabled = true;
     btn.textContent = 'Сохраняем...';
     let itemId = editingMenuItemId;
@@ -8881,7 +8965,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const canEdit = canEditMenuCategory(it.category);
     const id = escJs(it.id);
     return `<div class="menu-item-row${canEdit ? ' can' : ''}" ${canEdit ? `onclick="toggleMenuItem('${id}')"` : ''}>
-        <div class="menu-item-name${it.available ? '' : ' unavailable'}">${escHtml(it.name)}${it.available ? '' : ' <span class="sl-stop">стоп</span>'}</div>
+        <div class="menu-item-name${it.available ? '' : ' unavailable'}">${escHtml(it.name)}${it.available ? '' : stopBadge(it)}</div>
         <div class="avail-toggle${it.available ? ' on' : ''}${canEdit ? '' : ' disabled'}" title="${it.available ? 'В наличии' : 'В стопе'}"><div class="avail-knob"></div></div>
       </div>`;
   }
@@ -8930,7 +9014,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (!it || stoplistBusy.has(id)) return;
     stoplistBusy.add(id);
     const newAvailable = !it.available;
+    const wasHidden = it.hidden;
     it.available = newAvailable;          // сразу на экране, без перезагрузки списка
+    if (!newAvailable) it.hidden = false; // стоп с этого экрана — «на смену», утром вернётся сам
     renderStoplistBody();
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/menu/${encodeURIComponent(id)}?pin=${getPin()}`, {
@@ -8942,6 +9028,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       notify(newAvailable ? `«${it.name}» снова в наличии` : `«${it.name}» — в стопе`, 'ok');
     } catch (e) {
       it.available = !newAvailable;       // не сохранилось — возвращаем как было
+      it.hidden = wasHidden;
       renderStoplistBody();
       notify(e.message && e.message !== 'Failed to fetch' ? e.message : 'Не удалось изменить — проверьте соединение');
     } finally {
