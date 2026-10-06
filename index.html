@@ -2431,6 +2431,19 @@
   </div>
 </div>
 
+<div class="screen" id="screen-segment-rules">
+  <div class="header">
+    <div class="back-btn" onclick="srBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Правила сегментов</h1><p>Сколько дней и визитов делают гостя чемпионом или потерянным</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div id="srContent" style="margin-top:6px"><div class="loading">Загружаю...</div></div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
 <div class="screen" id="screen-review-rules">
   <div class="header">
     <div class="back-btn" onclick="showScreen('service')">
@@ -3391,6 +3404,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('tags.manage')) list.push({ group: G.guests, icon: 'tags', short: 'теги', title: 'Теги', sub: 'Список, цвета, подсказки', fn: 'openTagsEdit()' });
     if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'Логины, роли и права', fn: 'openEmployees()' });
     if (can('candidates.view')) list.push({ group: G.team, icon: 'candidates', short: 'кандидаты', title: 'Кандидаты', sub: 'Отклики на вакансии', fn: 'openCandidates()' });
+    if (can('settings.manage')) list.push({ group: G.guests, icon: 'segments', short: 'правила сегментов', title: 'Правила сегментов', sub: 'Границы: дни и визиты', fn: 'openSegmentRules()' });
     if (can('settings.manage')) list.push({ group: G.system, icon: 'reviews', short: 'отзывы', title: 'Просьбы об отзыве', sub: 'Когда и кому бот пишет', fn: 'openReviewRules()' });
     if (can('settings.manage') || can('events.manage')) list.push({ group: G.system, icon: 'venue', short: 'режим работы', title: 'Режим работы', sub: 'Часы, закрытые даты, терраса', fn: 'openVenue()' });
     if (can('settings.manage') || can('marketing.send')) list.push({ group: G.guests, icon: 'birthday', short: 'поздравления', title: 'Поздравления', sub: 'Что бот пишет именинникам', fn: 'openBirthdayText()' });
@@ -8041,6 +8055,165 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     list.innerHTML = html;
   }
 
+  // ─── «КАК ХОДЯТ ГОСТИ» И ПРАВИЛА СЕГМЕНТОВ ───
+  // Блок с фактами по визитам (экран «Сегменты» и экран правил): через сколько дней гости возвращаются,
+  // сколько пришли один раз, сколько визитов у самых частых. По этим цифрам и ставят границы сегментов.
+  function insightHtml(ins, opts = {}) {
+    if (!ins) return '';
+    const pct = (a, b) => b ? ` (${Math.round((a / b) * 100)}%)` : '';
+    const days = n => `${n} ${ruPlural(n, 'день', 'дня', 'дней')}`;
+    const rows = [];
+    rows.push(['Гостей с визитами за год', String(ins.guests)]);
+    rows.push(['Пришли один раз и пока не вернулись', `${ins.oneTime}${pct(ins.oneTime, ins.guests)}`]);
+    rows.push(['Вернулись хотя бы раз', `${ins.returned}${pct(ins.returned, ins.guests)}`]);
+    if (ins.returned) {
+      rows.push(['Обычный промежуток между визитами', ins.typicalGap != null ? days(ins.typicalGap) : '—']);
+      rows.push(['8 из 10 возвращений — в пределах', ins.gap80 != null ? days(ins.gap80) : '—']);
+    }
+    if (ins.guests) rows.push(['У лучших 10% гостей — от', `${ins.top10Visits} ${ruPlural(ins.top10Visits, 'визита', 'визитов', 'визитов')}`]);
+    let note;
+    if (!ins.guests) note = 'Визитов пока не записано — цифры появятся, когда гости начнут ходить.';
+    else if (!ins.enough) note = `Данных пока мало, цифрам верить рано: нужно от ${ins.minReturned} вернувшихся гостей и ${Math.round(ins.minSpanDays / 7)} недель работы (сейчас вернувшихся ${ins.returned}, визиты записываются ${days(ins.spanDays)}). Границы пока не подсказываем.`;
+    else if (ins.suggestion) note = `Подсказка по этим цифрам: «был недавно» — до ${days(ins.suggestion.recentDays)} (два обычных промежутка), «давно не был» — после ${days(ins.suggestion.sleepDays)} (четыре), «чемпион» — от ${ins.suggestion.championVisits} визитов.`;
+    else note = '';
+    return `<div class="sec">Как ходят гости</div><div class="rr-card" style="padding-top:2px;padding-bottom:2px">${rows.map(([l, v]) => `<div class="rr-stat"><span>${escHtml(l)}</span><b>${escHtml(v)}</b></div>`).join('')}</div>
+      ${note ? `<div class="poster-note" style="margin-top:8px">${escHtml(note)}</div>` : ''}
+      ${opts.link && can('settings.manage') ? `<button class="link-btn" onclick="openSegmentRules('segments')">Правила сегментов: изменить границы →</button>` : ''}`;
+  }
+
+  var sr = null;            // ответ сервера: правила, значения по умолчанию, пределы, счётчики, «как ходят гости»
+  var srPreview = null;     // что получится с цифрами в форме
+  var srPreviewSeq = 0, srPreviewTimer = null, srBackTo = 'service';
+  const SR_FIELDS = [
+    ['recentDays', '«Был недавно» — не позже', 'Чемпион — тот, кто был не позже этого срока. Дольше — уже «риск оттока»', 'дн.'],
+    ['sleepDays', '«Давно не был» — больше', 'После этого срока гость «спящий» или «потерянный»', 'дн.'],
+    ['loyalVisits', '«Лояльный» — от', 'Сколько визитов за период делают гостя лояльным. Меньше — «активный»', 'виз.'],
+    ['championVisits', '«Чемпион» — от', 'Сколько визитов за период делают гостя чемпионом', 'виз.'],
+    ['windowDays', 'За какой период считать визиты', 'Обычно год. Пока бар работает недолго, можно меньше', 'дн.']
+  ];
+  function srBack() { showScreen(srBackTo === 'segments' ? 'segments' : 'service'); if (srBackTo === 'segments') loadSegments(); }
+  function openSegmentRules(from) {
+    if (!needPerm('settings.manage', 'менять правила сегментов')) return;
+    srBackTo = from === 'segments' ? 'segments' : 'service';
+    showScreen('segment-rules');
+    loadSegmentRules();
+  }
+  async function loadSegmentRules() {
+    const el = document.getElementById('srContent');
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    srPreview = null;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/segment-rules?pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить правила сегментов'));
+      sr = await res.json();
+      renderSegmentRules();
+    } catch (e) {
+      el.innerHTML = errorStateHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером', 'loadSegmentRules()');
+    }
+  }
+  function renderSegmentRules() {
+    const el = document.getElementById('srContent');
+    const meta = sr.meta && sr.meta.updatedAt ? `Последняя правка: ${fmtDateTime(sr.meta.updatedAt)}${sr.meta.updatedBy ? ', ' + escHtml(sr.meta.updatedBy) : ''}` : 'Пока стоят значения по умолчанию';
+    const field = ([key, title, hint, unit]) => {
+      const lim = sr.limits[key] || {};
+      return `<div class="rr-row"><div class="rr-l"><span class="rr-t">${title}</span><span class="rr-h">${hint}</span></div><div class="rr-r"><input class="form-input" type="number" inputmode="numeric" id="sr_${key}" min="${lim.min}" max="${lim.max}" step="1" oninput="srChanged()"><span class="rr-u">${unit}</span></div></div>`;
+    };
+    el.innerHTML = insightHtml(sr.insight)
+      + '<div class="tg-glabel">Границы</div><div class="rr-card">' + SR_FIELDS.map(field).join('') + '</div>'
+      + '<div class="rr-warn" id="srError" style="display:none"></div>'
+      + '<div class="tg-glabel">Что получится</div><div class="rr-card" id="srPreview" style="padding-top:2px;padding-bottom:2px"></div>'
+      + `<div class="poster-note" style="margin-top:8px">Сегмент считается сам по записанным визитам. После сохранения все гости пересчитаются по новым границам; в историю гостей это не пишется. Сумма чека добавится сюда после подключения кассы. ${meta}.</div>`
+      + '<button class="btn-cta" id="srSaveBtn" style="margin-top:14px" onclick="saveSegmentRules()">Сохранить</button>'
+      + (sr.insight && sr.insight.suggestion ? '<button class="btn-ghost" onclick="srFill(sr.insight.suggestion, \'Цифры из подсказки подставлены — посмотрите, что получится, и нажмите «Сохранить»\')">Взять из подсказки</button>' : '')
+      + '<button class="btn-ghost" onclick="srFill(sr.defaults, \'Стандартные значения подставлены — нажмите «Сохранить»\')">Вернуть стандартные значения</button>';
+    SR_FIELDS.forEach(([k]) => { document.getElementById('sr_' + k).value = sr.rules[k]; });
+    srChanged();
+  }
+  function srFill(rules, msg) {
+    if (!sr || !rules) return;
+    SR_FIELDS.forEach(([k]) => { document.getElementById('sr_' + k).value = rules[k]; });
+    srChanged();
+    if (msg) notify(msg);
+  }
+  function srRead() {
+    const o = {};
+    SR_FIELDS.forEach(([k]) => { const v = document.getElementById('sr_' + k).value.trim(); o[k] = /^\d+$/.test(v) ? Number(v) : NaN; });
+    return o;
+  }
+  // та же проверка, что на сервере — чтобы подсказать сразу, не дожидаясь ответа
+  function srCheck(r) {
+    const names = { recentDays: '«Был недавно»', sleepDays: '«Давно не был»', loyalVisits: '«Лояльный»', championVisits: '«Чемпион»', windowDays: 'Период' };
+    for (const [k] of SR_FIELDS) {
+      if (isNaN(r[k])) return `${names[k]}: впишите целое число`;
+      const lim = sr.limits[k];
+      if (r[k] < lim.min || r[k] > lim.max) return `${names[k]}: от ${lim.min} до ${lim.max}`;
+    }
+    if (r.sleepDays <= r.recentDays) return '«Давно не был» должно быть больше, чем «Был недавно»';
+    if (r.championVisits <= r.loyalVisits) return 'Для «Чемпиона» нужно больше визитов, чем для «Лояльного»';
+    if (r.windowDays < r.sleepDays) return 'Период, за который считаются визиты, не может быть короче, чем «Давно не был»';
+    return '';
+  }
+  function srDirty(r) { return SR_FIELDS.some(([k]) => r[k] !== sr.rules[k]); }
+  function srChanged() {
+    if (!sr) return;
+    const r = srRead(), err = srCheck(r), dirty = srDirty(r);
+    const eb = document.getElementById('srError');
+    eb.style.display = err ? '' : 'none';
+    eb.textContent = err;
+    const btn = document.getElementById('srSaveBtn');
+    btn.disabled = !!err || !dirty;
+    btn.textContent = dirty ? 'Сохранить' : 'Нет изменений';
+    clearTimeout(srPreviewTimer);
+    if (err) { srPreview = null; srRenderPreview(err ? 'Исправьте цифры — тогда здесь появится расчёт.' : ''); return; }
+    if (!dirty) { srPreview = null; srRenderPreview(); return; }
+    srRenderPreview('Считаю...');
+    const seq = ++srPreviewSeq;
+    srPreviewTimer = setTimeout(async () => {
+      try {
+        const d = await tgRequest('POST', '/api/admin/segment-rules/preview', { rules: r });
+        if (seq !== srPreviewSeq) return;
+        srPreview = d;
+        srRenderPreview();
+      } catch (e) {
+        if (seq === srPreviewSeq) srRenderPreview(tgNetErr(e));
+      }
+    }, 350);
+  }
+  function srRenderPreview(msg) {
+    const box = document.getElementById('srPreview');
+    if (!box) return;
+    if (msg) { box.innerHTML = `<div class="rr-stat"><span>${escHtml(msg)}</span></div>`; return; }
+    const p = srPreview;
+    const segs = p ? p.segments : sr.segments;
+    const now = p ? p.current : sr.counts;
+    const next = p ? p.counts : null;
+    box.innerHTML = segs.map(x => {
+      const a = now[x.key] || 0, b = next ? (next[x.key] || 0) : a;
+      const val = next && a !== b ? `${a} → <b style="color:var(--accent)">${b}</b>` : `<b>${a}</b>`;
+      return `<div class="rr-stat" style="align-items:flex-start"><span><span style="color:var(--text)">${escHtml(x.name)}</span><br><span style="font-size:11.5px">${escHtml(x.description)}</span></span><span style="white-space:nowrap">${val}</span></div>`;
+    }).join('') + `<div class="rr-stat"><span>Без визитов</span><b>${(next || now).none || 0}</b></div>`;
+  }
+  async function saveSegmentRules() {
+    const btn = document.getElementById('srSaveBtn');
+    if (btn.disabled) return;
+    const r = srRead();
+    if (srCheck(r) || !srDirty(r)) return;
+    const moved = srPreview ? sr.segments.filter(x => (srPreview.current[x.key] || 0) !== (srPreview.counts[x.key] || 0)).map(x => `${x.name}: ${srPreview.current[x.key] || 0} → ${srPreview.counts[x.key] || 0}`) : [];
+    if (!await askConfirm(`Сохранить новые границы сегментов?\n\n${moved.length ? moved.join('\n') : 'Число гостей в сегментах не изменится.'}\n\nСегменты пересчитаются у всех гостей: в карточках, рассылках, списках и аналитике.`, { ok: 'Сохранить' })) return;
+    btn.disabled = true; btn.textContent = 'Сохраняем...';
+    try {
+      sr = await tgRequest('PUT', '/api/admin/segment-rules', { rules: r });
+      srPreview = null;
+      renderSegmentRules();
+      notify('Правила сохранены — сегменты пересчитаны');
+    } catch (e) {
+      btn.disabled = false; btn.textContent = 'Сохранить';
+      notify(tgNetErr(e));
+    }
+  }
+
   // ─── СЕРВИС → СИСТЕМА: ПРОСЬБЫ ОБ ОТЗЫВЕ ───
   var rr = null;      // ответ сервера: правила, значения по умолчанию, статистика
   const RR_BOOL = ['enabled', 'first_visit_always', 'skip_vip'];
@@ -10892,6 +11065,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       ${d.months.map((m, i) => `<option value="${escHtml(m.value)}" ${m.value === d.month ? 'selected' : ''}>${escHtml(m.label)}${i === 0 ? ' — по сегодня' : ''}</option>`).join('')}
     </select>`;
     html += `<div class="sg-period">Было на ${escHtml(fmtDayMonth(d.startAsOf))} → ${d.isCurrent ? 'сейчас' : 'стало на ' + escHtml(fmtDayMonth(d.endAsOf))}</div>`;
+    if (d.isCurrent) html += insightHtml(d.insight, { link: true });
 
     const sm = d.summary;
     html += `<div class="sg-stats">
@@ -10943,7 +11117,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const r = d.rules;
     html += `<div class="hint-box" style="margin-top:18px">
       <div class="hint-title">Как считается</div>
-      <div class="hint-item">Давность — сколько дней с последнего визита. Частота — сколько визитов за последние ${r.windowDays} дней (несколько записей за один день — один визит).</div>
+      <div class="hint-item">Давность — сколько дней с последнего визита. Частота — сколько визитов за последние ${r.windowDays} дней (несколько записей за один день — один визит). Границы: «был недавно» — до ${r.recentDays} дней, «давно не был» — больше ${r.sleepDays} дней, «лояльный» — от ${r.loyalVisits} визитов, «чемпион» — от ${r.championVisits}.</div>
       <div class="hint-item">Считается сам по визитам, которые записали в карточке («Добавить визит»). Визит не записали — для сегмента гостя не было.</div>
       <div class="hint-item">Сумма чека добавится в сегменты после подключения кассы.</div>
       <div class="hint-item">VIP — отдельный ручной тег, на сегмент не влияет.</div>
@@ -11856,7 +12030,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'venue', 'birthday-text', 'messages'];
+  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'venue', 'birthday-text', 'messages'];
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
 
@@ -12264,8 +12438,10 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     guest.vip = isVipTagList(guest.tagsSpecial);
     const sg = guest.segment;
     if (!sg || !guest.autoTags) return;
-    const away = sg.daysSince === null || sg.daysSince === undefined || sg.daysSince > 30;
-    guest.autoTags.atRisk = guest.vip ? away : (sg.daysSince !== null && sg.daysSince !== undefined && sg.daysSince > 30 && sg.visitsYear >= 2);
+    // границы приходят с сервера вместе с карточкой («Правила сегментов»); у прежнего сервера их нет — тогда 30 дней и 2 визита
+    const rl = guest.segmentRules || { recentDays: 30, loyalVisits: 2 };
+    const away = sg.daysSince === null || sg.daysSince === undefined || sg.daysSince > rl.recentDays;
+    guest.autoTags.atRisk = guest.vip ? away : (sg.daysSince !== null && sg.daysSince !== undefined && sg.daysSince > rl.recentDays && sg.visitsYear >= rl.loyalVisits);
   }
   function daysAgoText(n) {
     if (n === 0) return 'сегодня';
@@ -12285,7 +12461,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const cancelBtn = document.getElementById('editOverlayCancel');
     if (cancelBtn) cancelBtn.textContent = 'Закрыть';
     const why = sg.key
-      ? `У гостя ${sg.visitsYear} ${ruPlural(sg.visitsYear, 'визит', 'визита', 'визитов')} за последний год, последний — ${daysAgoText(sg.daysSince)}.`
+      ? `У гостя ${sg.visitsYear} ${ruPlural(sg.visitsYear, 'визит', 'визита', 'визитов')} ${g.segmentRules && g.segmentRules.windowDays !== 365 ? `за последние ${g.segmentRules.windowDays} дней` : 'за последний год'}, последний — ${daysAgoText(sg.daysSince)}.`
       : 'Визитов пока не записано — сегмент появится после первого визита.';
     const guide = (g.segmentGuide && g.segmentGuide.length ? g.segmentGuide : SEGMENTS_UI).map(x => `
       <div class="sg-guide-item rfm-${x.key}${x.key === sg.key ? ' current' : ''}">
