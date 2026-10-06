@@ -5803,7 +5803,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
   // Посадка без брони (гость с улицы) принадлежит служебной карточке: приложение шлёт её условный номер, как у обычной брони
   const WALKIN_PHONE = '+70000000000';
-  const bkPhone = b => (b && b.walkIn ? WALKIN_PHONE : ((b && b.phone) || ''));
+  // безымянная посадка без брони — служебный номер; посадка гостя из базы — его собственный
+  const bkPhone = b => (b && b.walkIn && !b.phone ? WALKIN_PHONE : ((b && b.phone) || ''));
   // Сколько минут гости сидят за столом: от отметки «Пришёл» (null — не сидят, ушли или это не сегодняшний вечер)
   function sitMinutes(b) {
     const a = b && b.arrival;
@@ -6218,7 +6219,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         ${bookingOverdueMin(b) !== null ? `<div class="visit-detail bk-overdue-line">⌛ Время брони прошло ${escHtml(shDuration(bookingOverdueMin(b)))} назад, гостя ещё нет — отметьте ниже, пришёл он или нет</div>` : ''}
         ${!b.past && pendingWaitMin(b) !== null && pendingWaitMin(b) >= PENDING_WAIT_WARN_MIN ? `<div class="visit-detail bk-wait-line">Ждёт подтверждения уже ${escHtml(shDuration(pendingWaitMin(b)))}</div>` : ''}
         ${b.comment ? `<div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>${escHtml(b.comment)}</div>` : ''}
-        ${b.walkIn ? '<div class="visit-detail">Пришли без брони — карточки гостя и телефона нет</div>' : `<div class="visit-detail"><a href="tel:${escHtml((b.phone || '').replace(/[^\d+]/g, ''))}" style="color:var(--text-sub);text-decoration:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="18" x2="14" y2="18"/></svg>${escHtml(b.phone || 'Телефон не указан')}</a>${b.phone ? ` <button type="button" class="copy-btn" onclick="copyPhone('${escJs(b.phone)}')" title="Скопировать номер">${COPY_ICON}Копировать</button>` : ''}</div>`}
+        ${b.walkIn && !b.phone && !b.guestCard ? '<div class="visit-detail">Пришли без брони — карточки гостя и телефона нет</div>' : `<div class="visit-detail"><a href="tel:${escHtml((b.phone || '').replace(/[^\d+]/g, ''))}" style="color:var(--text-sub);text-decoration:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="18" x2="14" y2="18"/></svg>${escHtml(b.phone || 'Телефон не указан')}</a>${b.phone ? ` <button type="button" class="copy-btn" onclick="copyPhone('${escJs(b.phone)}')" title="Скопировать номер">${COPY_ICON}Копировать</button>` : ''}</div>`}
       </div>
       ${roomNoteHtml(b)}
       ${confirmHtml}
@@ -6334,6 +6335,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const tb = HALL_TABLES.find(x => x.key === tableKey);
     if (!tb) return;
     walkInTable = tableKey;
+    walkInGuest = null;
+    wiSearchSeq++;
     editingField = 'walkin';
     document.getElementById('editOverlayTitle').textContent = `Посадить без брони · ${hallPlaceName(tb)}`;
     const saveBtn = document.getElementById('editOverlaySave');
@@ -6342,16 +6345,72 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (cancelBtn) cancelBtn.textContent = 'Отмена';
     document.getElementById('editOverlayBody').innerHTML = `
       <div class="note" style="margin-bottom:12px">Гости пришли без брони. Стол станет занятым на схеме, время за столом пойдёт с этой минуты. Когда гости уйдут — нажмите «Гость ушёл».</div>
-      <div class="form-group"><label class="form-label">Имя (необязательно)</label><input class="form-input" id="wiName" type="text" maxlength="60" placeholder="Например, Анна" autocomplete="off"></div>
+      ${can('guests.view') ? `<div class="form-group"><label class="form-label">Гость уже есть в базе? Найдите его</label>
+        <div id="wiPicked"></div>
+        <div id="wiSearchBox"><input class="form-input" id="wiSearch" type="text" maxlength="60" placeholder="Имя или последние 4 цифры телефона" autocomplete="off" oninput="wiSearchInput()">
+        <div id="wiResults"></div></div></div>` : ''}
+      <div class="form-group" id="wiNameGroup"><label class="form-label">Имя (необязательно)</label><input class="form-input" id="wiName" type="text" maxlength="60" placeholder="Например, Анна" autocomplete="off"></div>
       <div class="form-group"><label class="form-label">Сколько гостей (необязательно)</label><div class="num-field"><input class="form-input" id="wiGuests" type="number" min="1" max="50" inputmode="numeric" placeholder="${tb.seats ? 'За столом мест: ' + tb.seats : ''}"><div class="num-steps"><button type="button" tabindex="-1" aria-label="Больше" onclick="stepNum(this,1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 15 12 9 18 15"/></svg></button><button type="button" tabindex="-1" aria-label="Меньше" onclick="stepNum(this,-1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button></div></div></div>`;
     document.getElementById('editOverlay').classList.add('show');
+  }
+  // Поиск гостя в окне посадки: по имени или по последним 4 цифрам телефона. Выбрали — посадка привяжется к его карточке
+  // (визит запишется, на столе будут видны его теги). Не нашли — сажаем как раньше, имя можно вписать руками.
+  let walkInGuest = null;   // { id, name, phone }
+  let wiSearchSeq = 0, wiSearchTimer = null, wiFound = [];
+  function wiSearchInput() {
+    clearTimeout(wiSearchTimer);
+    const box = document.getElementById('wiResults'), inp = document.getElementById('wiSearch');
+    if (!box || !inp) return;
+    const q = inp.value.trim();
+    const seq = ++wiSearchSeq;
+    const digits = q.replace(/\D/g, '');
+    const byPhone = /^[\d\s+()-]+$/.test(q) && digits.length >= 4;
+    if (!byPhone && q.length < 2) { box.innerHTML = ''; return; }
+    box.innerHTML = '<div class="note" style="margin-top:8px">Ищу...</div>';
+    wiSearchTimer = setTimeout(async () => {
+      try {
+        const url = byPhone ? `/api/staff/search-last4?digits=${digits.slice(-4)}` : `/api/staff/search?name=${encodeURIComponent(q)}`;
+        const res = await fetch(`${PROXY_BASE}${url}&pin=${getPin()}`);
+        if (seq !== wiSearchSeq) return;
+        if (res.status === 401) { showScreen('pin'); return; }
+        if (!res.ok) { box.innerHTML = '<div class="note" style="margin-top:8px">Поиск не сработал — попробуйте ещё раз или посадите без поиска</div>'; return; }
+        const list = await res.json();
+        if (seq !== wiSearchSeq) return;
+        wiFound = (Array.isArray(list) ? list : []).filter(g => g && g.id).slice(0, 8);
+        box.innerHTML = wiFound.length
+          ? wiFound.map((g, i) => `<button type="button" class="app-choice-btn" style="width:100%;margin-top:8px" onclick="wiPick(${i})">${escHtml(g.name || 'Без имени')}${g.phone ? `<span style="color:var(--text-muted)"> · ${escHtml(g.phone)}</span>` : ''}</button>`).join('')
+          : '<div class="note" style="margin-top:8px">В базе не нашли. Посадите без поиска — имя можно вписать ниже.</div>';
+      } catch {
+        if (seq === wiSearchSeq) box.innerHTML = '<div class="note" style="margin-top:8px">Нет связи — поиск не сработал</div>';
+      }
+    }, 350);
+  }
+  function wiPick(i) {
+    const g = wiFound[i];
+    if (!g) return;
+    walkInGuest = { id: g.id, name: g.name || 'Гость', phone: g.phone || '' };
+    wiSearchSeq++;
+    wiRenderPicked();
+  }
+  function wiUnpick() { walkInGuest = null; wiRenderPicked(); }
+  function wiRenderPicked() {
+    const picked = document.getElementById('wiPicked'), box = document.getElementById('wiSearchBox'), nameGroup = document.getElementById('wiNameGroup');
+    if (!picked) return;
+    const g = walkInGuest;
+    picked.innerHTML = g ? `<div class="visit-item" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <div><div style="color:var(--text)">${escHtml(g.name)}</div>${g.phone ? `<div class="note" style="margin:2px 0 0">${escHtml(g.phone)}</div>` : ''}<div class="note" style="margin:4px 0 0">Посадка привяжется к карточке, гостю запишется визит</div></div>
+        <button type="button" class="link-btn" style="white-space:nowrap" onclick="wiUnpick()">Другой гость</button></div>` : '';
+    if (box) box.style.display = g ? 'none' : '';
+    if (nameGroup) nameGroup.style.display = g ? 'none' : '';
+    if (!g) { const inp = document.getElementById('wiSearch'), res = document.getElementById('wiResults'); if (inp) inp.value = ''; if (res) res.innerHTML = ''; }
   }
   async function submitWalkIn(force) {
     if (walkInBusy) return;
     const tb = HALL_TABLES.find(x => x.key === walkInTable);
     if (!tb) { closeEditOverlay(); return; }
     const nameEl = document.getElementById('wiName'), guestsEl = document.getElementById('wiGuests');
-    const name = nameEl ? nameEl.value.trim() : '';
+    const known = walkInGuest;
+    const name = known ? '' : (nameEl ? nameEl.value.trim() : '');
     const guests = guestsEl ? guestsEl.value.trim() : '';
     if (guests && !(Number(guests) >= 1 && Number(guests) <= 50)) { notify('Число гостей — от 1 до 50'); return; }
     if (guests && tb.seats && Number(guests) > tb.seats && !force &&
@@ -6362,7 +6421,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/bookings/walkin?pin=${getPin()}`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: getPin(), table: tb.key, guests, name, force: !!force })
+        body: JSON.stringify({ pin: getPin(), table: tb.key, guests, name, force: !!force, ...(known ? { guestId: known.id } : {}) })
       });
       if (res.status === 401) { showScreen('pin'); return; }
       const data = await res.json().catch(() => ({}));
@@ -6374,7 +6433,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       }
       if (!res.ok) { showToast(data.error || 'Не удалось посадить гостей — попробуйте ещё раз', true); return; }
       closeEditOverlay();
-      showToast(`${hallPlaceName(tb)}: гости посажены${name ? ' · ' + name : ''}`);
+      const whoSat = data.guestName || name;
+      if (data.warning) notify(data.warning);
+      else showToast(`${hallPlaceName(tb)}: гости посажены${whoSat ? ' · ' + whoSat : ''}${data.linked ? ' · визит записан' : ''}`);
       await refreshBookingsNow();
     } catch {
       showToast('Нет связи — гостей не посадили, попробуйте ещё раз', true);
