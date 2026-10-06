@@ -2656,7 +2656,7 @@
     </div>
     <div class="form-group">
       <label class="form-label">Что случилось</label>
-      <textarea class="form-input" id="probComment" placeholder="Опишите ситуацию своими словами. Если это у стола — укажите номер"></textarea>
+      <textarea class="form-input" id="probComment" maxlength="1000" placeholder="Опишите ситуацию своими словами. Если это у стола — укажите номер"></textarea>
     </div>
     <div class="form-group">
       <label class="form-label">Критичность</label>
@@ -4580,6 +4580,21 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     }
   }
 
+  // Обновить брони сразу после своего действия (посадили, убрали запись), не сбрасывая выбранный стол и время на схеме
+  async function refreshBookingsNow() {
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/bookings?past=${BOOKINGS_PAST_DAYS}&cancelled=1&pin=${getPin()}`);
+      if (!res.ok) return;
+      const all = await res.json();
+      if (!Array.isArray(all)) return;
+      const parts = splitBookings(all);
+      setBookingLists(parts.cur, parts.past, parts.cancelled);
+      bookingsLoadedOnce = true;
+      refreshBookingsDot();
+      if (document.getElementById('screen-bookings')?.classList.contains('active')) renderBookingsView();
+    } catch { /* список обновится сам через 30 секунд */ }
+  }
+
   // ─── СОБЫТИЯ ОТ ГОСТЯ: «ОПАЗДЫВАЮ» И ОТМЕНА ─────
   // Раньше оба события жили только сообщением в Telegram: в приложении опоздания не было видно вовсе, а отменённая
   // гостем бронь молча пропадала из списка. Теперь: пометка «опаздывает» на брони, раздел «Отменены гостем» в списке,
@@ -4629,7 +4644,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function bookingsWaitSig(list) {
     return (list || []).map(b => {
       const w = pendingWaitMin(b), o = bookingOverdueMin(b);
-      return (w !== null && w >= PENDING_WAIT_WARN_MIN ? `${b.uid}:${w}` : '') + (o !== null ? `${b.uid}:o${o}` : '');
+      const sm = sitMinutes(b); // «сидит N» на схеме обновляется раз в 5 минут
+      return (w !== null && w >= PENDING_WAIT_WARN_MIN ? `${b.uid}:${w}` : '') + (o !== null ? `${b.uid}:o${o}` : '') + (sm !== null ? `${b.uid}:s${Math.floor(sm / 5)}` : '');
     }).filter(Boolean).join(',');
   }
   // Сколько минут бронь ждёт подтверждения (null — не ждёт)
@@ -4755,6 +4771,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const nameHtml = escHtml(b.name) + (b.guests ? ` · ${escHtml(String(b.guests))} гост.` : '');
       const metaParts = [];
       if (kindLine) metaParts.push(escHtml(kindLine));
+      if (b.walkIn) metaParts.push('без брони');
       const arr = b.arrival?.status;
       const leftHm = arr === 'arrived' && b.arrival.leftAt ? mskHm(b.arrival.leftAt) : '';
       const lateHm = bookingLate(b);
@@ -5441,6 +5458,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     }
     // время: сколько гости уже за столом / через сколько придут
     if (st.cur) {
+      // гости уже отмечены «Пришёл» — считаем от этой отметки (а не от времени брони) и пишем «сидит 3 ч 10 мин»
+      const sm = hallDate === venueNow().day ? sitMinutes(st.cur.b) : null;
+      if (sm !== null) return fitLabel([[{ text: `сидит ${shDuration(sm)}`, cls: 'good' }], [{ text: shDuration(sm), cls: 'good' }], [{ text: durShort(sm), cls: 'good' }]], maxW);
       const sat = t - st.cur.start;
       return [{ text: sat > 0 ? `уже ${durShort(sat)}` : 'только пришли', cls: 'good' }];
     }
@@ -5647,7 +5667,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const rows = mine.length ? mine.map(it => {
       const b = it.b;
       const color = b.status === 'pending' ? '#f59e0b' : '#4ade80';
-      const nowTag = (it.left ? ` <span class="pill">ушёл ${escHtml(mskHm(b.arrival.leftAt))}</span>` : (it.start <= t && t < it.end ? ' <span class="pill good">сейчас</span>' : ''))
+      const sitMin = sitMinutes(b);
+      const nowTag = (it.left ? ` <span class="pill">ушёл ${escHtml(mskHm(b.arrival.leftAt))}</span>` : (sitMin !== null ? ` <span class="pill good">сидит ${escHtml(shDuration(sitMin))}</span>` : (it.start <= t && t < it.end ? ' <span class="pill good">сейчас</span>' : '')))
         + (bookingLate(b) ? ' <span class="pill late">⏰ опаздывает</span>' : '')
         + (bookingOverdueMin(b) !== null ? ` <span class="pill late">⌛ время прошло ${escHtml(shDuration(bookingOverdueMin(b)))}</span>` : '');
       const canLeave = !it.left && b.arrival?.status === 'arrived' && b.uid && bookingVenueDay(b.iso) === venueDayStr() && can('bookings.mark_arrival');
@@ -5658,9 +5679,13 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         ${canLeave ? `<button type="button" class="hz-mini-btn hz-leave-btn" onclick="event.stopPropagation();markLeave('${escJs(b.uid)}', 'leave')">Гость ушёл</button>` : ''}
       </div>`;
     }).join('') : '<div class="autotag-empty">На этот день броней нет</div>';
+    // «Посадить без брони» — гость пришёл с улицы: стол станет занятым на схеме, время за столом пойдёт с этой минуты (только на сегодняшний вечер)
+    const walkInBtn = hallDate === venueNow().day && can('bookings.mark_arrival')
+      ? `<div class="add-row" style="justify-content:flex-start;margin:10px 0 0"><button type="button" class="btn-new-guest" onclick="openWalkIn('${escJs(tb.key)}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg>Посадить без брони</button></div>` : '';
     return `<div class="hint-box" style="margin-top:12px">
       <div class="hint-title">${escHtml(title)}</div>
       ${rows}
+      ${walkInBtn}
       <div class="add-row" style="justify-content:flex-start;margin:10px 0 0;${can('bookings.create') ? '' : 'display:none'}"><button type="button" class="btn-new-guest" onclick="openAddBookingAt(hallDate, ${t}, '${escJs(tb.key)}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Бронь на ${tb.zone === 'vip' ? 'эту комнату' : 'этот стол'} в ${hhmm(t)}</button></div>
     </div>`;
   }
@@ -5749,6 +5774,18 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       btn.disabled = false;
       btn.textContent = 'Создать бронь — сразу подтверждена';
     }
+  }
+
+  // Посадка без брони (гость с улицы) принадлежит служебной карточке: приложение шлёт её условный номер, как у обычной брони
+  const WALKIN_PHONE = '+70000000000';
+  const bkPhone = b => (b && b.walkIn ? WALKIN_PHONE : ((b && b.phone) || ''));
+  // Сколько минут гости сидят за столом: от отметки «Пришёл» (null — не сидят, ушли или это не сегодняшний вечер)
+  function sitMinutes(b) {
+    const a = b && b.arrival;
+    if (!a || a.status !== 'arrived' || a.leftAt || !a.at) return null;
+    if (bookingVenueDay(b.iso) !== venueDayStr()) return null;
+    const m = Math.round((Date.now() - new Date(a.at)) / 60000);
+    return Number.isFinite(m) && m >= 0 && m <= 16 * 60 ? m : null;
   }
 
   // Бронь открыта из общего списка ('cur') или из сверки прошлых ('past')
@@ -5852,7 +5889,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/bookings/party?pin=${getPin()}`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: getPin(), phone: b.phone, uid, guests: partyDraft.n })
+        body: JSON.stringify({ pin: getPin(), phone: bkPhone(b), uid, guests: partyDraft.n })
       });
       if (res.status === 401) { showScreen('pin'); return; }
       const data = await res.json().catch(() => ({}));
@@ -5880,6 +5917,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const a = b.arrival;
     const short = who => who ? who.replace(/ \(.+\)$/, '') : '';
     const fixBtn = (label, call) => canMark ? `<button class="arr-btn fix" onclick="${call}">${label}</button>` : '';
+    // у посадки без брони нет отметки «пришёл» в обычном смысле: ошибочную посадку убирают целиком
+    const fixClear = b.walkIn ? (canMark && sameEvening ? `<button class="arr-btn fix" onclick="removeWalkIn('${uid}')">Посадили по ошибке — убрать запись</button>` : '') : fixBtn('Гость не приходил — убрать отметку', `markArrival('${uid}', 'clear')`);
 
     if (stage === 'pending' || stage === 'confirmed') {
       // сегодняшнюю бронь сначала подтверждают (кнопка выше), потом отмечают приход;
@@ -5898,14 +5937,14 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (stage === 'seated') {
       const cameHm = a.at ? mskHm(a.at) : '';
       const sat = a.at ? Math.round((Date.now() - new Date(a.at)) / 60000) : null;
-      const satTxt = sat !== null && sat >= 1 && sat <= 16 * 60 ? ` · уже ${escHtml(shDuration(sat))}` : '';
+      const satTxt = sat !== null && sat >= 1 && sat <= 16 * 60 ? ` · сидит ${escHtml(shDuration(sat))}` : '';
       return `<div class="arr-box">
         <div class="arr-state arrived">✓ За столом${cameHm ? ' с ' + escHtml(cameHm) : ''}${satTxt}${short(a.by) ? `<span class="note">отметил(а) ${escHtml(short(a.by))}</span>` : ''}</div>
         ${canMark ? partyRowHtml(b) : ''}
         ${canMark ? `<div class="arr-btns"><button class="arr-btn yes big arr-leave" onclick="markLeave('${uid}', 'leave')">Гость ушёл — стол свободен</button></div>` : ''}
         ${arrFixHtml([
           tableInner ? `<div class="arr-fix-item"><div class="arr-fix-label">Не тот стол</div>${tableInner}</div>` : '',
-          fixBtn('Гость не приходил — убрать отметку', `markArrival('${uid}', 'clear')`)
+          fixClear
         ])}
       </div>`;
     }
@@ -5914,7 +5953,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       // вчерашняя бронь: гость был, но когда ушёл — не отметили
       return `<div class="arr-box">
         <div class="arr-state arrived">✓ Был${a.at ? ' · пришёл в ' + escHtml(mskHm(a.at)) : ''}<span class="note">Время ухода не отмечено${short(a.by) ? ` · отметил(а) ${escHtml(short(a.by))}` : ''}</span></div>
-        ${arrFixHtml([fixBtn('Гость не приходил — убрать отметку', `markArrival('${uid}', 'clear')`)])}
+        ${arrFixHtml([fixClear])}
       </div>`;
     }
 
@@ -5924,7 +5963,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         <div class="arr-state left">Был за столом${a.at ? ' с ' + escHtml(mskHm(a.at)) : ''} до ${escHtml(mskHm(a.leftAt))}${stay !== null ? ` · ${escHtml(shDuration(stay))}` : ''}<span class="note">Стол свободен${short(a.leftBy) ? ` · уход отметил(а) ${escHtml(short(a.leftBy))}` : ''}</span></div>
         ${arrFixHtml([sameEvening
           ? fixBtn('Гость ещё за столом — вернуть', `markLeave('${uid}', 'undo')`)
-          : fixBtn('Гость не приходил — убрать отметку', `markArrival('${uid}', 'clear')`)])}
+          : fixClear])}
       </div>`;
     }
 
@@ -5948,7 +5987,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const res = await fetch(`${PROXY_BASE}/api/staff/bookings/arrival?pin=${getPin()}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: getPin(), phone: b.phone, uid: b.uid, status, prev: b.arrival?.status || 'none' })
+        body: JSON.stringify({ pin: getPin(), phone: bkPhone(b), uid: b.uid, status, prev: b.arrival?.status || 'none' })
       });
       if (res.status === 401) { showScreen('pin'); return; }
       const data = await res.json().catch(() => ({}));
@@ -5988,7 +6027,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const res = await fetch(`${PROXY_BASE}/api/staff/bookings/leave?pin=${getPin()}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: getPin(), phone: b.phone, uid: b.uid, action })
+        body: JSON.stringify({ pin: getPin(), phone: bkPhone(b), uid: b.uid, action })
       });
       if (res.status === 401) { showScreen('pin'); return; }
       const data = await res.json().catch(() => ({}));
@@ -6132,7 +6171,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const waiting = !b.past && (stage === 'pending' || stage === 'confirmed');
     // гость сидит за своим столом — выбор стола нужен, только если ошиблись: он в «Отметили по ошибке».
     // Сел без стола — стол назначают как обычно.
-    const tableInFix = !b.past && stage === 'seated' && !!b.table;
+    const tableInFix = !b.past && !b.walkIn && stage === 'seated' && !!b.table;
     const confirmHtml = !b.past && !closed && b.status === 'pending' && can('bookings.confirm')
       ? `<button class="btn-cta" id="bkConfirmBtn" onclick="confirmBookingAction()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px;margin-right:6px;display:inline-block"><path d="M4 12l5 5L20 6"/></svg>Подтвердить</button>` : '';
     const manageHtml = waiting
@@ -6154,14 +6193,14 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         ${bookingOverdueMin(b) !== null ? `<div class="visit-detail bk-overdue-line">⌛ Время брони прошло ${escHtml(shDuration(bookingOverdueMin(b)))} назад, гостя ещё нет — отметьте ниже, пришёл он или нет</div>` : ''}
         ${!b.past && pendingWaitMin(b) !== null && pendingWaitMin(b) >= PENDING_WAIT_WARN_MIN ? `<div class="visit-detail bk-wait-line">Ждёт подтверждения уже ${escHtml(shDuration(pendingWaitMin(b)))}</div>` : ''}
         ${b.comment ? `<div class="visit-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>${escHtml(b.comment)}</div>` : ''}
-        <div class="visit-detail"><a href="tel:${escHtml((b.phone || '').replace(/[^\d+]/g, ''))}" style="color:var(--text-sub);text-decoration:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="18" x2="14" y2="18"/></svg>${escHtml(b.phone || 'Телефон не указан')}</a>${b.phone ? ` <button type="button" class="copy-btn" onclick="copyPhone('${escJs(b.phone)}')" title="Скопировать номер">${COPY_ICON}Копировать</button>` : ''}</div>
+        ${b.walkIn ? '<div class="visit-detail">Пришли без брони — карточки гостя и телефона нет</div>' : `<div class="visit-detail"><a href="tel:${escHtml((b.phone || '').replace(/[^\d+]/g, ''))}" style="color:var(--text-sub);text-decoration:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="18" x2="14" y2="18"/></svg>${escHtml(b.phone || 'Телефон не указан')}</a>${b.phone ? ` <button type="button" class="copy-btn" onclick="copyPhone('${escJs(b.phone)}')" title="Скопировать номер">${COPY_ICON}Копировать</button>` : ''}</div>`}
       </div>
       ${roomNoteHtml(b)}
       ${confirmHtml}
 
       ${renderArrivalBlock(b, tableInFix ? tableInner : '')}
 
-      ${b.past ? '<div class="note" style="margin-top:14px">Бронь уже прошла — подтверждать, переносить и отменять её не нужно.</div>' : closed || tableInFix ? '' : tableBlockHtml}
+      ${b.past ? '<div class="note" style="margin-top:14px">Бронь уже прошла — подтверждать, переносить и отменять её не нужно.</div>' : b.walkIn || closed || tableInFix ? '' : tableBlockHtml}
 
       ${renderBookingGuestBlock(b)}
 
@@ -6257,6 +6296,90 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (ok) {
       const st2 = document.getElementById('bkTableStatus');
       if (st2) { st2.className = 'bk-table-status ok'; st2.textContent = table ? '✓ Стол сохранён' : '✓ Стол снят'; }
+    }
+  }
+
+  // ─── ПОСАДКА БЕЗ БРОНИ ─────────────────────────
+  // Гости пришли с улицы: на схеме стол должен быть занят, а время за столом и «Гость ушёл» должны работать, как у брони.
+  // Имя и число гостей необязательны. Занят стол или на него есть бронь — сервер предупреждает, посадить всё равно можно.
+  let walkInTable = null;
+  let walkInBusy = false;
+  function openWalkIn(tableKey) {
+    if (!needPerm('bookings.mark_arrival', 'сажать гостей за стол')) return;
+    const tb = HALL_TABLES.find(x => x.key === tableKey);
+    if (!tb) return;
+    walkInTable = tableKey;
+    editingField = 'walkin';
+    document.getElementById('editOverlayTitle').textContent = `Посадить без брони · ${hallPlaceName(tb)}`;
+    const saveBtn = document.getElementById('editOverlaySave');
+    if (saveBtn) { saveBtn.style.display = ''; saveBtn.disabled = false; saveBtn.textContent = 'Посадить'; }
+    const cancelBtn = document.getElementById('editOverlayCancel');
+    if (cancelBtn) cancelBtn.textContent = 'Отмена';
+    document.getElementById('editOverlayBody').innerHTML = `
+      <div class="note" style="margin-bottom:12px">Гости пришли без брони. Стол станет занятым на схеме, время за столом пойдёт с этой минуты. Когда гости уйдут — нажмите «Гость ушёл».</div>
+      <div class="form-group"><label class="form-label">Имя (необязательно)</label><input class="form-input" id="wiName" type="text" maxlength="60" placeholder="Например, Анна" autocomplete="off"></div>
+      <div class="form-group"><label class="form-label">Сколько гостей (необязательно)</label><input class="form-input" id="wiGuests" type="number" min="1" max="50" inputmode="numeric" placeholder="${tb.seats ? 'За столом мест: ' + tb.seats : ''}"></div>`;
+    document.getElementById('editOverlay').classList.add('show');
+  }
+  async function submitWalkIn(force) {
+    if (walkInBusy) return;
+    const tb = HALL_TABLES.find(x => x.key === walkInTable);
+    if (!tb) { closeEditOverlay(); return; }
+    const nameEl = document.getElementById('wiName'), guestsEl = document.getElementById('wiGuests');
+    const name = nameEl ? nameEl.value.trim() : '';
+    const guests = guestsEl ? guestsEl.value.trim() : '';
+    if (guests && !(Number(guests) >= 1 && Number(guests) <= 50)) { notify('Число гостей — от 1 до 50'); return; }
+    if (guests && tb.seats && Number(guests) > tb.seats && !force &&
+        !await askConfirm(`${tb.zone === 'vip' ? 'В комнате ' + tb.short : 'За столом ' + tb.short} ${tb.seats} ${ruPlural(tb.seats, 'место', 'места', 'мест')}, а гостей ${guests}.\n\nВсё равно посадить сюда?`, { ok: 'Посадить' })) return;
+    walkInBusy = true;
+    const btn = document.getElementById('editOverlaySave');
+    if (btn) { btn.disabled = true; btn.textContent = 'Сажаем…'; }
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/bookings/walkin?pin=${getPin()}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), table: tb.key, guests, name, force: !!force })
+      });
+      if (res.status === 401) { showScreen('pin'); return; }
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 409 && data.needConfirm) {
+        if (btn) { btn.disabled = false; btn.textContent = 'Посадить'; }
+        // флаг «занято» держим, пока человек отвечает на вопрос: иначе второе нажатие запустит вторую посадку
+        if (await askConfirm(`${data.error}\n\nВсё равно посадить сюда?`, { ok: 'Посадить' })) { walkInBusy = false; return submitWalkIn(true); }
+        return;
+      }
+      if (!res.ok) { showToast(data.error || 'Не удалось посадить гостей — попробуйте ещё раз', true); return; }
+      closeEditOverlay();
+      showToast(`${hallPlaceName(tb)}: гости посажены${name ? ' · ' + name : ''}`);
+      await refreshBookingsNow();
+    } catch {
+      showToast('Нет связи — гостей не посадили, попробуйте ещё раз', true);
+    } finally {
+      walkInBusy = false;
+      const b2 = document.getElementById('editOverlaySave');
+      if (b2 && editingField === 'walkin') { b2.disabled = false; b2.textContent = 'Посадить'; }
+    }
+  }
+  // Убрать посадку без брони, сделанную по ошибке
+  async function removeWalkIn(uid) {
+    if (arrivalBusy) return;
+    if (!needPerm('bookings.mark_arrival', 'убирать посадки')) return;
+    if (!await askConfirm('Убрать запись?\n\nПосадка исчезнет совсем, как будто гостей не сажали. Если гости просто ушли — вместо этого нажмите «Гость ушёл».', { ok: 'Убрать', danger: true })) return;
+    arrivalBusy = true;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/bookings/walkin/remove?pin=${getPin()}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pin: getPin(), uid })
+      });
+      if (res.status === 401) { showScreen('pin'); return; }
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) { showToast(data.error || 'Не удалось убрать запись', true); return; }
+      showToast('Запись убрана');
+      arrivalBusy = false;
+      await refreshBookingsNow();
+      if (document.getElementById('screen-booking-detail')?.classList.contains('active')) openBookings();
+    } catch {
+      showToast('Нет связи — запись не убрана', true);
+    } finally {
+      arrivalBusy = false;
     }
   }
 
@@ -6751,7 +6874,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     for (const m of t.months) {
       const [y, mo] = String(m.month || '').split('-');
       const title = `${RU_MONTHS_NOM[Number(mo) - 1] || m.month} ${y || ''}`.trim();
-      html += `<div class="enps-month">${escHtml(title)} · ${escHtml(String(m.count))} ${ruPlural(m.count, 'ответ', 'ответа', 'ответов')}</div>`;
+      html += `<div class="enps-month">${escHtml(title)}${m.count == null ? '' : ` · ${escHtml(String(m.count))} ${ruPlural(m.count, 'ответ', 'ответа', 'ответов')}`}</div>`;
       if (m.hidden) {
         html += `<div class="visit-item enps-answer"><div class="note">${m.current
           ? 'Месяц ещё идёт — ответы откроются, когда он закончится.'
@@ -7757,7 +7880,21 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
         ? row('ok', 'Бот гостей', `@${d.guestBot.username} · отвечает`)
         : row('bad', 'Бот гостей', `Не отвечает: ${d.guestBot.error || 'неизвестная ошибка'}`));
       // сообщения гостям, которые не дошли за сутки: по брони — тревога (гостю надо позвонить), остальное — предупреждение
-      const sf = d.sendFailures;
+      // Админ-чат: туда уходят новые брони с именами и телефонами, проблемы, итоги вечера. Не дошло — об этом никто бы не узнал.
+      if (d.adminChat) {
+        const ac = d.adminChat;
+        if (!ac.ok) rows.push(row('bad', 'Админ-чат', `Бот не видит чат: ${ac.error || 'Telegram не ответил'}. Сообщения администрации не доходят — проверьте, что бот в чате, и переменную ADMIN_CHAT_ID`));
+        else if (!ac.fromEnv) rows.push(row('warn', 'Админ-чат', `Чат доступен${ac.title ? ' (' + ac.title + ')' : ''}, но переменная ADMIN_CHAT_ID не задана — сообщения уходят на запасной адрес из кода. Задайте её в Railway`));
+        else if (ac.failed24h) rows.push(row('warn', 'Админ-чат', `Чат доступен, но за сутки не дошло сообщений: ${ac.failed24h}. Загляните в приложение: возможны брони и проблемы без уведомления`));
+        else rows.push(row('ok', 'Админ-чат', `Доступен${ac.title ? ' · ' + ac.title : ''} · за сутки все сообщения дошли`));
+      }
+      const sf = d.sendFailures ? (() => {
+        const byKind = { ...d.sendFailures.byKind };
+        const adminFailed = byKind.admin ? byKind.admin.failed : 0;
+        delete byKind.admin; // сбои админ-чата показаны отдельной строкой выше
+        const last = d.sendFailures.last && d.sendFailures.last.kind === 'admin' ? null : d.sendFailures.last;
+        return { ...d.sendFailures, total: d.sendFailures.total - adminFailed, byKind, last };
+      })() : null;
       if (sf) {
         const KIND = { booking: 'по броням', broadcast: 'рассылки', birthday: 'поздравления', review: 'просьбы об отзыве' };
         if (!sf.total) rows.push(row('ok', 'Сообщения гостям', 'За сутки все дошли'));
@@ -9127,10 +9264,10 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     xlsxLibPromise = new Promise((resolve, reject) => {
       const script = document.createElement('script');
       script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-      script.onload = resolve;
-      script.onerror = reject;
+      script.onload = () => window.XLSX ? resolve() : reject(new Error('Модуль Excel не загрузился'));
+      script.onerror = () => { script.remove(); reject(new Error('Не удалось загрузить модуль Excel. Проверьте интернет')); };
       document.head.appendChild(script);
-    });
+    }).catch(e => { xlsxLibPromise = null; throw e; }); // после сбоя сети следующая попытка снова пробует загрузить, а не ждёт перезагрузки страницы
     return xlsxLibPromise;
   }
 
@@ -9416,12 +9553,25 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       myShift.open = d.open || null;
       myShift.loaded = true;
       showToast(kind === 'open' ? `Смена открыта${d.open ? ' · ' + d.open.opened : ''}` : `Смена закрыта${d.closed ? ' · ' + d.closed : ''}`);
+      if (kind === 'close' && d.dayClose) showDayCloseNotice(d.dayClose);
     } catch {
       notify('Нет связи — отметка не сохранилась, попробуйте ещё раз');
     } finally {
       myShift.busy = false;
       renderShiftBar();
     }
+  }
+  // После закрытия смены: что за этот вечер осталось без отметки (сервер присылает список, только если можно смотреть брони)
+  async function showDayCloseNotice(dc) {
+    const un = dc.unmarked || [], op = dc.open || [];
+    if (!un.length && !op.length) return;
+    const list = (arr, fmt) => arr.slice(0, 10).map(fmt).join('\n') + (arr.length > 10 ? `\nи ещё ${arr.length - 10}` : '');
+    const place = x => x ? (/^\d/.test(x) ? `стол ${x}` : x) : '';
+    const parts = [];
+    if (un.length) parts.push(`Без отметки «Пришёл / Не пришёл»: ${un.length}\n` + list(un, x => `• ${x.name}${[x.time, place(x.place)].filter(Boolean).length ? ' (' + [x.time, place(x.place)].filter(Boolean).join(', ') + ')' : ''}`));
+    if (op.length) parts.push(`Столы не закрыты (нет «Гость ушёл»): ${op.length}\n` + list(op, x => `• ${x.name}${[place(x.place), x.sinceMin != null ? 'сидит ' + shDuration(x.sinceMin) : ''].filter(Boolean).length ? ' (' + [place(x.place), x.sinceMin != null ? 'сидит ' + shDuration(x.sinceMin) : ''].filter(Boolean).join(', ') + ')' : ''}`));
+    const ok = await askConfirm(`Перед уходом: не всё отмечено\n\n${parts.join('\n\n')}`, { ok: can('bookings.view') ? 'Открыть брони' : 'Понятно', cancel: 'Позже' });
+    if (ok && can('bookings.view')) openBookings();
   }
   function shiftOpen() { return shiftAction('open'); }
   async function shiftClose() {
@@ -9852,6 +10002,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     ['cancellations', 'Отмены броней'],
     ['arrivals', 'Пришли по брони'],
     ['noShows', 'Неявки по броням'],
+    ['unmarked', 'Брони без отметки'],
+    ['walkIns', 'Посадки без брони'],
     ['stay', 'Среднее время визита'],
     ['turnover', 'Оборот столов'],
     ['csi', 'CSI — средняя оценка'],
@@ -9861,13 +10013,13 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   // Как показатели сгруппированы на экране и как коротко называются на кнопках
   const AN_METRIC_GROUPS = [
     ['Гости', ['visits', 'guests', 'newGuests', 'returning']],
-    ['Брони', ['bookings', 'cancellations', 'arrivals', 'noShows']],
+    ['Брони', ['bookings', 'cancellations', 'arrivals', 'noShows', 'unmarked', 'walkIns']],
     ['Столы', ['stay', 'turnover']],
     ['Оценки', ['csi', 'nps', 'enps']]
   ];
   const AN_CHIP_LABELS = {
     visits: 'Визиты', guests: 'Уникальные гости', newGuests: 'Новые гости', returning: 'Вернувшиеся',
-    bookings: 'Брони', cancellations: 'Отмены', arrivals: 'Пришли по брони', noShows: 'Неявки',
+    bookings: 'Брони', cancellations: 'Отмены', arrivals: 'Пришли по брони', noShows: 'Неявки', unmarked: 'Без отметки', walkIns: 'Без брони',
     stay: 'Время визита', turnover: 'Оборот столов',
     csi: 'CSI', nps: 'NPS гостей', enps: 'eNPS команды'
   };
@@ -9881,11 +10033,13 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     cancellations: 'Сколько броней на даты периода отменили. Чем меньше, тем лучше.',
     arrivals: 'Брони с отметкой «Пришёл». Брони без отметки не считаются ни здесь, ни в неявках.',
     noShows: 'Брони с отметкой «Не пришёл». Чем меньше, тем лучше.',
+    unmarked: 'Брони прошедших вечеров, по которым так и не нажали «Пришёл» или «Не пришёл». Чем меньше, тем лучше: без отметки неизвестно, пришёл ли гость, и статистика приходов неполная. Мероприятия не считаются.',
+    walkIns: 'Сколько раз гостей посадили за стол без брони (кнопка «Посадить без брони» на схеме). В «Брони» и «Пришли по брони» они не входят.',
     stay: 'Сколько в среднем гость сидит за столом: от отметки «Пришёл» до отметки «Гость ушёл». Считаются только брони, где нажали обе кнопки.',
     turnover: 'Сколько компаний в среднем проходит за вечер через один занятый стол. 1 — стол заняли один раз за вечер, 2 — дважды. Считаются брони с отметкой «Пришёл» и назначенным столом.',
     csi: 'Средняя оценка гостей из отзывов: вечер, кальян, напитки, еда, команда. Шкала до 10.',
     nps: 'Готовность рекомендовать нас: доля оценивших на 9–10 минус доля оценивших на 0–6. От −100 до +100, чем выше, тем лучше.',
-    enps: 'То же самое, но для сотрудников: анонимный опрос команды. От −100 до +100.'
+    enps: 'То же самое, но для сотрудников: анонимный опрос команды. От −100 до +100. Опрос анонимный, поэтому цифра появляется только за закончившийся месяц и только если ответили трое и больше; по дням и неделям не делится.'
   };
   // Слово после числа: «14 визитов», «3 брони»
   const AN_UNITS = {
@@ -9896,10 +10050,12 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     bookings: ['бронь', 'брони', 'броней'],
     cancellations: ['отмена', 'отмены', 'отмен'],
     arrivals: ['пришёл по брони', 'пришли по брони', 'пришли по брони'],
-    noShows: ['неявка', 'неявки', 'неявок']
+    noShows: ['неявка', 'неявки', 'неявок'],
+    unmarked: ['бронь без отметки', 'брони без отметки', 'броней без отметки'],
+    walkIns: ['посадка без брони', 'посадки без брони', 'посадок без брони']
   };
   const AN_VISIT_METRICS = ['visits', 'guests', 'newGuests', 'returning'];
-  const AN_LOWER_BETTER = ['cancellations', 'noShows']; // для них рост — плохо
+  const AN_LOWER_BETTER = ['cancellations', 'noShows', 'unmarked']; // для них рост — плохо
   const AN_PERIODS = [['7', '7 дней'], ['30', '30 дней'], ['90', '90 дней'], ['month', 'Этот месяц'], ['year', 'Этот год'], ['custom', 'Свои даты']];
   const AN_GROUPS = [['day', 'По дням'], ['week', 'По неделям'], ['month', 'По месяцам']];
   const AN_COMPARE = [['prev', 'Прошлый период'], ['year', 'Прошлый год'], ['none', 'Без сравнения']];
@@ -10179,7 +10335,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       <div class="an-total"><span>${anFormat(d.total, d.kind)}</span><span class="an-unit">${escHtml(anUnit(d, d.total).trim())}</span></div>
       <div class="an-period">${fmtDMY(d.from)} — ${fmtDMY(d.to)}</div>`;
     if (d.metric === 'nps' || d.metric === 'enps') html += '<div class="an-period">Шкала от −100 до +100</div>';
-    if (noData) html += `<div class="an-empty-hint">${d.metric === 'stay' ? 'За этот период нет броней с отметкой «Гость ушёл». Время визита появится, когда в бронях начнут отмечать уход.' : 'За этот период нет данных. Попробуйте выбрать период побольше.'}</div>`;
+    if (noData) html += `<div class="an-empty-hint">${d.metric === 'enps' ? 'За этот период нет закончившегося месяца, где ответили трое и больше. Так опрос остаётся анонимным: оценка текущего месяца откроется, когда он закончится.' : d.metric === 'stay' ? 'За этот период нет броней с отметкой «Гость ушёл». Время визита появится, когда в бронях начнут отмечать уход.' : 'За этот период нет данных. Попробуйте выбрать период побольше.'}</div>`;
     else if (d.samples != null) html += `<div class="an-period">${d.metric === 'stay'
       ? `Посчитано по ${d.samples} ${ruPlural(d.samples, 'визиту', 'визитам', 'визитам')} с отметкой «Гость ушёл»`
       : `Посчитано по ${d.samples} ${ruPlural(d.samples, 'занятому столу', 'занятым столам', 'занятым столам')} за вечер`}</div>`;
@@ -10253,16 +10409,20 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       const s = document.createElement('script');
       s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundle.js';
       s.onload = () => window.PptxGenJS ? resolve() : reject(new Error('Модуль презентаций не загрузился'));
-      s.onerror = () => reject(new Error('Не удалось загрузить модуль презентаций. Проверьте интернет'));
+      s.onerror = () => { s.remove(); reject(new Error('Не удалось загрузить модуль презентаций. Проверьте интернет')); };
       document.head.appendChild(s);
     });
   }
 
-  async function anFetchMetric(metric) {
-    const r = anRange();
-    const q = new URLSearchParams({ metric, group: anState.group, compare: anState.compare, from: r.from, to: r.to });
-    if (anState.dow) q.set('dow', anState.dow);
-    if (anState.segment && AN_VISIT_METRICS.includes(metric)) q.set('segment', anState.segment);
+  // Настройки экрана на момент нажатия «Выгрузить»: пока презентация собирается (это несколько запросов подряд), период или фильтр
+  // могут поменять — раньше в одном файле тогда оказывались показатели за разные периоды.
+  function anSnapshot() { return { range: anRange(), group: anState.group, compare: anState.compare, dow: anState.dow, segment: anState.segment }; }
+  async function anFetchMetric(metric, snap) {
+    snap = snap || anSnapshot();
+    const r = snap.range;
+    const q = new URLSearchParams({ metric, group: snap.group, compare: snap.compare, from: r.from, to: r.to });
+    if (snap.dow) q.set('dow', snap.dow);
+    if (snap.segment && AN_VISIT_METRICS.includes(metric)) q.set('segment', snap.segment);
     const res = await fetch(`${PROXY_BASE}/api/admin/analytics?${q.toString()}&pin=${getPin()}`);
     if (res.status === 401) { showScreen('pin'); throw new Error('Войдите заново'); }
     if (res.status === 403) throw new Error('Нет доступа к аналитике');
@@ -10271,12 +10431,13 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   }
 
   // Достаём все показатели небольшими пачками, чтобы не заваливать сервер
-  async function anFetchAll() {
+  async function anFetchAll(snap) {
+    snap = snap || anSnapshot();
     const out = {};
     const list = [...AN_ALL_METRICS];
     for (let i = 0; i < list.length; i += 4) {
       const part = list.slice(i, i + 4);
-      const got = await Promise.all(part.map(anFetchMetric));
+      const got = await Promise.all(part.map(m => anFetchMetric(m, snap)));
       part.forEach((m, j) => { out[m] = got[j]; });
     }
     return AN_ALL_METRICS.map(m => out[m]);
@@ -10550,7 +10711,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     try {
       await anLoadPptx();
       let list, d0;
-      if (mode === 'full') { list = await anFetchAll(); d0 = list[0]; }
+      if (mode === 'full') { list = await anFetchAll(anSnapshot()); d0 = list[0]; }
       else { d0 = anLast.d; }
       const pptx = new window.PptxGenJS();
       pptx.layout = 'LAYOUT_WIDE';
@@ -11062,18 +11223,23 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
     // eNPS персонала — отдельно от периода отзывов гостей (7/30/90 дней): опросы
     // проводятся примерно раз в месяц, поэтому это всегда текущий календарный месяц.
+    // Опрос анонимный: оценку и число ответов текущего месяца не показываем (по тому, как они меняются, видно, кто ответил).
+    // Только последний закончившийся месяц и только если ответили трое и больше.
     const en = d.enps;
     if (en) {
       html += `<div class="sec">eNPS команды · ${escHtml(en.month)}</div>`;
-      if (en.count) {
-        html += statRow('Опросов за месяц', en.count);
+      if (en.hidden) {
+        html += `<div class="empty-state" style="padding:18px 10px">Ответили меньше ${escHtml(String(en.minAnswers || 3))} человек — результат не показывается, чтобы опрос оставался анонимным.</div>`;
+      } else if (en.count) {
+        html += statRow('Ответов за месяц', en.count);
         html += statRow('eNPS', en.score !== null ? signed(en.score) : null);
         html += statRow('Промоутеры', en.promoters);
         html += statRow('Нейтралы', en.passives);
         html += statRow('Критики', en.detractors);
       } else {
-        html += '<div class="empty-state">Нет опросов за этот месяц</div>';
+        html += '<div class="empty-state">За прошлый месяц опроса не было</div>';
       }
+      html += '<div class="note" style="margin-top:8px">Результат текущего месяца откроется, когда он закончится.</div>';
     }
     html += enpsTextsHtml(d.enpsTexts);
 
@@ -12591,7 +12757,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     document.getElementById('editOverlayTitle').textContent = title;
     const body = document.getElementById('editOverlayBody');
     const saveBtn = document.getElementById('editOverlaySave');
-    if (saveBtn) saveBtn.style.display = '';
+    if (saveBtn) { saveBtn.style.display = ''; saveBtn.disabled = false; saveBtn.textContent = 'Сохранить'; }
     const cancelBtn = document.getElementById('editOverlayCancel');
     if (cancelBtn) cancelBtn.textContent = 'Отмена';
 
@@ -12614,6 +12780,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       body.innerHTML = `
         <div class="form-group"><select class="form-input" id="editBirthDay">${dayOpts}</select></div>
         <div class="form-group"><select class="form-input" id="editBirthMonth">${monthOpts}</select></div>
+        ${currentGuest.birthday ? `<button type="button" class="btn-ghost danger" style="margin-top:4px" onclick="clearGuestBirthday()">Стереть дату рождения</button>
+        <div class="note" style="margin-top:6px">Если дату внесли по ошибке — лучше стереть, чем оставить неверную: бот поздравит в этот день.</div>` : ''}
       `;
     } else if (field === 'phone') {
       body.innerHTML = `<input class="form-input" id="editInput" type="tel" value="${escHtml(currentGuest.phone || '+7')}" oninput="formatRuPhone(this)">`;
@@ -12634,6 +12802,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   }
 
   async function saveEditField() {
+    if (editingField === 'walkin') { submitWalkIn(false); return; }
     if (!editingField) { closeEditOverlay(); return; }
     let value;
     let surname;
@@ -12653,6 +12822,12 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
     if (editingField === 'phone' && !isPhoneComplete(value)) { notify('Укажите телефон полностью — карточка без телефона не остаётся'); return; }
     await sendGuestFieldUpdate(editingField, value, false, surname);
+  }
+
+  // Ошибочно внесённую дату рождения можно стереть: раньше её можно было только заменить другой
+  async function clearGuestBirthday() {
+    if (!await askConfirm('Стереть дату рождения?\n\nБот не будет поздравлять этого гостя, пока дату не внесут заново.', { ok: 'Стереть', danger: true })) return;
+    await sendGuestFieldUpdate('birthday', '', false);
   }
 
   async function sendGuestFieldUpdate(field, value, force, surname) {
