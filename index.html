@@ -570,6 +570,9 @@
     .num-field { position: relative; }
     .num-field .form-input { padding-right: 46px; -moz-appearance: textfield; appearance: textfield; }
     .num-field .form-input::-webkit-inner-spin-button, .num-field .form-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    /* узкие числовые поля в настройках («Просьбы об отзыве», «Правила сегментов»): белые системные стрелки убраны, число вводят с клавиатуры */
+    .rr-r .form-input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+    .rr-r .form-input[type="number"]::-webkit-inner-spin-button, .rr-r .form-input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     .num-steps { position: absolute; top: 50%; right: 8px; transform: translateY(-50%); display: flex; flex-direction: column; gap: 3px; }
     .num-steps button { width: 26px; height: 17px; padding: 0; display: flex; align-items: center; justify-content: center; background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(184,115,51,0.35); border-radius: 6px; cursor: pointer; }
     .num-steps button:hover, .num-steps button:active { background: rgba(184,115,51,0.28); }
@@ -6340,7 +6343,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     document.getElementById('editOverlayBody').innerHTML = `
       <div class="note" style="margin-bottom:12px">Гости пришли без брони. Стол станет занятым на схеме, время за столом пойдёт с этой минуты. Когда гости уйдут — нажмите «Гость ушёл».</div>
       <div class="form-group"><label class="form-label">Имя (необязательно)</label><input class="form-input" id="wiName" type="text" maxlength="60" placeholder="Например, Анна" autocomplete="off"></div>
-      <div class="form-group"><label class="form-label">Сколько гостей (необязательно)</label><input class="form-input" id="wiGuests" type="number" min="1" max="50" inputmode="numeric" placeholder="${tb.seats ? 'За столом мест: ' + tb.seats : ''}"></div>`;
+      <div class="form-group"><label class="form-label">Сколько гостей (необязательно)</label><div class="num-field"><input class="form-input" id="wiGuests" type="number" min="1" max="50" inputmode="numeric" placeholder="${tb.seats ? 'За столом мест: ' + tb.seats : ''}"><div class="num-steps"><button type="button" tabindex="-1" aria-label="Больше" onclick="stepNum(this,1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 15 12 9 18 15"/></svg></button><button type="button" tabindex="-1" aria-label="Меньше" onclick="stepNum(this,-1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button></div></div></div>`;
     document.getElementById('editOverlay').classList.add('show');
   }
   async function submitWalkIn(force) {
