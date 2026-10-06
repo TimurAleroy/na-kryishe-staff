@@ -6551,14 +6551,25 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (!b) { notify(BOOKING_GONE); return; }
     const key = bookingKey(b);
     const whose = `${b.name || 'Гость'}${b.display ? ', ' + b.display : ''}`;
-    if (!await askConfirm(`Отменить бронь?\n\n${whose}\n\nГость получит уведомление об отмене.`, { ok: 'Отменить бронь', cancel: 'Не отменять', danger: true })) return;
+    // причина отмены решает, что напишем гостю; самый вероятный вариант — первым
+    const REASONS = [
+      ['changed_mind', 'Гость передумал — «Будем рады видеть»'],
+      ['no_seats', 'Нет мест — извинение, просьба выбрать другое время'],
+      ['closed', 'Бар закрыт в этот день — просьба выбрать другую дату'],
+      ['other', 'Другая причина — гостю сообщение не отправляется']
+    ];
+    if (b.status !== 'confirmed') REASONS.unshift(REASONS.splice(1, 1)[0]);
+    const picked = await askChoice(`Отменить бронь: ${whose}. Почему?`, REASONS.map(r => r[1]));
+    if (!picked) return;
+    const reason = (REASONS.find(r => r[1] === picked) || [])[0];
+    if (!reason) return;
     if (bookingActionBusy) return;
     bookingActionBusy = true;
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/bookings/cancel?pin=${getPin()}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: getPin(), phone: b.phone, entry: b.entry })
+        body: JSON.stringify({ pin: getPin(), phone: b.phone, entry: b.entry, reason })
       });
       const data = await res.json();
       if (!res.ok) { notify(data.error || 'Не удалось отменить'); return; }
@@ -6570,7 +6581,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       currentBookingKey = '';
       refreshBookingsDot();
       showScreen('bookings');
-      if (!data.notified && !data.already) notify('Бронь отменена, но гостя уведомить не удалось — свяжитесь сами.');
+      if (data.silent) showToast('Бронь отменена. Гостю сообщение не отправлялось.');
+      else if (!data.notified && !data.already) notify('Бронь отменена, но гостя уведомить не удалось — свяжитесь сами.');
     } catch {
       notify('Не удалось отменить');
     } finally {
@@ -10009,6 +10021,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     ['returning', 'Вернувшиеся гости'],
     ['bookings', 'Брони'],
     ['cancellations', 'Отмены броней'],
+    ['cancelNoSeats', 'Отмены: нет мест'],
+    ['cancelChangedMind', 'Отмены: гость передумал'],
     ['arrivals', 'Пришли по брони'],
     ['noShows', 'Неявки по броням'],
     ['unmarked', 'Брони без отметки'],
@@ -10022,13 +10036,13 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   // Как показатели сгруппированы на экране и как коротко называются на кнопках
   const AN_METRIC_GROUPS = [
     ['Гости', ['visits', 'guests', 'newGuests', 'returning']],
-    ['Брони', ['bookings', 'cancellations', 'arrivals', 'noShows', 'unmarked', 'walkIns']],
+    ['Брони', ['bookings', 'cancellations', 'cancelNoSeats', 'cancelChangedMind', 'arrivals', 'noShows', 'unmarked', 'walkIns']],
     ['Столы', ['stay', 'turnover']],
     ['Оценки', ['csi', 'nps', 'enps']]
   ];
   const AN_CHIP_LABELS = {
     visits: 'Визиты', guests: 'Уникальные гости', newGuests: 'Новые гости', returning: 'Вернувшиеся',
-    bookings: 'Брони', cancellations: 'Отмены', arrivals: 'Пришли по брони', noShows: 'Неявки', unmarked: 'Без отметки', walkIns: 'Без брони',
+    bookings: 'Брони', cancellations: 'Отмены', cancelNoSeats: 'Нет мест', cancelChangedMind: 'Передумали', arrivals: 'Пришли по брони', noShows: 'Неявки', unmarked: 'Без отметки', walkIns: 'Без брони',
     stay: 'Время визита', turnover: 'Оборот столов',
     csi: 'CSI', nps: 'NPS гостей', enps: 'eNPS команды'
   };
@@ -10040,6 +10054,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     returning: 'Гости, которые были в этом периоде и приходили к нам раньше — до его начала.',
     bookings: 'Сколько броней на даты периода. Отменённые не считаются.',
     cancellations: 'Сколько броней на даты периода отменили. Чем меньше, тем лучше.',
+    cancelNoSeats: 'Отмены, где сотрудник выбрал причину «Нет мест»: вы теряете гостей из-за заполненного зала. Причина записывается с 6 октября, раньше — без причины.',
+    cancelChangedMind: 'Отмены, где сотрудник выбрал причину «Гость передумал». Причина записывается с 6 октября, раньше — без причины.',
     arrivals: 'Брони с отметкой «Пришёл». Брони без отметки не считаются ни здесь, ни в неявках.',
     noShows: 'Брони с отметкой «Не пришёл». Чем меньше, тем лучше.',
     unmarked: 'Брони прошедших вечеров, по которым так и не нажали «Пришёл» или «Не пришёл». Чем меньше, тем лучше: без отметки неизвестно, пришёл ли гость, и статистика приходов неполная. Мероприятия не считаются.',
@@ -10058,13 +10074,15 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     returning: ['вернувшийся гость', 'вернувшихся гостя', 'вернувшихся гостей'],
     bookings: ['бронь', 'брони', 'броней'],
     cancellations: ['отмена', 'отмены', 'отмен'],
+    cancelNoSeats: ['отмена: нет мест', 'отмены: нет мест', 'отмен: нет мест'],
+    cancelChangedMind: ['отмена: гость передумал', 'отмены: гость передумал', 'отмен: гость передумал'],
     arrivals: ['пришёл по брони', 'пришли по брони', 'пришли по брони'],
     noShows: ['неявка', 'неявки', 'неявок'],
     unmarked: ['бронь без отметки', 'брони без отметки', 'броней без отметки'],
     walkIns: ['посадка без брони', 'посадки без брони', 'посадок без брони']
   };
   const AN_VISIT_METRICS = ['visits', 'guests', 'newGuests', 'returning'];
-  const AN_LOWER_BETTER = ['cancellations', 'noShows', 'unmarked']; // для них рост — плохо
+  const AN_LOWER_BETTER = ['cancellations', 'cancelNoSeats', 'cancelChangedMind', 'noShows', 'unmarked']; // для них рост — плохо
   const AN_PERIODS = [['7', '7 дней'], ['30', '30 дней'], ['90', '90 дней'], ['month', 'Этот месяц'], ['year', 'Этот год'], ['custom', 'Свои даты']];
   const AN_GROUPS = [['day', 'По дням'], ['week', 'По неделям'], ['month', 'По месяцам']];
   const AN_COMPARE = [['prev', 'Прошлый период'], ['year', 'Прошлый год'], ['none', 'Без сравнения']];
