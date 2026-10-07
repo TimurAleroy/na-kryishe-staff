@@ -6956,6 +6956,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       ${when ? `<div class="pb-when">Сообщили ${escHtml(when)}</div>` : ''}
       ${isResolved && p.resolvedAt ? `<div class="pb-when">Закрыл(а) ${escHtml(String(p.resolvedBy || 'сотрудник').replace(/ \(.+\)$/, ''))} · ${escHtml(timeAgo(p.resolvedAt))}</div>` : ''}
       ${p.rootCause ? `<div class="pb-cause"><b>Причина:</b> ${escHtml(p.rootCause)}</div>` : (isResolved ? '<div class="pb-cause"><b>Причина:</b> не указана</div>' : '')}
+      ${isResolved && p.contact ? `<div class="pb-cause"><b>Гость:</b> ${p.contact === 'contacted' ? 'связались' : p.contact === 'no_answer' ? 'связаться не удалось' : 'связываться не нужно'}${p.contactNote ? ` — ${escHtml(p.contactNote)}` : ''}</div>` : ''}
       <div class="pb-actions">${action}${reassign}</div>
     </div>`;
   }
@@ -7005,7 +7006,9 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       });
       if (res.status === 401) { showScreen('pin'); return false; }
       if (!res.ok) { notify(await responseError(res, 'Не удалось сохранить')); return false; }
-      notify(okText, 'ok');
+      let warn = '';
+      try { warn = (await res.json()).warning || ''; } catch {}
+      notify(warn ? `${okText}. ${warn}` : okText, 'ok');
       openProblems();
       return true;
     } catch {
@@ -7028,7 +7031,21 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       if (v === null) return;
       rootCause = v;
     }
-    return problemPost(id, 'resolve', { rootCause }, 'Проблема решена');
+    // Проблема из отзыва гостя: обязательно ответить, связались ли с гостем (у анонимного отзыва связаться не с кем)
+    const body = { rootCause };
+    if (p && p.fromReview && !p.anonymous) {
+      const ans = await askChoice('Связались с гостем?\n\nГость оставил низкую оценку. Ответьте, чтобы закрыть проблему.', ['Да, связались', 'Не получилось связаться', 'Не нужно']);
+      if (!ans) return;
+      if (ans === 'Да, связались') body.contact = 'contacted';
+      else if (ans === 'Не получилось связаться') body.contact = 'no_answer';
+      else {
+        const why = await askText('Почему связываться не нужно?\n\nНапример: гость получил компенсацию на месте.', { placeholder: 'Коротко, одной фразой', ok: 'Решена', required: true });
+        if (why === null) return;
+        body.contact = 'not_needed';
+        body.contactNote = why;
+      }
+    }
+    return problemPost(id, 'resolve', body, 'Проблема решена');
   }
 
   async function reassignProblem(id) {
@@ -7045,7 +7062,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       const ov = document.createElement('div');
       ov.className = 'app-dialog-ov';
       ov.innerHTML = `<div class="app-dialog" role="dialog" aria-modal="true">
-        <div class="app-dialog-title">${escHtml(message)}</div>
+        <div class="app-dialog-title">${escHtml(String(message).split('\n\n')[0])}</div>
+        ${String(message).includes('\n\n') ? `<div class="app-dialog-text">${escHtml(String(message).split('\n\n').slice(1).join('\n\n'))}</div>` : ''}
         <div class="app-choice">${options.map((o, i) => `<button type="button" class="app-choice-btn" data-i="${i}">${escHtml(o)}</button>`).join('')}</div>
         <div class="app-dialog-btns"><button type="button" class="app-dialog-btn" data-v="0">Отмена</button></div>
       </div>`;
@@ -11483,6 +11501,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       <div class="hint-item">Бот попросил оценить визит: ${rq.sent} ${ruPlural(rq.sent, 'гостя', 'гостей', 'гостей')}${rq.noTelegram ? ` · не смог написать (нет Telegram): ${rq.noTelegram}` : ''}${rq.optedOut ? ` · отписались: ${rq.optedOut}` : ''}</div>
       <div class="hint-item ${s.negative ? 'danger' : 'good'}">Негативных отзывов: ${s.negative}</div>
       <div class="hint-item ${d.openProblems.overdue ? 'danger' : ''}">Открытых проблем: ${d.openProblems.total}${d.openProblems.overdue ? ` (просрочено: ${d.openProblems.overdue})` : ''}</div>
+      ${(() => { const gc = d.openProblems.guestContact; const all = gc ? gc.contacted + gc.noAnswer + gc.notNeeded : 0; return all ? `<div class="hint-item ${gc.noAnswer ? 'danger' : ''}">С гостями по закрытым отзывам: связались ${gc.contacted} из ${all}${gc.noAnswer ? ` · не дозвонились: ${gc.noAnswer}` : ''}${gc.notNeeded ? ` · не требовалось: ${gc.notNeeded}` : ''}</div>` : ''; })()}
       ${d.openProblems.total ? '<button class="link-btn" onclick="openProblems()">Открыть проблемы →</button>' : ''}
     </div>`;
 
@@ -11603,12 +11622,14 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   function empRowHtml(e) {
     const meta = [];
+    let noTg = false;
     if (e.isSelf) meta.push('это вы');
     if (e.login) meta.push(e.login);
     if (e.lockedUntil) meta.push('вход закрыт');
     else if (!e.hasPassword) meta.push('пароль не задан');
     else if (e.mustChangePassword) meta.push('ждёт смены пароля');
     if (e.telegramId) meta.push('Telegram привязан');
+    else if (e.active) noTg = true;
     if (e.customPerms) meta.push('особые права');
     const seen = empSeenText(e);
     if (seen) meta.push(seen);
@@ -11616,7 +11637,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       <div class="emp-row${e.active ? '' : ' off'}" onclick="openEmployeeForm('${escJs(e.id)}')">
         <div class="emp-body">
           <div class="emp-name">${escHtml(e.name)}</div>
-          ${meta.length ? `<div class="emp-meta${e.lockedUntil ? ' emp-lock' : ''}">${escHtml(meta.join(' · '))}</div>` : ''}
+          ${meta.length || noTg ? `<div class="emp-meta${e.lockedUntil ? ' emp-lock' : ''}">${escHtml(meta.join(' · '))}${noTg ? `<span class="emp-lock">${meta.length ? ' · ' : ''}нет Telegram ID</span>` : ''}</div>` : ''}
         </div>
         <div class="emp-role">${escHtml(e.role)}</div>
         <div class="qrow-chev">›</div>
