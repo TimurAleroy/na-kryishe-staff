@@ -482,6 +482,11 @@
     .au-meta { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
     .rr-sum { background: var(--accent-dim); border: 1px solid rgba(184,115,51,0.3); border-radius: 14px; padding: 12px 14px; font-size: 13px; color: var(--text); line-height: 1.55; margin-top: 8px; }
     .rr-warn { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.35); border-radius: 14px; padding: 10px 14px; font-size: 12.5px; color: var(--text); line-height: 1.5; margin-top: 8px; }
+    .ss-chip { font-size: 11px; letter-spacing: 0.4px; padding: 3px 10px; border-radius: 100px; border: 1px solid rgba(240,223,192,0.18); color: var(--text-muted); white-space: nowrap; }
+    .ss-chip.now { color: #4ade80; border-color: rgba(74,222,128,0.45); }
+    .ss-dates { display: flex; gap: 10px; margin-top: 10px; }
+    .ss-dates > div { flex: 1; min-width: 0; }
+    .ss-dates .form-input { width: 100%; min-width: 0; }
     .rr-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 0 14px; }
     .rr-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid var(--border); }
     .rr-card > :first-child { border-top: none; }
@@ -2447,6 +2452,19 @@
   </div>
 </div>
 
+<div class="screen" id="screen-season">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('service')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Сезоны</h1><p>Праздничная анимация в приложении гостя</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div id="ssContent" style="margin-top:6px"><div class="loading">Загружаю...</div></div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
 <div class="screen" id="screen-review-rules">
   <div class="header">
     <div class="back-btn" onclick="showScreen('service')">
@@ -3408,6 +3426,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'Логины, роли и права', fn: 'openEmployees()' });
     if (can('candidates.view')) list.push({ group: G.team, icon: 'candidates', short: 'кандидаты', title: 'Кандидаты', sub: 'Отклики на вакансии', fn: 'openCandidates()' });
     if (can('settings.manage')) list.push({ group: G.guests, icon: 'segments', short: 'правила сегментов', title: 'Правила сегментов', sub: 'Границы: дни и визиты', fn: 'openSegmentRules()' });
+    if (can('settings.manage')) list.push({ group: G.content, icon: 'season', short: 'сезоны', title: 'Сезоны', sub: 'Снег, сердечки, лепестки у гостей', fn: 'openSeason()' });
     if (can('settings.manage')) list.push({ group: G.system, icon: 'reviews', short: 'отзывы', title: 'Просьбы об отзыве', sub: 'Когда и кому бот пишет', fn: 'openReviewRules()' });
     if (can('settings.manage') || can('events.manage')) list.push({ group: G.system, icon: 'venue', short: 'режим работы', title: 'Режим работы', sub: 'Часы, закрытые даты, терраса', fn: 'openVenue()' });
     if (can('settings.manage') || can('marketing.send')) list.push({ group: G.guests, icon: 'birthday', short: 'поздравления', title: 'Поздравления', sub: 'Что бот пишет именинникам', fn: 'openBirthdayText()' });
@@ -3483,6 +3502,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const qgroup = (label, extraClass) => `<div class="qgroup-label${extraClass ? ' ' + extraClass : ''}">${label}</div>`;
 
     const icons = {
+      season: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><line x1="12" y1="3" x2="12" y2="21"/><line x1="4.2" y1="7.5" x2="19.8" y2="16.5"/><line x1="4.2" y1="16.5" x2="19.8" y2="7.5"/></svg>',
       birthday: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2c-1.5 2.5-3 4.5-3 7a3 3 0 006 0c0-2.5-1.5-4.5-3-7z"/><line x1="12" y1="14" x2="12" y2="22"/></svg>',
       recent: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 103-6.7"/><polyline points="3 4 3 9 8 9"/><polyline points="12 8 12 12 15 14"/></svg>',
       tasks: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="15" y2="14"/><line x1="9" y1="18" x2="12" y2="18"/></svg>',
@@ -8296,6 +8316,109 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     }
   }
 
+  // ─── СЕРВИС → КОНТЕНТ: СЕЗОНЫ (праздничная анимация в приложении гостя) ───
+  var ss = null;       // ответ сервера: сезоны, эффекты, сегодняшний день, что видят гости
+  var ssSaved = '';    // как сезоны лежат на сервере (чтобы понимать, есть ли несохранённые правки)
+  function openSeason() {
+    if (!needPerm('settings.manage', 'настраивать сезоны')) return;
+    showScreen('season');
+    loadSeason();
+  }
+  async function loadSeason() {
+    const el = document.getElementById('ssContent');
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/season?pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить сезоны'));
+      ss = await res.json();
+      ssSaved = ssKey();
+      renderSeason();
+    } catch (e) {
+      el.innerHTML = errorStateHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером', 'loadSeason()');
+    }
+  }
+  const ssKey = () => JSON.stringify(ss.items.map(x => [x.effect, x.from, x.to, x.enabled]));
+  function ssFmt(d) { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d || ''); return m ? `${m[3]}.${m[2]}.${m[1]}` : ''; }
+  function ssState(x) {
+    if (!x.enabled) return ['выключен', ''];
+    if (!x.from || !x.to) return ['', ''];
+    if (x.to < ss.today) return ['прошёл', ''];
+    if (x.from > ss.today) return ['ещё не начался', ''];
+    return ['идёт сейчас', 'work'];
+  }
+  function renderSeason() {
+    const el = document.getElementById('ssContent');
+    const dirty = ssKey() !== ssSaved;
+    const effOpts = x => ss.effects.map(e => `<option value="${e.id}"${e.id === x.effect ? ' selected' : ''}>${escHtml(e.name)}</option>`).join('');
+    const cards = ss.items.map((x, i) => {
+      const [st, cls] = ssState(x);
+      return `<div class="rr-card" style="padding:12px 14px;margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-size:11px;letter-spacing:1px;color:var(--text-muted);text-transform:uppercase">Сезон ${i + 1}</span>
+          ${st ? `<span class="ss-chip${cls === 'work' ? ' now' : ''}">${st}</span>` : ''}
+        </div>
+        <select class="form-input" onchange="ssSet(${i},'effect',this.value)">${effOpts(x)}</select>
+        <div class="ss-dates">
+          <div><div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">С</div><input class="form-input" type="date" value="${escHtml(x.from)}" onchange="ssSet(${i},'from',this.value)"></div>
+          <div><div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">По (включительно)</div><input class="form-input" type="date" value="${escHtml(x.to)}" onchange="ssSet(${i},'to',this.value)"></div>
+        </div>
+        <label class="perm-row" style="padding-left:0;padding-right:0;margin-top:6px">
+          <input type="checkbox"${x.enabled ? ' checked' : ''} onchange="ssSet(${i},'enabled',this.checked)">
+          <span class="perm-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 9 17 20 6"/></svg></span>
+          <span style="font-size:14px;color:var(--text)">Включён</span>
+        </label>
+        <button type="button" class="pb-link" onclick="ssRemove(${i})">Удалить сезон</button>
+      </div>`;
+    }).join('');
+    const active = ss.active
+      ? `Сегодня гости видят: <b>${escHtml(ss.active.name)}</b>`
+      : 'Сегодня у гостей анимации нет';
+    const meta = ss.meta && ss.meta.updatedAt ? `Последняя правка: ${fmtDateTime(ss.meta.updatedAt)}${ss.meta.updatedBy ? ', ' + escHtml(ss.meta.updatedBy) : ''}` : 'Пока ни одного сезона';
+    el.innerHTML = `<div class="rr-card" style="padding:12px 14px;margin-bottom:10px"><div style="font-size:14px;color:var(--text)">${active}</div><div style="font-size:11.5px;color:var(--text-muted);margin-top:4px">${meta}</div></div>`
+      + (cards || '<div class="poster-note" style="margin:8px 2px 12px">Сезонов пока нет — у гостей обычное приложение. Добавьте сезон: выберите праздник и даты.</div>')
+      + '<button class="btn-ghost" onclick="ssAdd()">+ Добавить сезон</button>'
+      + `<button class="btn-cta" id="ssSaveBtn" style="margin-top:14px"${dirty ? '' : ' disabled'} onclick="saveSeason()">Сохранить</button>`
+      + '<div class="poster-note" style="margin-top:10px">Анимация идёт в приложении гостя в выбранные даты по московскому времени: снег и гирлянда, сердечки или лепестки. Если даты двух сезонов совпали, показывается тот, что выше. Гости увидят изменение в течение минуты при открытии приложения. У тех, кто включил в телефоне «уменьшить движение», анимации не будет.</div>';
+  }
+  function ssSet(i, k, v) { ss.items[i][k] = v; renderSeason(); }
+  function ssRemove(i) { ss.items.splice(i, 1); renderSeason(); }
+  async function ssAdd() {
+    if (ss.items.length >= 20) { notify('Сезонов не больше 20'); return; }
+    const P = ['Новый год: снег и гирлянда', '14 февраля: сердечки', '8 Марта: лепестки', 'Свой период'];
+    const pick = await askChoice('Какой сезон добавить?', P);
+    if (!pick) return;
+    const [Y, M, D] = ss.today.split('-').map(Number);
+    const pad = n => String(n).padStart(2, '0'), ymd = (y, m, d) => `${y}-${pad(m)}-${pad(d)}`;
+    let item;
+    if (pick === P[0]) { const y = (M === 1 && D <= 10) ? Y - 1 : Y; item = { effect: 'newyear', from: ymd(y, 12, 15), to: ymd(y + 1, 1, 10) }; }
+    else if (pick === P[1]) { const y = (M * 100 + D) > 215 ? Y + 1 : Y; item = { effect: 'valentine', from: ymd(y, 2, 12), to: ymd(y, 2, 15) }; }
+    else if (pick === P[2]) { const y = (M * 100 + D) > 309 ? Y + 1 : Y; item = { effect: 'march8', from: ymd(y, 3, 6), to: ymd(y, 3, 9) }; }
+    else { const e = new Date(Date.UTC(Y, M - 1, D + 7)); item = { effect: 'newyear', from: ss.today, to: ymd(e.getUTCFullYear(), e.getUTCMonth() + 1, e.getUTCDate()) }; }
+    ss.items.push({ id: '', enabled: true, ...item });
+    renderSeason();
+  }
+  async function saveSeason() {
+    const btn = document.getElementById('ssSaveBtn');
+    if (!btn || btn.disabled) return;
+    for (let i = 0; i < ss.items.length; i++) {
+      const x = ss.items[i];
+      if (!x.from || !x.to) { notify(`Сезон ${i + 1}: укажите даты «с» и «по»`); return; }
+      if (x.from > x.to) { notify(`Сезон ${i + 1}: дата «с» позже даты «по»`); return; }
+    }
+    btn.disabled = true; btn.textContent = 'Сохраняем...';
+    try {
+      ss = await tgRequest('PUT', '/api/admin/season', { items: ss.items });
+      ssSaved = ssKey();
+      renderSeason();
+      notify(ss.active ? `Сохранено. Сегодня у гостей: ${ss.active.name}` : 'Сохранено. Сегодня у гостей анимации нет', 'ok');
+    } catch (e) {
+      btn.disabled = false; btn.textContent = 'Сохранить';
+      notify(tgNetErr(e));
+    }
+  }
+
   // ─── СЕРВИС → СИСТЕМА: ПРОСЬБЫ ОБ ОТЗЫВЕ ───
   var rr = null;      // ответ сервера: правила, значения по умолчанию, статистика
   const RR_BOOL = ['enabled', 'first_visit_always', 'skip_vip'];
@@ -12115,7 +12238,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'venue', 'birthday-text', 'messages'];
+  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages'];
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
 
