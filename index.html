@@ -3426,7 +3426,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'Логины, роли и права', fn: 'openEmployees()' });
     if (can('candidates.view')) list.push({ group: G.team, icon: 'candidates', short: 'кандидаты', title: 'Кандидаты', sub: 'Отклики на вакансии', fn: 'openCandidates()' });
     if (can('settings.manage')) list.push({ group: G.guests, icon: 'segments', short: 'правила сегментов', title: 'Правила сегментов', sub: 'Границы: дни и визиты', fn: 'openSegmentRules()' });
-    if (can('settings.manage')) list.push({ group: G.content, icon: 'season', short: 'сезоны', title: 'Сезоны', sub: 'Снег, сердечки, лепестки у гостей', fn: 'openSeason()' });
+    if (can('settings.manage')) list.push({ group: G.content, icon: 'season', short: 'сезоны', title: 'Сезоны', sub: 'Снег, сердечки, мимоза у гостей', fn: 'openSeason()' });
     if (can('settings.manage')) list.push({ group: G.system, icon: 'reviews', short: 'отзывы', title: 'Просьбы об отзыве', sub: 'Когда и кому бот пишет', fn: 'openReviewRules()' });
     if (can('settings.manage') || can('events.manage')) list.push({ group: G.system, icon: 'venue', short: 'режим работы', title: 'Режим работы', sub: 'Часы, закрытые даты, терраса', fn: 'openVenue()' });
     if (can('settings.manage') || can('marketing.send')) list.push({ group: G.guests, icon: 'birthday', short: 'поздравления', title: 'Поздравления', sub: 'Что бот пишет именинникам', fn: 'openBirthdayText()' });
@@ -8386,7 +8386,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   function ssRemove(i) { ss.items.splice(i, 1); renderSeason(); }
   async function ssAdd() {
     if (ss.items.length >= 20) { notify('Сезонов не больше 20'); return; }
-    const P = ['Новый год: снег и гирлянда', '14 февраля: сердечки', '8 Марта: лепестки', 'Свой период'];
+    const P = ['Новый год: снег и гирлянда', '14 февраля: сердечки', '8 Марта: мимоза и цветочки', 'Свой период'];
     const pick = await askChoice('Какой сезон добавить?', P);
     if (!pick) return;
     const [Y, M, D] = ss.today.split('-').map(Number);
