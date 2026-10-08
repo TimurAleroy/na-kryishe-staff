@@ -6655,18 +6655,25 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (!b) { notify(BOOKING_GONE); return; }
     const key = bookingKey(b);
     const whose = `${b.name || 'Гость'}${b.display ? ', ' + b.display : ''}`;
-    // причина отмены решает, что напишем гостю; самый вероятный вариант — первым
-    const REASONS = [
-      ['changed_mind', 'Гость передумал — «Будем рады видеть»'],
-      ['no_seats', 'Нет мест — извинение, просьба выбрать другое время'],
-      ['closed', 'Бар закрыт в этот день — просьба выбрать другую дату'],
-      ['other', 'Другая причина — гостю сообщение не отправляется']
-    ];
-    if (b.status !== 'confirmed') REASONS.unshift(REASONS.splice(1, 1)[0]);
-    const picked = await askChoice(`Отменить бронь: ${whose}. Почему?`, REASONS.map(r => r[1]));
-    if (!picked) return;
-    const reason = (REASONS.find(r => r[1] === picked) || [])[0];
-    if (!reason) return;
+    // Бронь с сайта или по телефону: бот гостю ничего не пишет, админ связывается сам. Причину не спрашиваем,
+    // только подтверждаем отмену, чтобы не нажать случайно.
+    // Бронь из приложения (гость в Telegram): причина решает, что бот напишет гостю. У подтверждённой брони
+    // «нет мест» не бывает: места же нашлись.
+    let reason;
+    if (b.canNotify === false) {
+      const ok = await askChoice(`Отменить бронь: ${whose}?\n\nГостю сообщение не отправится — свяжитесь с ним сами.`, ['Да, отменить бронь']);
+      if (!ok) return;
+      reason = 'other'; // «без сообщения гостю»
+    } else {
+      const REASONS = b.status === 'confirmed'
+        ? [['changed_mind', 'Гость передумал — «Будем рады видеть»']]
+        : [['no_seats', 'Нет мест — извинение, просьба выбрать другое время'],
+           ['changed_mind', 'Гость передумал — «Будем рады видеть»']];
+      const picked = await askChoice(`Отменить бронь: ${whose}. Почему?\n\nГостю в Telegram уйдёт сообщение.`, REASONS.map(r => r[1]));
+      if (!picked) return;
+      reason = (REASONS.find(r => r[1] === picked) || [])[0];
+      if (!reason) return;
+    }
     if (bookingActionBusy) return;
     bookingActionBusy = true;
     try {
