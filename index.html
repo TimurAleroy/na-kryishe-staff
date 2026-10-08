@@ -484,9 +484,13 @@
     .rr-warn { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.35); border-radius: 14px; padding: 10px 14px; font-size: 12.5px; color: var(--text); line-height: 1.5; margin-top: 8px; }
     .ss-chip { font-size: 11px; letter-spacing: 0.4px; padding: 3px 10px; border-radius: 100px; border: 1px solid rgba(240,223,192,0.18); color: var(--text-muted); white-space: nowrap; }
     .ss-chip.now { color: #4ade80; border-color: rgba(74,222,128,0.45); }
-    .ss-dates { display: flex; gap: 10px; margin-top: 10px; }
-    .ss-dates > div { flex: 1; min-width: 0; }
-    .ss-dates .form-input { width: 100%; min-width: 0; }
+    /* два поля даты в ряд: на iPhone у поля даты своя минимальная ширина — без этого правое вылезало за карточку */
+    .ss-dates { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin-top: 10px; }
+    .ss-dates > div { min-width: 0; overflow: hidden; }
+    .ss-dates .form-input { display: block; width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; height: 46px; padding: 0 10px; font-size: 15px; -webkit-appearance: none; appearance: none; text-align: left; }
+    .ss-dates .form-input::-webkit-date-and-time-value { text-align: left; min-height: 1.2em; }
+    .ss-lbl { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+    .ss-del { display: block; margin-top: 4px; padding: 8px 0; background: none; border: none; color: var(--accent); font-family: 'Inter', sans-serif; font-size: 13px; cursor: pointer; }
     .rr-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 0 14px; }
     .rr-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid var(--border); }
     .rr-card > :first-child { border-top: none; }
@@ -8363,15 +8367,15 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
         </div>
         <select class="form-input" onchange="ssSet(${i},'effect',this.value)">${effOpts(x)}</select>
         <div class="ss-dates">
-          <div><div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">С</div><input class="form-input" type="date" value="${escHtml(x.from)}" onchange="ssSet(${i},'from',this.value)"></div>
-          <div><div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">По (включительно)</div><input class="form-input" type="date" value="${escHtml(x.to)}" onchange="ssSet(${i},'to',this.value)"></div>
+          <div><div class="ss-lbl">С</div><input class="form-input" type="date" value="${escHtml(x.from)}" onchange="ssSet(${i},'from',this.value)"></div>
+          <div><div class="ss-lbl">По (включительно)</div><input class="form-input" type="date" value="${escHtml(x.to)}" onchange="ssSet(${i},'to',this.value)"></div>
         </div>
         <label class="perm-row" style="padding-left:0;padding-right:0;margin-top:6px">
           <input type="checkbox"${x.enabled ? ' checked' : ''} onchange="ssSet(${i},'enabled',this.checked)">
           <span class="perm-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 9 17 20 6"/></svg></span>
           <span style="font-size:14px;color:var(--text)">Включён</span>
         </label>
-        <button type="button" class="pb-link" onclick="ssRemove(${i})">Удалить сезон</button>
+        <button type="button" class="ss-del" onclick="ssRemove(${i})">Удалить сезон</button>
       </div>`;
     }).join('');
     const active = ss.active
