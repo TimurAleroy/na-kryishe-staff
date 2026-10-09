@@ -364,6 +364,30 @@
     .poster-actions { display: flex; gap: 8px; margin-top: 8px; }
     .poster-note { font-size: 11.5px; color: var(--text-muted); margin-top: 6px; min-height: 14px; }
     .poster-note.warn { color: #f59e0b; }
+    /* Афиша календарём (боковая панель и экран «Мероприятия») */
+    .ec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .ec-title { font-family: 'Jost', sans-serif; font-size: 13px; letter-spacing: 0.5px; color: var(--text); }
+    .ec-nav { width: 26px; height: 26px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-sub); font-size: 15px; line-height: 1; cursor: pointer; padding: 0; }
+    .ec-nav:disabled { opacity: 0.3; cursor: default; }
+    .ec-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+    .ec-wd { text-align: center; font-size: 9.5px; letter-spacing: 0.5px; color: var(--text-muted); padding-bottom: 3px; }
+    .ec-day { position: relative; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border: 1px solid transparent; border-radius: 8px; background: transparent; color: var(--text-sub); font: inherit; font-size: 11.5px; padding: 0; cursor: pointer; }
+    .ec-day.empty { cursor: default; }
+    .ec-day.past { color: var(--text-muted); opacity: 0.55; }
+    .ec-day.today { border-color: rgba(184,115,51,0.55); color: var(--text); }
+    .ec-day.has { background: rgba(184,115,51,0.12); color: var(--text); }
+    .ec-day.sel { background: var(--accent); border-color: var(--accent); color: #140B00; }
+    .ec-dots { position: absolute; bottom: 3px; left: 0; right: 0; display: flex; justify-content: center; gap: 2px; pointer-events: none; }
+    .ec-dots b { width: 3px; height: 3px; border-radius: 50%; background: var(--accent); }
+    .ec-day.sel .ec-dots b { background: #140B00; }
+    @media (hover: hover) { .ec-day:not(.empty):hover { border-color: rgba(184,115,51,0.5); } }
+    .ec-scr { margin-top: 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 14px; }
+    .ec-scr .ec-title { font-size: 15px; }
+    .ec-scr .ec-nav { width: 32px; height: 32px; font-size: 18px; }
+    .ec-scr .ec-day { font-size: 14px; border-radius: 10px; }
+    .ec-scr .ec-dots b { width: 4px; height: 4px; }
+    .ec-scr .ec-dots { bottom: 5px; }
+    .ec-scr .ec-wd { font-size: 10.5px; }
     .ev-thumb { position: relative; width: 46px; height: 58px; flex-shrink: 0; border-radius: 10px; overflow: hidden; background: #140a03; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
     .ev-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
     .ev-thumb .d { font-family: 'Jost', sans-serif; font-size: 18px; color: var(--accent); }
@@ -1633,10 +1657,6 @@
     <div id="dpShift"><div class="dp-loading">Загружаю...</div></div>
   </div>
   <div class="dp-section">
-    <div class="dp-label"><span>Именинники</span></div>
-    <div id="dpBirthdays"><div class="dp-loading">Загружаю...</div></div>
-  </div>
-  <div class="dp-section">
     <div class="dp-label">
       <span>Афиша</span>
       <span style="display:flex;align-items:center;gap:8px;">
@@ -1919,7 +1939,6 @@
   </div>
   <div style="padding:0 16px">
     <div class="add-row"><button type="button" class="btn-new-guest" onclick="openAddEvent()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Новое мероприятие</button></div>
-    <div class="sec">Ближайшие</div>
     <div id="eventsContent"><div class="loading">Загружаю...</div></div>
   </div>
 </div>
@@ -3424,7 +3443,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const resultsSection = document.getElementById('resultsSection');
     if (resultsSection) resultsSection.style.display = 'none';
     ['deskLeft', 'deskRight'].forEach(id => document.getElementById(id)?.classList.remove('role-ok'));
-    ['dpShift', 'dpBirthdays', 'dpEvents', 'dpProblems', 'dpBookings', 'dpFounderTasks', 'dpNotes'].forEach(id => {
+    ['dpShift', 'dpEvents', 'dpProblems', 'dpBookings', 'dpFounderTasks', 'dpNotes'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.innerHTML = '<div class="dp-loading">Загружаю...</div>';
     });
@@ -3745,7 +3764,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     right.classList.add('role-ok');
 
     // блоки панелей — только те, что разрешены этому сотруднику
-    const dpAllow = { dpShift: 'schedule.view', dpBirthdays: 'guests.birthdays', dpEvents: 'events.manage', dpProblems: 'problems.view', dpBookings: 'bookings.view', dpFounderTasks: 'founder_tasks.manage', dpNotes: 'notes.manage' };
+    const dpAllow = { dpShift: 'schedule.view', dpEvents: 'events.manage', dpProblems: 'problems.view', dpBookings: 'bookings.view', dpFounderTasks: 'founder_tasks.manage', dpNotes: 'notes.manage' };
     for (const [id, key] of Object.entries(dpAllow)) {
       const sec = document.getElementById(id)?.closest('.dp-section');
       if (sec) sec.style.display = can(key) ? '' : 'none';
@@ -3781,25 +3800,6 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       } catch { if (!stale()) el.innerHTML = DP_FAILED; }
     })();
 
-    (async () => {
-      const el = document.getElementById('dpBirthdays');
-      if (!can('guests.birthdays')) return;
-      try {
-        const res = await fetch(`${PROXY_BASE}/api/staff/birthdays?days=2&pin=${pin}`);
-        const raw = await dpJson(res);
-        if (stale()) return;
-        const d = Array.isArray(raw) ? { today: raw.map(g => ({ ...g, greeted: null })), tomorrow: [], botOn: false, old: true } : raw;
-        if (!d || (!d.today.length && !d.tomorrow.length)) { el.innerHTML = '<div class="dp-empty">Сегодня и завтра никого нет</div>'; return; }
-        birthdaysData = d;
-        const line = (g, isToday) => {
-          const st = d.old ? null : bdStatus(g, isToday, d.botOn);
-          return `<div class="dp-row" onclick="openBirthdays()">${escHtml(g.name || '')}${st ? `<div class="dp-sub"${st.todo && isToday ? ' style="color:#f59e0b"' : st.done ? ' style="color:#4ade80"' : ''}>${st.done ? '✓ ' : ''}${escHtml(st.text)}</div>` : ''}</div>`;
-        };
-        el.innerHTML = (d.today.length ? d.today.map(g => line(g, true)).join('') : '<div class="dp-empty">Сегодня никого нет</div>')
-          + (d.tomorrow.length ? `<div class="dp-sublabel">Завтра</div>${d.tomorrow.map(g => line(g, false)).join('')}` : '');
-      } catch { if (!stale()) el.innerHTML = DP_FAILED; }
-    })();
-
     // «Афиша» — лёгкий превью-список ближайших мероприятий, как и остальные
     // панели; полный список с возможностью править/удалять — на экране
     // "Мероприятия" (openEvents → openEditEvent), плюс в углу — быстрое
@@ -3814,11 +3814,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         const list = await dpJson(res);
         if (stale()) return;
         if (countEl) countEl.textContent = Array.isArray(list) && list.length ? String(list.length) : '';
-        if (!Array.isArray(list) || !list.length) { el.innerHTML = '<div class="dp-empty">Ближайших нет</div>'; return; }
-        el.innerHTML = list.slice(0, 5).map(e => {
-          const d = new Date(e.date);
-          return `<div class="dp-row" onclick="openEvents()">${escHtml(e.name || 'Мероприятие')}<div class="dp-sub">${d.getDate()} ${MONTHS[d.getMonth()]} · ${escHtml(e.format || '')}</div></div>`;
-        }).join('');
+        if (!Array.isArray(list)) { el.innerHTML = DP_FAILED; return; }
+        window._eventsCache = list;
+        renderEvCal('dp');
       } catch { if (!stale()) el.innerHTML = DP_FAILED; }
     })();
 
@@ -7219,27 +7217,96 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить афишу'));
       const list = await res.json();
       if (!Array.isArray(list)) throw new Error('Не удалось загрузить афишу');
-      if (!list.length) {
-        el.innerHTML = '<div class="empty-state">Ближайших мероприятий нет</div>';
-        return;
-      }
       window._eventsCache = list; // чтобы не запрашивать заново при открытии на редактирование
-      el.innerHTML = list.map(e => {
-        const d = new Date(e.date);
-        const hasTime = /T\d{2}:\d{2}/.test(e.date || '') && !/T00:00/.test(e.date || '');
-        const when = capFirst(humanDay(e.date, { noRelative: false })) + (hasTime ? ` · ${String(e.date).slice(11, 16)}` : '');
-        return `
+      renderEvCal('scr');
+    } catch (err) {
+      el.innerHTML = errorStateHtml(err.message || 'Не удалось загрузить афишу', 'openEvents()');
+    }
+  }
+
+  // ─── АФИША КАЛЕНДАРЁМ ──────────────────────────
+  // Один календарь месяца в двух местах: узкий блок «Афиша» в боковой панели (ctx 'dp') и экран «Мероприятия» (ctx 'scr').
+  // Дни с мероприятиями — с точками; нажали на день — ниже мероприятия этого дня. Сервер отдаёт только предстоящие
+  // (с сегодняшнего дня), поэтому в прошлые месяцы не листаем.
+  const EV_CAL = { y: 0, m: 0, sel: null, init: false };
+  const EV_MON = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+  const EV_MAX_AHEAD_MONTHS = 12;
+  const evDayOf = e => String((e && e.date) || '').slice(0, 10);
+  const evPad = n => String(n).padStart(2, '0');
+  function evCalByDay() {
+    const by = {};
+    for (const e of (window._eventsCache || [])) { const d = evDayOf(e); if (/^\d{4}-\d{2}-\d{2}$/.test(d)) (by[d] = by[d] || []).push(e); }
+    return by;
+  }
+  function evCalPickDefault(by) {
+    const today = venueCalendarDay();
+    const pre = `${EV_CAL.y}-${evPad(EV_CAL.m + 1)}-`;
+    const days = Object.keys(by).filter(d => d.startsWith(pre)).sort();
+    if (by[today] && today.startsWith(pre)) return today;
+    return days.find(d => d >= today) || days[0] || null;
+  }
+  function evCalNav(delta) {
+    const t = venueCalendarDay().split('-').map(Number);
+    const cur = t[0] * 12 + (t[1] - 1), next = EV_CAL.y * 12 + EV_CAL.m + delta;
+    if (next < cur || next > cur + EV_MAX_AHEAD_MONTHS) return;
+    EV_CAL.y = Math.floor(next / 12); EV_CAL.m = next % 12; EV_CAL.sel = null;
+    renderEvCal();
+  }
+  function evCalPick(day) { EV_CAL.sel = day; renderEvCal(); }
+  function evCalHtml(ctx, by) {
+    const today = venueCalendarDay();
+    const t = today.split('-').map(Number), cur = t[0] * 12 + (t[1] - 1), shown = EV_CAL.y * 12 + EV_CAL.m;
+    const first = new Date(EV_CAL.y, EV_CAL.m, 1), daysIn = new Date(EV_CAL.y, EV_CAL.m + 1, 0).getDate();
+    const lead = (first.getDay() + 6) % 7; // понедельник — первый
+    let cells = '';
+    for (let i = 0; i < lead; i++) cells += '<span class="ec-day empty"></span>';
+    for (let d = 1; d <= daysIn; d++) {
+      const iso = `${EV_CAL.y}-${evPad(EV_CAL.m + 1)}-${evPad(d)}`;
+      const n = (by[iso] || []).length;
+      const cls = ['ec-day', n ? 'has' : '', iso === today ? 'today' : '', iso === EV_CAL.sel ? 'sel' : '', iso < today ? 'past' : ''].filter(Boolean).join(' ');
+      const dots = n ? `<i class="ec-dots">${'<b></b>'.repeat(Math.min(n, 3))}</i>` : '';
+      cells += `<button type="button" class="${cls}" onclick="evCalPick('${iso}')" aria-label="${d} ${EV_MON[EV_CAL.m].toLowerCase()}${n ? `, мероприятий: ${n}` : ''}"><span>${d}</span>${dots}</button>`;
+    }
+    return `<div class="ec ec-${ctx}">
+      <div class="ec-head">
+        <button type="button" class="ec-nav" onclick="evCalNav(-1)" ${shown <= cur ? 'disabled' : ''} aria-label="Прошлый месяц">‹</button>
+        <div class="ec-title">${EV_MON[EV_CAL.m]} ${EV_CAL.y}</div>
+        <button type="button" class="ec-nav" onclick="evCalNav(1)" ${shown >= cur + EV_MAX_AHEAD_MONTHS ? 'disabled' : ''} aria-label="Следующий месяц">›</button>
+      </div>
+      <div class="ec-grid">${['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map(w => `<span class="ec-wd">${w}</span>`).join('')}${cells}</div>
+    </div>`;
+  }
+  function evTimeOf(e) { return /T\d{2}:\d{2}/.test(e.date || '') && !/T00:00/.test(e.date || '') ? String(e.date).slice(11, 16) : ''; }
+  function evDayHeading(day) { return capFirst(humanDay(day, { noRelative: false })); }
+  function renderEvCal(only) {
+    const by = evCalByDay();
+    if (!EV_CAL.init) { const t = venueCalendarDay().split('-').map(Number); EV_CAL.y = t[0]; EV_CAL.m = t[1] - 1; EV_CAL.init = true; }
+    const pre = `${EV_CAL.y}-${evPad(EV_CAL.m + 1)}-`;
+    if (!EV_CAL.sel || !EV_CAL.sel.startsWith(pre)) EV_CAL.sel = evCalPickDefault(by);
+    const day = EV_CAL.sel, list = day ? (by[day] || []) : [];
+    const monthHas = Object.keys(by).some(d => d.startsWith(pre));
+    const none = monthHas ? (day ? 'В этот день мероприятий нет' : 'Выберите день с точкой') : 'В этом месяце мероприятий нет';
+    const targets = only ? [only] : ['dp', 'scr'];
+    if (targets.includes('dp')) {
+      const el = document.getElementById('dpEvents');
+      if (el) el.innerHTML = evCalHtml('dp', by) + (day ? `<div class="dp-sublabel">${escHtml(evDayHeading(day))}</div>` : '')
+        + (list.length ? list.map(e => `<div class="dp-row" onclick="openEditEvent('${escJs(e.id)}')">${escHtml(e.name || 'Мероприятие')}<div class="dp-sub">${[evTimeOf(e), e.format ? eventFormatLabel(e.format) : ''].filter(Boolean).map(escHtml).join(' · ') || 'без времени'}</div></div>`).join('') : `<div class="dp-empty">${none}</div>`);
+    }
+    if (targets.includes('scr')) {
+      const el = document.getElementById('eventsContent');
+      if (el) el.innerHTML = evCalHtml('scr', by) + (day ? `<div class="sec">${escHtml(evDayHeading(day))}</div>` : '')
+        + (list.length ? list.map(e => {
+          const d = new Date(e.date), tm = evTimeOf(e);
+          return `
         <div class="visit-item" style="cursor:pointer;display:flex;align-items:center;gap:12px;" onclick="openEditEvent('${escJs(e.id)}')">
           <div class="ev-thumb">${e.poster ? `<img src="${escHtml(e.poster)}" alt="" loading="lazy" onerror="this.remove()">` : ''}<span class="d">${isNaN(d) ? '' : d.getDate()}</span></div>
           <div style="min-width:0;flex:1;">
-            <div class="visit-date">${escHtml(when)}${e.format ? ` · ${escHtml(eventFormatLabel(e.format))}` : ''}</div>
+            <div class="visit-date">${tm ? escHtml(tm) : 'Без времени'}${e.format ? ` · ${escHtml(eventFormatLabel(e.format))}` : ''}</div>
             <div class="visit-detail" style="font-size:14px;color:var(--text);">${escHtml(e.name || '')}</div>
             <div class="visit-detail" style="font-size:11px;color:${e.poster ? 'var(--text-muted)' : '#f59e0b'};">${e.poster ? 'Постер есть' : 'Без постера'}</div>
           </div>
         </div>`;
-      }).join('');
-    } catch (err) {
-      el.innerHTML = errorStateHtml(err.message || 'Не удалось загрузить афишу', 'openEvents()');
+        }).join('') : `<div class="empty-state" style="margin-top:14px">${none}</div>`);
     }
   }
 
