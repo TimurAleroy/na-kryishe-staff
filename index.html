@@ -1306,6 +1306,21 @@
     }
     .sv-range { width: 100%; accent-color: var(--accent); margin: 6px 0 2px; }
     .sv-range-l { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); }
+    /* ТВ-экраны ВИП-комнат */
+    .tvp { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); background: #140a03; margin: 6px 0 4px; }
+    .tvp-bg { position: absolute; left: -6%; top: -6%; width: 112%; height: 112%; object-fit: cover; }
+    .tvp-veil { position: absolute; inset: 0; background: radial-gradient(120% 100% at 50% 50%, rgba(30,16,4,.15) 0%, rgba(30,16,4,.72) 100%); }
+    .tvp-body { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 8%; }
+    .tvp-h { font-family: 'Lora', serif; font-weight: 600; font-size: 5.2cqw; line-height: 1.15; color: #F0DFC0; }
+    .tvp-n { font-family: 'Lora', serif; font-weight: 600; font-size: 9cqw; line-height: 1.2; color: #B87333; margin-top: 1cqw; }
+    .tvp-s { font-size: 2.6cqw; font-weight: 300; color: #C9A880; margin-top: 3cqw; }
+    .tvp-wrap { container-type: inline-size; }
+    .tv-st { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--text-muted); margin-right: 6px; }
+    .tv-st.on { background: #4ade80; }
+    .tv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .tv-grid .form-group { margin-bottom: 8px; }
+    .tv-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 14px; }
+    .tv-box .form-label:first-child { margin-top: 0; }
     #screen-enps { position: relative; }
     .enps-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; display: none; background: var(--bg); }
     .enps-bg.on { display: block; }
@@ -2362,6 +2377,27 @@
   </div>
 </div>
 
+<!-- СЕРВИС: ТВ-ЭКРАНЫ. Телевизоры в ВИП-комнатах: приветствие, фон, тексты, сообщения -->
+<div class="screen" id="screen-tv">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('service')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">ТВ-экраны</h1><p>Телевизоры в ВИП-комнатах и проектор на террасе</p></div>
+  </div>
+  <div style="padding:0 16px"><div id="tvContent" style="margin-top:14px"><div class="loading">Загружаю...</div></div></div>
+</div>
+
+<div class="screen" id="screen-tv-room">
+  <div class="header">
+    <div class="back-btn" onclick="openTv()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;" id="tvRoomTitle">ВИП-комната</h1><p id="tvRoomSub">Экран телевизора</p></div>
+  </div>
+  <div style="padding:0 16px" id="tvRoomBody"></div>
+</div>
+
 <!-- СЕРВИС: ТЕГИ. Список тегов гостей: названия, цвета, подсказки «что делать», кто может ставить -->
 <div class="screen" id="screen-tags-edit">
   <div class="header">
@@ -3012,7 +3048,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function fallbackPerms(jobRole) {
     const base = ['guests.view', 'guests.create', 'guests.edit', 'tags.use', 'visits.record', 'guests.birthdays', 'guests.vip_list', 'shift.mark', 'schedule.view', 'menu.view', 'problems.view', 'problems.report', 'problems.work_own_role'];
     const own = { 'Бармен': ['menu.stoplist_drinks'], 'Повар': ['menu.stoplist_food'], 'КМ': ['menu.stoplist_hookah'] }[jobRole] || [];
-    const admin = ['shifts.review', 'stories.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage', 'messages.view'];
+    const admin = ['shifts.review', 'stories.manage', 'tv.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage', 'messages.view'];
     const owner = ['surveys.manage', 'tags.manage', 'audit.view', 'settings.manage', 'founder_tasks.create', 'marketing.send', 'marketing.log', 'analytics.view', 'segments.view', 'feedback.view', 'guests.table', 'candidates.view'];
     if (jobRole === 'Основатель') return base.concat(admin, owner);
     if (jobRole === 'Администратор') return base.concat(admin);
@@ -3475,6 +3511,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('menu.manage')) list.push({ group: G.content, icon: 'menu', short: 'меню', title: 'Меню', sub: 'Позиции, цены, фото', fn: 'openMenuEdit()' });
     if (can('stories.manage')) list.push({ group: G.content, icon: 'stories', short: 'сторис', title: 'Сторис', sub: 'Фото бара и ВИП-комнат', fn: 'openStoriesEdit()' });
     if (can('surveys.manage')) list.push({ group: G.content, icon: 'surveys', short: 'опросы', title: 'Опросы', sub: 'Фон, ретушь, тексты', fn: 'openSurveysEdit()' });
+    if (can('tv.manage')) list.push({ group: G.content, icon: 'tv', short: 'тв-экраны', title: 'ТВ-экраны', sub: 'ВИП-комнаты и терраса: приветствие, фон, сообщения', fn: 'openTv()' });
     if (can('guests.merge')) list.push({ group: G.guests, icon: 'duplicates', short: 'дубли', title: 'Дубли', sub: 'Одна карточка на гостя', fn: 'openDuplicates()' });
     if (can('tags.manage')) list.push({ group: G.guests, icon: 'tags', short: 'теги', title: 'Теги', sub: 'Список, цвета, подсказки', fn: 'openTagsEdit()' });
     if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'Логины, роли и права', fn: 'openEmployees()' });
@@ -3577,6 +3614,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       menu: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h11a3 3 0 013 3v15H8a3 3 0 01-3-3V3z"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="12" y2="16"/></svg>',
       candidates: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="2.6"/><path d="M7.5 17c.8-2 2.4-3 4.5-3s3.7 1 4.5 3"/></svg>',
       stories: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2.5"/><circle cx="12" cy="10" r="2.4"/><path d="M6.5 18l4-4 3 3 2-2 2.5 2.5"/></svg>',
+      tv: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/></svg>',
       surveys: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><path d="M8 13l2 2 4-4"/><line x1="8" y1="18" x2="12" y2="18"/></svg>',
       tags: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12V4a1 1 0 011-1h8l9 9-9 9-9-9z"/><circle cx="7.5" cy="7.5" r="1.3"/></svg>',
       reviews: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8-4.3-4.1 5.9-.9L12 3.5z"/></svg>',
@@ -8971,6 +9009,279 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     openSurveysEdit();
   }
 
+  // ─── СЕРВИС: ТВ-ЭКРАНЫ ──
+  // Телевизор в ВИП-комнате показывает приветствие по имени из брони (после «За столом»), фон, афишу, сообщение.
+  // Здесь: фон (видео или фото) с размытием, тексты, какие сцены показывать, сообщение на экран, замена имени, ссылка для телевизора.
+  var tvRooms = [], tvCur = null, tvBgNew = { blob: null, preview: '', mime: '', remove: false, video: false };
+  const TV_VIDEO_MAX_BYTES = 15 * 1024 * 1024, TV_VIDEO_MAX_SEC = 60;
+  const TV_TEXTS = [
+    ['idleTag', 'Подпись на заставке', 'Добро пожаловать домой'],
+    ['welcome', 'Приветствие гостя', 'Добро пожаловать домой,'],
+    ['welcomeSub', 'Фраза под именем', 'Ваша комната готова'],
+    ['bdayBig', 'Поздравление: заголовок', 'С днём рождения,'],
+    ['bdayWish', 'Поздравление: пожелание', 'Пусть этот вечер будет таким, каким вы его задумали. Мы рядом, если понадобится что-то ещё.'],
+    ['eventCta', 'Подпись под афишей', 'Бронь стола — в нашем приложении']
+  ];
+  function openTv() { showScreen('tv'); loadTv(); }
+  async function loadTv() {
+    const el = document.getElementById('tvContent');
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/tv?pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить экраны'));
+      tvRooms = (await res.json()).rooms || [];
+      el.innerHTML = tvRooms.map(r => {
+        const now = r.shared ? 'общий экран' : (r.now && r.now.guest ? (r.now.guest.name ? `приветствует: ${escHtml(r.now.guest.name)}` : 'приветствие') : (r.override && r.override.mode === 'off' ? 'приветствие отключено' : 'ждёт гостя'));
+        const st = !r.enabled ? 'выключен' : (r.online ? 'на связи' : 'не на связи');
+        return `<div class="qrow" onclick="openTvRoom(${r.room})"><div class="qrow-icon">${homeIcons.tv || ''}</div><div class="qrow-t">${escHtml(r.title)}</div><div class="qrow-s"><span class="tv-st${r.enabled && r.online ? ' on' : ''}"></span>${st} · ${now}</div><div class="qrow-chev">›</div></div>`;
+      }).join('') + '<div class="poster-note" style="margin-top:12px">Когда бронь ВИП-комнаты подтверждена (за выбранное время до начала) или администратор нажал «За столом», на экране комнаты появляется «Добро пожаловать домой, имя». После «Гость ушёл» или «Не пришёл» экран возвращается к заставке и афише. Проектор на террасе общий: приветствия по имени у него нет, остальное настраивается так же.</div>';
+    } catch (e) {
+      el.innerHTML = errorStateHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером', 'loadTv()');
+    }
+  }
+  function openTvRoom(n) {
+    const r = tvRooms.find(x => x.room === n);
+    if (!r) return;
+    tvCur = r;
+    if (tvBgNew.preview) URL.revokeObjectURL(tvBgNew.preview);
+    tvBgNew = { blob: null, preview: '', mime: '', remove: false, video: false };
+    document.getElementById('tvRoomTitle').textContent = r.title;
+    renderTvRoom();
+    showScreen('tv-room');
+  }
+  function tvIn(id) { return document.getElementById(id); }
+  function renderTvRoom() {
+    const r = tvCur;
+    const texts = TV_TEXTS.filter(([k]) => !r.shared || k === 'idleTag' || k === 'eventCta').map(([k, label, ph]) => `<div class="form-group"><label class="form-label">${label}</label><input class="form-input" id="tvT_${k}" maxlength="${k === 'bdayWish' ? 200 : 80}" value="${escHtml(r.texts[k] || '')}" placeholder="${escHtml(ph)}" oninput="tvPreview()"></div>`).join('');
+    const nowGuest = r.now && r.now.guest;
+    const status = `<span class="tv-st${r.enabled && r.online ? ' on' : ''}"></span>${!r.enabled ? 'Экран выключен' : (r.online ? 'Телевизор на связи' : 'Телевизор сейчас не на связи')}`;
+    const seatedLine = r.seated ? (r.seated.arrived ? 'За столом: ' : 'Бронь подтверждена, гость ещё не отмечен: ') + escHtml(r.seated.name || 'гость') + (r.seated.birthday ? ' · день рождения' : '') : 'Сейчас в комнате нет гостя (подтверждённой брони на ближайшее время тоже нет)';
+    const showLine = nowGuest ? `На экране: «Добро пожаловать домой, ${escHtml(nowGuest.name || '')}»${r.override ? ' (вручную)' : ''}` : (r.override && r.override.mode === 'off' ? 'Приветствие отключено вручную' : 'На экране: заставка и афиша');
+    document.getElementById('tvRoomBody').innerHTML = `
+      <div class="tv-box" style="margin-top:14px">
+        <div style="font-size:13px;color:var(--text)">${status}</div>
+        ${r.shared ? '<div class="poster-note" style="margin-top:4px">Общий экран на террасе: заставка, афиша и сообщения для всех гостей. Приветствия по имени нет.</div>' : `<div class="poster-note" style="margin-top:4px">${seatedLine}</div>
+        <div class="poster-note">${showLine}</div>
+        <div class="form-group" style="margin:10px 0 0"><label class="form-label">Когда начинать приветствие</label>
+          <select class="form-input" id="tvWelcomeBefore">${[[0, 'Только после «За столом»'], [30, 'За 30 минут до брони'], [60, 'За час до брони'], [120, 'За 2 часа до брони'], [180, 'За 3 часа до брони'], [720, 'С утра в день брони']].map(([v, l]) => `<option value="${v}"${r.welcomeBefore === v ? ' selected' : ''}>${l}</option>`).join('')}</select>
+          <div class="poster-note">Работает для подтверждённых броней: гость зашёл и включил телевизор раньше, чем нажали «За столом», а на экране уже приветствие.</div></div>
+        <div class="tv-grid" style="margin-top:10px">
+          <div class="form-group" style="grid-column:1/-1;margin-bottom:6px"><input class="form-input" id="tvOvName" maxlength="40" placeholder="Другое имя на экране" value="${r.override && r.override.mode === 'name' ? escHtml(r.override.name) : ''}"></div>
+          <button type="button" class="btn-primary" onclick="tvOverride('name')">Показать это имя</button>
+          <button type="button" class="btn-primary" onclick="tvOverride('off')">Не приветствовать</button>
+        </div>
+        ${r.override ? '<button type="button" class="btn-primary" style="margin-top:8px;width:100%" onclick="tvOverride(\'clear\')">Вернуть как в брони</button>' : ''}
+        <div class="poster-note">Замена действует, пока в комнате этот гость, и сбросится сама, когда нажмут «Гость ушёл».</div>`}
+      </div>
+
+      <div class="form-label">Так выглядит экран</div>
+      <div class="tvp-wrap"><div class="tvp" id="tvPrev"><div id="tvPrevBgBox"></div><div class="tvp-veil" id="tvPrevVeil"></div>
+        <div class="tvp-body"><div class="tvp-h" id="tvPrevH"></div>${r.shared ? '' : `<div class="tvp-n">${escHtml((r.seated && r.seated.name) || 'Анна')}</div>`}<div class="tvp-s" id="tvPrevS"></div></div></div></div>
+      <div class="poster-note" id="tvPrevNote">Предпросмотр: фон, размытие и тексты.${r.shared ? '' : ' Имя «Анна» — для примера.'}</div>
+
+      <div class="form-group" style="margin-top:12px">
+        <label class="form-label">Фон</label>
+        <div class="poster-actions" style="margin-top:0">
+          <button type="button" class="btn-primary" style="flex:1" onclick="tvIn('tvBgInput').click()" id="tvPickBtn">Загрузить фон</button>
+          <button type="button" class="btn-primary" style="flex:1;background:transparent;border-color:rgba(239,68,68,0.45);color:#ef4444" onclick="tvRemoveBg()" id="tvRemoveBtn">Стандартный</button>
+        </div>
+        <div class="poster-note" id="tvBgNote"></div>
+        <input type="file" id="tvBgInput" accept="video/mp4,video/quicktime,video/webm,image/*" style="display:none" onchange="onTvBgFile(this.files[0]); this.value='';">
+      </div>
+      <div class="form-group"><label class="form-label">Размытие: <span id="tvBlurV"></span></label><input type="range" class="sv-range" id="tvBlur" min="0" max="40" step="1" value="${r.blur}" oninput="tvPreview()"><div class="sv-range-l"><span>чётко</span><span>сильно размыто</span></div></div>
+      <div class="form-group"><label class="form-label">Яркость: <span id="tvBrightV"></span>%</label><input type="range" class="sv-range" id="tvBright" min="20" max="100" step="5" value="${r.bright}" oninput="tvPreview()"><div class="sv-range-l"><span>темнее</span><span>ярче</span></div></div>
+      <div class="form-group"><label class="form-label">Затемнение: <span id="tvVeilV"></span>%</label><input type="range" class="sv-range" id="tvVeil" min="0" max="80" step="1" value="${r.veil}" oninput="tvPreview()"><div class="sv-range-l"><span>светлее</span><span>темнее</span></div></div>
+
+      <div class="form-label" style="margin-top:6px">Тексты</div>
+      ${texts}
+      <div class="poster-note" style="margin:-4px 0 12px">Пустое поле — стандартный текст (он виден серым). Имя гостя подставляется само.</div>
+
+      <div class="form-label">Что показывать</div>
+      <div class="tv-box" style="padding:4px 14px">
+        <label class="perm-row" style="padding-left:0;padding-right:0"><input type="checkbox" id="tvShowIdle" ${r.showIdle ? 'checked' : ''}><span class="perm-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 9 17 20 6"/></svg></span><span style="font-size:14px;color:var(--text)">Заставка с логотипом</span></label>
+        <label class="perm-row" style="padding-left:0;padding-right:0"><input type="checkbox" id="tvShowEvent" ${r.showEvent ? 'checked' : ''}><span class="perm-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 9 17 20 6"/></svg></span><span style="font-size:14px;color:var(--text)">Афиша ближайших мероприятий</span></label>
+        <label class="perm-row" style="padding-left:0;padding-right:0"><input type="checkbox" id="tvEnabled" ${r.enabled ? 'checked' : ''}><span class="perm-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 9 17 20 6"/></svg></span><span><span style="font-size:14px;color:var(--text);display:block">Экран включён</span><span style="font-size:11.5px;color:var(--text-muted);display:block">Без галочки телевизор показывает чёрный экран</span></span></label>
+      </div>
+      <div class="form-group"><label class="form-label">Секунд на каждую сцену</label><input class="form-input" type="number" inputmode="numeric" id="tvSec" min="5" max="60" value="${r.sceneSec}"></div>
+      <button class="btn-cta" id="tvSaveBtn" onclick="saveTv()">Сохранить</button>
+
+      <div class="form-label" style="margin-top:22px">Сообщение на экран</div>
+      <div class="tv-box">
+        ${r.message ? `<div class="poster-note" style="margin:0 0 8px">Сейчас на экране: «${escHtml(r.message)}»</div>` : ''}
+        <input class="form-input" id="tvMsg" maxlength="160" placeholder="Например: Ваш кальян сейчас принесут">
+        <div class="tv-grid" style="margin-top:8px">
+          <select class="form-input" id="tvMsgMin"><option value="10">10 минут</option><option value="30" selected>30 минут</option><option value="60">1 час</option><option value="120">2 часа</option></select>
+          <button type="button" class="btn-primary" onclick="tvSendMessage()">Показать на экране</button>
+        </div>
+        ${r.message ? '<button type="button" class="btn-primary" style="margin-top:8px;width:100%" onclick="tvClearMessage()">Убрать сообщение</button>' : ''}
+        <div class="poster-note">Сообщение появится в течение 15 секунд и исчезнет само через выбранное время.</div>
+      </div>
+
+      <div class="form-label">Ссылка для телевизора</div>
+      <div class="tv-box">
+        <div class="sv-link" id="tvLinkText">${escHtml(r.link)}</div>
+        <div class="poster-actions" style="margin-top:10px">
+          <button type="button" class="btn-primary" style="flex:1" onclick="copyText(tvCur.link, 'Ссылка скопирована')">Скопировать</button>
+          <button type="button" class="btn-primary" style="flex:1" onclick="tvNewToken()">Новая ссылка</button>
+        </div>
+        <div class="poster-note">Откройте эту ссылку в браузере телевизора. Ссылка секретная: если её увидел посторонний, выдайте новую (старая сразу перестанет работать, на телевизоре нужно будет открыть новую).</div>
+      </div>
+      <div style="height:16px"></div>`;
+    tvPreview();
+  }
+  function tvBgSrc() {
+    if (tvBgNew.remove) return null;
+    if (tvBgNew.preview) return { url: tvBgNew.preview, type: tvBgNew.video ? 'video' : 'image' };
+    return tvCur.bg || null;
+  }
+  function tvPreview() {
+    if (!tvCur) return;
+    const blur = Number(tvIn('tvBlur').value), bright = Number(tvIn('tvBright').value), veil = Number(tvIn('tvVeil').value);
+    tvIn('tvBlurV').textContent = blur === 0 ? 'без размытия' : blur;
+    tvIn('tvBrightV').textContent = bright;
+    tvIn('tvVeilV').textContent = veil;
+    const box = tvIn('tvPrevBgBox'), src = tvBgSrc();
+    const key = src ? src.type + '|' + src.url : '';
+    if (box.dataset.k !== key) {
+      box.dataset.k = key;
+      if (!src) box.innerHTML = '<div class="tvp-bg" style="background:linear-gradient(160deg,#4a2e12 0%,#140B00 100%)"></div>';
+      else if (src.type === 'video') box.innerHTML = `<video class="tvp-bg" src="${escHtml(src.url)}" muted loop playsinline autoplay></video>`;
+      else box.innerHTML = `<img class="tvp-bg" src="${escHtml(src.url)}" alt="">`;
+      const v = box.querySelector('video'); if (v) { v.muted = true; v.play().catch(() => {}); }
+    }
+    const bg = box.firstElementChild;
+    const w = tvIn('tvPrev').clientWidth || 340;
+    bg.style.filter = `blur(${(blur * w / 1920).toFixed(2)}px) brightness(${bright / 100}) saturate(.9)`;
+    tvIn('tvPrevVeil').style.background = `radial-gradient(120% 100% at 50% 50%, rgba(30,16,4,.15) 0%, rgba(30,16,4,.72) 100%), rgba(30,16,4,${veil / 100})`;
+    if (tvCur.shared) { tvIn('tvPrevH').textContent = tvIn('tvT_idleTag').value.trim() || 'Добро пожаловать домой'; tvIn('tvPrevS').textContent = ''; }
+    else {
+      tvIn('tvPrevH').textContent = tvIn('tvT_welcome').value.trim() || 'Добро пожаловать домой,';
+      tvIn('tvPrevS').textContent = tvIn('tvT_welcomeSub').value.trim() || 'Ваша комната готова';
+    }
+    tvIn('tvRemoveBtn').style.display = src ? '' : 'none';
+    tvIn('tvPickBtn').textContent = src ? 'Заменить фон' : 'Загрузить фон';
+    const note = tvIn('tvBgNote');
+    if (!note.classList.contains('warn')) note.textContent = tvBgNew.blob ? 'Новый фон — сохранится кнопкой «Сохранить» ниже' : (tvBgNew.remove ? 'Вернётся стандартный фон после сохранения' : (tvCur.bg ? (tvCur.bg.type === 'video' ? 'Свой фон: видео' : 'Свой фон: фото') : 'Стандартный фон. Видео до 15 МБ и 60 секунд (звук не нужен) или фото.'));
+  }
+  function tvBgWarn(text) { const n = tvIn('tvBgNote'); n.textContent = text; n.classList.add('warn'); }
+  function tvRemoveBg() {
+    if (tvBgNew.preview) URL.revokeObjectURL(tvBgNew.preview);
+    tvBgNew = { blob: null, preview: '', mime: '', remove: !!tvCur.bg, video: false };
+    tvIn('tvBgNote').classList.remove('warn'); tvPreview();
+  }
+  async function onTvBgFile(file) {
+    if (!file) return;
+    tvIn('tvBgNote').classList.remove('warn');
+    if (isVideoFile(file)) {
+      if (file.size > TV_VIDEO_MAX_BYTES) { tvBgWarn(`Видео ${(file.size / 1024 / 1024).toFixed(1)} МБ — нужно не больше 15 МБ. Сожмите или обрежьте.`); return; }
+      tvBgWarn('Проверяю видео…');
+      const url = URL.createObjectURL(file);
+      const info = await new Promise(resolve => {
+        const v = document.createElement('video'); v.preload = 'metadata'; v.muted = true;
+        const t = setTimeout(() => resolve(null), 8000);
+        v.onloadedmetadata = () => { clearTimeout(t); resolve({ sec: v.duration, w: v.videoWidth }); };
+        v.onerror = () => { clearTimeout(t); resolve(null); };
+        v.src = url;
+      });
+      if (!info || !isFinite(info.sec) || !info.w) { URL.revokeObjectURL(url); tvBgWarn('Не получилось открыть это видео. Нужен MP4 (H.264) или MOV с телефона.'); return; }
+      if (info.sec > TV_VIDEO_MAX_SEC + 0.5) { URL.revokeObjectURL(url); tvBgWarn(`Видео ${Math.round(info.sec)} сек — нужно не длиннее 60. Обрежьте его.`); return; }
+      if (tvBgNew.preview) URL.revokeObjectURL(tvBgNew.preview);
+      const ext = ((file.name || '').match(/\.(\w+)$/) || [])[1];
+      tvBgNew = { blob: file, preview: url, video: true, remove: false,
+        mime: /^video\//.test(file.type || '') ? file.type : (ext && ext.toLowerCase() === 'webm' ? 'video/webm' : ext && ext.toLowerCase() === 'mov' ? 'video/quicktime' : 'video/mp4') };
+      tvIn('tvBgNote').classList.remove('warn'); tvPreview();
+      return;
+    }
+    if (file.type && !file.type.startsWith('image/')) { tvBgWarn('Нужно видео (MP4) или фото (JPG, PNG)'); return; }
+    tvBgWarn('Готовлю фото…');
+    try {
+      const { blob } = await compressPoster(file, 1920);
+      if (tvBgNew.preview) URL.revokeObjectURL(tvBgNew.preview);
+      tvBgNew = { blob, preview: URL.createObjectURL(blob), mime: 'image/jpeg', video: false, remove: false };
+      tvIn('tvBgNote').classList.remove('warn'); tvPreview();
+    } catch { tvBgWarn('Не получилось открыть это фото. Сохраните его как JPG или PNG и выберите снова.'); }
+  }
+  function tvCollect() {
+    const texts = {};
+    TV_TEXTS.forEach(([k]) => { const e = tvIn('tvT_' + k); if (e) texts[k] = e.value.trim(); });
+    const wb = tvIn('tvWelcomeBefore');
+    return {
+      ...(wb ? { welcomeBefore: Number(wb.value) } : {}),
+      enabled: tvIn('tvEnabled').checked, showIdle: tvIn('tvShowIdle').checked, showEvent: tvIn('tvShowEvent').checked,
+      blur: Number(tvIn('tvBlur').value), bright: Number(tvIn('tvBright').value), veil: Number(tvIn('tvVeil').value),
+      sceneSec: Number(tvIn('tvSec').value), texts
+    };
+  }
+  async function saveTv() {
+    const btn = tvIn('tvSaveBtn');
+    if (btn.disabled || !tvCur) return;
+    const sec = Number(tvIn('tvSec').value);
+    if (!Number.isInteger(sec) || sec < 5 || sec > 60) { notify('Секунд на сцену: число от 5 до 60'); tvIn('tvSec').focus(); return; }
+    btn.disabled = true; btn.textContent = 'Сохраняем...';
+    try {
+      await tgRequest('PUT', `/api/admin/tv/${tvCur.room}`, tvCollect());
+      if (tvBgNew.blob) {
+        btn.textContent = 'Загружаем фон...';
+        const r = await fetch(`${PROXY_BASE}/api/admin/tv/${tvCur.room}/background?pin=${getPin()}`, { method: 'POST', headers: { 'Content-Type': tvBgNew.mime }, body: tvBgNew.blob });
+        if (!r.ok) throw new Error('Настройки сохранены, но фон не загрузился: ' + await responseError(r, 'ошибка загрузки'));
+      } else if (tvBgNew.remove) {
+        const r = await fetch(`${PROXY_BASE}/api/admin/tv/${tvCur.room}/background?pin=${getPin()}`, { method: 'DELETE' });
+        if (!r.ok) throw new Error('Настройки сохранены, но фон не убрался: ' + await responseError(r, 'ошибка'));
+      }
+    } catch (e) {
+      btn.disabled = false; btn.textContent = 'Сохранить';
+      notify(tgNetErr(e));
+      return;
+    }
+    btn.disabled = false; btn.textContent = 'Сохранить';
+    showSuccess('Экран сохранён', 'Телевизор обновится в течение 15 секунд');
+    await tvReload();
+  }
+  async function tvReload() {
+    const n = tvCur.room;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/tv?pin=${getPin()}`);
+      if (res.ok) tvRooms = (await res.json()).rooms || tvRooms;
+    } catch {}
+    openTvRoom(n);
+  }
+  async function tvOverride(mode) {
+    try {
+      if (mode === 'clear') await tgRequest('DELETE', `/api/admin/tv/${tvCur.room}/override`);
+      else if (mode === 'off') await tgRequest('POST', `/api/admin/tv/${tvCur.room}/override`, { off: true });
+      else {
+        const name = tvIn('tvOvName').value.trim();
+        if (!name) { notify('Впишите имя'); tvIn('tvOvName').focus(); return; }
+        await tgRequest('POST', `/api/admin/tv/${tvCur.room}/override`, { name });
+      }
+    } catch (e) { notify(tgNetErr(e)); return; }
+    showToast(mode === 'clear' ? 'Приветствие снова по брони' : 'Готово, экран обновится в течение 15 секунд');
+    await tvReload();
+  }
+  async function tvSendMessage() {
+    const text = tvIn('tvMsg').value.trim();
+    if (!text) { notify('Впишите сообщение'); tvIn('tvMsg').focus(); return; }
+    try { await tgRequest('PUT', `/api/admin/tv/${tvCur.room}`, { message: text, messageMinutes: Number(tvIn('tvMsgMin').value) }); }
+    catch (e) { notify(tgNetErr(e)); return; }
+    showToast('Сообщение появится на экране в течение 15 секунд');
+    await tvReload();
+  }
+  async function tvClearMessage() {
+    try { await tgRequest('PUT', `/api/admin/tv/${tvCur.room}`, { message: '' }); }
+    catch (e) { notify(tgNetErr(e)); return; }
+    showToast('Сообщение убрано');
+    await tvReload();
+  }
+  async function tvNewToken() {
+    if (!await askConfirm('Выдать новую ссылку?\n\nСтарая сразу перестанет работать, и на телевизоре нужно будет открыть новую.', { ok: 'Выдать' })) return;
+    try { await tgRequest('POST', `/api/admin/tv/${tvCur.room}/token`); }
+    catch (e) { notify(tgNetErr(e)); return; }
+    showToast('Новая ссылка выдана');
+    await tvReload();
+  }
+
   // ─── СЕРВИС: ТЕГИ ──
   // Список тегов гостей: названия, цвета, подсказки «что делать», кто может ставить, порядок, объединение.
   var tgAdmin = null;                                  // ответ /api/admin/tags: { groups, roles, palette }
@@ -12448,7 +12759,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages'];
+  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room'];
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
 
