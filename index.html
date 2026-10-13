@@ -9033,7 +9033,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   // Телевизор в ВИП-комнате показывает приветствие по имени из брони (после «За столом»), фон, афишу, сообщение.
   // Здесь: фон (видео или фото) с размытием, тексты, какие сцены показывать, сообщение на экран, замена имени, ссылка для телевизора.
   var tvRooms = [], tvCur = null, tvBgNew = { blob: null, preview: '', mime: '', remove: false, video: false };
-  const TV_VIDEO_MAX_BYTES = 15 * 1024 * 1024, TV_VIDEO_MAX_SEC = 60;
+  const TV_VIDEO_MAX_BYTES = 40 * 1024 * 1024, TV_VIDEO_MAX_SEC = 60;
   const TV_TEXTS = [
     ['idleTag', 'Подпись на заставке', 'Добро пожаловать домой'],
     ['welcome', 'Приветствие гостя', 'Добро пожаловать домой,'],
@@ -9125,6 +9125,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
           <button type="button" class="btn-primary" style="flex:1;background:transparent;border-color:rgba(239,68,68,0.45);color:#ef4444" onclick="tvRemoveBg()" id="tvRemoveBtn">Стандартный</button>
         </div>
         <div class="poster-note" id="tvBgNote"></div>
+        <div class="poster-note">Видео до 60 секунд и 40 МБ, без звука. Сервер сам сожмёт его и сделает плавную петлю, загрузка займёт до минуты.</div>
         <input type="file" id="tvBgInput" accept="video/mp4,video/quicktime,video/webm,image/*" style="display:none" onchange="onTvBgFile(this.files[0]); this.value='';">
       </div>
       <div class="form-group"><label class="form-label">Размытие: <span id="tvBlurV"></span></label><input type="range" class="sv-range" id="tvBlur" min="0" max="40" step="1" value="${r.blur}" oninput="tvPreview()"><div class="sv-range-l"><span>чётко</span><span>сильно размыто</span></div></div>
@@ -9224,7 +9225,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     if (!file) return;
     tvIn('tvBgNote').classList.remove('warn');
     if (isVideoFile(file)) {
-      if (file.size > TV_VIDEO_MAX_BYTES) { tvBgWarn(`Видео ${(file.size / 1024 / 1024).toFixed(1)} МБ — нужно не больше 15 МБ. Сожмите или обрежьте.`); return; }
+      if (file.size > TV_VIDEO_MAX_BYTES) { tvBgWarn(`Видео ${(file.size / 1024 / 1024).toFixed(1)} МБ — нужно не больше 40 МБ. Сожмите или обрежьте.`); return; }
       tvBgWarn('Проверяю видео…');
       const url = URL.createObjectURL(file);
       const info = await new Promise(resolve => {
@@ -9269,12 +9270,14 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const sec = Number(tvIn('tvSec').value);
     if (!Number.isInteger(sec) || sec < 5 || sec > 60) { notify('Секунд на сцену: число от 5 до 60'); tvIn('tvSec').focus(); return; }
     btn.disabled = true; btn.textContent = 'Сохраняем...';
+    let bgNote = '';
     try {
       await tgRequest('PUT', `/api/admin/tv/${tvCur.room}`, tvCollect());
       if (tvBgNew.blob) {
-        btn.textContent = 'Загружаем фон...';
+        btn.textContent = tvBgNew.video ? 'Загружаем и обрабатываем видео (до минуты)...' : 'Загружаем фон...';
         const r = await fetch(`${PROXY_BASE}/api/admin/tv/${tvCur.room}/background?pin=${getPin()}`, { method: 'POST', headers: { 'Content-Type': tvBgNew.mime }, body: tvBgNew.blob });
         if (!r.ok) throw new Error('Настройки сохранены, но фон не загрузился: ' + await responseError(r, 'ошибка загрузки'));
+        try { const j = await r.json(); if (j && j.note) bgNote = j.note; } catch {}
       } else if (tvBgNew.remove) {
         const r = await fetch(`${PROXY_BASE}/api/admin/tv/${tvCur.room}/background?pin=${getPin()}`, { method: 'DELETE' });
         if (!r.ok) throw new Error('Настройки сохранены, но фон не убрался: ' + await responseError(r, 'ошибка'));
@@ -9285,7 +9288,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       return;
     }
     btn.disabled = false; btn.textContent = 'Сохранить';
-    showSuccess('Экран сохранён', 'Телевизор обновится в течение 15 секунд');
+    showSuccess('Экран сохранён', bgNote || 'Телевизор обновится в течение 15 секунд');
     await tvReload();
   }
   async function tvReload() {
