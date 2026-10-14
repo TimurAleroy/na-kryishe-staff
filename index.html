@@ -2137,12 +2137,11 @@
       flex-direction: column;
       gap: 12px;
       padding: 0 1px 2px;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(184,115,51,0.35) transparent;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
       z-index: 10;
     }
-    .desk-panel::-webkit-scrollbar { width: 5px; }
-    .desk-panel::-webkit-scrollbar-thumb { background: rgba(184,115,51,0.35); border-radius: 5px; }
+    .desk-panel::-webkit-scrollbar { display: none; width: 0; height: 0; }
     /* 900px — ширина центральной колонки, 450 — её половина, 16 — отступ от колонки */
     .desk-panel.left { left: calc(50vw - 450px - 16px - var(--dpw)); }
     .desk-panel.right { left: calc(50vw + 450px + 16px); }
@@ -4111,7 +4110,6 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('stories.manage')) list.push({ group: G.content, icon: 'stories', short: 'сторис', title: 'Сторис', sub: 'Фото бара и ВИП-комнат', fn: 'openStoriesEdit()' });
     if (can('surveys.manage')) list.push({ group: G.content, icon: 'surveys', short: 'опросы', title: 'Опросы', sub: 'Фон, ретушь, тексты', fn: 'openSurveysEdit()' });
     if (can('tv.manage')) list.push({ group: G.content, icon: 'tv', short: 'тв-экраны', title: 'ТВ-экраны', sub: 'ВИП-комнаты и терраса: приветствие, фон, сообщения', fn: 'openTv()' });
-    if (can('guests.merge')) list.push({ group: G.guests, icon: 'duplicates', short: 'дубли', title: 'Дубли', sub: 'Одна карточка на гостя', fn: 'openDuplicates()' });
     if (can('tags.manage')) list.push({ group: G.guests, icon: 'tags', short: 'теги', title: 'Теги', sub: 'Список, цвета, подсказки', fn: 'openTagsEdit()' });
     if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'Логины, роли и права', fn: 'openEmployees()' });
     if (can('candidates.view')) list.push({ group: G.team, icon: 'candidates', short: 'кандидаты', title: 'Кандидаты', sub: 'Отклики на вакансии', fn: 'openCandidates()' });
@@ -4130,7 +4128,6 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function svcBadgeInfo(i) {
     const b = svcBadges || {};
     if (i.icon === 'candidates' && b.candidates > 0) return { n: b.candidates, sub: `Новых: ${b.candidates}` };
-    if (i.icon === 'duplicates' && b.duplicates > 0) return { n: b.duplicates, sub: `Найдено: ${b.duplicates}` };
     if (i.icon === 'menu' && b.menuAny > 0) {
       const parts = [];
       if (b.menuNoPhoto > 0) parts.push(`без фото ${b.menuNoPhoto}`);
