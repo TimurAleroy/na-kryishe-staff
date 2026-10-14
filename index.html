@@ -2173,7 +2173,12 @@
     .desk-panel.right { left: calc(50% + var(--colw) / 2 + var(--dp-gap)); }
 
     /* Дата — золотая плитка с крупным числом */
-    .desk-panel .dp-date { flex: 0 0 auto; display: flex; align-items: center; gap: 14px; margin: 0; padding: 15px 18px; border-radius: 18px; background: linear-gradient(155deg, rgba(184,115,51,0.24), rgba(184,115,51,0.05)); border: 1px solid rgba(184,115,51,0.34); }
+    .desk-panel .dp-date { flex: 0 0 auto; display: flex; flex-direction: column; align-items: stretch; gap: 11px; margin: 0; padding: 15px 18px 13px; border-radius: 18px; background: linear-gradient(155deg, rgba(184,115,51,0.24), rgba(184,115,51,0.05)); border: 1px solid rgba(184,115,51,0.34); }
+    .dp-d-top { display: flex; align-items: center; gap: 14px; }
+    .dp-d-time { display: flex; align-items: center; gap: 9px; padding-top: 10px; border-top: 1px solid rgba(184,115,51,0.24); }
+    .dp-d-time svg { flex: 0 0 auto; color: var(--accent); }
+    .dp-clock { font-family: 'Jost', sans-serif; font-size: 22px; font-weight: 500; line-height: 1; letter-spacing: 0.5px; color: var(--text); font-variant-numeric: tabular-nums; }
+    .dp-d-time small { margin-left: auto; font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--accent); }
     .dp-day { font-family: 'Jost', sans-serif; font-size: 46px; font-weight: 500; line-height: 1; color: var(--text); font-variant-numeric: tabular-nums; }
     .dp-dm b { display: block; font-weight: 400; font-size: 17px; line-height: 1.2; color: var(--text); }
     .dp-dm span { display: block; margin-top: 4px; font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--accent); }
@@ -4512,6 +4517,26 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (!res.ok) throw new Error('dp ' + res.status);
     return res.json();
   }
+  // Карточка с датой в левой панели: число, день недели, месяц и часы. Всё по времени заведения (Москва), а не по часам устройства —
+  // так же, как схема зала, брони и «Сейчас» на графике. Часы обновляются сами; при смене даты карточка перерисовывается целиком.
+  function renderDeskDate() {
+    const el = document.getElementById('dpDate');
+    if (!el || !document.getElementById('deskLeft')?.classList.contains('role-ok')) return;   // панели только у админа
+    const day = venueCalendarDay();                 // 'YYYY-MM-DD' по Москве
+    const hm = moscowNowIso().slice(11, 16);        // 'ЧЧ:ММ' по Москве
+    if (el.dataset.day !== day) {
+      el.dataset.day = day;
+      const now = new Date(), tz = { timeZone: 'Europe/Moscow' };
+      const monthGen = now.toLocaleDateString('ru-RU', { ...tz, day: 'numeric', month: 'long' }).replace(/^\d+\s*/, '');
+      el.innerHTML = `<div class="dp-d-top"><div class="dp-day">${Number(day.slice(8, 10))}</div><div class="dp-dm"><b>${escHtml(capFirst(now.toLocaleDateString('ru-RU', { ...tz, weekday: 'long' })))}</b><span>${escHtml(monthGen)} ${day.slice(0, 4)}</span></div></div>`
+        + `<div class="dp-d-time" title="Время заведения (Москва)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg><span class="dp-clock" id="dpClock"></span><small>МСК</small></div>`;
+    }
+    const c = document.getElementById('dpClock');
+    if (c && c.textContent !== hm) c.textContent = hm;
+  }
+  setInterval(renderDeskDate, 10000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) renderDeskDate(); });
+
   async function loadDeskPanels() {
     const gen = ++deskPanelsGen;
     const stale = () => gen !== deskPanelsGen; // панели перезапросили или сотрудник вышел — этот ответ уже не нужен
@@ -4534,12 +4559,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       if (sec) sec.style.display = can(key) ? '' : 'none';
     }
 
-    const dateEl = document.getElementById('dpDate');
-    if (dateEl) {
-      const nd = new Date();
-      const monthGen = nd.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }).replace(/^\d+\s*/, '');
-      dateEl.innerHTML = `<div class="dp-day">${nd.getDate()}</div><div class="dp-dm"><b>${escHtml(capFirst(nd.toLocaleDateString('ru-RU', { weekday: 'long' })))}</b><span>${escHtml(monthGen)} ${nd.getFullYear()}</span></div>`;
-    }
+    renderDeskDate();
 
     const today = todayISO();
     const pin = getPin();
