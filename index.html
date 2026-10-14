@@ -256,7 +256,7 @@
     }
     .qgroup-label:first-child { margin-top: 0; }
     /* Плитки одной группы. На телефоне обёртка «невидима» (плитки лежат в общей сетке, как раньше); на компьютере fitTileGrids()
-       включает .fit и считает колонки так, чтобы ряды делили ширину поровну и последний ряд не оставался с дырами. */
+       включает .fit и задаёт одинаковые колонки для всех групп экрана — плитки везде одного размера. */
     .qsec { display: contents; }
     .qsec.fit { display: grid; grid-column: 1 / -1; gap: 10px; }
 
@@ -2253,21 +2253,24 @@
          Панели растут медленно (до 400px), колонка — остальное (потолок 1900px, чтобы строки не растягивались на 4K). */
       :root {
         --dpw: clamp(230px, calc(230px + (100vw - 1392px) * 0.2), 400px);
-        --colw: min(calc(100% - 2 * (var(--dpw) + var(--dp-gap) + var(--dp-edge))), 1900px);
+        --colw: min(calc(100% - 2 * (var(--dpw) + var(--dp-gap) + var(--dp-edge))), 1600px);
+        /* МАСШТАБ НА КОМПЬЮТЕРЕ — всё держится на этих числах (плитки: TILE_MIN в fitTileGrids, сейчас 200px) */
+        --formw: 720px;   /* ширина формы и карточки одной записи */
+        --btnw: 320px;    /* максимальная ширина кнопки «Сохранить / Отправить / Обновить» */
       }
       body:has(#deskLeft.role-ok) { max-width: var(--colw); }
       /* плитки главной и «Сервиса» занимают всю ширину колонки: на 900px — три в ряд, шире — четыре и больше */
       body:has(#deskLeft.role-ok) .grid-2 { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
       /* формы и карточки одной записи не растягиваем: колонка 900px по центру широкого поля (класс col-narrow ставит showScreen) */
-      body:has(#deskLeft.role-ok).col-narrow .screen { max-width: 900px; margin-left: auto; margin-right: auto; }
+      body:has(#deskLeft.role-ok).col-narrow .screen { max-width: var(--formw); margin-left: auto; margin-right: auto; }
       /* календари на всю ширину делаем низкими (широкие клетки), иначе месяц не помещается на экран по высоте */
       body:has(#deskLeft.role-ok) #screen-schedule .cal-day { aspect-ratio: 2.3 / 1; }
       body:has(#deskLeft.role-ok) #screen-schedule.cal-big .cal-day { aspect-ratio: 1.5 / 1; }
       body:has(#deskLeft.role-ok) .ec-scr .ec-day { aspect-ratio: 2.6 / 1; }
       /* Списки на всю ширину не вытягиваем в длинные полосы (имя на одном краю, кнопка на другом за 1100px):
          карточки проблем и задач — в две колонки, строки в карточках-списках (VIP, именинники, стоп-лист) — тоже в две */
-      body:has(#deskLeft.role-ok):not(.col-narrow) :is(div:has(> .pr-card), div:has(> .tk-card)) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; }
-      body:has(#deskLeft.role-ok):not(.col-narrow) :is(div:has(> .pr-card), div:has(> .tk-card)) > :not(.pr-card):not(.tk-card) { grid-column: 1 / -1; }
+      body:has(#deskLeft.role-ok):not(.col-narrow) :is(div:has(> .pr-card), div:has(> .tk-card), div:has(> .gm-card)) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; }
+      body:has(#deskLeft.role-ok):not(.col-narrow) :is(div:has(> .pr-card), div:has(> .tk-card), div:has(> .gm-card)) > :not(.pr-card):not(.tk-card):not(.gm-card) { grid-column: 1 / -1; }
       body:has(#deskLeft.role-ok):not(.col-narrow) .ls-card:not(:has(> :not(.ls-row))):has(> .ls-row:nth-child(3)) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
       body:has(#deskLeft.role-ok):not(.col-narrow) .ls-card:not(:has(> :not(.ls-row))):has(> .ls-row:nth-child(3)) > .ls-row:nth-child(-n+2) { border-top: none; }
       body:has(#deskLeft.role-ok):not(.col-narrow) .ls-card:not(:has(> :not(.ls-row))):has(> .ls-row:nth-child(3)) > .ls-row:nth-child(even) { border-left: 1px solid var(--border); }
@@ -2276,6 +2279,15 @@
       body:has(#deskLeft.role-ok):not(.col-narrow) .mn-card:not(:has(> :not(.menu-item-row))):has(> .menu-item-row:nth-child(3)) > .menu-item-row:nth-child(-n+2) { border-top: none; }
       body:has(#deskLeft.role-ok):not(.col-narrow) .mn-card:not(:has(> :not(.menu-item-row))):has(> .menu-item-row:nth-child(3)) > .menu-item-row:nth-child(even) { border-left: 1px solid var(--border); }
       body:has(#deskLeft.role-ok):not(.col-narrow) .mn-card:not(:has(> :not(.menu-item-row))):has(> .menu-item-row:nth-child(3)) > .menu-item-row:last-child:nth-child(odd) { grid-column: 1 / -1; }
+      /* Кнопки и переключатели не растягиваем на всю колонку: «Отправить» на 1100px выглядит как полоса, а не как кнопка.
+         Главные кнопки форм и экранов — до --btnw, кнопки внутри карточек (Взять в работу, Ответить) — по тексту, слева. */
+      body:has(#deskLeft.role-ok) :is(.btn-cta, .btn-ghost) { width: min(100%, var(--btnw)); }
+      body:has(#deskLeft.role-ok) .btn-row { width: min(100%, 520px); }
+      body:has(#deskLeft.role-ok) .btn-row .btn-ghost { width: 100%; }
+      body:has(#deskLeft.role-ok) .pb-act { flex: 0 0 auto; min-width: 170px; padding-left: 24px; padding-right: 24px; }
+      body:has(#deskLeft.role-ok) .gm-actions button { flex: 0 0 auto; min-width: 150px; padding-left: 24px; padding-right: 24px; }
+      body:has(#deskLeft.role-ok) .seg { width: fit-content; max-width: 100%; }
+      body:has(#deskLeft.role-ok) .seg-btn { flex: 0 0 auto; min-width: 124px; padding-left: 22px; padding-right: 22px; }
       .desk-panel.role-ok { display: flex; }
       /* Когда справа видна боковая панель, «Управление» живёт в ней, а в главной колонке его не дублируем */
       body:has(#deskRight.role-ok) .svc-main { display: none; }
@@ -4380,35 +4392,46 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     refreshQuickActionStatus();
   }
 
-  // Плитки групп на компьютере: ряды делятся поровну и растягиваются на всю ширину группы.
-  // Пример: 5 плиток при 4 возможных в ряд → 3 + 2 (а не 4 + одна одинокая), и во втором ряду плитки шире, чтобы закрыть всю строку.
-  // Колонок столько, сколько влезает по минимальной ширине плитки; на телефоне (< 700px) ничего не трогаем — там две колонки, как было.
+  // Плитки на компьютере: на одном экране ВСЕ группы разбиты на одинаковые колонки, поэтому плитки везде одного размера
+  // («Внимание», «Смена», «Гости» — не растягиваются по-разному). Колонок столько, сколько влезает по минимальной ширине плитки;
+  // неполный ряд остаётся слева, пустое место справа — это нормально. Единственное послабление: если при полном числе колонок
+  // в какой-то группе получается одинокая плитка во втором ряду (5 при 4 колонках), берём на одну колонку меньше — но сразу для всех групп.
+  // Компактные строки (Маркетинг, Аналитика) занимают по полэкрана и встают в ту же сетку. На телефоне (< 700px) ничего не трогаем.
   function fitTileGrids() {
+    const TILE_MIN = 200, TILE_GAP = 10;
     const wide = window.innerWidth >= 700;
-    const gcd = (a, b) => b ? gcd(b, a % b) : a;
-    document.querySelectorAll('.qsec, .svc-fit').forEach(g => {
-      const kids = Array.from(g.children);
-      if (!wide) {
+    const groups = Array.from(document.querySelectorAll('.qsec, .svc-fit'));
+    if (!wide) {
+      groups.forEach(g => {
         g.classList.remove('fit');
-        if (g.classList.contains('svc-fit')) g.style.gridTemplateColumns = '';
+        g.style.gridTemplateColumns = '';
+        Array.from(g.children).forEach(k => { k.style.gridColumn = ''; });
+      });
+      return;
+    }
+    groups.forEach(g => g.classList.add('fit'));
+    const byScreen = new Map();
+    groups.forEach(g => { const sc = g.closest('.screen') || document.body; if (!byScreen.has(sc)) byScreen.set(sc, []); byScreen.get(sc).push(g); });
+    byScreen.forEach(list => {
+      const info = list.map(g => {
+        const kids = Array.from(g.children);
         kids.forEach(k => { k.style.gridColumn = ''; });
-        return;
-      }
-      g.classList.add('fit');
-      const W = g.clientWidth;
+        return { g, kids, shown: kids.filter(k => getComputedStyle(k).display !== 'none') };
+      });
+      const withKids = info.filter(x => x.shown.length);
+      if (!withKids.length) return;
+      const W = withKids[0].g.clientWidth;
       if (!W) return; // экран сейчас скрыт — посчитаем, когда его откроют (showScreen)
-      const shown = kids.filter(k => getComputedStyle(k).display !== 'none');
-      kids.forEach(k => { k.style.gridColumn = ''; });
-      if (!shown.length) return;
-      const GAP = 10, MIN = 230;
-      const maxCols = Math.max(1, Math.floor((W + GAP) / (MIN + GAP)));
-      const n = shown.length;
-      const rows = Math.ceil(n / maxCols);
-      const cols = Math.ceil(n / rows);
-      const last = n - cols * (rows - 1);          // плиток в последнем ряду (1…cols)
-      const L = last === cols ? cols : (cols * last) / gcd(cols, last);   // общее число дорожек, чтобы оба ряда делились ровно
-      g.style.gridTemplateColumns = `repeat(${L}, minmax(0, 1fr))`;
-      shown.forEach((k, i) => { k.style.gridColumn = `span ${i >= cols * (rows - 1) ? L / last : L / cols}`; });
+      const maxCols = Math.min(6, Math.max(1, Math.floor((W + TILE_GAP) / (TILE_MIN + TILE_GAP))));   // не больше 6 в ряд: на сверхшироких экранах плитки растут, а не плодятся
+      const tileCounts = withKids.map(x => x.shown.filter(k => k.classList.contains('qcard')).length).filter(n => n > 0);
+      const orphan = c => tileCounts.some(n => n > c && n % c === 1);
+      let C = maxCols;
+      if (C >= 4 && orphan(C) && !orphan(C - 1)) C -= 1;
+      const rowSpan = C >= 4 ? Math.floor(C / 2) : C;   // строки-разделы: по две в ряд
+      info.forEach(x => {
+        x.g.style.gridTemplateColumns = `repeat(${C}, minmax(0, 1fr))`;
+        x.shown.forEach(k => { if (k.classList.contains('qrow')) k.style.gridColumn = `span ${rowSpan}`; });
+      });
     });
   }
   let fitTilesRaf = 0;
