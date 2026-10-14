@@ -2126,7 +2126,7 @@
        Каждый блок панели — отдельная карточка; сама панель прозрачная и прокручивается, если блоков много.
        Видимость панели — ДВА независимых условия: медиа-запрос по ширине (CSS) и класс .role-ok,
        который JS вешает только администратору. */
-    :root { --dpw: 230px; }
+    :root { --dpw: 230px; --dp-gap: 14px; --dp-edge: 16px; --colw: 900px; }
     .desk-panel {
       display: none;
       position: fixed;
@@ -2142,9 +2142,10 @@
       z-index: 10;
     }
     .desk-panel::-webkit-scrollbar { display: none; width: 0; height: 0; }
-    /* 900px — ширина центральной колонки, 450 — её половина, 16 — отступ от колонки */
-    .desk-panel.left { left: calc(50vw - 450px - 16px - var(--dpw)); }
-    .desk-panel.right { left: calc(50vw + 450px + 16px); }
+    /* --colw — ширина центральной колонки (на широком экране растёт, см. ниже), --dp-gap — отступ панели от колонки.
+       Проценты у fixed считаются от окна без полосы прокрутки страницы — поэтому отступы слева и справа одинаковые. */
+    .desk-panel.left { left: calc(50% - var(--colw) / 2 - var(--dp-gap) - var(--dpw)); }
+    .desk-panel.right { left: calc(50% + var(--colw) / 2 + var(--dp-gap)); }
 
     /* Дата — золотая плитка с крупным числом */
     .desk-panel .dp-date { flex: 0 0 auto; display: flex; align-items: center; gap: 14px; margin: 0; padding: 15px 18px; border-radius: 18px; background: linear-gradient(155deg, rgba(184,115,51,0.24), rgba(184,115,51,0.05)); border: 1px solid rgba(184,115,51,0.34); }
@@ -2223,14 +2224,24 @@
     /* 900(колонка) + 16*2(отступы) + 230*2(панели) = 1392 — при более узком окне панели не показываем,
        чтобы не наезжали на контент. Шире — панели растут: на 1700px и больше они по 372px. */
     @media (min-width: 1392px) {
-      :root { --dpw: clamp(230px, calc((100vw - 900px) / 2 - 28px), 372px); }
+      /* На весь экран: панели у самых краёв окна (отступ --dp-edge), центральная колонка занимает всё, что между ними.
+         Панели растут медленно (до 400px), колонка — остальное (потолок 1900px, чтобы строки не растягивались на 4K). */
+      :root {
+        --dpw: clamp(230px, calc(230px + (100vw - 1392px) * 0.2), 400px);
+        --colw: min(calc(100% - 2 * (var(--dpw) + var(--dp-gap) + var(--dp-edge))), 1900px);
+      }
+      body:has(#deskLeft.role-ok) { max-width: var(--colw); }
+      /* плитки главной и «Сервиса» занимают всю ширину колонки: на 900px — три в ряд, шире — четыре и больше */
+      body:has(#deskLeft.role-ok) .grid-2 { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+      /* формы и узкие списки не растягиваем: колонка 900px по центру широкого поля (класс wide-ok ставит showScreen) */
+      body:has(#deskLeft.role-ok):not(.wide-ok) .screen { max-width: 900px; margin-left: auto; margin-right: auto; }
       .desk-panel.role-ok { display: flex; }
       /* Когда справа видна боковая панель, «Управление» живёт в ней, а в главной колонке его не дублируем */
       body:has(#deskRight.role-ok) .svc-main { display: none; }
       /* В разделе «Брони» правая панель прячется, а колонка расширяется на её место: схеме и графику нужна ширина.
          Левый край колонки остаётся там же (левая панель на месте), правый — доходит до края бывшей панели. */
       body.bk-wide #deskRight { display: none; }
-      body.bk-wide:has(#deskLeft.role-ok) { max-width: calc(916px + var(--dpw)); margin-left: calc(50vw - 450px); margin-right: 0; }
+      body.bk-wide:has(#deskLeft.role-ok) { max-width: calc(var(--colw) + var(--dp-gap) + var(--dpw)); margin-left: calc(50% - var(--colw) / 2); margin-right: 0; }
     }
     @media (max-width: 1559px) { .desk-panel .dp-label { font-size: 10px; letter-spacing: 1.1px; } }
     @media (min-width: 1560px) {
@@ -2242,7 +2253,7 @@
       .desk-panel .ec-dots b { width: 4px; height: 4px; }
       .desk-panel .dp-row { font-size: 13.5px; }
     }
-    @media (min-width: 1640px) { .dp-svc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (min-width: 1900px) { .dp-svc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   </style>
 </head>
 <body>
@@ -13879,6 +13890,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   // ─── NAVIGATION ────────────────────────────────
 
   const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room'];
+  var WIDE_SCREENS = ['home', 'bookings', 'service', 'analytics', 'marketing', 'guests-table', 'segments', 'feedback'];
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
 
@@ -13892,6 +13904,9 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     screens.forEach(s => document.getElementById('screen-' + s)?.classList.remove('active'));
     document.getElementById('screen-' + name)?.classList.add('active');
     document.body.classList.toggle('bk-wide', name === 'bookings'); // на широком экране «Брони» занимают и место правой панели
+    // Экраны, которым полезна вся ширина (плитки, графики, таблицы). Остальные — формы и узкие списки — на широком экране
+    // остаются в колонке 900px по центру: поля ввода в 1200px не нужны.
+    document.body.classList.toggle('wide-ok', WIDE_SCREENS.indexOf(name) >= 0);
     if (name === 'pin' && prev !== 'pin' && !opts.keepAuth) authEnter(); // вход истёк или вышли: экран входа
     window.scrollTo(0, opts.restoreScroll ? (screenScroll[name] || 0) : 0);
     try { if (tg?.BackButton) (name === 'home' || name === 'pin') ? tg.BackButton.hide() : tg.BackButton.show(); } catch {}
