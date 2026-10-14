@@ -34,6 +34,19 @@
 
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
+    /* Полосы прокрутки в стиле приложения: тонкие, медные, без белой подложки. Это и общая прокрутка страницы на компьютере,
+       и график броней, и ленты со вкладками. Chrome/Edge/Safari — через ::-webkit-scrollbar (там есть наведение),
+       Firefox — через стандартные свойства (они же отключили бы webkit-вариант в новом Chrome, поэтому только для Firefox). */
+    *::-webkit-scrollbar { width: 10px; height: 10px; }
+    *::-webkit-scrollbar-track { background: transparent; }
+    *::-webkit-scrollbar-thumb { background: rgba(184, 115, 51, 0.45); border: 2px solid transparent; background-clip: padding-box; border-radius: 10px; }
+    *::-webkit-scrollbar-thumb:hover { background: rgba(214, 144, 76, 0.8); background-clip: padding-box; }
+    *::-webkit-scrollbar-thumb:active { background: #D6904C; background-clip: padding-box; }
+    *::-webkit-scrollbar-corner { background: transparent; }
+    @supports not selector(::-webkit-scrollbar) {
+      * { scrollbar-width: thin; scrollbar-color: rgba(184, 115, 51, 0.55) transparent; }
+    }
+
     html {
       background: var(--bg);
       overscroll-behavior: none;
@@ -134,6 +147,14 @@
       outline: none;
     }
     .search-input:focus { border-color: rgba(184,115,51,0.4); }
+    /* поле поиска с крестиком «очистить» справа (виден, только когда в поле что-то введено) */
+    .search-field { position: relative; flex: 1; min-width: 0; display: flex; }
+    .search-field .search-input { width: 100%; }
+    .search-field.has-text .search-input { padding-right: 46px; }
+    .search-clear { display: none; position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; border-radius: 50%; border: none; background: rgba(240,223,192,0.08); color: var(--text-sub); cursor: pointer; align-items: center; justify-content: center; padding: 0; }
+    .search-field.has-text .search-clear { display: flex; }
+    .search-clear:active { background: rgba(240,223,192,0.2); }
+    @media (hover: hover) { .search-clear:hover { background: rgba(184,115,51,0.25); color: var(--text); } }
     .search-input::placeholder { color: var(--text-muted); }
     .btn-primary {
       background: var(--accent-dim);
@@ -234,6 +255,10 @@
       margin: 18px 0 2px;
     }
     .qgroup-label:first-child { margin-top: 0; }
+    /* Плитки одной группы. На телефоне обёртка «невидима» (плитки лежат в общей сетке, как раньше); на компьютере fitTileGrids()
+       включает .fit и считает колонки так, чтобы ряды делили ширину поровну и последний ряд не оставался с дырами. */
+    .qsec { display: contents; }
+    .qsec.fit { display: grid; grid-column: 1 / -1; gap: 10px; }
 
     /* Статус-точка на карточке — не видна в норме, красная только когда есть что-то необработанное */
     .qcard-dot {
@@ -2233,8 +2258,24 @@
       body:has(#deskLeft.role-ok) { max-width: var(--colw); }
       /* плитки главной и «Сервиса» занимают всю ширину колонки: на 900px — три в ряд, шире — четыре и больше */
       body:has(#deskLeft.role-ok) .grid-2 { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
-      /* формы и узкие списки не растягиваем: колонка 900px по центру широкого поля (класс wide-ok ставит showScreen) */
-      body:has(#deskLeft.role-ok):not(.wide-ok) .screen { max-width: 900px; margin-left: auto; margin-right: auto; }
+      /* формы и карточки одной записи не растягиваем: колонка 900px по центру широкого поля (класс col-narrow ставит showScreen) */
+      body:has(#deskLeft.role-ok).col-narrow .screen { max-width: 900px; margin-left: auto; margin-right: auto; }
+      /* календари на всю ширину делаем низкими (широкие клетки), иначе месяц не помещается на экран по высоте */
+      body:has(#deskLeft.role-ok) #screen-schedule .cal-day { aspect-ratio: 2.3 / 1; }
+      body:has(#deskLeft.role-ok) #screen-schedule.cal-big .cal-day { aspect-ratio: 1.5 / 1; }
+      body:has(#deskLeft.role-ok) .ec-scr .ec-day { aspect-ratio: 2.6 / 1; }
+      /* Списки на всю ширину не вытягиваем в длинные полосы (имя на одном краю, кнопка на другом за 1100px):
+         карточки проблем и задач — в две колонки, строки в карточках-списках (VIP, именинники, стоп-лист) — тоже в две */
+      body:has(#deskLeft.role-ok):not(.col-narrow) :is(div:has(> .pr-card), div:has(> .tk-card)) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; }
+      body:has(#deskLeft.role-ok):not(.col-narrow) :is(div:has(> .pr-card), div:has(> .tk-card)) > :not(.pr-card):not(.tk-card) { grid-column: 1 / -1; }
+      body:has(#deskLeft.role-ok):not(.col-narrow) .ls-card:not(:has(> :not(.ls-row))):has(> .ls-row:nth-child(3)) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      body:has(#deskLeft.role-ok):not(.col-narrow) .ls-card:not(:has(> :not(.ls-row))):has(> .ls-row:nth-child(3)) > .ls-row:nth-child(-n+2) { border-top: none; }
+      body:has(#deskLeft.role-ok):not(.col-narrow) .ls-card:not(:has(> :not(.ls-row))):has(> .ls-row:nth-child(3)) > .ls-row:nth-child(even) { border-left: 1px solid var(--border); }
+      body:has(#deskLeft.role-ok):not(.col-narrow) .ls-card:not(:has(> :not(.ls-row))):has(> .ls-row:nth-child(3)) > .ls-row:last-child:nth-child(odd) { grid-column: 1 / -1; }
+      body:has(#deskLeft.role-ok):not(.col-narrow) .mn-card:not(:has(> :not(.menu-item-row))):has(> .menu-item-row:nth-child(3)) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      body:has(#deskLeft.role-ok):not(.col-narrow) .mn-card:not(:has(> :not(.menu-item-row))):has(> .menu-item-row:nth-child(3)) > .menu-item-row:nth-child(-n+2) { border-top: none; }
+      body:has(#deskLeft.role-ok):not(.col-narrow) .mn-card:not(:has(> :not(.menu-item-row))):has(> .menu-item-row:nth-child(3)) > .menu-item-row:nth-child(even) { border-left: 1px solid var(--border); }
+      body:has(#deskLeft.role-ok):not(.col-narrow) .mn-card:not(:has(> :not(.menu-item-row))):has(> .menu-item-row:nth-child(3)) > .menu-item-row:last-child:nth-child(odd) { grid-column: 1 / -1; }
       .desk-panel.role-ok { display: flex; }
       /* Когда справа видна боковая панель, «Управление» живёт в ней, а в главной колонке его не дублируем */
       body:has(#deskRight.role-ok) .svc-main { display: none; }
@@ -2392,7 +2433,12 @@
   </div>
   <div style="padding:0 16px">
     <div class="search-box" id="homeSearchBox" style="margin-bottom:8px;">
-      <input class="search-input" id="searchInput" type="search" enterkeyhint="search" autocomplete="off" placeholder="Имя или телефон" oninput="updateSearchHint()" onkeydown="if(event.key==='Enter') doSearch()">
+      <div class="search-field" id="searchField">
+        <input class="search-input" id="searchInput" type="search" enterkeyhint="search" autocomplete="off" placeholder="Имя или телефон" oninput="updateSearchHint()" onkeydown="if(event.key==='Enter') doSearch(); else if(event.key==='Escape') clearSearch()">
+        <button type="button" class="search-clear" id="searchClear" onmousedown="event.preventDefault()" onclick="clearSearch()" title="Очистить" aria-label="Очистить поиск">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+        </button>
+      </div>
       <button class="btn-primary" onclick="doSearch()">Найти</button>
     </div>
     <div class="search-under" id="homeSearchUnder">
@@ -4189,8 +4235,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       g.items.push(it);
     }
     document.getElementById('serviceContent').innerHTML = items.length
-      ? groups.map(g => `<div class="svc-glabel">${escHtml(g.name)}</div><div class="grid-2">${g.items.map(serviceCardHtml).join('')}</div>`).join('')
+      ? groups.map(g => `<div class="svc-glabel">${escHtml(g.name)}</div><div class="grid-2 svc-fit">${g.items.map(serviceCardHtml).join('')}</div>`).join('')
       : '<div class="empty-state">Здесь пока ничего не открыто</div>';
+    fitTileGrids();
   }
   function openService() {
     renderService();
@@ -4319,17 +4366,53 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     let html = '';
     // Кнопки «Открыть смену» / «Закрыть смену» — наверху главного экрана (у основателя их нет: он только смотрит)
     if (can('shift.mark') && currentJobRole !== 'Основатель') html += `<div class="shift-bar${myShift.open ? ' on' : ''}" id="shiftBar">${shiftBarHtml()}</div>`;
-    if (attentionCards) html += qgroup('Внимание') + attentionCards;
-    if (shiftCards) html += qgroup('Смена') + shiftCards;
-    if (guestsCards) html += qgroup('Гости') + guestsCards;
-    if (marketingRows) html += qgroup('Маркетинг') + marketingRows;
-    if (analyticsRows) html += qgroup('Аналитика') + analyticsRows;
-    if (serviceRows) html += qgroup('Управление', 'svc-main') + serviceRows;
+    const qsec = cards => `<div class="qsec">${cards}</div>`;
+    if (attentionCards) html += qgroup('Внимание') + qsec(attentionCards);
+    if (shiftCards) html += qgroup('Смена') + qsec(shiftCards);
+    if (guestsCards) html += qgroup('Гости') + qsec(guestsCards);
+    if (marketingRows) html += qgroup('Маркетинг') + qsec(marketingRows);
+    if (analyticsRows) html += qgroup('Аналитика') + qsec(analyticsRows);
+    if (serviceRows) html += qgroup('Управление', 'svc-main') + qsec(serviceRows);
     if (!html) html = '<div class="empty-state" style="grid-column:1/-1">Пока ничего не открыто. Попросите основателя выдать доступ.</div>';
 
     grid.innerHTML = html;
+    fitTileGrids();
     refreshQuickActionStatus();
   }
+
+  // Плитки групп на компьютере: ряды делятся поровну и растягиваются на всю ширину группы.
+  // Пример: 5 плиток при 4 возможных в ряд → 3 + 2 (а не 4 + одна одинокая), и во втором ряду плитки шире, чтобы закрыть всю строку.
+  // Колонок столько, сколько влезает по минимальной ширине плитки; на телефоне (< 700px) ничего не трогаем — там две колонки, как было.
+  function fitTileGrids() {
+    const wide = window.innerWidth >= 700;
+    const gcd = (a, b) => b ? gcd(b, a % b) : a;
+    document.querySelectorAll('.qsec, .svc-fit').forEach(g => {
+      const kids = Array.from(g.children);
+      if (!wide) {
+        g.classList.remove('fit');
+        if (g.classList.contains('svc-fit')) g.style.gridTemplateColumns = '';
+        kids.forEach(k => { k.style.gridColumn = ''; });
+        return;
+      }
+      g.classList.add('fit');
+      const W = g.clientWidth;
+      if (!W) return; // экран сейчас скрыт — посчитаем, когда его откроют (showScreen)
+      const shown = kids.filter(k => getComputedStyle(k).display !== 'none');
+      kids.forEach(k => { k.style.gridColumn = ''; });
+      if (!shown.length) return;
+      const GAP = 10, MIN = 230;
+      const maxCols = Math.max(1, Math.floor((W + GAP) / (MIN + GAP)));
+      const n = shown.length;
+      const rows = Math.ceil(n / maxCols);
+      const cols = Math.ceil(n / rows);
+      const last = n - cols * (rows - 1);          // плиток в последнем ряду (1…cols)
+      const L = last === cols ? cols : (cols * last) / gcd(cols, last);   // общее число дорожек, чтобы оба ряда делились ровно
+      g.style.gridTemplateColumns = `repeat(${L}, minmax(0, 1fr))`;
+      shown.forEach((k, i) => { k.style.gridColumn = `span ${i >= cols * (rows - 1) ? L / last : L / cols}`; });
+    });
+  }
+  let fitTilesRaf = 0;
+  window.addEventListener('resize', () => { cancelAnimationFrame(fitTilesRaf); fitTilesRaf = requestAnimationFrame(fitTileGrids); });
 
   // Статус-точки на «Проблемы»/«Брони»: зелёная в норме, красная — если есть открытая
   // проблема или бронь, ожидающая подтверждения. Не блокирует показ сетки — догружается следом.
@@ -13890,7 +13973,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   // ─── NAVIGATION ────────────────────────────────
 
   const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room'];
-  var WIDE_SCREENS = ['home', 'bookings', 'service', 'analytics', 'marketing', 'guests-table', 'segments', 'feedback'];
+  var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'segment-rules', 'season', 'review-rules', 'venue'];
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
 
@@ -13904,9 +13987,10 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     screens.forEach(s => document.getElementById('screen-' + s)?.classList.remove('active'));
     document.getElementById('screen-' + name)?.classList.add('active');
     document.body.classList.toggle('bk-wide', name === 'bookings'); // на широком экране «Брони» занимают и место правой панели
-    // Экраны, которым полезна вся ширина (плитки, графики, таблицы). Остальные — формы и узкие списки — на широком экране
-    // остаются в колонке 900px по центру: поля ввода в 1200px не нужны.
-    document.body.classList.toggle('wide-ok', WIDE_SCREENS.indexOf(name) >= 0);
+    // На широком экране всё занимает всю ширину, кроме форм и карточек одной записи: у них поля в 1200px бессмысленны,
+    // они остаются колонкой 900px по центру.
+    document.body.classList.toggle('col-narrow', NARROW_SCREENS.indexOf(name) >= 0);
+    if (name === 'home' || name === 'service') fitTileGrids();   // экран только что стал видимым — теперь у плиток есть ширина
     if (name === 'pin' && prev !== 'pin' && !opts.keepAuth) authEnter(); // вход истёк или вышли: экран входа
     window.scrollTo(0, opts.restoreScroll ? (screenScroll[name] || 0) : 0);
     try { if (tg?.BackButton) (name === 'home' || name === 'pin') ? tg.BackButton.hide() : tg.BackButton.show(); } catch {}
@@ -14051,9 +14135,23 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     return { kind: 'badDigits', digits };
   }
 
+  // Крестик в строке поиска (и Esc): стереть запрос и прошлые результаты, курсор остаётся в поле — можно сразу вводить новое
+  function clearSearch() {
+    const input = document.getElementById('searchInput');
+    if (!input) return;
+    input.value = '';
+    updateSearchHint();
+    const results = document.getElementById('searchResults');
+    if (results) results.innerHTML = '';
+    const section = document.getElementById('resultsSection');
+    if (section) section.style.display = 'none';
+    input.focus();
+  }
+
   function updateSearchHint() {
     const el = document.getElementById('searchHint');
     if (!el) return;
+    document.getElementById('searchField')?.classList.toggle('has-text', !!document.getElementById('searchInput')?.value);
     const c = classifySearch(document.getElementById('searchInput')?.value);
     const text = {
       empty: 'Можно ввести 4 последние цифры номера',
