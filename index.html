@@ -2178,7 +2178,6 @@
     .dp-d-time { display: flex; align-items: center; gap: 9px; padding-top: 10px; border-top: 1px solid rgba(184,115,51,0.24); }
     .dp-d-time svg { flex: 0 0 auto; color: var(--accent); }
     .dp-clock { font-family: 'Jost', sans-serif; font-size: 22px; font-weight: 500; line-height: 1; letter-spacing: 0.5px; color: var(--text); font-variant-numeric: tabular-nums; }
-    .dp-d-time small { margin-left: auto; font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--accent); }
     .dp-day { font-family: 'Jost', sans-serif; font-size: 46px; font-weight: 500; line-height: 1; color: var(--text); font-variant-numeric: tabular-nums; }
     .dp-dm b { display: block; font-weight: 400; font-size: 17px; line-height: 1.2; color: var(--text); }
     .dp-dm span { display: block; margin-top: 4px; font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--accent); }
@@ -2302,6 +2301,15 @@
       body.bk-wide:has(#deskLeft.role-ok) { max-width: calc(var(--colw) + var(--dp-gap) + var(--dpw)); margin-left: calc(50% - var(--colw) / 2); margin-right: 0; }
     }
     @media (max-width: 1559px) { .desk-panel .dp-label { font-size: 10px; letter-spacing: 1.1px; } }
+    /* Панель достаточно широка (карточка даты ≥ 290px): часы встают справа в той же строке, что и число с днём недели.
+       Уже — часы отдельной строкой под датой (см. .dp-d-time выше), иначе «Воскресенье» и «сентября» упираются в часы. */
+    @media (min-width: 1700px) {
+      .desk-panel .dp-date { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0 14px; padding: 15px 20px; }
+      .desk-panel .dp-d-top { display: contents; }
+      .desk-panel .dp-d-time { padding-top: 0; border-top: none; }
+      .desk-panel .dp-d-time svg { display: none; }
+      .desk-panel .dp-clock { font-size: 26px; }
+    }
     @media (min-width: 1560px) {
       .desk-panel .ec-title { font-size: 15px; }
       .desk-panel .ec-nav { width: 30px; height: 30px; border-radius: 10px; font-size: 17px; }
@@ -4529,7 +4537,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const now = new Date(), tz = { timeZone: 'Europe/Moscow' };
       const monthGen = now.toLocaleDateString('ru-RU', { ...tz, day: 'numeric', month: 'long' }).replace(/^\d+\s*/, '');
       el.innerHTML = `<div class="dp-d-top"><div class="dp-day">${Number(day.slice(8, 10))}</div><div class="dp-dm"><b>${escHtml(capFirst(now.toLocaleDateString('ru-RU', { ...tz, weekday: 'long' })))}</b><span>${escHtml(monthGen)} ${day.slice(0, 4)}</span></div></div>`
-        + `<div class="dp-d-time" title="Время заведения (Москва)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg><span class="dp-clock" id="dpClock"></span><small>МСК</small></div>`;
+        + `<div class="dp-d-time" title="Время заведения (Москва)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg><span class="dp-clock" id="dpClock"></span></div>`;
     }
     const c = document.getElementById('dpClock');
     if (c && c.textContent !== hm) c.textContent = hm;
