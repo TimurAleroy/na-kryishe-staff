@@ -1033,21 +1033,76 @@
     .room-note.warn { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.4); color: #f59e0b; }
     .room-note.bad { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.45); color: #f87171; }
     .room-note-call { display: block; width: max-content; max-width: 100%; margin-top: 8px; padding: 7px 12px; border-radius: 10px; border: 1px solid currentColor; color: inherit; text-decoration: none; font-size: 12.5px; }
-    .vn-closed { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 11px 14px; margin-bottom: 8px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-card); }
-    .vn-closed-main { display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
-    .vn-closed-main b { font-weight: 500; color: var(--text); }
-    .vn-closed-main span { color: var(--text-sub); font-size: 12px; }
-    .vn-closed-main .vn-warn { color: #f59e0b; }
-    .vn-del { flex-shrink: 0; width: 30px; height: 30px; border-radius: 9px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; }
-    .vn-add { margin-top: 10px; }
-    .vn-day { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    /* РЕЖИМ РАБОТЫ: сводка, закрытые даты карточками-календарями, переключатели, полоска времени по дням */
+    .vn-hero { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 8px; }
+    .vn-stat { min-width: 0; padding: 12px 13px 13px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); }
+    .vn-stat.main { background: linear-gradient(155deg, rgba(184,115,51,0.2), rgba(184,115,51,0.05)); border-color: rgba(184,115,51,0.32); }
+    .vn-stat-k { font-size: 9.5px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--text-muted); white-space: nowrap; }
+    .vn-stat-v { margin-top: 7px; font-family: 'Jost', sans-serif; font-size: 20px; font-weight: 500; line-height: 1.1; color: var(--text); white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .vn-stat.main .vn-stat-v { font-size: 18px; padding-top: 1px; }
+    .vn-stat-v.sm { font-size: 16px; padding-top: 3px; }
+    .vn-stat-v.ok { color: #4ade80; }
+    .vn-stat-v.off { color: var(--text-muted); }
+    .vn-stat-s { margin-top: 4px; font-size: 11px; line-height: 1.35; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; }
+    .vn-sec { display: flex; align-items: center; gap: 8px; }
+    .vn-count { min-width: 18px; height: 18px; padding: 0 6px; border-radius: 9px; background: var(--accent-dim); color: var(--accent); font-size: 10.5px; letter-spacing: 0; line-height: 18px; text-align: center; }
+    .vn-closed { display: flex; align-items: center; gap: 12px; padding: 10px 12px; margin-bottom: 8px; border: 1px solid var(--border); border-radius: 16px; background: var(--bg-card); }
+    .vn-cal { flex: 0 0 auto; width: 48px; border-radius: 12px; overflow: hidden; text-align: center; background: rgba(255,255,255,0.04); border: 1px solid rgba(240,223,192,0.12); }
+    .vn-cal span { display: block; padding: 3px 0; background: var(--accent); color: var(--bg); font-size: 9.5px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; }
+    .vn-cal b { display: block; padding: 3px 0 5px; font-family: 'Jost', sans-serif; font-size: 20px; font-weight: 500; line-height: 1.1; color: var(--text); }
+    .vn-closed-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .vn-closed-main b { font-size: 14px; font-weight: 500; color: var(--text); }
+    .vn-closed-main .vn-reason { font-size: 12.5px; color: var(--text-sub); line-height: 1.35; }
+    .vn-closed-main .vn-when { font-size: 11px; color: var(--text-muted); }
+    .vn-closed-main .vn-warn { margin-top: 3px; font-size: 12px; line-height: 1.4; color: #f59e0b; }
+    .vn-del { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .vn-del:active { color: #f87171; border-color: rgba(248,113,113,0.45); background: rgba(248,113,113,0.08); }
+    .vn-empty { display: flex; align-items: center; gap: 14px; padding: 14px; border: 1px dashed rgba(240,223,192,0.16); border-radius: 16px; color: var(--text-muted); font-size: 12px; line-height: 1.45; }
+    .vn-empty b { display: block; font-size: 13.5px; font-weight: 500; color: var(--text-sub); margin-bottom: 2px; }
+    .vn-add { margin-top: 10px; padding: 14px; border: 1px dashed rgba(184,115,51,0.4); border-radius: 16px; background: rgba(184,115,51,0.045); }
+    .vn-add-t { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 13.5px; color: var(--text); }
+    .vn-add .form-input { height: 46px; padding: 0 14px; }
+    .vn-add .form-group { margin-bottom: 12px; }
+    .vn-addbtn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 4px; padding: 13px 18px; border-radius: 100px; border: 1px solid rgba(184,115,51,0.55); background: var(--accent-dim); color: var(--accent); font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 600; cursor: pointer; }
+    .vn-addbtn:active { background: rgba(184,115,51,0.26); }
+    .vn-card { display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); }
+    .vn-ico { flex: 0 0 auto; width: 42px; height: 42px; border-radius: 13px; display: flex; align-items: center; justify-content: center; background: var(--accent-dim); color: var(--accent); }
+    .vn-card.off .vn-ico { background: rgba(240,223,192,0.05); color: var(--text-muted); }
+    .vn-card-body { flex: 1; min-width: 0; }
+    .vn-card-t { font-size: 14.5px; color: var(--text); }
+    .vn-card-h { margin-top: 2px; font-size: 11.5px; line-height: 1.45; color: var(--text-muted); }
+    .vn-sw { position: relative; flex: 0 0 auto; display: inline-flex; cursor: pointer; }
+    .vn-sw input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+    .vn-sw i { position: relative; display: block; width: 46px; height: 28px; border-radius: 100px; background: rgba(240,223,192,0.1); border: 1px solid rgba(240,223,192,0.18); transition: background .18s, border-color .18s; }
+    .vn-sw i::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--text-sub); transition: transform .18s, background .18s; }
+    .vn-sw input:checked + i { background: linear-gradient(135deg, #D28C48, var(--accent)); border-color: transparent; }
+    .vn-sw input:checked + i::after { transform: translateX(18px); background: #FBF0DA; }
+    .vn-sw input:focus-visible + i { outline: 2px solid var(--text-sub); outline-offset: 2px; }
+    .vn-week { padding: 2px 14px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); }
+    .vn-day { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px 12px; padding: 13px 0; border-bottom: 1px solid var(--border); }
     .vn-day:last-child { border-bottom: none; }
-    .vn-day-name { flex: 1 1 100%; font-size: 13px; color: var(--text); }
-    @media (min-width: 700px) { .vn-day-name { flex: 1 1 130px; } .vn-day .vn-time { flex: 0 0 110px; } }
-    .vn-day.off .vn-day-name { color: var(--text-muted); }
-    .vn-time { flex: 1 1 80px; min-width: 0; padding: 8px 10px; font-size: 13px; }
+    .vn-day-name { grid-column: 1; grid-row: 1; display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; font-size: 14.5px; color: var(--text); min-width: 0; }
+    .vn-day-name small { font-size: 11.5px; color: var(--text-muted); }
+    .vn-today { padding: 2px 8px; border-radius: 100px; border: 1px solid rgba(184,115,51,0.38); background: var(--accent-dim); color: var(--accent); font-size: 9.5px; letter-spacing: 0.8px; text-transform: uppercase; }
+    .vn-swl { grid-column: 2; grid-row: 1; display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 12px; color: var(--text-sub); }
+    .vn-swl > span:first-child { min-width: 62px; text-align: right; }
+    .vn-times { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; }
+    .vn-time { flex: 1 1 0; min-width: 0; height: 42px; padding: 0 12px; border-radius: 12px; background: rgba(255,255,255,0.03); text-align: center; font-size: 15px; font-variant-numeric: tabular-nums; color-scheme: dark; }
     .vn-dash { color: var(--text-muted); }
-    .vn-off { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-sub); cursor: pointer; }
+    .vn-track { grid-column: 1 / -1; position: relative; height: 6px; border-radius: 100px; overflow: hidden; background: rgba(240,223,192,0.07); }
+    .vn-track::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 24.7%, rgba(240,223,192,0.2) 24.7%, rgba(240,223,192,0.2) 25.3%, transparent 25.3%, transparent 49.7%, rgba(240,223,192,0.2) 49.7%, rgba(240,223,192,0.2) 50.3%, transparent 50.3%, transparent 74.7%, rgba(240,223,192,0.2) 74.7%, rgba(240,223,192,0.2) 75.3%, transparent 75.3%); }
+    .vn-seg { position: absolute; top: 0; bottom: 0; background: linear-gradient(90deg, #D28C48, var(--accent)); }
+    .vn-offmsg { grid-column: 1 / -1; padding: 11px 12px; border: 1px dashed rgba(240,223,192,0.13); border-radius: 12px; text-align: center; font-size: 12px; color: var(--text-muted); }
+    .vn-day.off .vn-day-name { color: var(--text-muted); }
+    @media (min-width: 700px) {
+      .vn-day { grid-template-columns: 180px 300px minmax(80px, 1fr) auto; gap: 14px; }
+      .vn-day-name, .vn-times, .vn-track, .vn-swl, .vn-offmsg { grid-row: 1; }
+      .vn-day-name { grid-column: 1; } .vn-times { grid-column: 2; } .vn-track { grid-column: 3; } .vn-swl { grid-column: 4; } .vn-offmsg { grid-column: 2 / 4; }
+      .vn-stat.main .vn-stat-v { font-size: 24px; }
+    }
+    .vn-save { margin-top: 16px; }
+    .vn-save.dirty { position: sticky; bottom: 0; z-index: 20; margin: 8px -16px 0; padding: 18px 16px calc(12px + env(safe-area-inset-bottom)); background: linear-gradient(to bottom, rgba(30,16,4,0) 0%, var(--bg) 42%); }
+    .vn-save .btn-cta { margin-top: 0; }
     .bd-item { align-items: center; }
     .bd-main { flex: 1; min-width: 0; }
     .bd-st { font-size: 11.5px; margin-top: 3px; color: var(--text-sub); }
@@ -4338,6 +4393,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить режим работы'));
       venueCfg = await res.json();
       venueDraft = JSON.parse(JSON.stringify(venueCfg));
+      venueAdd = { date: '', reason: '', own: '' };
       renderVenue();
     } catch (e) {
       el.innerHTML = errorStateHtml(e.message || 'Не удалось загрузить режим работы', 'openVenue()');
@@ -4347,52 +4403,110 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const pick = c => JSON.stringify({ h: c.hours, c: (c.closed || []).map(x => [x.date, x.reason]), t: c.terrace !== false });
     return !!venueCfg && !!venueDraft && pick(venueCfg) !== pick(venueDraft);
   }
+  // Добавление закрытой даты: что выбрано в форме. Хранится отдельно, чтобы переключатель или часы не стирали уже выбранную дату
+  let venueAdd = { date: '', reason: '', own: '' };
+  const VN_WD = ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'];
+  const VN_MON = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+  const VN_HM = /^\d{2}:\d{2}$/;
+  const vnMin = t => Number(t.slice(0, 2)) * 60 + Number(t.slice(3, 5));
+  function vnDur(h) { let m = vnMin(h.close) - vnMin(h.open); if (m <= 0) m += 1440; return m; }   // закрытие после полуночи — тот же вечер
+  function vnDurText(m) { const hh = Math.floor(m / 60), mm = m % 60; return mm ? `${hh} ч ${mm} мин` : `${hh} ч`; }
+  // Полоска суток заведения (06:00 → 06:00): сколько занимает рабочее время
+  function vnTrack(h) {
+    const dur = vnDur(h), start = (((vnMin(h.open) - 360) % 1440) + 1440) % 1440;
+    const seg = (l, w) => `<i class="vn-seg" style="left:${(l / 14.4).toFixed(2)}%;width:${(w / 14.4).toFixed(2)}%"></i>`;
+    return seg(start, Math.min(dur, 1440 - start)) + (start + dur > 1440 ? seg(0, start + dur - 1440) : '');
+  }
+  function vnDate(iso) {
+    const [y, m, dd] = iso.split('-').map(Number), t = venueDayStr().split('-').map(Number);
+    const diff = Math.round((Date.UTC(y, m - 1, dd) - Date.UTC(t[0], t[1] - 1, t[2])) / 864e5);
+    const when = diff === 0 ? 'сегодня' : diff === 1 ? 'завтра' : diff > 1 ? `через ${diff} ${ruPlural(diff, 'день', 'дня', 'дней')}` : 'дата прошла';
+    return { y, m, d: dd, wd: VN_WD[new Date(Date.UTC(y, m - 1, dd)).getUTCDay()], when, year: y !== t[0] };
+  }
   function renderVenue() {
     const el = document.getElementById('venueContent');
     const d = venueDraft;
     if (!el || !d) return;
     const reasons = d.reasons || ['Закрыто на частное мероприятие', 'Выходной', 'Санитарный день'];
-    const closedRows = (d.closed || []).map((c, i) => `
+    if (venueAdd.reason !== '__own' && !reasons.includes(venueAdd.reason)) venueAdd.reason = reasons[0];
+    const todayIso = venueDayStr(), td = vnDate(todayIso);
+    const todayKey = String(new Date(todayIso + 'T00:00:00Z').getUTCDay() || 7);
+    const terrace = d.terrace !== false;
+    // сводка: что гость видит сегодня, работает ли терраса, сколько закрытых дат впереди
+    const closedToday = (d.closed || []).find(c => c.date === todayIso), hToday = d.hours[todayKey];
+    const todayV = closedToday ? ['Закрыто', 'sm off', escHtml(closedToday.reason)] : hToday.closed ? ['Выходной', 'sm off', 'по режиму недели'] : [`${escHtml(hToday.open)}–${escHtml(hToday.close)}`, '', 'открыто'];
+    const nextClosed = (d.closed || [])[0];
+    const hero = `<div class="vn-hero">
+        <div class="vn-stat main"><div class="vn-stat-k">Сегодня</div><div class="vn-stat-v ${todayV[1]}">${todayV[0]}</div><div class="vn-stat-s">${capFirst(td.wd)}, ${td.d} ${VN_MON[td.m - 1]} · ${todayV[2]}</div></div>
+        <div class="vn-stat"><div class="vn-stat-k">Терраса</div><div class="vn-stat-v sm ${terrace ? 'ok' : 'off'}">${terrace ? 'Работает' : 'Закрыта'}</div><div class="vn-stat-s">${terrace ? 'столы в брони' : 'столы скрыты'}</div></div>
+        <div class="vn-stat"><div class="vn-stat-k">Закрыто</div><div class="vn-stat-v">${(d.closed || []).length}</div><div class="vn-stat-s">${nextClosed ? 'ближайшая: ' + vnDate(nextClosed.date).d + ' ' + VN_MON[vnDate(nextClosed.date).m - 1] : 'дат нет'}</div></div>
+      </div>`;
+    const closedRows = (d.closed || []).map((c, i) => {
+      const v = vnDate(c.date);
+      return `
       <div class="vn-closed">
-        <div class="vn-closed-main"><b>${escHtml(capFirst(humanDay(c.date)))}</b><span>${escHtml(c.reason)}</span>
+        <div class="vn-cal"><span>${VN_MON[v.m - 1]}</span><b>${v.d}</b></div>
+        <div class="vn-closed-main"><b>${capFirst(v.wd)}${v.year ? ', ' + v.y : ''}</b><span class="vn-reason">${escHtml(c.reason)}</span><span class="vn-when">${v.when}</span>
           ${c.bookings ? `<span class="vn-warn">На эту дату уже ${c.bookings} ${ruPlural(c.bookings, 'бронь', 'брони', 'броней')} — свяжитесь с гостями</span>` : ''}</div>
-        <button type="button" class="vn-del" onclick="venueRemoveClosed(${i})" aria-label="Убрать">✕</button>
-      </div>`).join('');
-    const hoursRows = VENUE_DAYS.map(([k, name]) => {
-      const h = d.hours[k];
-      return `<div class="vn-day${h.closed ? ' off' : ''}">
-        <span class="vn-day-name">${name}</span>
-        <input class="form-input vn-time" type="time" value="${escHtml(h.open)}" ${h.closed ? 'disabled' : ''} onchange="venueSetHour('${k}', 'open', this.value)" aria-label="Открытие, ${name}">
-        <span class="vn-dash">—</span>
-        <input class="form-input vn-time" type="time" value="${escHtml(h.close)}" ${h.closed ? 'disabled' : ''} onchange="venueSetHour('${k}', 'close', this.value)" aria-label="Закрытие, ${name}">
-        <label class="vn-off"><input type="checkbox" ${h.closed ? 'checked' : ''} onchange="venueSetHour('${k}', 'closed', this.checked)"> выходной</label>
+        <button type="button" class="vn-del" onclick="venueRemoveClosed(${i})" aria-label="Убрать дату"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       </div>`;
     }).join('');
+    const emptyClosed = `<div class="vn-empty"><span class="vn-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17M9 15l2 2 4-4"/></svg></span><div><b>Закрытых дат нет</b>Гости бронируют во все дни по часам ниже</div></div>`;
+    const hoursRows = VENUE_DAYS.map(([k, name]) => {
+      const h = d.hours[k], on = !h.closed, valid = VN_HM.test(h.open) && VN_HM.test(h.close);
+      return `<div class="vn-day${on ? '' : ' off'}">
+        <div class="vn-day-name">${name}${k === todayKey ? '<span class="vn-today">сегодня</span>' : ''}${on && valid ? `<small>${vnDurText(vnDur(h))}</small>` : ''}</div>
+        <label class="vn-swl"><span>${on ? 'работаем' : 'выходной'}</span><span class="vn-sw"><input type="checkbox" ${on ? 'checked' : ''} onchange="venueSetHour('${k}', 'closed', !this.checked)" aria-label="${name}: работаем"><i></i></span></label>
+        ${on ? `<div class="vn-times">
+          <input class="form-input vn-time" type="time" value="${escHtml(h.open)}" onchange="venueSetHour('${k}', 'open', this.value)" aria-label="Открытие, ${name}">
+          <span class="vn-dash">—</span>
+          <input class="form-input vn-time" type="time" value="${escHtml(h.close)}" onchange="venueSetHour('${k}', 'close', this.value)" aria-label="Закрытие, ${name}">
+        </div>${valid ? `<div class="vn-track">${vnTrack(h)}</div>` : ''}` : '<div class="vn-offmsg">Выходной — брони на этот день закрыты</div>'}
+      </div>`;
+    }).join('');
+    const own = venueAdd.reason === '__own';
+    const dirty = venueDirty();
     el.innerHTML = `
-      <div class="sec" style="margin-top:0">Закрытые даты</div>
+      ${hero}
+
+      <div class="sec vn-sec">Закрытые даты${(d.closed || []).length ? `<span class="vn-count">${d.closed.length}</span>` : ''}</div>
       <div class="note" style="margin-bottom:10px">В закрытую дату гости не могут забронировать ни стол, ни ВИП-комнату — в приложении и на сайте они увидят причину. Действующие брони сами не отменяются.</div>
-      ${closedRows || '<div class="empty-state" style="padding:14px 10px">Закрытых дат нет</div>'}
-      <div class="visit-item vn-add">
-        <div class="form-group" style="margin-bottom:10px"><label class="form-label">Дата</label><input class="form-input" type="date" id="vnDate" min="${escHtml(venueDayStr())}"></div>
-        <div class="form-group" style="margin-bottom:10px"><label class="form-label">Причина — её увидит гость</label>
-          <select class="form-input" id="vnReason" onchange="document.getElementById('vnReasonOwn').style.display = this.value === '__own' ? 'block' : 'none'">
-            ${reasons.map(r => `<option value="${escHtml(r)}">${escHtml(r)}</option>`).join('')}<option value="__own">Свой текст…</option>
-          </select>
-          <input class="form-input" id="vnReasonOwn" maxlength="80" placeholder="Например: закрыто на ремонт" style="display:none;margin-top:8px">
+      ${closedRows || emptyClosed}
+      <div class="vn-add">
+        <div class="vn-add-t"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg>Закрыть дату</div>
+        <div class="form-group"><label class="form-label" for="vnDate">Дата</label><input class="form-input" type="date" id="vnDate" value="${escHtml(venueAdd.date)}" min="${escHtml(venueDayStr())}" oninput="venueAdd.date = this.value"></div>
+        <div class="form-group"><label class="form-label">Причина — её увидит гость</label>
+          <div class="chip-row" id="vnReasons">
+            ${reasons.map((r, i) => `<button type="button" class="chip${venueAdd.reason === r ? ' selected' : ''}" onclick="venuePickReason(${i})">${escHtml(r)}</button>`).join('')}<button type="button" class="chip${own ? ' selected' : ''}" onclick="venuePickReason(-1)">Свой текст…</button>
+          </div>
+          <input class="form-input" id="vnReasonOwn" maxlength="80" placeholder="Например: закрыто на ремонт" value="${escHtml(venueAdd.own)}" oninput="venueAdd.own = this.value" style="display:${own ? 'block' : 'none'};margin-top:10px">
         </div>
-        <button type="button" class="btn-ghost" onclick="venueAddClosed()">+ Закрыть дату</button>
+        <button type="button" class="vn-addbtn" onclick="venueAddClosed()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Закрыть дату</button>
       </div>
 
       <div class="sec">Терраса</div>
-      <label class="perm-row"><input type="checkbox" id="vnTerrace" ${d.terrace !== false ? 'checked' : ''} onchange="venueSetTerrace(this.checked)"><span class="perm-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 9 17 20 6"/></svg></span><span><span class="rr-t">Терраса работает</span><span class="rr-h">Выключите на холодный сезон — столы террасы пропадут из выбора стола в брони</span></span></label>
+      <div class="vn-card${terrace ? '' : ' off'}">
+        <span class="vn-ico"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4"/></svg></span>
+        <div class="vn-card-body"><div class="vn-card-t">${terrace ? 'Терраса работает' : 'Терраса закрыта'}</div><div class="vn-card-h">${terrace ? 'Выключите на холодный сезон — столы террасы пропадут из выбора стола в брони' : 'Столы террасы не показываются в выборе стола. Включите, когда откроете сезон'}</div></div>
+        <label class="vn-sw"><input type="checkbox" id="vnTerrace" ${terrace ? 'checked' : ''} onchange="venueSetTerrace(this.checked)" aria-label="Терраса работает"><i></i></label>
+      </div>
       ${d.terrace === false && d.terraceBookings ? `<div class="room-note warn">На столах террасы ${d.terraceBookings} ${ruPlural(d.terraceBookings, 'будущая бронь', 'будущие брони', 'будущих броней')} — пересадите гостей в зал.</div>` : ''}
 
       <div class="sec">Часы работы</div>
-      <div class="note" style="margin-bottom:10px">Гости могут бронировать только на это время. Закрытие после полуночи относится к тому же вечеру.</div>
-      <div class="visit-item" style="padding:6px 14px">${hoursRows}</div>
+      <div class="note" style="margin-bottom:10px">Гости могут бронировать только на это время. Закрытие после полуночи относится к тому же вечеру. Полоска показывает рабочее время в сутках с 6 утра до 6 утра.</div>
+      <div class="vn-week">${hoursRows}</div>
 
-      <button class="btn-cta" id="vnSaveBtn" style="margin-top:16px" onclick="saveVenue()" ${venueDirty() ? '' : 'disabled'}>Сохранить</button>
-      <div class="note" id="vnSaveNote" style="margin-top:8px;text-align:center">${venueDirty() ? 'Есть несохранённые изменения' : ''}</div>`;
+      <div class="vn-save${dirty ? ' dirty' : ''}">
+        <button class="btn-cta" id="vnSaveBtn" onclick="saveVenue()" ${dirty ? '' : 'disabled'}>Сохранить</button>
+        <div class="note" id="vnSaveNote" style="margin-top:8px;text-align:center">${dirty ? 'Есть несохранённые изменения' : ''}</div>
+      </div>`;
+  }
+  function venuePickReason(i) {
+    const reasons = (venueDraft && venueDraft.reasons) || ['Закрыто на частное мероприятие', 'Выходной', 'Санитарный день'];
+    venueAdd.reason = i < 0 ? '__own' : reasons[i];
+    document.querySelectorAll('#vnReasons .chip').forEach((c, j) => c.classList.toggle('selected', (i < 0 ? j === reasons.length : j === i)));
+    const own = document.getElementById('vnReasonOwn');
+    if (own) { own.style.display = i < 0 ? 'block' : 'none'; if (i < 0) own.focus(); }
   }
   function venueSetHour(k, field, value) {
     if (!venueDraft) return;
@@ -4403,14 +4517,14 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function venueSetTerrace(on) { if (venueDraft) { venueDraft.terrace = !!on; renderVenue(); } }
   function venueAddClosed() {
     const date = document.getElementById('vnDate').value;
-    const sel = document.getElementById('vnReason').value;
-    const reason = (sel === '__own' ? document.getElementById('vnReasonOwn').value : sel).trim();
+    const reason = (venueAdd.reason === '__own' ? document.getElementById('vnReasonOwn').value : venueAdd.reason).trim();
     if (!date) { showToast('Выберите дату', true); return; }
     if (date < venueDayStr()) { showToast('Эта дата уже прошла', true); return; }
     if (!reason) { showToast('Напишите причину — её увидит гость', true); return; }
     if (venueDraft.closed.some(c => c.date === date)) { showToast('Эта дата уже закрыта', true); return; }
     venueDraft.closed.push({ date, reason, bookings: 0 });
     venueDraft.closed.sort((a, b) => a.date.localeCompare(b.date));
+    venueAdd.date = ''; venueAdd.own = '';
     renderVenue();
   }
   function venueRemoveClosed(i) { if (venueDraft) { venueDraft.closed.splice(i, 1); renderVenue(); } }
