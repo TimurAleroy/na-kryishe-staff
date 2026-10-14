@@ -246,14 +246,6 @@
     .qcard-sub.warn { color: #E8A33D; }
     .svc-glabel { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin: 20px 2px 0; }
     .svc-glabel:first-child { margin-top: 4px; }
-    /* Состояние системы */
-    .ss-row { display: flex; align-items: flex-start; gap: 12px; padding: 13px 14px; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border); margin-bottom: 8px; }
-    .ss-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; background: var(--text-muted); }
-    .ss-dot.ok { background: #4ade80; box-shadow: 0 0 0 3px rgba(74,222,128,0.15); }
-    .ss-dot.bad { background: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.15); }
-    .ss-dot.warn { background: #E8A33D; box-shadow: 0 0 0 3px rgba(232,163,61,0.15); }
-    .ss-t { font-size: 14px; color: var(--text); }
-    .ss-s { font-size: 12px; color: var(--text-muted); margin-top: 2px; line-height: 1.45; }
 
     .result-item {
       background: var(--bg-card);
@@ -635,32 +627,157 @@
     .sr-delta.down { color: #fbbf24; background: rgba(251,191,36,0.1); border-color: rgba(251,191,36,0.38); }
     .sr-delta { display: block; width: max-content; margin-left: auto; }
 
-    /* ЖУРНАЛ ДЕЙСТВИЙ и ПРОСЬБЫ ОБ ОТЗЫВЕ (Сервис → Система) */
-    .au-filters { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 2px; }
-    .au-filters .form-input { padding: 10px 12px; font-size: 13px; }
-    #auditPeriod { gap: 6px; flex-wrap: nowrap; }
-    #auditPeriod .chip { padding: 8px 11px; font-size: 12.5px; white-space: nowrap; flex: 1; text-align: center; }
-    .au-note { font-size: 11.5px; color: var(--text-muted); margin: 10px 2px 0; line-height: 1.45; }
-    .au-day { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin: 18px 2px 6px; }
-    .au-row { display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px; margin-bottom: 6px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; }
-    .au-row.click { cursor: pointer; }
-    .au-row.click:active { background: var(--bg-card-hover); }
-    .au-time { flex: 0 0 38px; font-size: 12px; color: var(--text-muted); padding-top: 1px; font-variant-numeric: tabular-nums; }
-    .au-main { min-width: 0; flex: 1; }
-    .au-sum { font-size: 13.5px; color: var(--text); line-height: 1.4; word-break: break-word; }
-    .au-guest { color: var(--accent); }
-    .au-meta { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
-    .rr-sum { background: var(--accent-dim); border: 1px solid rgba(184,115,51,0.3); border-radius: 14px; padding: 12px 14px; font-size: 13px; color: var(--text); line-height: 1.55; margin-top: 8px; }
-    .rr-warn { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.35); border-radius: 14px; padding: 10px 14px; font-size: 12.5px; color: var(--text); line-height: 1.5; margin-top: 8px; }
-    .ss-chip { font-size: 11px; letter-spacing: 0.4px; padding: 3px 10px; border-radius: 100px; border: 1px solid rgba(240,223,192,0.18); color: var(--text-muted); white-space: nowrap; }
-    .ss-chip.now { color: #4ade80; border-color: rgba(74,222,128,0.45); }
+    /* СЕРВИС: общие кирпичи экранов настроек (Состояние, Сезоны, Просьбы об отзыве, Поздравления, Журнал) */
+    .sv-hero { display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 16px; background: linear-gradient(155deg, rgba(184,115,51,0.2), rgba(184,115,51,0.05)); border: 1px solid rgba(184,115,51,0.32); }
+    .sv-hero.ok { background: linear-gradient(155deg, rgba(74,222,128,0.14), rgba(74,222,128,0.03)); border-color: rgba(74,222,128,0.32); }
+    .sv-hero.warn { background: linear-gradient(155deg, rgba(232,163,61,0.2), rgba(232,163,61,0.05)); border-color: rgba(232,163,61,0.42); }
+    .sv-hero.bad { background: linear-gradient(155deg, rgba(239,68,68,0.18), rgba(239,68,68,0.04)); border-color: rgba(239,68,68,0.42); }
+    .sv-hero.off { background: var(--bg-card); border-color: var(--border); }
+    .sv-hero-ico { flex: 0 0 auto; width: 52px; height: 52px; border-radius: 16px; display: flex; align-items: center; justify-content: center; background: rgba(240,223,192,0.08); color: var(--accent); }
+    .sv-hero.ok .sv-hero-ico { background: rgba(74,222,128,0.16); color: #4ade80; }
+    .sv-hero.warn .sv-hero-ico { background: rgba(232,163,61,0.18); color: #E8A33D; }
+    .sv-hero.bad .sv-hero-ico { background: rgba(239,68,68,0.18); color: #f87171; }
+    .sv-hero.off .sv-hero-ico { background: rgba(240,223,192,0.06); color: var(--text-muted); }
+    .sv-hero-body { flex: 1; min-width: 0; }
+    .sv-hero-k { font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--text-muted); }
+    .sv-hero-t { margin-top: 3px; font-family: 'Jost', sans-serif; font-size: 21px; font-weight: 500; line-height: 1.15; color: var(--text); }
+    .sv-hero-s { margin-top: 5px; font-size: 12.5px; line-height: 1.5; color: var(--text-sub); }
+    .sv-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+    .sv-gl { display: flex; align-items: center; gap: 8px; margin: 20px 2px 8px; font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--text-muted); }
+    .sv-gl svg { flex: 0 0 auto; color: var(--accent); }
+    .sv-card { border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); overflow: hidden; }
+    .sv-card > :first-child { border-top: none; }
+    .sv-row { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-top: 1px solid var(--border); }
+    .sv-ico { flex: 0 0 auto; width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--accent-dim); color: var(--accent); }
+    .sv-row.ok .sv-ico { background: rgba(74,222,128,0.12); color: #4ade80; }
+    .sv-row.warn .sv-ico { background: rgba(232,163,61,0.14); color: #E8A33D; }
+    .sv-row.bad .sv-ico { background: rgba(239,68,68,0.14); color: #f87171; }
+    .sv-body { flex: 1; min-width: 0; }
+    .sv-t { display: block; font-size: 14px; line-height: 1.35; color: var(--text); }
+    .sv-s { display: block; margin-top: 2px; font-size: 11.5px; line-height: 1.5; color: var(--text-muted); word-break: break-word; }
+    .sv-chip { flex: 0 0 auto; padding: 3px 10px; border-radius: 100px; font-size: 11px; letter-spacing: 0.3px; border: 1px solid rgba(240,223,192,0.18); color: var(--text-muted); white-space: nowrap; }
+    .sv-chip.ok { color: #4ade80; border-color: rgba(74,222,128,0.4); background: rgba(74,222,128,0.08); }
+    .sv-chip.warn { color: #E8A33D; border-color: rgba(232,163,61,0.45); background: rgba(232,163,61,0.08); }
+    .sv-chip.bad { color: #f87171; border-color: rgba(239,68,68,0.45); background: rgba(239,68,68,0.08); }
+    .sv-chip.acc { color: var(--accent); border-color: rgba(184,115,51,0.5); background: rgba(184,115,51,0.1); }
+    .sv-line { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 14px; padding: 13px 14px; border-top: 1px solid var(--border); }
+    .sv-lt { flex: 1 1 210px; min-width: 0; }
+    .sv-line.big { padding: 15px 14px; }
+    .sv-warn { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; padding: 12px 14px; border-radius: 14px; background: rgba(239,68,68,0.09); border: 1px solid rgba(239,68,68,0.4); font-size: 12.5px; line-height: 1.5; color: #fca5a5; }
+    .sv-warn::before { content: '!'; flex: 0 0 auto; width: 20px; height: 20px; border-radius: 50%; background: rgba(239,68,68,0.22); color: #f87171; font-weight: 700; font-size: 12px; line-height: 20px; text-align: center; }
+    .sv-warn b { color: #fecaca; font-weight: 600; }
+    .sv-tip { display: flex; align-items: flex-start; gap: 11px; margin-top: 10px; padding: 12px 14px; border-radius: 14px; background: rgba(240,223,192,0.04); border: 1px solid var(--border); font-size: 12px; line-height: 1.55; color: var(--text-sub); }
+    .sv-tip > svg { flex: 0 0 auto; margin-top: 1px; color: var(--text-muted); }
+    .nm { display: flex; align-items: center; gap: 6px; flex: 0 0 auto; }
+    .nm .form-input { width: 64px; height: 38px; padding: 0 6px; text-align: center; font-size: 16px; font-variant-numeric: tabular-nums; -moz-appearance: textfield; appearance: textfield; }
+    .nm .form-input::-webkit-inner-spin-button, .nm .form-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    .nm .rr-u { min-width: 32px; }
+    .nmb { flex: 0 0 auto; width: 38px; height: 38px; border-radius: 50%; border: 1px solid rgba(240,223,192,0.16); background: transparent; color: var(--text-sub); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .nmb:active { background: var(--accent-dim); border-color: rgba(184,115,51,0.55); color: var(--accent); }
+    .nmb:disabled { opacity: 0.35; cursor: default; }
+    .sv-sel2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+    .sv-sel2 .form-input { height: 44px; padding: 0 12px; font-size: 15px; }
+    .sv-track { position: relative; width: 100%; height: 12px; border-radius: 100px; background: rgba(240,223,192,0.06); overflow: hidden; }
+    .sv-track i { position: absolute; top: 0; bottom: 0; border-radius: 100px; background: linear-gradient(90deg, #D28C48, var(--accent)); transition: left .2s, width .2s; }
+    .sv-ticks { position: relative; width: 100%; height: 14px; margin-top: 5px; }
+    .sv-ticks span { position: absolute; top: 0; transform: translateX(-50%); font-size: 10px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .sv-ticks span:first-child { transform: none; }
+    .sv-ticks span:last-child { transform: translateX(-100%); }
+    .sv-bars { padding: 4px 14px 6px; }
+    .sv-bar { padding: 9px 0; border-top: 1px solid var(--border); }
+    .sv-bars > :first-child { border-top: none; }
+    .sv-bar-top { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--text-sub); }
+    .sv-bar-top b { font-family: 'Jost', sans-serif; font-weight: 500; font-size: 15px; color: var(--text); font-variant-numeric: tabular-nums; }
+    .sv-bar-line { height: 6px; margin-top: 7px; border-radius: 100px; background: rgba(240,223,192,0.06); overflow: hidden; }
+    .sv-bar-line i { display: block; height: 100%; border-radius: 100px; background: linear-gradient(90deg, #D28C48, var(--accent)); }
+
+    /* Сезоны */
+    .ss-art { flex: 0 0 auto; width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: #fff; background: linear-gradient(145deg, var(--a), var(--b)); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14); }
+    .ss-art.lg { width: 54px; height: 54px; border-radius: 17px; }
+    .ss-art.none { background: rgba(240,223,192,0.06); color: var(--text-muted); box-shadow: none; }
+    .ss-year { margin-top: 8px; padding: 13px 14px 12px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); }
+    .ss-year-k { font-size: 11.5px; color: var(--text-muted); }
+    .ss-track { position: relative; height: 26px; margin-top: 10px; border-radius: 100px; background: rgba(240,223,192,0.06); overflow: hidden; }
+    .ss-seg { position: absolute; top: 4px; bottom: 4px; min-width: 6px; border-radius: 100px; background: linear-gradient(90deg, var(--a), var(--b)); }
+    .ss-seg.off { background: repeating-linear-gradient(45deg, var(--a) 0 3px, transparent 3px 7px); opacity: 0.5; }
+    .ss-today { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: #FBF0DA; box-shadow: 0 0 6px rgba(251,240,218,0.7); z-index: 2; }
+    .ss-months { position: relative; height: 14px; margin-top: 5px; }
+    .ss-months span { position: absolute; top: 0; font-size: 9.5px; color: var(--text-muted); }
+    .ss-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; font-size: 11.5px; color: var(--text-sub); }
+    .ss-legend span { display: flex; align-items: center; gap: 6px; }
+    .ss-legend i { width: 8px; height: 8px; border-radius: 50%; background: var(--a); }
+    .ss-card { margin-bottom: 10px; padding: 14px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); }
+    .ss-card.now { border-color: rgba(74,222,128,0.42); background: linear-gradient(160deg, rgba(74,222,128,0.07), var(--bg-card) 60%); }
+    .ss-card.off .ss-art { opacity: 0.45; }
+    .ss-head { display: flex; align-items: center; gap: 12px; }
+    .ss-hb { flex: 1; min-width: 0; }
+    .ss-no { font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); }
+    .ss-info { margin-top: 3px; font-size: 12px; line-height: 1.4; color: var(--text-sub); }
+    .ss-sel { margin-top: 12px; }
+    .ss-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
+    .ss-sw { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px; color: var(--text); }
+    .ss-del { display: flex; align-items: center; gap: 6px; padding: 8px 4px; background: none; border: none; color: var(--text-muted); font-family: 'Inter', sans-serif; font-size: 13px; cursor: pointer; }
+    .ss-del:active { color: #f87171; }
+    .ss-add { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px; border: 1.5px dashed rgba(184,115,51,0.5); border-radius: 16px; background: rgba(184,115,51,0.05); color: var(--accent); font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; }
+    .ss-add:active { background: var(--accent-dim); }
     /* два поля даты в ряд: на iPhone у поля даты своя минимальная ширина — без этого правое вылезало за карточку */
     .ss-dates { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin-top: 10px; }
     .ss-dates > div { min-width: 0; overflow: hidden; }
     .ss-dates .form-input { display: block; width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; height: 46px; padding: 0 10px; font-size: 15px; -webkit-appearance: none; appearance: none; text-align: left; }
     .ss-dates .form-input::-webkit-date-and-time-value { text-align: left; min-height: 1.2em; }
     .ss-lbl { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
-    .ss-del { display: block; margin-top: 4px; padding: 8px 0; background: none; border: none; color: var(--accent); font-family: 'Inter', sans-serif; font-size: 13px; cursor: pointer; }
+
+    /* Поздравления */
+    .bd-field { margin-top: 10px; padding: 13px 14px 14px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); }
+    .bd-fh { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 9px; }
+    .bd-fk { font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--text-muted); }
+    .bd-cnt { font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .bd-field textarea.form-input { display: block; width: 100%; min-height: 128px; resize: vertical; line-height: 1.5; }
+    .bd-tokens { display: flex; align-items: center; gap: 10px; margin-top: 11px; }
+    .bd-tok { padding: 8px 14px; border-radius: 100px; border: 1px solid rgba(184,115,51,0.55); background: rgba(184,115,51,0.1); color: var(--accent); font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+    .bd-tok:active { background: rgba(184,115,51,0.26); }
+    .bd-tokh { font-size: 11.5px; color: var(--text-muted); }
+    .bd-tg { border-radius: 16px; overflow: hidden; border: 1px solid var(--border); background: #120a04; }
+    .bd-tgh { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg-card); border-bottom: 1px solid var(--border); }
+    .bd-ava { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: linear-gradient(145deg, #D28C48, #7a4118); color: #FBF0DA; font-family: 'Jost', sans-serif; font-size: 13px; letter-spacing: 0.5px; }
+    .bd-tgn { font-size: 13.5px; line-height: 1.2; color: var(--text); }
+    .bd-tgs { font-size: 11px; color: var(--text-muted); }
+    .bd-tgb { padding: 16px 14px 18px; background: radial-gradient(120% 90% at 0% 0%, rgba(184,115,51,0.1), transparent 60%); }
+    .bd-bub { position: relative; width: fit-content; max-width: 90%; min-width: 96px; padding: 9px 13px 22px; border-radius: 4px 16px 16px 16px; background: #2b1b0c; border: 1px solid rgba(240,223,192,0.1); color: var(--text); font-size: 13.5px; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+    .bd-bub.empty { color: var(--text-muted); font-style: italic; }
+    .bd-time { position: absolute; right: 11px; bottom: 5px; font-size: 10.5px; color: var(--text-muted); font-style: normal; }
+
+    /* Журнал */
+    .au-search { position: relative; margin-top: 10px; }
+    .au-search > svg { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
+    .au-search .form-input { margin: 0; padding-left: 42px; }
+    .au-seg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 10px; padding: 4px; border-radius: 100px; background: var(--bg-card); border: 1px solid var(--border); }
+    .au-seg button { padding: 9px 4px; border: none; border-radius: 100px; background: transparent; color: var(--text-sub); font-family: 'Inter', sans-serif; font-size: 12.5px; white-space: nowrap; cursor: pointer; }
+    .au-seg button.on { background: var(--accent-dim); color: var(--accent); box-shadow: inset 0 0 0 1px rgba(184,115,51,0.5); }
+    .au-filters { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 2px; }
+    .au-filters .form-input { padding: 10px 12px; font-size: 13px; }
+    .au-note { font-size: 11.5px; color: var(--text-muted); margin: 10px 2px 0; line-height: 1.45; }
+    .au-day { font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--text-muted); margin: 18px 2px 8px; }
+    .au-card { border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); overflow: hidden; }
+    .au-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-top: 1px solid var(--border); }
+    .au-card > :first-child { border-top: none; }
+    .au-row.click { cursor: pointer; }
+    .au-row.click:active { background: var(--bg-card-hover); }
+    .au-ico { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 11px; display: flex; align-items: center; justify-content: center; background: rgba(240,223,192,0.06); color: var(--text-muted); }
+    .au-ico.c1 { background: rgba(184,115,51,0.16); color: #E0A060; }
+    .au-ico.c2 { background: rgba(124,196,255,0.13); color: #7cc4ff; }
+    .au-ico.c3 { background: rgba(74,222,128,0.12); color: #4ade80; }
+    .au-ico.c4 { background: rgba(176,142,255,0.14); color: #b9a1ff; }
+    .au-ico.c5 { background: rgba(255,143,176,0.13); color: #ff8fb0; }
+    .au-main { min-width: 0; flex: 1; }
+    .au-sum { font-size: 13.5px; color: var(--text); line-height: 1.4; word-break: break-word; }
+    .au-guest { color: var(--accent); }
+    .au-meta { display: flex; flex-wrap: wrap; gap: 4px 8px; margin-top: 3px; font-size: 11.5px; color: var(--text-muted); line-height: 1.4; }
+    .au-meta i { font-style: normal; opacity: 0.5; }
+    .au-time { flex: 0 0 auto; font-size: 12px; color: var(--text-muted); padding-top: 1px; font-variant-numeric: tabular-nums; }
+    .au-chev { flex: 0 0 10px; align-self: center; margin-right: -2px; text-align: right; font-size: 18px; line-height: 1; color: var(--text-muted); }
+
+    /* ЖУРНАЛ ДЕЙСТВИЙ и ПРОСЬБЫ ОБ ОТЗЫВЕ (Сервис → Система) */
     .rr-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 0 14px; }
     .rr-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid var(--border); }
     .rr-card > :first-child { border-top: none; }
@@ -1339,14 +1456,26 @@
     .rc-btns { display: flex; gap: 6px; flex-shrink: 0; }
     .rc-btns .arr-btn { min-width: 0; flex: none; padding: 7px 11px; font-size: 12px; }
     /* ДУБЛИ КАРТОЧЕК */
-    .dup-group { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 12px; margin-bottom: 12px; }
-    .dup-head { font-size: 12px; color: var(--text-sub); margin: 2px 2px 10px; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
-    .dup-card { display: flex; gap: 10px; align-items: flex-start; padding: 10px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px; cursor: pointer; }
-    .dup-card.main { border-color: rgba(184,115,51,0.6); background: var(--accent-dim); }
-    .dup-card input { margin-top: 3px; accent-color: var(--accent); flex-shrink: 0; }
+    .dup-group { background: var(--bg-card); border: 1px solid var(--border); border-radius: 18px; padding: 12px; margin-bottom: 12px; }
+    .dup-head { font-size: 13px; color: var(--text); margin: 2px 2px 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+    .dup-head span:last-child { font-size: 11px; color: var(--text-muted); padding: 3px 10px; border-radius: 100px; border: 1px solid var(--border); }
+    .dup-card { position: relative; display: flex; gap: 12px; align-items: flex-start; padding: 12px; border: 1px solid var(--border); border-radius: 14px; margin-bottom: 8px; cursor: pointer; background: rgba(240,223,192,0.02); }
+    .dup-card.main { border-color: rgba(184,115,51,0.65); background: linear-gradient(155deg, rgba(184,115,51,0.2), rgba(184,115,51,0.06)); }
+    .dup-card input { position: absolute; opacity: 0; pointer-events: none; }
+    .dup-radio { flex: 0 0 auto; width: 22px; height: 22px; margin-top: 7px; border-radius: 50%; border: 1.5px solid var(--text-muted); transition: border-color .12s, background .12s; }
+    .dup-card.main .dup-radio { border-color: var(--accent); background: radial-gradient(circle, var(--accent) 0 5px, transparent 6px); }
+    .dup-card input:focus-visible + .dup-radio { outline: 2px solid var(--text-sub); outline-offset: 2px; }
     .dup-card.shared { cursor: default; opacity: 0.6; border-style: dashed; }
-    .dup-card.shared .dup-role { color: var(--text-muted); }
+    .dup-card.shared .dup-role { color: var(--text-muted); background: transparent; border: 1px solid var(--border); }
     .dup-card-body { flex: 1; min-width: 0; }
+    .dup-top { display: flex; align-items: center; gap: 11px; }
+    .dup-ava { flex: 0 0 auto; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(184,115,51,0.16); color: #E0A060; font-family: 'Jost', sans-serif; font-size: 14px; letter-spacing: 0.5px; }
+    .dup-id { min-width: 0; flex: 1; }
+    .dup-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .dup-chips span { padding: 3px 10px; border-radius: 100px; font-size: 11px; color: var(--text-sub); background: rgba(240,223,192,0.06); }
+    .dup-fact { margin-top: 7px; font-size: 12px; line-height: 1.5; color: var(--text-sub); }
+    .dup-fact b { margin-right: 8px; font-size: 10px; font-weight: 500; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted); }
+    .dup-fact.danger { color: #fca5a5; }
     .emp-row { display: flex; align-items: center; gap: 12px; padding: 11px 14px; margin-bottom: 8px; border: 1px solid var(--border); border-radius: 14px; background: var(--bg-card); cursor: pointer; transition: background .15s; }
     .emp-row:active { background: var(--bg-card-hover); }
     @media (hover: hover) { .emp-row:hover { background: var(--bg-card-hover); } }
@@ -1381,36 +1510,89 @@
     .perm-chg { display: inline-block; margin-left: 6px; font-size: 10.5px; letter-spacing: .3px; color: var(--accent); border: 1px solid var(--accent-dim); background: var(--accent-dim); border-radius: 8px; padding: 1px 6px; vertical-align: 1px; }
     .perm-locked { margin-top: 10px; font-size: 11.5px; line-height: 1.5; color: var(--text-muted); }
     .emp-hint { font-size: 11.5px; line-height: 1.5; color: var(--text-muted); margin-top: 6px; }
-    .mi-thumb { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; flex-shrink: 0; background: #140a03; border: 1px solid var(--border); }
-    .mi-thumb.none { display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 15px; }
+    .mi-thumb { width: 46px; height: 46px; border-radius: 12px; object-fit: cover; flex-shrink: 0; background: #140a03; border: 1px solid var(--border); }
+    .mi-thumb.none { display: flex; align-items: center; justify-content: center; color: var(--text-muted); background: transparent; border: 1.5px dashed rgba(240,223,192,0.22); }
     .menu-subsec-edit { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
     .mi-mv.mi-mv-sub { flex-direction: row; }
+    .mi-mv.mi-mv-sub button + button { border-top: none; border-left: 1px solid var(--border); }
+    .mi-mv.mi-mv-sub button { width: 30px; height: 26px; font-size: 11px; }
     .mi-mv button:disabled { opacity: 0.3; cursor: default; }
-    .mi-mv { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
-    .mi-mv button { background: none; border: 1px solid var(--border); border-radius: 8px; color: var(--text-sub); width: 30px; height: 20px; line-height: 1; font-size: 10px; cursor: pointer; padding: 0; }
+    .mi-mv { display: flex; flex-direction: column; gap: 0; flex-shrink: 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: rgba(240,223,192,0.03); }
+    .mi-mv button { background: none; border: none; color: var(--text-sub); width: 32px; height: 22px; line-height: 1; font-size: 9px; cursor: pointer; padding: 0; }
+    .mi-mv button + button { border-top: 1px solid var(--border); }
     .mi-mv button:active { background: var(--accent-dim); color: var(--accent); }
-    .mi-price { font-size: 12.5px; color: var(--accent); white-space: nowrap; margin-right: 4px; }
-    .cand-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 13px 14px; margin-bottom: 10px; }
-    .cand-card.new { border-color: rgba(184,115,51,0.45); }
-    .cand-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
-    .cand-name { font-size: 15px; color: var(--text); }
-    .cand-when { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
-    .cand-meta { font-size: 12.5px; color: var(--text-sub); margin-top: 3px; }
-    .cand-meta a { color: var(--accent); text-decoration: none; }
-    .cand-about { font-size: 13px; line-height: 1.5; color: var(--text); margin-top: 8px; white-space: pre-wrap; word-break: break-word; }
-    .cand-status { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
-    .cand-status .chip { padding: 7px 11px; font-size: 12px; }
-    .cand-del { background: none; border: none; color: var(--text-muted); font-size: 11.5px; margin-top: 8px; padding: 0; cursor: pointer; text-decoration: underline; }
-    .dup-name { font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-    .dup-meta { font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin-top: 3px; }
-    .dup-meta .danger { color: #fca5a5; }
-    .dup-role { font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--accent); }
-    .dup-open { font-size: 11.5px; color: var(--accent); background: none; border: none; padding: 4px 0 0; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .mi-price { font-family: 'Jost', sans-serif; font-size: 14.5px; font-weight: 500; color: var(--accent); white-space: nowrap; margin-right: 2px; font-variant-numeric: tabular-nums; }
+    .mi-price.none { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 400; padding: 3px 9px; border-radius: 100px; border: 1px solid rgba(232,163,61,0.45); background: rgba(232,163,61,0.08); color: #E8A33D; }
+    .mn-ch { display: flex; align-items: center; justify-content: space-between; margin: 22px 2px 8px; font-size: 10px; letter-spacing: 1.8px; text-transform: uppercase; color: var(--text-muted); }
+    .mn-card { border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); overflow: hidden; }
+    .mn-card .emp-row { margin: 0; padding: 10px 12px; border: none; border-top: 1px solid var(--border); border-radius: 0; background: transparent; }
+    .mn-card > .emp-row:first-child { border-top: none; }
+    .mn-card .emp-row:active { background: var(--bg-card-hover); }
+    .mn-card .menu-subsec-edit { margin: 0; padding: 9px 12px; background: rgba(240,223,192,0.045); border-top: 1px solid var(--border); font-size: 12.5px; color: var(--text-sub); }
+    .mn-card > .menu-subsec-edit:first-child { border-top: none; }
+    /* Сотрудники: плитки-итоги, список карточкой, аватар с точкой «в сети», метки-чипы */
+    .ep-warn { color: #E8A33D; }
+    .ep-card { border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); overflow: hidden; }
+    .ep-card .emp-row.ep { margin: 0; border: none; border-top: 1px solid var(--border); border-radius: 0; background: transparent; align-items: flex-start; gap: 12px; padding: 12px 14px; }
+    .ep-card > .emp-row.ep:first-child { border-top: none; }
+    .ep-card .emp-row.ep:active { background: var(--bg-card-hover); }
+    @media (hover: hover) { .ep-card .emp-row.ep:hover { background: var(--bg-card-hover); } }
+    .emp-row.ep.off { opacity: 1; }
+    .emp-row.ep.off .ep-ava, .emp-row.ep.off .emp-name { opacity: 0.5; filter: grayscale(0.6); }
+    .ep-ava { position: relative; flex: 0 0 auto; width: 42px; height: 42px; margin-top: 1px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(184,115,51,0.16); color: #E0A060; font-family: 'Jost', sans-serif; font-size: 15px; letter-spacing: 0.5px; }
+    .ep-ava.boss { background: linear-gradient(150deg, #C98A4B, #8E5624); color: #1E1004; font-weight: 500; }
+    .ep-ava i { position: absolute; right: -1px; bottom: -1px; width: 11px; height: 11px; border-radius: 50%; background: #4ade80; border: 2px solid var(--bg-card); box-sizing: border-box; }
+    .emp-row.ep .emp-name { display: flex; align-items: center; gap: 7px; font-size: 14.5px; }
+    .emp-row.ep .emp-name span { overflow: hidden; text-overflow: ellipsis; }
+    .ep-sub { margin-top: 2px; font-size: 12px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ep-sub b { font-weight: 400; color: var(--accent); }
+    .ep-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+    .ep-chips .sv-chip { padding: 2px 9px; font-size: 10.5px; }
+    .ep-chips .sv-chip.dim { color: var(--text-muted); border-color: rgba(240,223,192,0.12); }
+    .ep-chev { align-self: center; }
+    .ep-you { flex: 0 0 auto; padding: 1px 8px; border-radius: 100px; font-size: 10px; letter-spacing: 0.4px; color: var(--text-muted); border: 1px solid rgba(240,223,192,0.16); }
+    /* Кандидаты */
+    .cd-fl { display: flex; gap: 7px; margin: 14px -16px 14px; padding: 0 16px 2px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .cd-fl::-webkit-scrollbar { display: none; }
+    .cd-fl button { flex: 0 0 auto; display: flex; align-items: center; gap: 7px; padding: 9px 14px; border-radius: 100px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-sub); font-family: 'Inter', sans-serif; font-size: 13px; white-space: nowrap; cursor: pointer; }
+    .cd-fl button em { font-style: normal; min-width: 18px; padding: 1px 6px; border-radius: 100px; background: rgba(240,223,192,0.08); font-size: 11px; line-height: 1.5; color: var(--text-muted); text-align: center; }
+    .cd-fl button.on { background: var(--accent-dim); border-color: rgba(184,115,51,0.55); color: var(--accent); }
+    .cd-fl button.on em { background: rgba(184,115,51,0.22); color: var(--accent); }
+    .cand-card { position: relative; background: var(--bg-card); border: 1px solid var(--border); border-radius: 18px; padding: 14px 14px 12px; margin-bottom: 12px; }
+    .cand-card.new { border-color: rgba(184,115,51,0.5); background: linear-gradient(160deg, rgba(184,115,51,0.12), var(--bg-card) 60%); }
+    .cand-head { display: flex; align-items: center; gap: 12px; }
+    .cd-ava { flex: 0 0 auto; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(184,115,51,0.16); color: #E0A060; font-family: 'Jost', sans-serif; font-size: 16px; letter-spacing: 0.5px; }
+    .cand-id { flex: 1; min-width: 0; }
+    .cand-name { font-size: 15.5px; line-height: 1.25; color: var(--text); }
+    .cand-meta { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
+    .cand-when { margin-top: 1px; font-size: 11px; color: var(--text-muted); }
+    .cd-pill { flex: 0 0 auto; align-self: flex-start; padding: 3px 11px; border-radius: 100px; font-size: 11px; border: 1px solid; }
+    .cd-pill.s0 { color: var(--accent); border-color: rgba(184,115,51,0.55); background: rgba(184,115,51,0.14); }
+    .cd-pill.s1 { color: #7DB8FF; border-color: rgba(96,165,250,0.45); background: rgba(96,165,250,0.1); }
+    .cd-pill.s2 { color: #4ade80; border-color: rgba(74,222,128,0.4); background: rgba(74,222,128,0.09); }
+    .cd-pill.s3 { color: #f87171; border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.08); }
+    .cd-call { display: flex; align-items: center; gap: 9px; margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: rgba(240,223,192,0.045); color: var(--accent); font-size: 13.5px; text-decoration: none; font-variant-numeric: tabular-nums; }
+    .cd-call svg { flex: 0 0 auto; }
+    .cd-call span { margin-left: auto; font-size: 11px; color: var(--text-muted); }
+    .cand-about { margin-top: 10px; padding: 10px 12px; border-left: 2px solid rgba(184,115,51,0.4); border-radius: 0 10px 10px 0; background: rgba(240,223,192,0.035); font-size: 13px; line-height: 1.55; color: var(--text); white-space: pre-wrap; word-break: break-word; }
+    .cd-seg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 12px; padding: 4px; border-radius: 100px; background: rgba(240,223,192,0.04); border: 1px solid var(--border); }
+    .cd-seg button { padding: 8px 2px; border: 1px solid transparent; border-radius: 100px; background: transparent; color: var(--text-sub); font-family: 'Inter', sans-serif; font-size: 12px; white-space: nowrap; cursor: pointer; }
+    .cd-seg button.s0.on { color: var(--accent); background: rgba(184,115,51,0.16); border-color: rgba(184,115,51,0.55); }
+    .cd-seg button.s1.on { color: #7DB8FF; background: rgba(96,165,250,0.12); border-color: rgba(96,165,250,0.5); }
+    .cd-seg button.s2.on { color: #4ade80; background: rgba(74,222,128,0.1); border-color: rgba(74,222,128,0.45); }
+    .cd-seg button.s3.on { color: #f87171; background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.45); }
+    .cand-del { display: block; margin: 8px auto 0; background: none; border: none; color: var(--text-muted); font-size: 11.5px; padding: 6px 10px; cursor: pointer; }
+    .cand-del:active { color: #f87171; }
+    @media (hover: hover) { .cand-del:hover { color: #f87171; } }
+    .dup-name { font-size: 14.5px; color: var(--text); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .dup-meta { font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-top: 2px; }
+    .dup-role { font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; padding: 2px 8px; border-radius: 100px; color: #1E1004; background: var(--accent); font-weight: 600; }
+    .dup-open { font-size: 12px; color: var(--accent); background: none; border: none; padding: 10px 0 0; cursor: pointer; font-family: 'Inter', sans-serif; }
     .dup-conflict { margin: 4px 2px 10px; }
     .dup-conflict .form-label { margin-bottom: 6px; }
     .dup-conflict .chip { font-size: 12px; padding: 7px 11px; }
-    .dup-list-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 12px; margin-bottom: 8px; }
-    .dup-found { border: 1px solid rgba(245,158,11,0.35); background: rgba(245,158,11,0.06); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; }
+    .dup-list-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 18px; padding: 14px; margin-bottom: 10px; }
+    .dup-found { border: 1px solid rgba(245,158,11,0.35); background: rgba(245,158,11,0.06); border-radius: 14px; padding: 12px; margin-bottom: 8px; }
     .app-toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(20px); max-width: min(440px, calc(100vw - 32px)); background: #2A160F; color: var(--text); border: 1px solid rgba(184,115,51,0.45); border-radius: 14px; padding: 11px 16px; font-size: 13px; line-height: 1.45; box-shadow: 0 10px 30px rgba(0,0,0,0.45); opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 400; }
     .app-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     .app-toast.bad { border-color: rgba(239,68,68,0.5); }
@@ -1468,19 +1650,28 @@
     .pb-note { flex: 1; font-size: 11.5px; color: var(--text-muted); }
     .pb-link { background: none; border: none; color: var(--accent); font-family: 'Inter', sans-serif; font-size: 12.5px; cursor: pointer; padding: 10px 4px; white-space: nowrap; }
     /* Сторис и опросы (раздел «Сервис») */
-    .st-set-head { display: flex; align-items: baseline; justify-content: space-between; margin: 20px 2px 10px; }
+    .st-set-head { display: flex; align-items: center; justify-content: space-between; margin: 22px 2px 10px; }
     .st-set-title { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); }
-    .st-set-count { font-size: 11.5px; color: var(--text-muted); }
-    .st-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; margin-bottom: 8px; border: 1px solid var(--border); border-radius: 14px; background: var(--bg-card); }
-    .st-thumb { width: 54px; height: 72px; border-radius: 10px; object-fit: cover; flex-shrink: 0; background: #140a03; border: 1px solid var(--border); }
-    .st-main { flex: 1; min-width: 0; }
-    .st-main .form-input { padding: 9px 11px; font-size: 13.5px; margin-bottom: 7px; }
-    .st-btns { display: flex; gap: 14px; }
-    .st-btn { background: none; border: none; padding: 2px 0; font-family: 'Inter', sans-serif; font-size: 12px; color: var(--accent); cursor: pointer; }
-    .st-btn.danger { color: #ef4444; }
-    .st-add { width: 100%; margin-top: 2px; }
+    .st2-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .st2 { min-width: 0; }
+    .st2-ph { position: relative; aspect-ratio: 3 / 4; border-radius: 16px; overflow: hidden; background: #140a03; border: 1px solid var(--border); }
+    .st2-ph img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .st2-ph::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 46%; background: linear-gradient(to top, rgba(14,7,2,0.82), transparent); pointer-events: none; }
+    .st2-n { position: absolute; top: 8px; left: 8px; z-index: 2; min-width: 24px; height: 24px; padding: 0 7px; border-radius: 12px; background: rgba(14,7,2,0.6); color: #FBF0DA; font-family: 'Jost', sans-serif; font-size: 13px; line-height: 24px; text-align: center; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+    .st2-x { position: absolute; top: 8px; right: 8px; z-index: 3; width: 28px; height: 28px; border-radius: 50%; border: none; background: rgba(14,7,2,0.6); color: #FBF0DA; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+    .st2-x:active { background: rgba(239,68,68,0.85); }
+    .st2-bar { position: absolute; left: 8px; right: 8px; bottom: 8px; z-index: 3; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+    .st2-bar button { height: 30px; min-width: 30px; padding: 0 8px; border-radius: 15px; border: none; background: rgba(251,240,218,0.16); color: #FBF0DA; display: flex; align-items: center; justify-content: center; gap: 5px; font-family: 'Inter', sans-serif; font-size: 11.5px; cursor: pointer; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+    .st2-bar button:active { background: rgba(184,115,51,0.7); }
+    .st2-bar button:disabled { opacity: 0.3; cursor: default; }
+    .st2-in { margin-top: 8px; padding: 10px 12px; font-size: 13px; }
+    .st2-add { aspect-ratio: 3 / 4; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 0; border: 1.5px dashed rgba(184,115,51,0.5); border-radius: 16px; background: rgba(184,115,51,0.05); color: var(--accent); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; }
+    .st2-add:active { background: var(--accent-dim); }
+    .st2-add:disabled { opacity: 0.4; cursor: default; }
+    .st2-addi { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--accent-dim); }
+    @media (min-width: 700px) { .st2-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
     .st-empty { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; padding: 4px 4px 10px; }
-    .sv-preview { position: relative; height: 220px; border-radius: 16px; overflow: hidden; border: 1px solid var(--border); background: #140a03; margin: 14px 0 6px; }
+    .sv-preview { position: relative; height: 230px; border-radius: 20px; overflow: hidden; border: 1px solid rgba(240,223,192,0.16); background: #140a03; margin: 6px 0 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
     .sv-prev-img { position: absolute; inset: -12px; background-size: cover; background-position: center 30%; }
     .sv-prev-img.retouch { filter: blur(8px); }
     .sv-prev-scrim { position: absolute; inset: 0; }
@@ -1505,7 +1696,10 @@
       #qrPrintSheet .qp-qr svg { width: 100%; height: 100%; display: block; }
       #qrPrintSheet .qp-hint { margin-top: 28px; font-size: 14px; color: #7a6850; letter-spacing: 1px; }
     }
-    .sv-range { width: 100%; accent-color: var(--accent); margin: 6px 0 2px; }
+    .sv-range { -webkit-appearance: none; appearance: none; display: block; width: 100%; height: 6px; margin: 12px 0 6px; border-radius: 100px; outline: none; cursor: pointer; background: linear-gradient(90deg, #D28C48 0%, var(--accent) var(--p, 50%), rgba(240,223,192,0.13) var(--p, 50%)); }
+    .sv-range::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #FBF0DA; border: 3px solid var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,0.45); }
+    .sv-range::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: #FBF0DA; border: 3px solid var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,0.45); }
+    .sv-range:focus-visible::-webkit-slider-thumb { outline: 2px solid var(--text-sub); outline-offset: 2px; }
     .sv-range-l { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); }
     /* ТВ-экраны ВИП-комнат */
     .tvp { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); background: #140a03; margin: 6px 0 4px; }
@@ -1536,6 +1730,33 @@
     .tvp-evt { font-family: 'Lora', serif; font-weight: 600; font-size: 4.2cqw; line-height: 1.1; color: #F0DFC0; margin: 1.2cqw 0; }
     .tvp-evd { font-size: 2.2cqw; color: #C9A880; }
     .tvp-evb { margin-top: 3cqw; font-size: 1.9cqw; letter-spacing: .4cqw; text-transform: uppercase; color: #B87333; }
+    /* Опросы */
+    .svl { display: flex; align-items: center; gap: 13px; padding: 12px 14px; margin-bottom: 8px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); cursor: pointer; }
+    .svl:active { background: var(--bg-card-hover); }
+    .svl-th { flex: 0 0 auto; width: 48px; height: 62px; border-radius: 11px; background: linear-gradient(160deg, #5a3716, #140B00) center / cover; border: 1px solid rgba(240,223,192,0.16); display: flex; align-items: center; justify-content: center; color: var(--accent); }
+    .svl-th.none { background: var(--accent-dim); }
+    .svl-body { flex: 1; min-width: 0; }
+    .svl-t { font-size: 14.5px; line-height: 1.3; color: var(--text); }
+    .svl-c { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    /* ТВ-экраны */
+    .tvl { display: flex; align-items: center; gap: 13px; padding: 13px 14px; margin-bottom: 8px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); cursor: pointer; transition: background .15s; }
+    .tvl:active { background: var(--bg-card-hover); }
+    .tvl-scr { position: relative; flex: 0 0 auto; width: 60px; aspect-ratio: 16 / 9; margin-bottom: 6px; border-radius: 7px; display: flex; align-items: center; justify-content: center; background: linear-gradient(150deg, #5a3716, #1a0d03); border: 1.5px solid rgba(240,223,192,0.22); color: rgba(240,223,192,0.5); }
+    .tvl-scr::after { content: ''; position: absolute; left: 50%; bottom: -7px; width: 20px; height: 3px; margin-left: -10px; border-radius: 2px; background: rgba(240,223,192,0.22); }
+    .tvl-scr.on { border-color: rgba(74,222,128,0.6); color: #FBF0DA; box-shadow: 0 0 14px rgba(74,222,128,0.2); }
+    .tvl-scr.lost { border-color: rgba(232,163,61,0.55); }
+    .tvl-scr.off { opacity: 0.5; }
+    .tvl-body { flex: 1; min-width: 0; }
+    .tvl-t { font-size: 14.5px; line-height: 1.3; color: var(--text); }
+    .tvl-s { margin-top: 3px; font-size: 11.5px; line-height: 1.4; color: var(--text-muted); }
+    .tv-rg { padding: 13px 14px 8px; border-top: 1px solid var(--border); }
+    .tv-rg-h { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-size: 14px; color: var(--text); }
+    .tv-rg-h b { font-family: 'Jost', sans-serif; font-weight: 500; font-size: 15px; color: var(--accent); }
+    .tv-rm { background: transparent; border-color: rgba(239,68,68,0.45); color: #f87171; }
+    .tv-rm:active { background: rgba(239,68,68,0.1); }
+    .tv-grid .form-input { height: 44px; padding: 0 12px; }
+    .tv-grid > * { min-width: 0; }
+    .tv-grid .btn-primary { padding: 12px 8px; font-size: 13px; }
     .tv-st { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--text-muted); margin-right: 6px; }
     .tv-st.on { background: #4ade80; }
     .tv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -2414,7 +2635,7 @@
     </div>
     <div class="form-group" id="empLoginWrap">
       <label class="form-label">Логин</label>
-      <input class="form-input" id="empLogin" type="text" maxlength="40" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Латиницей, например anna.k (обязательно)">
+      <input class="form-input" id="empLogin" type="text" maxlength="40" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Например anna.k — обязательно">
       <div class="emp-hint" id="empLoginHint"></div>
     </div>
     <div class="form-group" id="empTempWrap">
@@ -2512,7 +2733,7 @@
     <div><h1 style="font-size:14px;letter-spacing:1px;">Сторис</h1><p>Фото бара и ВИП-комнат для гостей</p></div>
   </div>
   <div style="padding:0 16px">
-    <div class="st-empty" style="margin-top:14px">Гости листают фото по 5 секунд на весь экран, лучше вертикальные. Пока фото нет, они видят заглушку «Фото скоро».</div>
+    <div class="sv-tip" style="margin-top:6px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><div>Гости листают фото по 5 секунд на весь экран, лучше вертикальные. Пока фото нет, они видят заглушку «Фото скоро».</div></div>
     <div id="storiesContent"><div class="loading">Загружаю...</div></div>
     <input type="file" id="storyFileInput" accept="image/*" multiple style="display:none" onchange="onStoryFiles(this.files); this.value='';">
     <input type="file" id="storyReplaceInput" accept="image/*" style="display:none" onchange="onStoryReplaceFile(this.files[0]); this.value='';">
@@ -2527,7 +2748,7 @@
     </div>
     <div><h1 style="font-size:14px;letter-spacing:1px;">Опросы</h1><p>Фон, ретушь, тексты</p></div>
   </div>
-  <div style="padding:0 16px"><div id="surveysContent" style="margin-top:14px"><div class="loading">Загружаю...</div></div></div>
+  <div style="padding:0 16px"><div id="surveysContent" style="margin-top:6px"><div class="loading">Загружаю...</div></div></div>
 </div>
 
 <div class="screen" id="screen-survey-form">
@@ -2548,26 +2769,21 @@
       </div>
       <div class="sv-prev-note" id="svPrevNote"></div>
     </div>
-    <div class="form-group">
-      <label class="form-label">Фон</label>
+    <div class="sv-gl">Фон</div>
+    <div class="sv-card"><div class="sv-line" style="display:block">
       <div class="poster-actions" style="margin-top:0">
         <button type="button" class="btn-primary" style="flex:1;" onclick="pickSurveyBg()" id="svPickBtn">Загрузить фон</button>
-        <button type="button" class="btn-primary" style="flex:1;background:transparent;border-color:rgba(239,68,68,0.45);color:#ef4444;" onclick="removeSurveyBg()" id="svRemoveBtn">Стандартный</button>
+        <button type="button" class="btn-primary tv-rm" style="flex:1;" onclick="removeSurveyBg()" id="svRemoveBtn">Стандартный</button>
       </div>
       <div class="poster-note" id="svBgNote"></div>
       <input type="file" id="svBgInput" accept="image/*" style="display:none" onchange="onSurveyBgFile(this.files[0]); this.value='';">
-    </div>
-    <div class="form-group">
-      <label class="perm-row" style="padding-left:0;padding-right:0">
-        <input type="checkbox" id="svRetouch" onchange="svChanged()">
-        <span class="perm-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 9 17 20 6"/></svg></span>
-        <span><span style="font-size:14px;color:var(--text);display:block">Ретушь фона</span><span style="font-size:11.5px;color:var(--text-muted);line-height:1.45;display:block;margin-top:2px">С галочкой фон слегка размыт, текст и оценки читаются лучше. Без галочки фото показывается как есть.</span></span>
-      </label>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Затемнение фона: <span id="svDimVal">70</span>%</label>
-      <input type="range" class="sv-range" id="svDim" min="0" max="95" step="5" oninput="svChanged()">
-      <div class="sv-range-l"><span>светлее</span><span>темнее</span></div>
+    </div></div>
+    <div class="sv-gl">Оформление</div>
+    <div class="sv-card">
+      <div class="sv-line"><div class="sv-lt"><span class="sv-t">Ретушь фона</span><span class="sv-s">Включено: фон слегка размыт, текст и оценки читаются лучше. Выключено: фото показывается как есть.</span></div><label class="vn-sw"><input type="checkbox" id="svRetouch" onchange="svChanged()"><i></i></label></div>
+      <div class="tv-rg"><div class="tv-rg-h"><span>Затемнение фона</span><b><span id="svDimVal">70</span>%</b></div>
+        <input type="range" class="sv-range" id="svDim" min="0" max="95" step="5" oninput="svChanged()">
+        <div class="sv-range-l"><span>светлее</span><span>темнее</span></div></div>
     </div>
     <!-- тексты опроса (заголовок, вступление, «спасибо») в приложении не правятся: поля скрыты, гости видят стандартные тексты -->
     <div style="display:none">
@@ -2588,12 +2804,10 @@
       <textarea class="form-input" id="svThanksText" maxlength="400"></textarea>
     </div>
     </div>
-    <div class="form-group" id="svLinkBox">
-      <label class="form-label">Ссылка и QR-код для печати</label>
-      <div id="svLinkInner"></div>
-    </div>
-    <div class="poster-note" style="margin-bottom:12px">Тексты опроса стандартные. Сами вопросы и шкалы не меняются: от них зависят CSI, NPS и eNPS.</div>
-    <button class="btn-cta" id="svSubmitBtn" onclick="saveSurvey()">Сохранить</button>
+    <div id="svLinkBox"><div class="sv-gl">Ссылка и QR-код для печати</div>
+      <div class="sv-card"><div class="sv-line" style="display:block" id="svLinkInner"></div></div></div>
+    <div class="sv-tip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><div>Тексты опроса стандартные. Сами вопросы и шкалы не меняются: от них зависят CSI, NPS и eNPS.</div></div>
+    <div class="tf-save"><button class="btn-cta" id="svSubmitBtn" onclick="saveSurvey()">Сохранить</button></div>
     <div style="height:16px"></div>
   </div>
 </div>
@@ -2730,8 +2944,8 @@
     <div><h1 style="font-size:14px;letter-spacing:1px;">Журнал</h1><p>Кто и что менял</p></div>
   </div>
   <div style="padding:0 16px">
-    <input class="form-input sl-search" id="auditSearch" type="search" placeholder="Поиск: имя гостя, сотрудник, слово" autocomplete="off" oninput="auSearchInput(this.value)" style="margin-top:10px">
-    <div class="chip-row" id="auditPeriod"></div>
+    <div class="au-search"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg><input class="form-input" id="auditSearch" type="search" placeholder="Поиск: имя гостя, сотрудник, слово" autocomplete="off" oninput="auSearchInput(this.value)"></div>
+    <div class="au-seg" id="auditPeriod"></div>
     <div class="au-filters">
       <select class="form-input" id="auditWho" onchange="auSetWho(this.value)"><option value="">Все сотрудники</option></select>
       <select class="form-input" id="auditType" onchange="auSetType(this.value)"><option value="">Всё</option></select>
@@ -2815,11 +3029,11 @@
     <div class="back-btn" onclick="showScreen('service')">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
-    <div><h1 style="font-size:14px;letter-spacing:1px;">Состояние системы</h1><p id="ssChecked">Проверяю…</p></div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Состояние системы</h1><p id="sysChecked">Проверяю…</p></div>
   </div>
   <div style="padding:0 16px">
-    <div id="ssContent" style="margin-top:14px"><div class="loading">Проверяю…</div></div>
-    <button class="btn-ghost" onclick="loadSystemStatus()">Проверить снова</button>
+    <div id="sysContent" style="margin-top:6px"><div class="loading">Проверяю…</div></div>
+    <button class="btn-ghost" id="sysRecheck" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px" onclick="loadSystemStatus()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 00-14.3-4.3L4 8.5M4 4v4.5h4.5M4 13a8 8 0 0014.3 4.3L20 15.5M20 20v-4.5h-4.5"/></svg>Проверить снова</button>
     <div style="height:16px"></div>
   </div>
 </div>
@@ -2919,7 +3133,7 @@
     <div><h1 style="font-size:14px;letter-spacing:1px;">Кандидаты</h1><p>Отклики на вакансии</p></div>
   </div>
   <div style="padding:0 16px">
-    <div class="chip-row" id="candFilterChips" style="margin:14px 0 14px"></div>
+    <div class="cd-fl" id="candFilterChips"></div>
     <div id="candidatesContent"><div class="loading">Загружаю...</div></div>
   </div>
 </div>
@@ -4829,23 +5043,54 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function renderBirthdayText() {
     const el = document.getElementById('bdTextContent');
     const t = bdText || { text: '', enabled: true, hour: 12 };
+    const hour = t.hour || 12;
     el.innerHTML = `
-      <div class="note" style="margin-bottom:12px">В день рождения в ${t.hour || 12}:00 бот пишет это гостям, у которых есть Telegram. Гостей с тегом «Нон-грата» не поздравляет. Тех, у кого Telegram нет, поздравляете сами — они видны в «Именинниках» с пометкой «поздравить вручную».</div>
-      <div class="form-group"><label class="form-label">Текст поздравления</label>
+      <div class="sv-hero" id="bdHero"><div class="sv-hero-ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M5.5 20v-6.5a1.5 1.5 0 011.5-1.5h10a1.5 1.5 0 011.5 1.5V20M5.5 15.5c1.5 1.3 2.5 1.3 3.5 0s2-1.3 3 0 2 1.3 3 0 2-1.3 3.5 0M12 12V8.5M12 8.5c-1.2-1-1.3-2.2 0-3.5 1.3 1.3 1.2 2.5 0 3.5z"/></svg></div>
+        <div class="sv-hero-body"><div class="sv-hero-k">В день рождения в ${hour}:00</div><div class="sv-hero-t" id="bdHeroT">Бот поздравляет</div><div class="sv-hero-s" id="bdHeroS"></div></div></div>
+      <div class="sv-card" style="margin-top:10px"><div class="sv-line big"><div class="sv-lt"><span class="sv-t">Бот поздравляет сам</span><span class="sv-s">Выключено или текст пустой — бот никого не поздравляет</span></div><label class="vn-sw"><input type="checkbox" id="bdEnabled" ${t.enabled !== false ? 'checked' : ''} onchange="bdTextPreview()"><i></i></label></div></div>
+      <div class="bd-field">
+        <div class="bd-fh"><span class="bd-fk">Текст поздравления</span><span class="bd-cnt" id="bdCnt"></span></div>
         <textarea class="form-input" id="bdTextArea" rows="6" maxlength="1500" placeholder="{имя}, с днём рождения! …" oninput="bdTextPreview()">${escHtml(t.text || '')}</textarea>
-        <div class="note" style="margin-top:6px">{имя} — подставится имя гостя.</div>
+        <div class="bd-tokens"><button type="button" class="bd-tok" onclick="bdInsertName()">+ {имя}</button><span class="bd-tokh">подставится имя гостя</span></div>
       </div>
-      <label class="perm-row"><input type="checkbox" id="bdEnabled" ${t.enabled !== false ? 'checked' : ''}><span class="perm-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 9 17 20 6"/></svg></span><span><span class="rr-t">Бот поздравляет сам</span><span class="rr-h">Выключено или текст пустой — бот никого не поздравляет</span></span></label>
-      <div class="sec">Как увидит гость</div>
-      <div class="visit-item" id="bdPreview" style="white-space:pre-wrap;font-size:13px;line-height:1.5"></div>
-      <button class="btn-cta" id="bdSaveBtn" style="margin-top:16px" onclick="saveBirthdayText()">Сохранить</button>`;
+      <div class="sv-gl">Как увидит гость</div>
+      <div class="bd-tg"><div class="bd-tgh"><div class="bd-ava">НК</div><div><div class="bd-tgn">На Крыше</div><div class="bd-tgs">бот</div></div></div>
+        <div class="bd-tgb"><div class="bd-bub" id="bdPreview"></div></div></div>
+      <div class="sv-tip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><div>Бот пишет гостям, у которых есть Telegram. Гостей с тегом «Нон-грата» не поздравляет. Тех, у кого Telegram нет, поздравляете сами — они видны в «Именинниках» с пометкой «поздравить вручную».</div></div>
+      <div class="vn-save" id="bdSaveWrap"><button class="btn-cta" id="bdSaveBtn" onclick="saveBirthdayText()">Сохранить</button></div>`;
+    bdTextPreview();
+  }
+  function bdInsertName() {
+    const ta = document.getElementById('bdTextArea');
+    if (!ta) return;
+    const a = ta.selectionStart ?? ta.value.length, b = ta.selectionEnd ?? a;
+    const ins = '{имя}';
+    if (ta.value.length - (b - a) + ins.length > (ta.maxLength || 1500)) { notify('Текст слишком длинный'); return; }
+    ta.value = ta.value.slice(0, a) + ins + ta.value.slice(b);
+    ta.focus();
+    ta.selectionStart = ta.selectionEnd = a + ins.length;
     bdTextPreview();
   }
   function bdTextPreview() {
-    const v = document.getElementById('bdTextArea').value.trim();
+    const ta = document.getElementById('bdTextArea');
+    if (!ta) return;
+    const v = ta.value.trim();
+    const on = document.getElementById('bdEnabled').checked;
     const p = document.getElementById('bdPreview');
+    const time = `${bdText && bdText.hour || 12}:00`;
+    p.className = 'bd-bub' + (v ? '' : ' empty');
     p.textContent = v ? v.replace(/\{имя\}/gi, 'Анна') : 'Текст не заполнен — бот не поздравляет.';
-    p.style.color = v ? '' : 'var(--text-muted)';
+    const tm = document.createElement('i'); tm.className = 'bd-time'; tm.textContent = time; p.appendChild(tm);
+    document.getElementById('bdCnt').textContent = `${ta.value.length} / ${ta.maxLength || 1500}`;
+    const works = on && !!v;
+    const hero = document.getElementById('bdHero');
+    hero.classList.toggle('off', !works);
+    document.getElementById('bdHeroT').textContent = works ? 'Бот поздравляет' : (on ? 'Текст не заполнен' : 'Бот не поздравляет');
+    document.getElementById('bdHeroS').textContent = works ? 'Каждому имениннику с Telegram, один раз в день рождения.' : (on ? 'Заполните текст — тогда бот начнёт поздравлять.' : 'Включите переключатель ниже, чтобы бот поздравлял сам.');
+    const t = bdText || { text: '', enabled: true };
+    const dirty = ta.value !== (t.text || '') || on !== (t.enabled !== false);
+    const wrap = document.getElementById('bdSaveWrap');
+    if (wrap) wrap.classList.toggle('dirty', dirty);
   }
   async function saveBirthdayText() {
     const btn = document.getElementById('bdSaveBtn');
@@ -4860,6 +5105,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const data = await res.json().catch(() => ({}));
       if (!res.ok) { showToast(data.error || 'Не сохранилось — попробуйте ещё раз', true); return; }
       bdText = data;
+      bdTextPreview();
       showToast(data.text && data.enabled ? 'Сохранено — бот будет поздравлять этим текстом' : 'Сохранено — бот не поздравляет');
     } catch {
       showToast('Нет связи — не сохранилось', true);
@@ -8002,13 +8248,14 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const id = escJs(it.id);
     const thumb = it.photo
       ? `<img class="mi-thumb" src="${escHtml(it.photo)}" alt="" loading="lazy">`
-      : '<div class="mi-thumb none">·</div>';
-    return `<div class="emp-row${it.available ? '' : ' off'}" onclick="openMenuItemForm('${id}')">
+      : '<div class="mi-thumb none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5h3l1.5-2.5h7L17 8.5h3v10H4z"/><circle cx="12" cy="13" r="3.2"/></svg></div>';
+    const hasPrice = it.price !== null && it.price !== undefined;
+    return `<div class="emp-row mn-row${it.available ? '' : ' off'}" onclick="openMenuItemForm('${id}')">
         ${thumb}
         <div class="emp-body">
           <div class="emp-name">${escHtml(it.name)}${it.available ? '' : stopBadge(it)}</div>
         </div>
-        <div class="mi-price">${it.price !== null && it.price !== undefined ? escHtml(String(it.price)) + ' ₽' : ''}</div>
+        <div class="mi-price${hasPrice ? '' : ' none'}">${hasPrice ? escHtml(String(it.price)) + ' ₽' : 'нет цены'}</div>
         <div class="mi-mv">
           <button type="button" aria-label="Выше" onclick="event.stopPropagation();moveMenuItem('${id}','up')">▲</button>
           <button type="button" aria-label="Ниже" onclick="event.stopPropagation();moveMenuItem('${id}','down')">▼</button>
@@ -8048,7 +8295,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       const grouped = catItems.filter(it => it.subcategory);
       const subOrder = [];
       grouped.forEach(it => { if (!subOrder.includes(it.subcategory)) subOrder.push(it.subcategory); });
-      return `<div class="sec" style="margin-top:18px;">${escHtml(cat)} · ${catItems.length}</div>`
+      return `<div class="mn-ch"><span>${escHtml(cat)}</span><span class="sv-chip">${catItems.length}</span></div><div class="mn-card">`
         + plain.map(menuEditRowHtml).join('')
         + subOrder.map((sub, si) => {
           // стрелки у подраздела двигают весь блок; при поиске и фильтре порядок не меняем (виден не весь список)
@@ -8057,10 +8304,12 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
             <button type="button" aria-label="Подраздел выше" ${si === 0 ? 'disabled' : ''} onclick="moveMenuSub('${escJs(cat)}','${escJs(sub)}','up')">▲</button>
             <button type="button" aria-label="Подраздел ниже" ${si === subOrder.length - 1 ? 'disabled' : ''} onclick="moveMenuSub('${escJs(cat)}','${escJs(sub)}','down')">▼</button></span>`;
           return `<div class="menu-subsec menu-subsec-edit"><span>${escHtml(sub)}</span>${mv}</div>${grouped.filter(it => it.subcategory === sub).map(menuEditRowHtml).join('')}`;
-        }).join('');
+        }).join('') + '</div>';
     }).join('');
+    const stopN = menuEditItems.filter(it => !it.available).length;
+    const hero = filtered ? '' : `<div class="vn-hero" style="margin-top:6px"><div class="vn-stat main"><div class="vn-stat-k">Позиций</div><div class="vn-stat-v">${menuEditItems.length}</div><div class="vn-stat-s">у гостей: ${menuEditItems.length - stopN}</div></div><div class="vn-stat"><div class="vn-stat-k">Без фото</div><div class="vn-stat-v${noPhotoN ? '' : ' off'}">${noPhotoN}</div></div><div class="vn-stat"><div class="vn-stat-k">В стопе</div><div class="vn-stat-v${stopN ? '' : ' off'}">${stopN}</div></div></div>`;
     const y = window.scrollY;
-    el.innerHTML = html;
+    el.innerHTML = hero + html;
     window.scrollTo(0, y);
   }
 
@@ -8410,27 +8659,34 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   function renderStories() {
     const el = document.getElementById('storiesContent');
     const hint = { bar: 'Коктейли бара', vip: 'Комнаты: интерьер, диваны, вид. Подпись = название комнаты, оно попадёт в бронь' };
+    const ic = {
+      x: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+      l: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>',
+      r: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>',
+      swap: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg>',
+      plus: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>'
+    };
     el.innerHTML = storySets.map(set => {
       const n = set.slides.length;
-      const rows = set.slides.map((sl, i) => `
-        <div class="st-row">
-          <img class="st-thumb" src="${escHtml(sl.photo)}" alt="" loading="lazy">
-          <div class="st-main">
-            <input class="form-input" value="${escHtml(sl.title)}" maxlength="80" placeholder="${set.key === 'vip' ? 'Название комнаты — гость увидит его в брони' : 'Подпись (необязательно)'}" onchange="saveStoryTitle('${escJs(sl.id)}', this)">
-            <div class="st-btns">
-              <button type="button" class="st-btn" onclick="pickStoryReplace('${escJs(sl.id)}')">Заменить фото</button>
-              <button type="button" class="st-btn danger" onclick="deleteStory('${escJs(sl.id)}')">Удалить</button>
+      const tiles = set.slides.map((sl, i) => `
+        <div class="st2">
+          <div class="st2-ph">
+            <img src="${escHtml(sl.photo)}" alt="" loading="lazy">
+            <span class="st2-n">${i + 1}</span>
+            <button type="button" class="st2-x" aria-label="Удалить" onclick="deleteStory('${escJs(sl.id)}')">${ic.x}</button>
+            <div class="st2-bar">
+              <button type="button" aria-label="Выше" ${i === 0 ? 'disabled' : ''} onclick="moveStory('${escJs(sl.id)}','up')">${ic.l}</button>
+              <button type="button" class="st2-rep" onclick="pickStoryReplace('${escJs(sl.id)}')">${ic.swap}Заменить</button>
+              <button type="button" aria-label="Ниже" ${i === n - 1 ? 'disabled' : ''} onclick="moveStory('${escJs(sl.id)}','down')">${ic.r}</button>
             </div>
           </div>
-          <span class="mi-mv">
-            <button type="button" aria-label="Выше" ${i === 0 ? 'disabled' : ''} onclick="moveStory('${escJs(sl.id)}','up')">▲</button>
-            <button type="button" aria-label="Ниже" ${i === n - 1 ? 'disabled' : ''} onclick="moveStory('${escJs(sl.id)}','down')">▼</button>
-          </span>
+          <input class="form-input st2-in" value="${escHtml(sl.title)}" maxlength="80" placeholder="${set.key === 'vip' ? 'Название комнаты' : 'Подпись (необязательно)'}" onchange="saveStoryTitle('${escJs(sl.id)}', this)">
         </div>`).join('');
-      return `<div class="st-set-head"><span class="st-set-title">${escHtml(set.title)}</span><span class="st-set-count">${n} из ${storyMax}</span></div>
-        ${set.key === 'vip' && n ? '<div class="st-empty" style="margin:0 0 10px">Подпись — это название комнаты. Гость нажмёт «Забронировать» и в брони увидит именно его.</div>' : ''}
-        ${n ? rows : `<div class="st-empty">Фото пока нет — гости видят заглушку. ${escHtml(hint[set.key] || '')}</div>`}
-        <button type="button" class="btn-primary st-add" ${n >= storyMax ? 'disabled' : ''} onclick="pickStoryFiles('${escJs(set.key)}')">+ Добавить фото</button>`;
+      const add = `<button type="button" class="st2 st2-add" ${n >= storyMax ? 'disabled' : ''} onclick="pickStoryFiles('${escJs(set.key)}')"><span class="st2-addi">${ic.plus}</span>Добавить фото</button>`;
+      return `<div class="st-set-head"><span class="st-set-title">${escHtml(set.title)}</span><span class="sv-chip${n >= storyMax ? ' warn' : ''}">${n} из ${storyMax}</span></div>
+        ${set.key === 'vip' && n ? '<div class="sv-tip" style="margin:0 0 10px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><div>Подпись — это название комнаты. Гость нажмёт «Забронировать» и в брони увидит именно его.</div></div>' : ''}
+        ${n ? '' : `<div class="st-empty">Фото пока нет — гости видят заглушку. ${escHtml(hint[set.key] || '')}</div>`}
+        <div class="st2-grid">${tiles}${add}</div>`;
     }).join('');
   }
   function pickStoryFiles(set) { storyAddSet = set; document.getElementById('storyFileInput').click(); }
@@ -8537,41 +8793,73 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const h = Math.floor(m / 60);
     return h < 48 ? `${h} ч` : `${Math.floor(h / 24)} дн.`;
   }
+  const SYS_IC = {
+    db: '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5.5" rx="7.5" ry="3"/><path d="M4.5 5.5v6.5c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3V5.5M4.5 12v6.5c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3V12"/></svg>',
+    server: '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4" width="17" height="6.5" rx="2"/><rect x="3.5" y="13.5" width="17" height="6.5" rx="2"/><path d="M7.5 7.2h.01M7.5 16.8h.01"/></svg>',
+    globe: '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.6 3.9 5.6 3.9 9s-1.3 6.4-3.9 9c-2.6-2.6-3.9-5.6-3.9-9S9.4 5.6 12 3z"/></svg>',
+    bot: '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4L3 11l6.5 2.5L12 20l2.5-5.5L21 4zM9.5 13.5L21 4"/></svg>',
+    chat: '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 12a8 8 0 01-11.7 7.1L4 20.5l1.4-4.6A8 8 0 1120.5 12z"/><path d="M8.5 11.5h7M8.5 14.5h4"/></svg>',
+    mail: '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="M4 7.5l8 6 8-6"/></svg>',
+    backup: '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4.5 4.5 0 01-.6-8.96A6 6 0 0117.9 8.6 4.8 4.8 0 0117 18H7z"/><path d="M12 11.5V16M9.8 13.7L12 16l2.2-2.3"/></svg>',
+    ok: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16.2 9.5"/></svg>',
+    warn: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4L2.8 19.5h18.4L12 4z"/><path d="M12 10v4.2M12 17h.01"/></svg>',
+    bad: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></svg>',
+    refresh: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 00-14.3-4.3L4 8.5M4 4v4.5h4.5M4 13a8 8 0 0014.3 4.3L20 15.5M20 20v-4.5h-4.5"/></svg>'
+  };
+  const SYS_CHIP = { ok: 'В порядке', warn: 'Внимание', bad: 'Сбой' };
+  function sysRowHtml(r) {
+    return `<div class="sv-row ${r.st}"><div class="sv-ico">${SYS_IC[r.ic] || ''}</div><div class="sv-body"><span class="sv-t">${escHtml(r.t)}</span><span class="sv-s">${escHtml(r.s)}</span></div><span class="sv-chip ${r.st}">${SYS_CHIP[r.st]}</span></div>`;
+  }
+  function sysHeroHtml(groups) {
+    const all = groups.flatMap(g => g.rows);
+    const bad = all.filter(r => r.st === 'bad'), warn = all.filter(r => r.st === 'warn');
+    const lvl = bad.length ? 'bad' : warn.length ? 'warn' : 'ok';
+    const title = { ok: 'Всё работает', warn: 'Есть замечания', bad: 'Есть сбои' }[lvl];
+    const sub = lvl === 'ok'
+      ? `Проверено: ${all.length}. Сбоев и замечаний нет.`
+      : `${bad.length ? `Сбоев: ${bad.length}. ` : ''}${warn.length ? `Замечаний: ${warn.length}. ` : ''}В порядке: ${all.length - bad.length - warn.length} из ${all.length}.`;
+    const pills = [...bad, ...warn].map(r => `<span class="sv-chip ${r.st}">${escHtml(r.t)}</span>`).join('');
+    return `<div class="sv-hero ${lvl}"><div class="sv-hero-ico">${SYS_IC[lvl]}</div><div class="sv-hero-body"><div class="sv-hero-k">Состояние системы</div><div class="sv-hero-t">${title}</div><div class="sv-hero-s">${sub}</div>${pills ? `<div class="sv-pills">${pills}</div>` : ''}</div></div>`;
+  }
   async function loadSystemStatus() {
-    const el = document.getElementById('ssContent');
+    const el = document.getElementById('sysContent');
+    const chk = document.getElementById('sysChecked');
+    const btn = document.getElementById('sysRecheck');
     el.innerHTML = '<div class="loading">Проверяю…</div>';
-    document.getElementById('ssChecked').textContent = 'Проверяю…';
+    chk.textContent = 'Проверяю…';
+    if (btn) btn.disabled = true;
     try {
       const res = await fetch(`${PROXY_BASE}/api/founder/system-status?pin=${getPin()}`);
       if (res.status === 401) { showScreen('pin'); return; }
       if (res.status === 403) { accessDenied(); return; }
       if (!res.ok) throw new Error(await responseError(res, 'Не удалось проверить систему'));
       const d = await res.json();
-      const row = (st, t, s) => `<div class="ss-row"><span class="ss-dot ${st}"></span><div><div class="ss-t">${escHtml(t)}</div><div class="ss-s">${escHtml(s)}</div></div></div>`;
-      const rows = [];
-      rows.push(d.database.ok
-        ? row('ok', 'База данных', `Работает · ответ ${d.database.ms} мс${d.database.migration ? ' · версия ' + d.database.migration.replace(/\.sql$/, '') : ''}`)
-        : row('bad', 'База данных', `Не отвечает: ${d.database.error || 'неизвестная ошибка'}`));
-      rows.push(row('ok', 'Сервер сотрудников', `Работает · без перезапуска ${ssUptime(d.staffServer.uptimeSec)} · сотрудников с доступом: ${d.staffServer.employees}`));
-      rows.push(d.guestServer.ok
-        ? row(d.guestServer.db === false ? 'bad' : 'ok', 'Гостевой сервер', d.guestServer.db === false ? 'Работает, но без связи с базой' : `Работает · ответ ${d.guestServer.ms} мс`)
-        : row('bad', 'Гостевой сервер', `Не отвечает: ${d.guestServer.error || 'неизвестная ошибка'}. Гости не смогут забронировать`));
+      const groups = [
+        { name: 'Серверы и база', ic: 'server', rows: [] },
+        { name: 'Боты и чат', ic: 'bot', rows: [] },
+        { name: 'Сообщения и копии', ic: 'mail', rows: [] }
+      ];
+      const add = (g, ic, st, t, s) => groups[g].rows.push({ ic, st, t, s });
+      if (d.database.ok) add(0, 'db', 'ok', 'База данных', `Работает · ответ ${d.database.ms} мс${d.database.migration ? ' · версия ' + d.database.migration.replace(/\.sql$/, '') : ''}`);
+      else add(0, 'db', 'bad', 'База данных', `Не отвечает: ${d.database.error || 'неизвестная ошибка'}`);
+      add(0, 'server', 'ok', 'Сервер сотрудников', `Работает · без перезапуска ${ssUptime(d.staffServer.uptimeSec)} · сотрудников с доступом: ${d.staffServer.employees}`);
+      if (d.guestServer.ok) add(0, 'globe', d.guestServer.db === false ? 'bad' : 'ok', 'Гостевой сервер', d.guestServer.db === false ? 'Работает, но без связи с базой' : `Работает · ответ ${d.guestServer.ms} мс`);
+      else add(0, 'globe', 'bad', 'Гостевой сервер', `Не отвечает: ${d.guestServer.error || 'неизвестная ошибка'}. Гости не смогут забронировать`);
       if (d.staffBot.ok) {
         const trouble = d.staffBot.lastError ? `Telegram сообщает об ошибке: ${d.staffBot.lastError}` : (d.staffBot.pending > 20 ? `Скопились необработанные сообщения: ${d.staffBot.pending}` : '');
-        rows.push(row(trouble || !d.staffBot.webhookSet ? 'warn' : 'ok', 'Бот сотрудников', `@${d.staffBot.username} · ${trouble || (d.staffBot.webhookSet ? 'принимает сообщения' : 'не подключён к серверу (вебхук не задан)')}`));
-      } else rows.push(row('bad', 'Бот сотрудников', `Не отвечает: ${d.staffBot.error || 'Telegram недоступен'}`));
-      rows.push(d.guestBot.ok
-        ? row('ok', 'Бот гостей', `@${d.guestBot.username} · отвечает`)
-        : row('bad', 'Бот гостей', `Не отвечает: ${d.guestBot.error || 'неизвестная ошибка'}`));
-      // сообщения гостям, которые не дошли за сутки: по брони — тревога (гостю надо позвонить), остальное — предупреждение
+        add(1, 'bot', trouble || !d.staffBot.webhookSet ? 'warn' : 'ok', 'Бот сотрудников', `@${d.staffBot.username} · ${trouble || (d.staffBot.webhookSet ? 'принимает сообщения' : 'не подключён к серверу (вебхук не задан)')}`);
+      } else add(1, 'bot', 'bad', 'Бот сотрудников', `Не отвечает: ${d.staffBot.error || 'Telegram недоступен'}`);
+      if (d.guestBot.ok) add(1, 'bot', 'ok', 'Бот гостей', `@${d.guestBot.username} · отвечает`);
+      else add(1, 'bot', 'bad', 'Бот гостей', `Не отвечает: ${d.guestBot.error || 'неизвестная ошибка'}`);
       // Админ-чат: туда уходят новые брони с именами и телефонами, проблемы, итоги вечера. Не дошло — об этом никто бы не узнал.
       if (d.adminChat) {
         const ac = d.adminChat;
-        if (!ac.ok) rows.push(row('bad', 'Админ-чат', `Бот не видит чат: ${ac.error || 'Telegram не ответил'}. Сообщения администрации не доходят — проверьте, что бот в чате, и переменную ADMIN_CHAT_ID`));
-        else if (!ac.fromEnv) rows.push(row('warn', 'Админ-чат', `Чат доступен${ac.title ? ' (' + ac.title + ')' : ''}, но переменная ADMIN_CHAT_ID не задана — сообщения уходят на запасной адрес из кода. Задайте её в Railway`));
-        else if (ac.failed24h) rows.push(row('warn', 'Админ-чат', `Чат доступен, но за сутки не дошло сообщений: ${ac.failed24h}. Загляните в приложение: возможны брони и проблемы без уведомления`));
-        else rows.push(row('ok', 'Админ-чат', `Доступен${ac.title ? ' · ' + ac.title : ''} · за сутки все сообщения дошли`));
+        if (!ac.ok) add(1, 'chat', 'bad', 'Админ-чат', `Бот не видит чат: ${ac.error || 'Telegram не ответил'}. Сообщения администрации не доходят — проверьте, что бот в чате, и переменную ADMIN_CHAT_ID`);
+        else if (!ac.fromEnv) add(1, 'chat', 'warn', 'Админ-чат', `Чат доступен${ac.title ? ' (' + ac.title + ')' : ''}, но переменная ADMIN_CHAT_ID не задана — сообщения уходят на запасной адрес из кода. Задайте её в Railway`);
+        else if (ac.failed24h) add(1, 'chat', 'warn', 'Админ-чат', `Чат доступен, но за сутки не дошло сообщений: ${ac.failed24h}. Загляните в приложение: возможны брони и проблемы без уведомления`);
+        else add(1, 'chat', 'ok', 'Админ-чат', `Доступен${ac.title ? ' · ' + ac.title : ''} · за сутки все сообщения дошли`);
       }
+      // сообщения гостям, которые не дошли за сутки: по брони — тревога (гостю надо позвонить), остальное — предупреждение
       const sf = d.sendFailures ? (() => {
         const byKind = { ...d.sendFailures.byKind };
         const adminFailed = byKind.admin ? byKind.admin.failed : 0;
@@ -8581,26 +8869,29 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       })() : null;
       if (sf) {
         const KIND = { booking: 'по броням', broadcast: 'рассылки', birthday: 'поздравления', review: 'просьбы об отзыве' };
-        if (!sf.total) rows.push(row('ok', 'Сообщения гостям', 'За сутки все дошли'));
+        if (!sf.total) add(2, 'mail', 'ok', 'Сообщения гостям', 'За сутки все дошли');
         else {
           const parts = Object.keys(sf.byKind).map(k => `${KIND[k] || k}: ${sf.byKind[k].failed}${sf.byKind[k].blocked ? ` (из них заблокировали бота: ${sf.byKind[k].blocked})` : ''}`);
           const REASON = { blocked: 'гость заблокировал бота', limit: 'лимит Telegram', network: 'Telegram не ответил', error: 'Telegram отказал' };
           const last = sf.last ? ` Последний: ${fmtDateTime(sf.last.at)}, ${REASON[sf.last.reason] || sf.last.reason}${sf.last.note ? ' — ' + sf.last.note : ''}.` : '';
           const bk = sf.byKind.booking && sf.byKind.booking.failed;
-          rows.push(row(bk ? 'bad' : 'warn', 'Сообщения гостям', `Не дошло за сутки: ${sf.total}. ${parts.join('; ')}.${last}${bk ? ' По броням гостю нужно позвонить.' : ''}`));
+          add(2, 'mail', bk ? 'bad' : 'warn', 'Сообщения гостям', `Не дошло за сутки: ${sf.total}. ${parts.join('; ')}.${last}${bk ? ' По броням гостю нужно позвонить.' : ''}`);
         }
       }
       if (d.backup.lastAt) {
         const ageDays = (Date.now() - new Date(d.backup.lastAt)) / 86400000;
-        rows.push(row(ageDays > 2 ? 'warn' : 'ok', 'Резервная копия базы', `Последняя: ${fmtDateTime(d.backup.lastAt)} (${timeAgo(d.backup.lastAt)})${ageDays > 2 ? ' — давно, проверьте' : ''}`));
+        add(2, 'backup', ageDays > 2 ? 'warn' : 'ok', 'Резервная копия базы', `Последняя: ${fmtDateTime(d.backup.lastAt)} (${timeAgo(d.backup.lastAt)})${ageDays > 2 ? ' — давно, проверьте' : ''}`);
       } else {
-        rows.push(row('warn', 'Резервная копия базы', 'Нет данных. Автоматические копии ещё не настроены — это нужно сделать до открытия бара'));
+        add(2, 'backup', 'warn', 'Резервная копия базы', 'Нет данных. Автоматические копии ещё не настроены — это нужно сделать до открытия бара');
       }
-      el.innerHTML = rows.join('');
-      document.getElementById('ssChecked').textContent = `Проверено в ${new Date(d.checkedAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`;
+      el.innerHTML = sysHeroHtml(groups)
+        + groups.filter(g => g.rows.length).map(g => `<div class="sv-gl">${g.name}</div><div class="sv-card">${g.rows.map(sysRowHtml).join('')}</div>`).join('');
+      chk.textContent = `Проверено в ${new Date(d.checkedAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`;
     } catch (e) {
-      document.getElementById('ssChecked').textContent = 'Не удалось проверить';
+      chk.textContent = 'Не удалось проверить';
       el.innerHTML = errorStateHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером сотрудников — возможно, он не запущен', 'loadSystemStatus()');
+    } finally {
+      if (btn) btn.disabled = false;
     }
   }
 
@@ -8612,8 +8903,28 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     renderAuditFilters();
     loadAudit(true);
   }
+  const AU_IC = {
+    user: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M5 20c.6-3.8 3.4-5.8 7-5.8s6.4 2 7 5.8"/></svg>',
+    tag: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 12.2V4.5h7.7l9.3 9.3a1.5 1.5 0 010 2.1l-5.4 5.4a1.5 1.5 0 01-2.1 0L3.5 12.2z"/><circle cx="8" cy="9" r="1.2"/></svg>',
+    cal: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>',
+    menu: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14v16H5zM8.5 9h7M8.5 13h7M8.5 17h4"/></svg>',
+    image: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="9" cy="10" r="1.7"/><path d="M4 17l5-4.5 3.5 3 3-2.5 4.5 4"/></svg>',
+    shield: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7.5 3v5.5c0 4.4-3 7.7-7.5 9.5-4.5-1.8-7.5-5.1-7.5-9.5V6L12 3z"/><path d="M9 12l2.2 2.2L15.2 10"/></svg>',
+    key: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M11 12l8.5-8.5M16 7l3 3M14 9l2 2"/></svg>',
+    gear: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></svg>',
+    send: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4L3 11l6.5 2.5L12 20l2.5-5.5L21 4zM9.5 13.5L21 4"/></svg>',
+    check: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 12.3l2.5 2.5 4.5-5"/></svg>',
+    alert: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4L2.8 19.5h18.4L12 4z"/><path d="M12 10v4M12 17h.01"/></svg>',
+    dot: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="2.5"/></svg>'
+  };
+  const AU_TYPE = {
+    guest: ['c1', 'user'], tag: ['c1', 'tag'], booking: ['c2', 'cal'], event: ['c2', 'cal'], schedule: ['c2', 'cal'],
+    menu: ['c3', 'menu'], menu_item: ['c3', 'menu'], menu_category: ['c3', 'menu'], checklist: ['c3', 'check'], task: ['c3', 'check'], problem: ['c3', 'alert'],
+    story: ['c4', 'image'], survey: ['c4', 'image'], marketing: ['c4', 'send'], settings: ['c4', 'gear'],
+    employee: ['c5', 'shield'], role: ['c5', 'shield'], auth: ['c5', 'key'], candidate: ['c5', 'user']
+  };
   function renderAuditFilters() {
-    document.getElementById('auditPeriod').innerHTML = AU_PERIODS.map(([v, l]) => `<div class="chip${au.days === v ? ' selected' : ''}" onclick="auSetDays('${v}')">${l}</div>`).join('');
+    document.getElementById('auditPeriod').innerHTML = AU_PERIODS.map(([v, l]) => `<button type="button" class="${au.days === v ? 'on' : ''}" onclick="auSetDays('${v}')">${l}</button>`).join('');
     const fill = (id, first, rows, cur) => {
       const sel = document.getElementById(id);
       sel.innerHTML = '';
@@ -8693,16 +9004,18 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     let html = '', lastDay = '';
     for (const it of au.items) {
       const day = auDayKey(it.at);
-      if (day !== lastDay) { html += `<div class="au-day">${escHtml(auDayLabel(day))}</div>`; lastDay = day; }
+      if (day !== lastDay) { if (lastDay) html += '</div>'; html += `<div class="au-day">${escHtml(auDayLabel(day))}</div><div class="au-card">`; lastDay = day; }
       const time = new Date(it.at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', timeZone: AU_TZ });
       const guestLink = it.type === 'guest' && it.entityId && it.guestName;
+      const [cls, ic] = AU_TYPE[it.type] || ['', 'dot'];
       html += `<div class="au-row${guestLink ? ' click' : ''}"${guestLink ? ` onclick="openGuestCard('${escJs(it.entityId)}')"` : ''}>`
-        + `<div class="au-time">${time}</div>`
+        + `<div class="au-ico ${cls}">${AU_IC[ic]}</div>`
         + `<div class="au-main"><div class="au-sum">${it.guestName ? `<span class="au-guest">${escHtml(it.guestName)}</span>: ` : ''}${escHtml(it.summary)}</div>`
         + `<div class="au-meta">${escHtml(it.actor)} · ${escHtml(it.typeLabel)}</div></div>`
-        + (guestLink ? '<div class="qrow-chev">›</div>' : '') + '</div>';
+        + `<div class="au-time">${time}</div>`
+        + `<div class="au-chev">${guestLink ? '›' : ''}</div></div>`;
     }
-    list.innerHTML = html;
+    list.innerHTML = html + '</div>';
   }
 
   // ─── «КАК ХОДЯТ ГОСТИ» И ПРАВИЛА СЕГМЕНТОВ ───
@@ -8952,39 +9265,99 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     if (x.from > ss.today) return ['ещё не начался', ''];
     return ['идёт сейчас', 'work'];
   }
+  // Картинки сезонов: два цвета плитки и значок. Для нового эффекта достаточно добавить сюда строку.
+  const SS_ART = {
+    newyear: ['#9fd3ff', '#2e5a92', '<svg width="CC" height="CC" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 2.8v18.4M4 7.4l16 9.2M4 16.6l16-9.2"/><path d="M9.6 4.6L12 6.8l2.4-2.2M9.6 19.4L12 17.2l2.4 2.2M4.6 9.8l3-.4-.8-2.9M19.4 14.2l-3 .4.8 2.9M4.6 14.2l3 .4-.8 2.9M19.4 9.8l-3-.4.8-2.9"/></svg>'],
+    valentine: ['#ff8fb0', '#a02a58', '<svg width="CC" height="CC" viewBox="0 0 24 24" fill="currentColor"><path d="M12 20.6s-7.6-4.7-7.6-10.2A4.3 4.3 0 0112 8a4.3 4.3 0 017.6 2.4c0 5.5-7.6 10.2-7.6 10.2z"/></svg>'],
+    march8: ['#f7b3cb', '#b5486b', '<svg width="CC" height="CC" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="6.4" r="3.5"/><circle cx="17.4" cy="10.4" r="3.5"/><circle cx="15.3" cy="16.7" r="3.5"/><circle cx="8.7" cy="16.7" r="3.5"/><circle cx="6.6" cy="10.4" r="3.5"/><circle cx="12" cy="12" r="2.4" fill="#b5486b"/></svg>'],
+    halloween: ['#ffa24a', '#5e2a12', '<svg width="CC" height="CC" viewBox="0 0 24 24" fill="currentColor"><path d="M12 6.2c.2-1.3.8-2.2 2-2.7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/><path d="M12 6.8c-1.2-.6-2.6-.8-4-.3-3 1-4.6 4-4.2 7.2.4 3.3 3.5 5.6 8.2 5.6s7.8-2.3 8.2-5.6c.4-3.2-1.2-6.2-4.2-7.2-1.4-.5-2.8-.3-4 .3z"/><path d="M8.6 11.2l1.7 2.4H7zM15.4 11.2l1.7 2.4h-3.3zM8.8 16.2c1.9 1.5 4.5 1.5 6.4 0" stroke="#5e2a12" stroke-width="1.4" stroke-linecap="round" fill="#5e2a12"/></svg>']
+  };
+  const SS_MONTHS = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
+  function ssArt(effect, cls) {
+    const a = SS_ART[effect];
+    const size = cls === 'lg' ? 28 : 22;
+    if (!a) return `<span class="ss-art none ${cls || ''}"><svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M8.5 12h7"/></svg></span>`;
+    return `<span class="ss-art ${cls || ''}" style="--a:${a[0]};--b:${a[1]}">${a[2].replace(/CC/g, size)}</span>`;
+  }
+  function ssShort(effect) {
+    const e = (ss.effects || []).find(x => x.id === effect);
+    return e ? e.name.split(':')[0] : effect;
+  }
+  function ssDays(a, b) { return Math.round((Date.parse(b + 'T00:00:00Z') - Date.parse(a + 'T00:00:00Z')) / 864e5); }
+  function ssInfo(x) {
+    if (!x.from || !x.to) return 'Укажите даты «с» и «по»';
+    if (x.from > x.to) return 'Дата «с» позже даты «по»';
+    const len = ssDays(x.from, x.to) + 1;
+    const dn = n => `${n} ${ruPlural(n, 'день', 'дня', 'дней')}`;
+    if (x.to < ss.today) return `${dn(len)} · закончился ${ssFmt(x.to)}`;
+    if (x.from > ss.today) return `${dn(len)} · начнётся через ${dn(ssDays(ss.today, x.from))}`;
+    const left = ssDays(ss.today, x.to);
+    return `${dn(len)} · ${left === 0 ? 'сегодня последний день' : 'осталось ' + dn(left)}`;
+  }
+  // Лента на ближайшие 12 месяцев: где стоят сезоны и где сегодня
+  function ssYearHtml() {
+    const [Y, M, D] = ss.today.split('-').map(Number);
+    const start = Date.UTC(Y, M - 1, 1), end = Date.UTC(Y, M + 11, 1);
+    const total = (end - start) / 864e5;
+    const idx = s => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ''); return m ? (Date.UTC(+m[1], +m[2] - 1, +m[3]) - start) / 864e5 : null; };
+    const segs = [], seen = [];
+    ss.items.forEach(x => {
+      const a = idx(x.from), b = idx(x.to);
+      if (a == null || b == null || b < a) return;
+      const l = Math.max(a, 0), r = Math.min(b + 1, total);
+      if (r <= 0 || l >= total) return;
+      const art = SS_ART[x.effect] || ['#c9a27a', '#6b4a2a'];
+      segs.push(`<i class="ss-seg${x.enabled ? '' : ' off'}" style="left:${(l / total * 100).toFixed(2)}%;width:${((r - l) / total * 100).toFixed(2)}%;--a:${art[0]};--b:${art[1]}"></i>`);
+      if (x.enabled && !seen.includes(x.effect)) seen.push(x.effect);
+    });
+    const months = [];
+    for (let k = 0; k < 12; k++) {
+      const t = Date.UTC(Y, M - 1 + k, 1);
+      months.push(`<span style="left:${((t - start) / 864e5 / total * 100).toFixed(2)}%">${SS_MONTHS[new Date(t).getUTCMonth()]}</span>`);
+    }
+    const todayPos = (((Date.UTC(Y, M - 1, D) - start) / 864e5 + 0.5) / total * 100).toFixed(2);
+    const legend = seen.map(e => { const a = SS_ART[e] || ['#c9a27a']; return `<span style="--a:${a[0]}"><i></i>${escHtml(ssShort(e))}</span>`; }).join('');
+    return `<div class="ss-year"><div class="ss-year-k">Ближайшие 12 месяцев</div>
+      <div class="ss-track">${segs.reverse().join('')}<i class="ss-today" style="left:${todayPos}%" title="Сегодня"></i></div>
+      <div class="ss-months">${months.join('')}</div>
+      ${legend ? `<div class="ss-legend">${legend}</div>` : ''}</div>`;
+  }
   function renderSeason() {
     const el = document.getElementById('ssContent');
     const dirty = ssKey() !== ssSaved;
     const effOpts = x => ss.effects.map(e => `<option value="${e.id}"${e.id === x.effect ? ' selected' : ''}>${escHtml(e.name)}</option>`).join('');
     const cards = ss.items.map((x, i) => {
       const [st, cls] = ssState(x);
-      return `<div class="rr-card" style="padding:12px 14px;margin-bottom:10px">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px">
-          <span style="font-size:11px;letter-spacing:1px;color:var(--text-muted);text-transform:uppercase">Сезон ${i + 1}</span>
-          ${st ? `<span class="ss-chip${cls === 'work' ? ' now' : ''}">${st}</span>` : ''}
+      return `<div class="ss-card${cls === 'work' ? ' now' : ''}${x.enabled ? '' : ' off'}">
+        <div class="ss-head">
+          ${ssArt(x.effect)}
+          <div class="ss-hb"><div class="ss-no">Сезон ${i + 1}</div><div class="ss-info">${escHtml(ssInfo(x))}</div></div>
+          ${st ? `<span class="sv-chip ${cls === 'work' ? 'ok' : ''}">${st}</span>` : ''}
         </div>
-        <select class="form-input" onchange="ssSet(${i},'effect',this.value)">${effOpts(x)}</select>
+        <select class="form-input ss-sel" onchange="ssSet(${i},'effect',this.value)">${effOpts(x)}</select>
         <div class="ss-dates">
           <div><div class="ss-lbl">С</div><input class="form-input" type="date" value="${escHtml(x.from)}" onchange="ssSet(${i},'from',this.value)"></div>
           <div><div class="ss-lbl">По (включительно)</div><input class="form-input" type="date" value="${escHtml(x.to)}" onchange="ssSet(${i},'to',this.value)"></div>
         </div>
-        <label class="perm-row" style="padding-left:0;padding-right:0;margin-top:6px">
-          <input type="checkbox"${x.enabled ? ' checked' : ''} onchange="ssSet(${i},'enabled',this.checked)">
-          <span class="perm-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 9 17 20 6"/></svg></span>
-          <span style="font-size:14px;color:var(--text)">Включён</span>
-        </label>
-        <button type="button" class="ss-del" onclick="ssRemove(${i})">Удалить сезон</button>
+        <div class="ss-foot">
+          <label class="ss-sw"><span class="vn-sw"><input type="checkbox"${x.enabled ? ' checked' : ''} onchange="ssSet(${i},'enabled',this.checked)"><i></i></span>Включён</label>
+          <button type="button" class="ss-del" onclick="ssRemove(${i})"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12h10l1-12M9 7V4h6v3"/></svg>Удалить сезон</button>
+        </div>
       </div>`;
     }).join('');
-    const active = ss.active
-      ? `Сегодня гости видят: <b>${escHtml(ss.active.name)}</b>`
-      : 'Сегодня у гостей анимации нет';
+    const act = ss.active;
     const meta = ss.meta && ss.meta.updatedAt ? `Последняя правка: ${fmtDateTime(ss.meta.updatedAt)}${ss.meta.updatedBy ? ', ' + escHtml(ss.meta.updatedBy) : ''}` : 'Пока ни одного сезона';
-    el.innerHTML = `<div class="rr-card" style="padding:12px 14px;margin-bottom:10px"><div style="font-size:14px;color:var(--text)">${active}</div><div style="font-size:11.5px;color:var(--text-muted);margin-top:4px">${meta}</div></div>`
-      + (cards || '<div class="poster-note" style="margin:8px 2px 12px">Сезонов пока нет — у гостей обычное приложение. Добавьте сезон: выберите праздник и даты.</div>')
-      + '<button class="btn-ghost" onclick="ssAdd()">+ Добавить сезон</button>'
-      + `<button class="btn-cta" id="ssSaveBtn" style="margin-top:14px"${dirty ? '' : ' disabled'} onclick="saveSeason()">Сохранить</button>`
-      + '<div class="poster-note" style="margin-top:10px">Анимация идёт в приложении гостя в выбранные даты по московскому времени: снег, сердечки, лепестки роз или Хэллоуин. Если даты двух сезонов совпали, показывается тот, что выше. Гости увидят изменение в течение минуты при открытии приложения. У тех, кто включил в телефоне «уменьшить движение», анимации не будет.</div>';
+    const hero = `<div class="sv-hero${act ? '' : ' off'}">${act ? ssArt(act.effect, 'lg') : ssArt('', 'lg none')}
+      <div class="sv-hero-body"><div class="sv-hero-k">Сегодня у гостей</div>
+        <div class="sv-hero-t" style="font-size:${act ? 18 : 19}px">${act ? escHtml(act.name) : 'Сегодня у гостей анимации нет'}</div>
+        <div class="sv-hero-s">${meta}</div></div></div>`;
+    el.innerHTML = hero
+      + (ss.items.length ? ssYearHtml() : '')
+      + '<div class="sv-gl" style="margin-top:20px">Сезоны</div>'
+      + (cards || '<div class="sv-tip" style="margin:0 0 12px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 00-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0012 3z"/></svg><div>Сезонов пока нет — у гостей обычное приложение. Добавьте сезон: выберите праздник и даты.</div></div>')
+      + '<button type="button" class="ss-add" onclick="ssAdd()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Добавить сезон</button>'
+      + `<div class="vn-save${dirty ? ' dirty' : ''}"><button class="btn-cta" id="ssSaveBtn"${dirty ? '' : ' disabled'} onclick="saveSeason()">Сохранить</button></div>`
+      + '<div class="sv-tip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><div>Анимация идёт в приложении гостя в выбранные даты по московскому времени: снег, сердечки, лепестки роз или Хэллоуин. Если даты двух сезонов совпали, показывается тот, что выше. Гости увидят изменение в течение минуты при открытии приложения. У тех, кто включил в телефоне «уменьшить движение», анимации не будет.</div></div>';
   }
   function ssSet(i, k, v) { ss.items[i][k] = v; renderSeason(); }
   function ssRemove(i) { ss.items.splice(i, 1); renderSeason(); }
@@ -9046,17 +9419,38 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       el.innerHTML = errorStateHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером', 'loadReviewRules()');
     }
   }
+  const RV_IC = {
+    star: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8-4.3-4.1 5.9-.9L12 3.5z"/></svg>',
+    power: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3v8M6.3 6.8a8 8 0 1011.4 0"/></svg>',
+    clock: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>',
+    users: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8.5" r="3.3"/><path d="M3 19c.5-3.3 3-5 6-5s5.5 1.7 6 5M16 5.5a3.2 3.2 0 010 6M18 14.3c1.8.6 2.7 2.2 3 4.7"/></svg>',
+    moon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 119.5 4a6.8 6.8 0 0010.5 10.5z"/></svg>',
+    layers: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5"/></svg>',
+    chart: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+    minus: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg>',
+    plus: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>'
+  };
+  const rrGroup = (ic, title) => `<div class="sv-gl">${RV_IC[ic]}${title}</div>`;
   function rrToggleHtml(key, title, hint) {
-    return `<label class="perm-row"><input type="checkbox" id="rr_${key}" onchange="rrChanged()"><span class="perm-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 9 17 20 6"/></svg></span><span><span class="rr-t">${title}</span>${hint ? `<span class="rr-h">${hint}</span>` : ''}</span></label>`;
+    return `<div class="sv-line"><div class="sv-lt"><span class="sv-t">${title}</span>${hint ? `<span class="sv-s">${hint}</span>` : ''}</div><label class="vn-sw"><input type="checkbox" id="rr_${key}" onchange="rrChanged()"><i></i></label></div>`;
   }
   function rrNumHtml(key, title, hint, unit) {
     const lim = (rr.limits || {})[key] || {};
-    return `<div class="rr-row"><div class="rr-l"><span class="rr-t">${title}</span>${hint ? `<span class="rr-h">${hint}</span>` : ''}</div><div class="rr-r"><input class="form-input" type="number" inputmode="numeric" id="rr_${key}" min="${lim.min ?? 0}" max="${lim.max ?? 999}" step="1" oninput="rrChanged()"><span class="rr-u">${unit}</span></div></div>`;
+    return `<div class="sv-line"><div class="sv-lt"><span class="sv-t">${title}</span>${hint ? `<span class="sv-s">${hint}</span>` : ''}</div><div class="nm"><button type="button" class="nmb" onclick="rrBump('${key}',-1)" aria-label="Меньше">${RV_IC.minus}</button><input class="form-input" type="number" inputmode="numeric" id="rr_${key}" min="${lim.min ?? 0}" max="${lim.max ?? 999}" step="1" oninput="rrChanged()"><button type="button" class="nmb" onclick="rrBump('${key}',1)" aria-label="Больше">${RV_IC.plus}</button><span class="rr-u">${unit}</span></div></div>`;
   }
-  function rrHoursHtml(key, title, hint, from, to) {
-    let opts = '';
-    for (let h = from; h <= to; h++) opts += `<option value="${h}">${h}:00</option>`;
-    return `<div class="rr-row"><div class="rr-l"><span class="rr-t">${title}</span>${hint ? `<span class="rr-h">${hint}</span>` : ''}</div><div class="rr-r"><select class="form-input" id="rr_${key}" onchange="rrChanged()">${opts}</select></div></div>`;
+  function rrBump(key, dir) {
+    const inp = document.getElementById('rr_' + key);
+    const lim = (rr.limits || {})[key] || {};
+    const min = lim.min ?? 0, max = lim.max ?? 999;
+    const cur = inp.value === '' ? (rr.rules[key] ?? min) : Number(inp.value);
+    inp.value = Math.min(max, Math.max(min, cur + dir));
+    rrChanged();
+  }
+  function rrWindowHtml() {
+    const opts = (a, b) => { let o = ''; for (let h = a; h <= b; h++) o += `<option value="${h}">${h}:00</option>`; return o; };
+    return `<div class="sv-line" style="display:block"><span class="sv-t">Окно отправки</span><span class="sv-s">Просьба уходит на следующий день после визита, в это окно (время бара). Не успели до конца окна — в этот раз не отправляем</span>
+      <div class="sv-sel2" style="margin-top:12px"><div><div class="ss-lbl">С</div><select class="form-input" id="rr_from" onchange="rrChanged()">${opts(0, 23)}</select></div><div><div class="ss-lbl">До</div><select class="form-input" id="rr_to" onchange="rrChanged()">${opts(1, 24)}</select></div></div>
+      <div style="margin-top:14px"><div class="sv-track"><i id="rrWin"></i></div><div class="sv-ticks"><span style="left:0">0:00</span><span style="left:25%">6:00</span><span style="left:50%">12:00</span><span style="left:75%">18:00</span><span style="left:100%">24:00</span></div></div></div>`;
   }
   function renderReviewRules() {
     const el = document.getElementById('rrContent');
@@ -9066,30 +9460,29 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     if (lk.off) warns.push('На сервере стоит переменная <b>REVIEW_REQUESTS=off</b> — просьбы выключены полностью, что бы ни было настроено здесь. Уберите её в Railway, чтобы включить.');
     if (lk.hours) warns.push(`Часы отправки заданы на сервере переменной <b>REVIEW_REQUEST_HOURS=${escHtml(lk.hours)}</b> и главнее этого экрана. Уберите её в Railway, чтобы менять часы здесь.`);
     const stats = (rr.stats && rr.stats.items) || [];
+    const maxStat = Math.max(1, ...stats.map(s => s.count));
     const meta = rr.meta && rr.meta.updatedAt ? `Последняя правка: ${fmtDateTime(rr.meta.updatedAt)}${rr.meta.updatedBy ? ', ' + escHtml(rr.meta.updatedBy) : ''}` : 'Пока стоят значения по умолчанию';
-    el.innerHTML = warns.map(w => `<div class="rr-warn">${w}</div>`).join('')
-      + '<div class="rr-sum" id="rrSummary"></div>'
-      + '<div class="tg-glabel">Включение</div><div class="rr-card">' + rrToggleHtml('enabled', 'Бот просит оценить визит', 'Выключите — просьбы не будут уходить никому') + '</div>'
-      + '<div class="tg-glabel">Когда</div><div class="rr-card">'
-        + rrHoursHtml('from', 'Начало окна отправки', 'Просьба уходит на следующий день после визита, в это окно (время бара)', 0, 23)
-        + rrHoursHtml('to', 'Конец окна', 'Не успели до этого часа — просьбу в этот раз не отправляем', 1, 24) + '</div>'
-      + '<div class="tg-glabel">Кому</div><div class="rr-card">'
+    el.innerHTML = warns.map(w => `<div class="sv-warn"><div>${w}</div></div>`).join('')
+      + `<div class="sv-hero" id="rrHero"><div class="sv-hero-ico">${RV_IC.star}</div><div class="sv-hero-body"><div class="sv-hero-k">Просьбы об отзыве</div><div class="sv-hero-t" id="rrHeroT">Включены</div><div class="sv-hero-s" id="rrSummary"></div></div></div>`
+      + rrGroup('power', 'Включение') + '<div class="sv-card">' + rrToggleHtml('enabled', 'Бот просит оценить визит', 'Выключите — просьбы не будут уходить никому') + '</div>'
+      + rrGroup('clock', 'Когда') + '<div class="sv-card">' + rrWindowHtml() + '</div>'
+      + rrGroup('users', 'Кому') + '<div class="sv-card">'
         + rrToggleHtml('first_visit_always', 'После первого визита — всегда', 'Мнение новичка о первом впечатлении самое ценное')
         + rrNumHtml('every_nth_visit', 'Дальше — каждый N-й визит', 'Не после каждого прихода, чтобы не надоедать', 'визит')
         + rrNumHtml('min_days', 'Не чаще, чем раз в', 'Между двумя просьбами одному гостю', 'дн.')
         + rrNumHtml('regular_min_days', 'Постоянным — не чаще, чем раз в', 'Чемпионы и «Лояльные+»: их спрашиваем реже', 'дн.')
         + rrToggleHtml('skip_vip', 'VIP ботом не спрашивать', 'Про вечер VIP-гостя спрашивает администратор лично') + '</div>'
-      + '<div class="tg-glabel">Когда не беспокоить</div><div class="rr-card">'
+      + rrGroup('moon', 'Когда не беспокоить') + '<div class="sv-card">'
         + rrNumHtml('ignored_in_row', 'Пауза после игнора: сколько просьб подряд', '0 — паузы нет. Ответом считается отзыв в течение недели', 'шт.')
         + rrNumHtml('ignored_pause_days', 'Длина паузы', 'Сколько дней не спрашиваем после проигнорированных просьб', 'дн.')
         + rrNumHtml('recent_review_days', 'Гость сам оставил отзыв за последние', 'Тогда не просим повторно. 0 — проверка выключена', 'дн.') + '</div>'
-      + '<div class="tg-glabel">Объём</div><div class="rr-card">'
+      + rrGroup('layers', 'Объём') + '<div class="sv-card">'
         + rrNumHtml('daily_cap', 'Не больше просьб в день', 'Потолок на один вечер. Сначала новички', 'шт.')
         + rrNumHtml('per_run', 'За один проход', 'Бот проверяет раз в 10 минут и отправляет не больше этого числа', 'шт.') + '</div>'
-      + '<div class="tg-glabel">За последние 7 дней</div><div class="rr-card" style="padding-top:2px;padding-bottom:2px">'
-        + (stats.length ? stats.map(s => `<div class="rr-stat"><span>${escHtml(s.label)}</span><b>${s.count}</b></div>`).join('') : '<div class="rr-stat"><span>Просьб и пропусков пока нет</span></div>') + '</div>'
+      + rrGroup('chart', 'За последние 7 дней') + '<div class="sv-card"><div class="sv-bars">'
+        + (stats.length ? stats.map(s => `<div class="sv-bar"><div class="sv-bar-top"><span>${escHtml(s.label)}</span><b>${s.count}</b></div><div class="sv-bar-line"><i style="width:${Math.max(s.count ? 4 : 0, Math.round(s.count / maxStat * 100))}%"></i></div></div>`).join('') : '<div class="sv-bar"><div class="sv-bar-top"><span>Просьб и пропусков пока нет</span></div></div>') + '</div></div>'
       + `<div class="poster-note" style="margin-top:8px">Здесь видно, что бот сделал с вчерашними и более ранними визитами. ${meta}.</div>`
-      + '<button class="btn-cta" id="rrSaveBtn" style="margin-top:14px" onclick="saveReviewRules()">Сохранить</button>'
+      + '<div class="vn-save" id="rrSaveWrap"><button class="btn-cta" id="rrSaveBtn" onclick="saveReviewRules()">Сохранить</button></div>'
       + '<button class="btn-ghost" onclick="rrResetDefaults()">Вернуть стандартные значения</button>';
     rrFill(rr.rules);
     document.getElementById('rr_from').disabled = !!lk.hours;
@@ -9133,10 +9526,23 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const { cur, patch } = rrDiff();
     const bad = Object.values(cur).some(v => typeof v === 'number' && isNaN(v));
     document.getElementById('rrSummary').textContent = bad ? 'Заполните все числа — тогда здесь появится описание.' : rrSummary(cur);
+    const on = !!cur.enabled;
+    const hero = document.getElementById('rrHero');
+    if (hero) hero.classList.toggle('off', !on);
+    const ht = document.getElementById('rrHeroT');
+    if (ht) ht.textContent = on ? 'Включены' : 'Выключены';
+    const win = document.getElementById('rrWin');
+    if (win) {
+      const a = Math.min(24, Math.max(0, cur.from)), b = Math.min(24, Math.max(0, cur.to));
+      win.style.left = (a / 24 * 100) + '%';
+      win.style.width = Math.max(0, (b - a) / 24 * 100) + '%';
+    }
     const btn = document.getElementById('rrSaveBtn');
     const n = Object.keys(patch).length;
     btn.disabled = !n && !bad;
     btn.textContent = n ? 'Сохранить' : 'Нет изменений';
+    const wrap = document.getElementById('rrSaveWrap');
+    if (wrap) wrap.classList.toggle('dirty', !btn.disabled);
   }
   function rrResetDefaults() {
     if (!rr) return;
@@ -9197,8 +9603,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       if (res.status === 403) { accessDenied(); return; }
       if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить опросы'));
       svList = (await res.json()).surveys || [];
-      el.innerHTML = svList.map(v => `<div class="qrow" onclick="openSurveyForm('${escJs(v.kind)}')"><div class="qrow-icon">${homeIcons.surveys || ''}</div><div class="qrow-t">${escHtml(v.title)}</div><div class="qrow-s">${v.background ? 'свой фон' : 'стандартный фон'} · ${v.retouch ? 'с ретушью' : 'без ретуши'}</div><div class="qrow-chev">›</div></div>`).join('')
-        + '<div class="poster-note" style="margin-top:12px">Фон, ретушь, затемнение и тексты. Вопросы и шкалы не меняются: от них зависят CSI, NPS и eNPS.</div>';
+      el.innerHTML = svList.map(v => `<div class="svl" onclick="openSurveyForm('${escJs(v.kind)}')"><div class="svl-th${v.background ? '' : ' none'}"${v.background ? ` style="background-image:url('${escHtml(v.background)}')"` : ''}>${v.background ? '' : (homeIcons.surveys || '')}</div><div class="svl-body"><div class="svl-t">${escHtml(v.title)}</div><div class="svl-c"><span class="sv-chip${v.background ? ' acc' : ''}">${v.background ? 'свой фон' : 'стандартный фон'}</span><span class="sv-chip${v.retouch ? ' acc' : ''}">${v.retouch ? 'с ретушью' : 'без ретуши'}</span></div></div><div class="qrow-chev">›</div></div>`).join('')
+        + '<div class="sv-tip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><div>Фон, ретушь, затемнение и тексты. Вопросы и шкалы не меняются: от них зависят CSI, NPS и eNPS.</div></div>';
     } catch (e) {
       el.innerHTML = errorStateHtml(e.message || 'Не удалось загрузить опросы', 'loadSurveys()');
     }
@@ -9287,6 +9693,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   function svChanged() {
     const d = SV_DEFAULTS[svKind] || SV_DEFAULTS.guest_review;
+    rangeFill(document.getElementById('svDim'));
     const retouch = document.getElementById('svRetouch').checked;
     const dim = Number(document.getElementById('svDim').value);
     document.getElementById('svDimVal').textContent = String(dim);
@@ -9379,6 +9786,26 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     ['bdayWish', 'Поздравление: пожелание', 'Пусть этот вечер будет таким, каким вы его задумали. Мы рядом, если понадобится что-то ещё.'],
     ['eventCta', 'Подпись под афишей', 'Бронь стола — в нашем приложении']
   ];
+  const TV_IC = {
+    tv: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="12.5" rx="2.5"/><path d="M8.5 20.5h7M12 17v3.5"/></svg>',
+    play: '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>',
+    user: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M5 20c.6-3.8 3.4-5.8 7-5.8s6.4 2 7 5.8"/></svg>',
+    image: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="9" cy="10" r="1.7"/><path d="M4 17l5-4.5 3.5 3 3-2.5 4.5 4"/></svg>',
+    sliders: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>',
+    link: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/></svg>'
+  };
+  // Заливка бегунка слева от ползунка (--p в процентах)
+  function rangeFill(el) {
+    if (!el) return;
+    const min = Number(el.min || 0), max = Number(el.max || 100);
+    el.style.setProperty('--p', (max > min ? (Number(el.value) - min) / (max - min) * 100 : 0) + '%');
+  }
+  function tvBump(dir) {
+    const el = document.getElementById('tvSec');
+    if (!el) return;
+    const cur = el.value === '' ? 12 : Number(el.value);
+    el.value = Math.min(60, Math.max(5, (isNaN(cur) ? 12 : cur) + dir));
+  }
   function openTv() { showScreen('tv'); loadTv(); }
   async function loadTv() {
     const el = document.getElementById('tvContent');
@@ -9389,11 +9816,14 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       if (res.status === 403) { accessDenied(); return; }
       if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить экраны'));
       tvRooms = (await res.json()).rooms || [];
-      el.innerHTML = tvRooms.map(r => {
+      const live = tvRooms.filter(r => r.enabled && r.online).length;
+      const hero = `<div class="vn-hero"><div class="vn-stat main"><div class="vn-stat-k">Экранов</div><div class="vn-stat-v">${tvRooms.length}</div><div class="vn-stat-s">ВИП-комнаты и терраса</div></div><div class="vn-stat"><div class="vn-stat-k">На связи</div><div class="vn-stat-v${live ? ' ok' : ' off'}">${live}</div></div><div class="vn-stat"><div class="vn-stat-k">Без связи</div><div class="vn-stat-v${tvRooms.length - live ? '' : ' off'}">${tvRooms.length - live}</div></div></div>`;
+      el.innerHTML = hero + '<div class="sv-gl" style="margin-top:18px">Экраны</div>' + tvRooms.map(r => {
         const now = r.shared ? 'общий экран' : (r.now && r.now.guest ? (r.now.guest.name ? `приветствует: ${escHtml(r.now.guest.name)}` : 'приветствие') : (r.override && r.override.mode === 'off' ? 'приветствие отключено' : 'ждёт гостя'));
         const st = !r.enabled ? 'выключен' : (r.online ? 'на связи' : 'не на связи');
-        return `<div class="qrow" onclick="openTvRoom(${r.room})"><div class="qrow-icon">${homeIcons.tv || ''}</div><div class="qrow-t">${escHtml(r.title)}</div><div class="qrow-s"><span class="tv-st${r.enabled && r.online ? ' on' : ''}"></span>${st} · ${now}</div><div class="qrow-chev">›</div></div>`;
-      }).join('') + '<div class="poster-note" style="margin-top:12px">Когда бронь ВИП-комнаты подтверждена (за выбранное время до начала) или администратор нажал «За столом», на экране комнаты появляется «Добро пожаловать домой, имя». После «Гость ушёл» или «Не пришёл» экран возвращается к заставке и афише. Проектор на террасе общий: приветствия по имени у него нет, остальное настраивается так же.</div>';
+        const cls = !r.enabled ? 'off' : (r.online ? 'on' : 'lost');
+        return `<div class="tvl" onclick="openTvRoom(${r.room})"><div class="tvl-scr ${cls}">${TV_IC.play}</div><div class="tvl-body"><div class="tvl-t">${escHtml(r.title)}</div><div class="tvl-s">${now}</div></div><span class="sv-chip ${cls === 'on' ? 'ok' : cls === 'lost' ? 'warn' : ''}">${st}</span><div class="qrow-chev">›</div></div>`;
+      }).join('') + '<div class="sv-tip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><div>Когда бронь ВИП-комнаты подтверждена (за выбранное время до начала) или администратор нажал «За столом», на экране комнаты появляется «Добро пожаловать домой, имя». После «Гость ушёл» или «Не пришёл» экран возвращается к заставке и афише. Проектор на террасе общий: приветствия по имени у него нет, остальное настраивается так же.</div></div>';
     } catch (e) {
       el.innerHTML = errorStateHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером', 'loadTv()');
     }
@@ -9415,27 +9845,28 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const scList = (r.shared ? [['idle', 'Заставка'], ['event', 'Афиша'], ['msg', 'Сообщение']] : [['welcome', 'Приветствие'], ['idle', 'Заставка'], ['bday', 'Поздравление'], ['event', 'Афиша'], ['msg', 'Сообщение']]);
     if (!scList.some(x => x[0] === tvTabCur)) tvTabCur = scList[0][0];
     const nowGuest = r.now && r.now.guest;
-    const status = `<span class="tv-st${r.enabled && r.online ? ' on' : ''}"></span>${!r.enabled ? 'Экран выключен' : (r.online ? 'Телевизор на связи' : 'Телевизор сейчас не на связи')}`;
     const seatedLine = r.seated ? (r.seated.arrived ? 'За столом: ' : 'Бронь подтверждена, гость ещё не отмечен: ') + escHtml(r.seated.name || 'гость') + (r.seated.birthday ? ' · день рождения' : '') : 'Сейчас в комнате нет гостя (подтверждённой брони на ближайшее время тоже нет)';
     const showLine = nowGuest ? `На экране: «Добро пожаловать домой, ${escHtml(nowGuest.name || '')}»${r.override ? ' (вручную)' : ''}` : (r.override && r.override.mode === 'off' ? 'Приветствие отключено вручную' : 'На экране: заставка и афиша');
+    const heroCls = !r.enabled ? 'off' : (r.online ? 'ok' : 'warn');
+    const heroT = !r.enabled ? 'Экран выключен' : (r.online ? 'Телевизор на связи' : 'Телевизор сейчас не на связи');
+    const heroS = r.shared ? 'Общий экран на террасе: заставка, афиша и сообщения для всех гостей. Приветствия по имени нет.' : `${seatedLine}<br>${showLine}`;
+    const sw = (id, on, title, hint) => `<div class="sv-line"><div class="sv-lt"><span class="sv-t">${title}</span>${hint ? `<span class="sv-s">${hint}</span>` : ''}</div><label class="vn-sw"><input type="checkbox" id="${id}"${on ? ' checked' : ''}><i></i></label></div>`;
+    const rng = (id, label, valHtml, min, max, step, val, l, rr_) => `<div class="tv-rg"><div class="tv-rg-h"><span>${label}</span><b>${valHtml}</b></div><input type="range" class="sv-range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}" oninput="tvPreview()"><div class="sv-range-l"><span>${l}</span><span>${rr_}</span></div></div>`;
     document.getElementById('tvRoomBody').innerHTML = `
-      <div class="tv-box" style="margin-top:14px">
-        <div style="font-size:13px;color:var(--text)">${status}</div>
-        ${r.shared ? '<div class="poster-note" style="margin-top:4px">Общий экран на террасе: заставка, афиша и сообщения для всех гостей. Приветствия по имени нет.</div>' : `<div class="poster-note" style="margin-top:4px">${seatedLine}</div>
-        <div class="poster-note">${showLine}</div>
-        <div class="form-group" style="margin:10px 0 0"><label class="form-label">Когда начинать приветствие</label>
-          <select class="form-input" id="tvWelcomeBefore">${[[0, 'Только после «За столом»'], [30, 'За 30 минут до брони'], [60, 'За час до брони'], [120, 'За 2 часа до брони'], [180, 'За 3 часа до брони'], [720, 'С утра в день брони']].map(([v, l]) => `<option value="${v}"${r.welcomeBefore === v ? ' selected' : ''}>${l}</option>`).join('')}</select>
-          <div class="poster-note">Работает для подтверждённых броней: гость зашёл и включил телевизор раньше, чем нажали «За столом», а на экране уже приветствие.</div></div>
-        <div class="tv-grid" style="margin-top:10px">
-          <div class="form-group" style="grid-column:1/-1;margin-bottom:6px"><input class="form-input" id="tvOvName" maxlength="40" placeholder="Другое имя на экране" value="${r.override && r.override.mode === 'name' ? escHtml(r.override.name) : ''}"></div>
-          <button type="button" class="btn-primary" onclick="tvOverride('name')">Показать это имя</button>
-          <button type="button" class="btn-primary" onclick="tvOverride('off')">Не приветствовать</button>
-        </div>
-        ${r.override ? '<button type="button" class="btn-primary" style="margin-top:8px;width:100%" onclick="tvOverride(\'clear\')">Вернуть как в брони</button>' : ''}
-        <div class="poster-note">Замена действует, пока в комнате этот гость, и сбросится сама, когда нажмут «Гость ушёл».</div>`}
-      </div>
+      <div class="sv-hero ${heroCls}" style="margin-top:6px"><div class="sv-hero-ico">${TV_IC.tv}</div><div class="sv-hero-body"><div class="sv-hero-k">${r.shared ? 'Проектор' : 'Телевизор'}</div><div class="sv-hero-t" style="font-size:18px">${heroT}</div><div class="sv-hero-s">${heroS}</div></div></div>
+      ${r.shared ? '' : `<div class="sv-gl">${TV_IC.user}Приветствие гостя</div>
+      <div class="sv-card">
+        <div class="sv-line" style="display:block"><span class="sv-t">Когда начинать приветствие</span>
+          <select class="form-input" id="tvWelcomeBefore" style="margin-top:10px">${[[0, 'Только после «За столом»'], [30, 'За 30 минут до брони'], [60, 'За час до брони'], [120, 'За 2 часа до брони'], [180, 'За 3 часа до брони'], [720, 'С утра в день брони']].map(([v, l]) => `<option value="${v}"${r.welcomeBefore === v ? ' selected' : ''}>${l}</option>`).join('')}</select>
+          <span class="sv-s" style="margin-top:8px">Работает для подтверждённых броней: гость зашёл и включил телевизор раньше, чем нажали «За столом», а на экране уже приветствие.</span></div>
+        <div class="sv-line" style="display:block"><span class="sv-t">Другое имя на экране</span>
+          <input class="form-input" id="tvOvName" maxlength="40" placeholder="Например: Анна и друзья" value="${r.override && r.override.mode === 'name' ? escHtml(r.override.name) : ''}" style="margin-top:10px">
+          <div class="tv-grid" style="margin-top:10px"><button type="button" class="btn-primary" onclick="tvOverride('name')">Показать это имя</button><button type="button" class="btn-primary" onclick="tvOverride('off')">Не приветствовать</button></div>
+          ${r.override ? '<button type="button" class="btn-primary" style="margin-top:8px;width:100%" onclick="tvOverride(\'clear\')">Вернуть как в брони</button>' : ''}
+          <span class="sv-s" style="margin-top:8px">Замена действует, пока в комнате этот гость, и сбросится сама, когда нажмут «Гость ушёл».</span></div>
+      </div>`}
 
-      <div class="form-label">Экран: нажмите на текст и впишите свой</div>
+      <div class="sv-gl">${TV_IC.tv}Что на экране <span style="text-transform:none;letter-spacing:0;opacity:.8">· нажмите на текст и впишите свой</span></div>
       <div class="tvp-tabs" id="tvTabs">${scList.map(([k, t]) => `<button type="button" class="tvp-tab${k === tvTabCur ? ' on' : ''}" data-sc="${k}" onclick="tvTab('${k}')">${t}</button>`).join('')}</div>
       <div class="tvp-wrap"><div class="tvp" id="tvPrev"><div id="tvPrevBgBox"></div><div class="tvp-veil" id="tvPrevVeil"></div>
         ${r.shared ? '' : `<div class="tvp-body tvp-sc" data-sc="welcome"><div class="tvp-h ed" contenteditable="true" data-k="welcome" data-ph="Добро пожаловать домой," data-max="80"></div><div class="tvp-n">${escHtml((r.seated && r.seated.name) || 'Анна')}</div><div class="tvp-s ed" contenteditable="true" data-k="welcomeSub" data-ph="Ваша комната готова" data-max="80"></div></div>`}
@@ -9445,49 +9876,52 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
         <div class="tvp-body tvp-sc" data-sc="msg"><div style="width:9%;height:1px;background:#B87333;margin-bottom:3cqw"></div><div class="tvp-big ed" contenteditable="true" data-k="msg" data-ph="Например: Ваш кальян сейчас принесут" data-max="160" style="font-size:4.4cqw;max-width:86%"></div></div>
       </div></div>
       <div class="poster-note" id="tvPrevNote">Пустой текст — стандартный (он виден серым). Имя гостя подставляется само: «Анна» здесь для примера.</div>
-      <div class="tv-box" id="tvMsgRow" style="display:none;margin-top:8px">
-        ${r.message ? `<div class="poster-note" style="margin:0 0 8px">Сейчас на экране: «${escHtml(r.message)}»</div>` : ''}
+      <div class="sv-card" id="tvMsgRow" style="display:none;margin-top:10px"><div class="sv-line" style="display:block">
+        ${r.message ? `<div class="sv-chip acc" style="display:block;white-space:normal;margin-bottom:10px">Сейчас на экране: «${escHtml(r.message)}»</div>` : ''}
         <div class="tv-grid">
           <select class="form-input" id="tvMsgMin"><option value="10">10 минут</option><option value="30" selected>30 минут</option><option value="60">1 час</option><option value="120">2 часа</option></select>
           <button type="button" class="btn-primary" onclick="tvSendMessage()">Показать на экране</button>
         </div>
         ${r.message ? '<button type="button" class="btn-primary" style="margin-top:8px;width:100%" onclick="tvClearMessage()">Убрать сообщение</button>' : ''}
-        <div class="poster-note">Впишите сообщение прямо на экране выше. Оно появится в течение 15 секунд и исчезнет само через выбранное время.</div>
-      </div>
+        <span class="sv-s" style="margin-top:8px">Впишите сообщение прямо на экране выше. Оно появится в течение 15 секунд и исчезнет само через выбранное время.</span></div></div>
 
-      <div class="form-group" style="margin-top:12px">
-        <label class="form-label">Фон</label>
-        <div class="poster-actions" style="margin-top:0">
-          <button type="button" class="btn-primary" style="flex:1" onclick="tvIn('tvBgInput').click()" id="tvPickBtn">Загрузить фон</button>
-          <button type="button" class="btn-primary" style="flex:1;background:transparent;border-color:rgba(239,68,68,0.45);color:#ef4444" onclick="tvRemoveBg()" id="tvRemoveBtn">Стандартный</button>
+      <div class="sv-gl">${TV_IC.image}Фон</div>
+      <div class="sv-card">
+        <div class="sv-line" style="display:block">
+          <div class="poster-actions" style="margin-top:0">
+            <button type="button" class="btn-primary" style="flex:1" onclick="tvIn('tvBgInput').click()" id="tvPickBtn">Загрузить фон</button>
+            <button type="button" class="btn-primary tv-rm" style="flex:1" onclick="tvRemoveBg()" id="tvRemoveBtn">Стандартный</button>
+          </div>
+          <div class="poster-note" id="tvBgNote"></div>
+          <span class="sv-s" style="margin-top:6px">Видео до 60 секунд и 40 МБ, без звука. Сервер сам сожмёт его и сделает плавную петлю, загрузка займёт до минуты.</span>
+          <input type="file" id="tvBgInput" accept="video/mp4,video/quicktime,video/webm,image/*" style="display:none" onchange="onTvBgFile(this.files[0]); this.value='';">
         </div>
-        <div class="poster-note" id="tvBgNote"></div>
-        <div class="poster-note">Видео до 60 секунд и 40 МБ, без звука. Сервер сам сожмёт его и сделает плавную петлю, загрузка займёт до минуты.</div>
-        <input type="file" id="tvBgInput" accept="video/mp4,video/quicktime,video/webm,image/*" style="display:none" onchange="onTvBgFile(this.files[0]); this.value='';">
+        ${rng('tvBlur', 'Размытие', '<span id="tvBlurV"></span>', 0, 40, 1, r.blur, 'чётко', 'сильно размыто')}
+        ${rng('tvBright', 'Яркость', '<span id="tvBrightV"></span>%', 20, 100, 5, r.bright, 'темнее', 'ярче')}
+        ${rng('tvVeil', 'Затемнение', '<span id="tvVeilV"></span>%', 0, 80, 1, r.veil, 'светлее', 'темнее')}
       </div>
-      <div class="form-group"><label class="form-label">Размытие: <span id="tvBlurV"></span></label><input type="range" class="sv-range" id="tvBlur" min="0" max="40" step="1" value="${r.blur}" oninput="tvPreview()"><div class="sv-range-l"><span>чётко</span><span>сильно размыто</span></div></div>
-      <div class="form-group"><label class="form-label">Яркость: <span id="tvBrightV"></span>%</label><input type="range" class="sv-range" id="tvBright" min="20" max="100" step="5" value="${r.bright}" oninput="tvPreview()"><div class="sv-range-l"><span>темнее</span><span>ярче</span></div></div>
-      <div class="form-group"><label class="form-label">Затемнение: <span id="tvVeilV"></span>%</label><input type="range" class="sv-range" id="tvVeil" min="0" max="80" step="1" value="${r.veil}" oninput="tvPreview()"><div class="sv-range-l"><span>светлее</span><span>темнее</span></div></div>
 
-      <div class="form-label">Что показывать</div>
-      <div class="tv-box" style="padding:4px 14px">
-        <label class="perm-row" style="padding-left:0;padding-right:0"><input type="checkbox" id="tvShowIdle" ${r.showIdle ? 'checked' : ''}><span class="perm-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 9 17 20 6"/></svg></span><span style="font-size:14px;color:var(--text)">Заставка с логотипом</span></label>
-        <label class="perm-row" style="padding-left:0;padding-right:0"><input type="checkbox" id="tvShowEvent" ${r.showEvent ? 'checked' : ''}><span class="perm-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 9 17 20 6"/></svg></span><span style="font-size:14px;color:var(--text)">Афиша ближайших мероприятий</span></label>
-        <label class="perm-row" style="padding-left:0;padding-right:0"><input type="checkbox" id="tvEnabled" ${r.enabled ? 'checked' : ''}><span class="perm-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 9 17 20 6"/></svg></span><span><span style="font-size:14px;color:var(--text);display:block">Экран включён</span><span style="font-size:11.5px;color:var(--text-muted);display:block">Без галочки телевизор показывает чёрный экран</span></span></label>
+      <div class="sv-gl">${TV_IC.sliders}Показ</div>
+      <div class="sv-card">
+        ${sw('tvShowIdle', r.showIdle, 'Заставка с логотипом')}
+        ${sw('tvShowEvent', r.showEvent, 'Афиша ближайших мероприятий')}
+        <div class="sv-line"><div class="sv-lt"><span class="sv-t">Секунд на каждую сцену</span><span class="sv-s">От 5 до 60</span></div>
+          <div class="nm"><button type="button" class="nmb" onclick="tvBump(-1)" aria-label="Меньше">${RV_IC.minus}</button><input class="form-input" type="number" inputmode="numeric" id="tvSec" min="5" max="60" value="${r.sceneSec}"><button type="button" class="nmb" onclick="tvBump(1)" aria-label="Больше">${RV_IC.plus}</button><span class="rr-u">сек.</span></div></div>
+        ${sw('tvEnabled', r.enabled, 'Экран включён', 'Выключите — телевизор покажет чёрный экран')}
       </div>
-      <div class="form-group"><label class="form-label">Секунд на каждую сцену</label><input class="form-input" type="number" inputmode="numeric" id="tvSec" min="5" max="60" value="${r.sceneSec}"></div>
-      <button class="btn-cta" id="tvSaveBtn" onclick="saveTv()">Сохранить</button>
+      <div class="tf-save"><button class="btn-cta" id="tvSaveBtn" onclick="saveTv()">Сохранить</button></div>
 
-      <div class="form-label">Ссылка для телевизора</div>
-      <div class="tv-box">
+      <div class="sv-gl">${TV_IC.link}Ссылка для телевизора</div>
+      <div class="sv-card"><div class="sv-line" style="display:block">
         <div class="sv-link" id="tvLinkText">${escHtml(r.link)}</div>
         <div class="poster-actions" style="margin-top:10px">
           <button type="button" class="btn-primary" style="flex:1" onclick="copyText(tvCur.link, 'Ссылка скопирована')">Скопировать</button>
           <button type="button" class="btn-primary" style="flex:1" onclick="tvNewToken()">Новая ссылка</button>
         </div>
-        <div class="poster-note">Откройте эту ссылку в браузере телевизора. Ссылка секретная: если её увидел посторонний, выдайте новую (старая сразу перестанет работать, на телевизоре нужно будет открыть новую).</div>
-      </div>
+        <span class="sv-s" style="margin-top:10px">Откройте эту ссылку в браузере телевизора. Ссылка секретная: если её увидел посторонний, выдайте новую (старая сразу перестанет работать, на телевизоре нужно будет открыть новую).</span>
+      </div></div>
       <div style="height:16px"></div>`;
+    document.querySelectorAll('#tvRoomBody .sv-range').forEach(rangeFill);
     tvBindEditors();
     tvTab(tvTabCur);
     tvPreview();
@@ -9531,6 +9965,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   function tvPreview() {
     if (!tvCur) return;
     const blur = Number(tvIn('tvBlur').value), bright = Number(tvIn('tvBright').value), veil = Number(tvIn('tvVeil').value);
+    ['tvBlur', 'tvBright', 'tvVeil'].forEach(id => rangeFill(tvIn(id)));
     tvIn('tvBlurV').textContent = blur === 0 ? 'без размытия' : blur;
     tvIn('tvBrightV').textContent = bright;
     tvIn('tvVeilV').textContent = veil;
@@ -9968,16 +10403,26 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) + ', ' + d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
   }
 
+  const CAND_PHONE_IC = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>';
+
   function candCardHtml(c) {
     const id = escJs(c.id);
     const phone = String(c.phone || '');
+    const si = Math.max(0, CAND_STATUSES.indexOf(c.status));
     const meta = [c.position ? escHtml(c.position) : '', c.age ? `${escHtml(String(c.age))} ${ruPlural(c.age, 'год', 'года', 'лет')}` : ''].filter(Boolean).join(' · ');
     return `<div class="cand-card${c.status === 'Новая' ? ' new' : ''}">
-        <div class="cand-head"><div class="cand-name">${escHtml(c.name)}</div><div class="cand-when">${escHtml(candWhen(c.appliedAt))}</div></div>
-        ${meta ? `<div class="cand-meta">${meta}</div>` : ''}
-        ${phone ? `<div class="cand-meta"><a href="tel:${escHtml(phone.replace(/[^\d+]/g, ''))}">${escHtml(phone)}</a></div>` : ''}
+        <div class="cand-head">
+          <div class="cd-ava">${escHtml(dupInitials(c.name))}</div>
+          <div class="cand-id">
+            <div class="cand-name">${escHtml(c.name)}</div>
+            ${meta ? `<div class="cand-meta">${meta}</div>` : ''}
+            <div class="cand-when">${escHtml(candWhen(c.appliedAt))}</div>
+          </div>
+          <div class="cd-pill s${si}">${escHtml(c.status || CAND_STATUSES[0])}</div>
+        </div>
+        ${phone ? `<a class="cd-call" href="tel:${escHtml(phone.replace(/[^\d+]/g, ''))}">${CAND_PHONE_IC}${escHtml(phone)}<span>позвонить</span></a>` : ''}
         ${c.about ? `<div class="cand-about">${escHtml(c.about)}</div>` : ''}
-        <div class="cand-status">${CAND_STATUSES.map(st => `<div class="chip${c.status === st ? ' selected' : ''}" onclick="setCandidateStatus('${id}','${escJs(st)}')">${escHtml(st)}</div>`).join('')}</div>
+        <div class="cd-seg cand-status">${CAND_STATUSES.map((st, k) => `<button type="button" class="s${k}${c.status === st ? ' on' : ''}" onclick="setCandidateStatus('${id}','${escJs(st)}')">${escHtml(st)}</button>`).join('')}</div>
         <button type="button" class="cand-del" onclick="deleteCandidate('${id}')">Удалить отклик</button>
       </div>`;
   }
@@ -9985,8 +10430,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   function renderCandidates() {
     const chips = document.getElementById('candFilterChips');
     const count = st => candList.filter(c => c.status === st).length;
-    chips.innerHTML = [['', `Все · ${candList.length}`], ...CAND_STATUSES.map(st => [st, `${st}${count(st) ? ' · ' + count(st) : ''}`])]
-      .map(([v, label]) => `<div class="chip${candFilter === v ? ' selected' : ''}" onclick="setCandFilter('${escJs(v)}')">${escHtml(label)}</div>`).join('');
+    chips.innerHTML = [['', 'Все', candList.length], ...CAND_STATUSES.map(st => [st, st, count(st)])]
+      .map(([v, label, n]) => `<button type="button" class="${candFilter === v ? 'on' : ''}" onclick="setCandFilter('${escJs(v)}')">${escHtml(label)}<em>${n}</em></button>`).join('');
     const el = document.getElementById('candidatesContent');
     const list = candFilter ? candList.filter(c => c.status === candFilter) : candList;
     el.innerHTML = list.length
@@ -12342,15 +12787,26 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     if (field === 'important') return opts[opts.length - 1].value;
     return dupFieldValue(dupMainOf(key), field) || opts[0].value;
   }
+  function dupInitials(name) {
+    const w = String(name || '').trim().split(/\s+/).filter(Boolean);
+    return ((w[0] || '?')[0] + (w[1] ? w[1][0] : '')).toUpperCase();
+  }
   function dupCardHtml(c, opts = {}) {
     const tags = [...(c.tagsSpecial || []), ...(c.tastesLike || []).map(t => `любит: ${t}`)];
+    const chips = [];
+    if (c.lastVisit) chips.push(`был ${daysAgoText(Math.round((Date.parse(venueDayStr()) - Date.parse(c.lastVisit)) / 86400000))}`);
+    chips.push(c.visitsTotal ? `${c.visitsTotal} ${ruPlural(c.visitsTotal, 'визит', 'визита', 'визитов')}` : 'визитов пока нет');
+    if (c.created) chips.push(`создана ${fmtDMY(c.created)}`);
+    if (c.sharedPhone) chips.push('общий номер');
     return `
-      <div class="dup-name">${escHtml(c.name || 'Без имени')}${c.vip ? '<span class="vip-star">★ VIP</span>' : ''} ${segmentPillHtml(c.segmentKey, c.segment, true)}${opts.role ? `<span class="dup-role">${escHtml(opts.role)}</span>` : ''}</div>
-      <div class="dup-meta">${escHtml(c.phone || 'без телефона')} · ${escHtml(dupSummaryLine(c))}${c.sharedPhone ? ' · общий номер' : ''}</div>
-      ${c.birthday ? `<div class="dup-meta">ДР: ${escHtml(fmtDM(c.birthday))}</div>` : ''}
-      ${c.important ? `<div class="dup-meta">Важно: ${escHtml(c.important)}</div>` : ''}
-      ${(c.tagsAllergy || []).length ? `<div class="dup-meta"><span class="danger">Аллергия: ${escHtml(c.tagsAllergy.join(', '))}</span></div>` : ''}
-      ${tags.length ? `<div class="dup-meta">Теги: ${escHtml(tags.join(', '))}</div>` : ''}
+      <div class="dup-top"><div class="dup-ava">${escHtml(dupInitials(c.name))}</div>
+        <div class="dup-id"><div class="dup-name">${escHtml(c.name || 'Без имени')}${c.vip ? '<span class="vip-star">★ VIP</span>' : ''} ${segmentPillHtml(c.segmentKey, c.segment, true)}${opts.role ? `<span class="dup-role">${escHtml(opts.role)}</span>` : ''}</div>
+        <div class="dup-meta">${escHtml(c.phone || 'без телефона')}</div></div></div>
+      <div class="dup-chips">${chips.map(x => `<span>${escHtml(x)}</span>`).join('')}</div>
+      ${c.birthday ? `<div class="dup-fact"><b>ДР</b>${escHtml(fmtDM(c.birthday))}</div>` : ''}
+      ${c.important ? `<div class="dup-fact"><b>Важно</b>${escHtml(c.important)}</div>` : ''}
+      ${(c.tagsAllergy || []).length ? `<div class="dup-fact danger"><b>Аллергия</b>${escHtml(c.tagsAllergy.join(', '))}</div>` : ''}
+      ${tags.length ? `<div class="dup-fact"><b>Теги</b>${escHtml(tags.join(', '))}</div>` : ''}
       <button class="dup-open" onclick="event.preventDefault();event.stopPropagation();openGuestCard('${escJs(c.id)}')">Открыть карточку →</button>`;
   }
 
@@ -12373,7 +12829,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
         html += `<div class="dup-group"><div class="dup-head"><span>${escHtml(main.phone || g.phone)}</span><span>${g.cards.length} ${ruPlural(g.cards.length, 'карточка', 'карточки', 'карточек')}</span></div>`;
         html += active.map(c => `
           <label class="dup-card${c.id === main.id ? ' main' : ''}">
-            <input type="radio" name="dupmain-${key}" ${c.id === main.id ? 'checked' : ''} onchange="dupSetMain('${key}', '${escJs(c.id)}')">
+            <input type="radio" name="dupmain-${key}" ${c.id === main.id ? 'checked' : ''} onchange="dupSetMain('${key}', '${escJs(c.id)}')"><span class="dup-radio"></span>
             <div class="dup-card-body">${dupCardHtml(c, { role: c.id === main.id ? 'главная' : '' })}</div>
           </label>`).join('');
         // уже отмеченные «другой человек с тем же номером» — показываем для понимания, но не трогаем
@@ -12682,27 +13138,37 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     return `был ${timeAgo(at)}`;
   }
 
+  function empIsOnline(e) {
+    const at = e.lastSeenAt || e.lastLoginAt;
+    return !!at && Date.now() - new Date(at) < 5 * 60 * 1000;
+  }
+  // Что у сотрудника не так: нет Telegram ID (только у работающих), вход закрыт, пароль не задан
+  function empNeedsAttention(e) {
+    return !!e.active && (!e.telegramId || !!e.lockedUntil || !e.hasPassword);
+  }
+
   function empRowHtml(e) {
-    const meta = [];
-    let noTg = false;
-    if (e.isSelf) meta.push('это вы');
-    if (e.login) meta.push(e.login);
-    if (e.lockedUntil) meta.push('вход закрыт');
-    else if (!e.hasPassword) meta.push('пароль не задан');
-    else if (e.mustChangePassword) meta.push('ждёт смены пароля');
-    if (e.telegramId) meta.push('Telegram привязан');
-    else if (e.active) noTg = true;
-    if (e.customPerms) meta.push('особые права');
-    const seen = empSeenText(e);
-    if (seen) meta.push(seen);
+    const chips = [];
+    if (e.lockedUntil) chips.push('<span class="sv-chip bad">вход закрыт</span>');
+    else if (!e.hasPassword) chips.push('<span class="sv-chip warn">пароль не задан</span>');
+    else if (e.mustChangePassword) chips.push('<span class="sv-chip warn">ждёт смены пароля</span>');
+    if (e.telegramId) chips.push('<span class="sv-chip dim">Telegram привязан</span>');
+    else if (e.active) chips.push('<span class="sv-chip bad">нет Telegram ID</span>');
+    if (e.customPerms) chips.push('<span class="sv-chip acc">особые права</span>');
+    const online = empIsOnline(e) && e.active;
+    const seen = online ? '' : empSeenText(e);
+    if (online) chips.push('<span class="sv-chip ok">в сети</span>');
+    else if (seen) chips.push(`<span class="sv-chip dim">${escHtml(seen)}</span>`);
+    const sub = `<b>${escHtml(e.role)}</b>${e.login ? ' · ' + escHtml(e.login) : ''}`;
     return `
-      <div class="emp-row${e.active ? '' : ' off'}" onclick="openEmployeeForm('${escJs(e.id)}')">
+      <div class="emp-row ep${e.active ? '' : ' off'}" onclick="openEmployeeForm('${escJs(e.id)}')">
+        <div class="ep-ava${e.role === 'Основатель' ? ' boss' : ''}">${escHtml(dupInitials(e.name))}${online ? '<i></i>' : ''}</div>
         <div class="emp-body">
-          <div class="emp-name">${escHtml(e.name)}</div>
-          ${meta.length || noTg ? `<div class="emp-meta${e.lockedUntil ? ' emp-lock' : ''}">${escHtml(meta.join(' · '))}${noTg ? `<span class="emp-lock">${meta.length ? ' · ' : ''}нет Telegram ID</span>` : ''}</div>` : ''}
+          <div class="emp-name"><span>${escHtml(e.name)}</span>${e.isSelf ? '<em class="ep-you">это вы</em>' : ''}</div>
+          <div class="ep-sub">${sub}</div>
+          ${chips.length ? `<div class="ep-chips">${chips.join('')}</div>` : ''}
         </div>
-        <div class="emp-role">${escHtml(e.role)}</div>
-        <div class="qrow-chev">›</div>
+        <div class="qrow-chev ep-chev">›</div>
       </div>`;
   }
 
@@ -12713,8 +13179,17 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const fired = list.filter(e => !e.active);
     let html = '';
     if (!list.length) html = '<div class="empty-state">Сотрудников пока нет</div>';
-    if (working.length) html += `<div class="sec">Работают · ${working.length}</div>` + working.map(empRowHtml).join('');
-    if (fired.length) html += `<div class="sec" style="margin-top:18px">Уволены · ${fired.length}</div>` + fired.map(empRowHtml).join('');
+    else {
+      const online = working.filter(empIsOnline).length;
+      const attn = working.filter(empNeedsAttention).length;
+      html += `<div class="vn-hero" style="margin-bottom:6px">
+        <div class="vn-stat main"><div class="vn-stat-k">Работают</div><div class="vn-stat-v">${working.length}</div>${fired.length ? `<div class="vn-stat-s">уволено: ${fired.length}</div>` : ''}</div>
+        <div class="vn-stat"><div class="vn-stat-k">В сети</div><div class="vn-stat-v${online ? ' ok' : ' off'}">${online}</div></div>
+        <div class="vn-stat"><div class="vn-stat-k">Внимание</div><div class="vn-stat-v${attn ? ' ep-warn' : ' off'}">${attn}</div></div>
+      </div>`;
+    }
+    if (working.length) html += `<div class="mn-ch"><span>Работают</span><span class="sv-chip">${working.length}</span></div><div class="ep-card">${working.map(empRowHtml).join('')}</div>`;
+    if (fired.length) html += `<div class="mn-ch"><span>Уволены</span><span class="sv-chip">${fired.length}</span></div><div class="ep-card">${fired.map(empRowHtml).join('')}</div>`;
     el.innerHTML = html;
   }
 
