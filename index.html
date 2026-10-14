@@ -123,6 +123,7 @@
     .search-box { display: flex; gap: 10px; margin-bottom: 18px; }
     .search-input {
       flex: 1;
+      min-width: 0;
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 14px;
@@ -218,6 +219,8 @@
     .qrow-t { font-size: 14px; color: var(--text); }
     .qrow-s { font-size: 11.5px; color: var(--text-muted); margin-left: auto; text-align: right; }
     .qrow-chev { color: var(--text-muted); font-size: 18px; line-height: 1; margin-left: 4px; }
+    .qrow-t { flex: 0 0 auto; }
+    .qrow.svc-main .qrow-s { flex: 1; min-width: 0; margin-left: 2px; text-align: left; font-size: 11px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .qrow.desktop-only { display: none; }
     @media (min-width: 700px) {
       .qrow { grid-column: auto; }
@@ -1300,7 +1303,7 @@
     .vn-hero { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 8px; }
     .vn-stat { min-width: 0; padding: 12px 13px 13px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); }
     .vn-stat.main { background: linear-gradient(155deg, rgba(184,115,51,0.2), rgba(184,115,51,0.05)); border-color: rgba(184,115,51,0.32); }
-    .vn-stat-k { font-size: 9.5px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--text-muted); white-space: nowrap; }
+    .vn-stat-k { font-size: 9.5px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .vn-stat-v { margin-top: 7px; font-family: 'Jost', sans-serif; font-size: 20px; font-weight: 500; line-height: 1.1; color: var(--text); white-space: nowrap; font-variant-numeric: tabular-nums; }
     .vn-stat.main .vn-stat-v { font-size: 18px; padding-top: 1px; }
     .vn-stat-v.sm { font-size: 16px; padding-top: 3px; }
@@ -1373,6 +1376,9 @@
     .bd-st.warn { color: #f59e0b; }
     .bd-btn { flex-shrink: 0; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--accent); background: transparent; color: var(--accent); font-size: 12.5px; cursor: pointer; }
     .bd-btn.undo { border-color: var(--border); color: var(--text-muted); }
+    .bd-act { margin-top: 10px; }
+    .ls-row.bd-item { align-items: flex-start; }
+    .ls-chips .sv-chip { max-width: 100%; white-space: normal; }
     .dp-sublabel { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin: 12px 0 2px; }
     .gm-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 10px; }
     .gm-card.is-new { border-color: rgba(184,115,51,0.5); }
@@ -1558,6 +1564,111 @@
     .cd-fl button em { font-style: normal; min-width: 18px; padding: 1px 6px; border-radius: 100px; background: rgba(240,223,192,0.08); font-size: 11px; line-height: 1.5; color: var(--text-muted); text-align: center; }
     .cd-fl button.on { background: var(--accent-dim); border-color: rgba(184,115,51,0.55); color: var(--accent); }
     .cd-fl button.on em { background: rgba(184,115,51,0.22); color: var(--accent); }
+    /* Списки: гости, смена, именинники, проблемы, задачи — общие кирпичи */
+    .vn-stat.main.alert { background: linear-gradient(155deg, rgba(239,68,68,0.2), rgba(239,68,68,0.05)); border-color: rgba(239,68,68,0.4); }
+    .vn-stat-v.bad { color: #f87171; }
+    .vn-hero.eq { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    @media (max-width: 460px) { .vn-hero.eq .vn-stat { padding: 11px 11px 12px; } .vn-hero.eq .vn-stat-k { font-size: 9px; letter-spacing: 1.1px; } }
+    @media (max-width: 360px) { .vn-hero.eq { grid-template-columns: repeat(2, minmax(0, 1fr)); } .vn-hero.eq .vn-stat.main { grid-column: 1 / -1; } }
+    .vn-stat-v.warn { color: #E8A33D; }
+    .ls-ava { position: relative; flex: 0 0 auto; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(184,115,51,0.16); color: #E0A060; font-family: 'Jost', sans-serif; font-size: 15px; letter-spacing: 0.5px; }
+    .ls-ava.vip { background: linear-gradient(150deg, #C98A4B, #8E5624); color: #1E1004; font-weight: 500; }
+    .ls-ava i { position: absolute; right: -1px; bottom: -1px; width: 11px; height: 11px; border-radius: 50%; background: #4ade80; border: 2px solid var(--bg-card); box-sizing: border-box; }
+    .ls-card { border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); overflow: hidden; }
+    .ls-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-top: 1px solid var(--border); cursor: pointer; transition: background .15s; }
+    .ls-card > .ls-row:first-child { border-top: none; }
+    .ls-row:active { background: var(--bg-card-hover); }
+    @media (hover: hover) { .ls-row:hover { background: var(--bg-card-hover); } }
+    .ls-row.static { cursor: default; }
+    .ls-row.static:hover, .ls-row.static:active { background: transparent; }
+    .ls-body { flex: 1; min-width: 0; }
+    .ls-name { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 14.5px; line-height: 1.3; color: var(--text); }
+    .ls-name .vip-star { margin-left: 0; }
+    .ls-sub { margin-top: 2px; font-size: 12px; color: var(--text-muted); }
+    .ls-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-top: 7px; }
+    .ls-chips .sv-chip { padding: 2px 9px; font-size: 10.5px; text-decoration: none; }
+    .ls-chips .sv-chip.dim { color: var(--text-muted); border-color: rgba(240,223,192,0.12); }
+    .ls-chips .rfm-pill { margin: 0; }
+    .ls-side { flex: 0 0 auto; text-align: right; font-size: 12.5px; line-height: 1.35; color: var(--text); }
+    .ls-side small { display: block; font-size: 11px; color: var(--text-muted); }
+    .sg2 { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; margin: 14px 0; padding: 4px; border-radius: 100px; background: var(--bg-card); border: 1px solid var(--border); }
+    .sg2 button { padding: 9px 4px; border: none; border-radius: 100px; background: transparent; color: var(--text-sub); font-family: 'Inter', sans-serif; font-size: 13px; white-space: nowrap; cursor: pointer; }
+    .sg2 button.on { background: var(--accent-dim); color: var(--accent); box-shadow: inset 0 0 0 1px rgba(184,115,51,0.5); }
+    /* Таблица гостей (компьютер) */
+    .gt-toolbar { display: flex; gap: 10px; align-items: center; margin: 4px 0 14px; flex-wrap: wrap; }
+    .gt-toolbar input[type="text"] { flex: 1; min-width: 200px; margin: 0; }
+    .gt-toolbar .gt-select { max-width: 190px; margin: 0; }
+    .gt-risk { cursor: pointer; user-select: none; }
+    .gt-risk input { position: absolute; opacity: 0; pointer-events: none; }
+    .gt-risk span { display: inline-block; padding: 11px 16px; border-radius: 100px; border: 1px solid var(--border); background: var(--bg-card); font-size: 13px; color: var(--text-sub); white-space: nowrap; transition: background .15s, border-color .15s, color .15s; }
+    .gt-risk input:checked + span { background: rgba(232,163,61,0.14); border-color: rgba(232,163,61,0.55); color: #E8A33D; }
+    .gt-risk input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .gt-xlsx { margin: 0; white-space: nowrap; }
+    .gt2-card { border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); overflow: hidden; }
+    .gt2-row { display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.2fr) minmax(0, 1.7fr) minmax(0, 1fr); gap: 12px; align-items: center; padding: 11px 16px; border-top: 1px solid var(--border); cursor: pointer; transition: background .15s; }
+    .gt2-row:hover { background: var(--bg-card-hover); }
+    .gt2-head { cursor: default; padding: 12px 16px; border-top: none; background: rgba(240,223,192,0.03); font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted); }
+    .gt2-head:hover { background: rgba(240,223,192,0.03); }
+    .gt2-who { display: flex; align-items: center; gap: 11px; min-width: 0; }
+    .gt2-who .ls-ava { width: 34px; height: 34px; font-size: 12.5px; }
+    .gt2-name { min-width: 0; font-size: 14px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .gt2-name .vip-star { margin-left: 6px; }
+    .gt2-last small { display: block; margin-top: 3px; font-size: 11px; color: var(--text-muted); }
+    @media (max-width: 699px) {
+      .gt2-head { display: none; }
+      .gt2-row { grid-template-columns: minmax(0, 1fr); gap: 7px; }
+    }
+    /* Обратная связь: eNPS и оценки в отзывах */
+    .fb-split { display: flex; height: 8px; margin: 12px 0 8px; border-radius: 4px; overflow: hidden; background: rgba(240,223,192,0.08); gap: 2px; }
+    .fb-split i { display: block; height: 100%; }
+    .fb-split i.p, .fb-leg i.p { background: #4ade80; }
+    .fb-split i.n, .fb-leg i.n { background: rgba(240,223,192,0.35); }
+    .fb-split i.d, .fb-leg i.d { background: #f87171; }
+    .fb-leg { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--text-sub); }
+    .fb-leg span { display: inline-flex; align-items: center; gap: 6px; }
+    .fb-leg i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .fb-scores { gap: 6px; }
+    .fb-scores span { padding: 2px 9px; border-radius: 100px; border: 1px solid rgba(240,223,192,0.14); font-size: 11px; }
+    .fb-scores .low { border-color: rgba(248,113,113,0.5); background: rgba(248,113,113,0.08); }
+    /* Стоп-лист */
+    .sl-stopbox { margin-top: 12px; padding: 13px 14px 4px; border-radius: 16px; background: linear-gradient(160deg, rgba(239,68,68,0.1), rgba(239,68,68,0.03)); border: 1px solid rgba(239,68,68,0.3); }
+    .mn-card .menu-item-row { padding: 12px 14px; border-bottom: none; border-top: 1px solid var(--border); }
+    .mn-card > .menu-item-row:first-child { border-top: none; }
+    .mn-card .menu-item-row.can:active { background: var(--bg-card-hover); }
+    .mn-card .menu-subsec { margin: 0; padding: 9px 14px; background: rgba(240,223,192,0.045); border-top: 1px solid var(--border); font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 400; letter-spacing: 0; color: var(--text-sub); }
+    .mn-card > .menu-subsec:first-child { border-top: none; }
+    .menu-item-row .avail-toggle { width: 44px; height: 26px; }
+    .menu-item-row .avail-toggle .avail-knob { width: 20px; height: 20px; }
+    .menu-item-row .avail-toggle.on { background: rgba(74,222,128,0.16); border-color: rgba(74,222,128,0.5); }
+    .menu-item-row .avail-toggle.on .avail-knob { left: 20px; background: #4ade80; }
+    /* Проблемы */
+    .pr-card { margin-bottom: 12px; padding: 14px 14px 12px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); box-shadow: inset 3px 0 0 var(--sev, var(--border)); }
+    .pr-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .pr-cat { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
+    .pr-text { margin-top: 9px; font-size: 14.5px; line-height: 1.5; color: var(--text); white-space: pre-line; word-break: break-word; }
+    .pr-card .pb-guest { margin-top: 10px; padding: 9px 11px; border-radius: 10px; background: rgba(240,223,192,0.04); }
+    .pr-card .ls-chips { margin-top: 11px; }
+    .pr-card .pb-when { margin-top: 8px; }
+    .pr-card .pb-cause { padding: 8px 11px; border-radius: 10px; background: rgba(240,223,192,0.035); }
+    .pr-card .pb-actions { margin-top: 12px; }
+    /* Задачи */
+    .tk-card { margin-bottom: 10px; padding: 14px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); box-shadow: inset 3px 0 0 var(--accent); }
+    .tk-card.over { box-shadow: inset 3px 0 0 #f87171; }
+    .tk-card.soon { box-shadow: inset 3px 0 0 #E8A33D; }
+    .tk-card.done { box-shadow: inset 3px 0 0 rgba(74,222,128,0.5); }
+    .tk-text { font-size: 14.5px; line-height: 1.5; color: var(--text); white-space: pre-line; word-break: break-word; }
+    .tk-card.done .tk-text { color: var(--text-muted); text-decoration: line-through; }
+    .tk-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; min-height: 36px; }
+    .tk-foot .sv-chip { display: inline-flex; align-items: center; gap: 6px; }
+    .tk-btn { margin-left: auto; display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px; border-radius: 100px; border: 1px solid rgba(74,222,128,0.45); background: rgba(74,222,128,0.08); color: #4ade80; font: inherit; font-size: 13px; cursor: pointer; }
+    .tk-btn.undo { border-color: var(--border); background: transparent; color: var(--text-sub); }
+    /* Обращения */
+    .gm-card { border-radius: 16px; }
+    .gm-card.is-new { background: linear-gradient(160deg, rgba(184,115,51,0.1), var(--bg-card) 60%); }
+    .gm-head { justify-content: flex-start; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .gm-id { flex: 1; min-width: 0; }
+    .gm-id .gm-meta { margin-top: 2px; white-space: normal; }
+    .gm-head .sv-chip { align-self: flex-start; }
     .cand-card { position: relative; background: var(--bg-card); border: 1px solid var(--border); border-radius: 18px; padding: 14px 14px 12px; margin-bottom: 12px; }
     .cand-card.new { border-color: rgba(184,115,51,0.5); background: linear-gradient(160deg, rgba(184,115,51,0.12), var(--bg-card) 60%); }
     .cand-head { display: flex; align-items: center; gap: 12px; }
@@ -1616,8 +1727,6 @@
     .shift-btn { flex: 0 0 auto; border: 1px solid rgba(184,115,51,0.5); background: var(--accent-dim); color: var(--accent); border-radius: 100px; padding: 10px 16px; font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap; }
     .shift-btn.primary { background: var(--accent); color: #140B00; border-color: var(--accent); font-weight: 500; }
     .shift-btn:disabled { opacity: 0.5; cursor: default; }
-    #shDays { gap: 6px; flex-wrap: nowrap; margin-bottom: 4px; }
-    #shDays .chip { padding: 8px 11px; font-size: 12.5px; white-space: nowrap; flex: 1; text-align: center; }
     .sh-sum { font-size: 12.5px; color: var(--text-sub); margin: 12px 2px 10px; line-height: 1.5; }
     .sh-sum b { color: var(--text); font-weight: 500; }
     .sh-row { display: flex; align-items: center; gap: 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 11px 12px; margin-bottom: 6px; }
@@ -2007,98 +2116,134 @@
       .grid-2 { grid-template-columns: repeat(3, 1fr); }
       .desktop-only { display: block; }
 
-      .gt-toolbar { display: flex; gap: 10px; align-items: center; margin: 14px 0; flex-wrap: wrap; }
-      .gt-toolbar input[type="text"] { flex: 1; min-width: 200px; }
-      .gt-row {
-        display: grid; grid-template-columns: 2fr 1fr 1.4fr 1.2fr;
-        gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--border);
-        align-items: center; font-size: 13px; cursor: pointer;
-      }
-      .gt-row:hover { background: var(--bg-card-hover); }
-      .gt-head { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); cursor: default; }
-      .gt-head:hover { background: none; }
     }
 
     /* БОКОВЫЕ ПАНЕЛИ (только широкий десктоп, только админ) ───────────────
-       Тело страницы центрировано и ограничено max-width (480/900px) — на
-       большом мониторе по бокам остаётся пустое место. Панели прибиты к
-       краям этой центральной колонки через position:fixed и расчёт от 50vw,
-       поэтому не требуют переверстки самой колонки и не мешают Telegram
-       Mini App (там вьюпорт всегда узкий, брейкпоинт не сработает).
-       Видимость панели — это ДВА независимых условия: медиа-запрос по
-       ширине экрана (CSS) и класс .role-ok, который JS вешает только
-       администратору (не-админам панели вообще не показываем). */
+       Тело страницы центрировано и ограничено max-width (480/900px) — на большом мониторе по бокам остаётся
+       пустое место. Панели прибиты к краям центральной колонки через position:fixed и расчёт от 50vw, поэтому
+       не требуют переверстки самой колонки и не мешают Telegram Mini App (там вьюпорт всегда узкий).
+       Ширина панели растёт вместе с экраном (--dpw): от 230px на узком мониторе до 372px на широком.
+       Каждый блок панели — отдельная карточка; сама панель прозрачная и прокручивается, если блоков много.
+       Видимость панели — ДВА независимых условия: медиа-запрос по ширине (CSS) и класс .role-ok,
+       который JS вешает только администратору. */
+    :root { --dpw: 230px; }
     .desk-panel {
       display: none;
       position: fixed;
       top: 24px;
-      width: 230px;
+      width: var(--dpw);
       max-height: calc(100vh - 48px);
       overflow-y: auto;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px 16px;
+      flex-direction: column;
+      gap: 12px;
+      padding: 0 1px 2px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(184,115,51,0.35) transparent;
       z-index: 10;
     }
-    /* 900px — ширина центральной колонки на десктопе (см. брейкпоинт выше),
-       450 — её половина, 16 — отступ от колонки, 230 — ширина самой панели. */
-    .desk-panel.left { left: calc(50vw - 450px - 16px - 230px); }
+    .desk-panel::-webkit-scrollbar { width: 5px; }
+    .desk-panel::-webkit-scrollbar-thumb { background: rgba(184,115,51,0.35); border-radius: 5px; }
+    /* 900px — ширина центральной колонки, 450 — её половина, 16 — отступ от колонки */
+    .desk-panel.left { left: calc(50vw - 450px - 16px - var(--dpw)); }
     .desk-panel.right { left: calc(50vw + 450px + 16px); }
-    .desk-panel .dp-date { font-size: 13px; color: var(--text-sub); margin-bottom: 18px; }
-    .desk-panel .dp-section { margin-bottom: 20px; }
+
+    /* Дата — золотая плитка с крупным числом */
+    .desk-panel .dp-date { flex: 0 0 auto; display: flex; align-items: center; gap: 14px; margin: 0; padding: 15px 18px; border-radius: 18px; background: linear-gradient(155deg, rgba(184,115,51,0.24), rgba(184,115,51,0.05)); border: 1px solid rgba(184,115,51,0.34); }
+    .dp-day { font-family: 'Jost', sans-serif; font-size: 46px; font-weight: 500; line-height: 1; color: var(--text); font-variant-numeric: tabular-nums; }
+    .dp-dm b { display: block; font-weight: 400; font-size: 17px; line-height: 1.2; color: var(--text); }
+    .dp-dm span { display: block; margin-top: 4px; font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--accent); }
+
+    /* Блок = карточка */
+    .desk-panel .dp-section { flex: 0 0 auto; margin: 0; padding: 15px 14px 14px; border-radius: 18px; background: var(--bg-card); border: 1px solid var(--border); }
     .desk-panel .dp-section:last-child { margin-bottom: 0; }
-    .desk-panel .dp-label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-    .desk-panel .dp-count { color: var(--accent); font-family: 'Jost', sans-serif; font-size: 13px; }
-    .desk-panel .dp-row { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; cursor: pointer; }
-    .desk-panel .dp-row:last-child { border-bottom: none; }
-    .desk-panel .dp-row:hover { color: var(--accent); }
-    .desk-panel .dp-row .dp-sub { color: var(--text-muted); font-size: 11px; margin-top: 2px; }
-    .desk-panel .dp-empty { font-size: 12px; color: var(--text-muted); padding: 4px 0; }
-    .desk-panel .dp-loading { font-size: 12px; color: var(--text-muted); }
+    .desk-panel .dp-label { display: flex; justify-content: space-between; align-items: center; gap: 8px; min-height: 26px; margin-bottom: 11px; font-size: 10.5px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--text-muted); }
+    .desk-panel .dp-lt { display: flex; align-items: center; gap: 8px; min-width: 0; white-space: nowrap; }
+    .desk-panel .dp-lt svg { flex: 0 0 auto; color: var(--accent); }
+    .desk-panel .dp-lr { display: flex; align-items: center; gap: 8px; }
+    .desk-panel .dp-count { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 21px; padding: 0 7px; border-radius: 100px; background: var(--accent-dim); border: 1px solid rgba(184,115,51,0.4); color: var(--accent); font-family: 'Jost', sans-serif; font-size: 12.5px; letter-spacing: 0; }
+    .desk-panel .dp-count:empty { display: none; }
+    .desk-panel .dp-count.bad { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.42); color: #f87171; }
+    .desk-panel .dp-count.warn { background: rgba(232,163,61,0.1); border-color: rgba(232,163,61,0.45); color: #E8A33D; }
+    .desk-panel .dp-plus { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; padding: 0; border-radius: 9px; border: 1px solid var(--border); background: transparent; color: var(--text-sub); cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+    .desk-panel .dp-plus:hover { background: var(--accent-dim); border-color: rgba(184,115,51,0.5); color: var(--accent); }
+    .desk-panel .dp-all { font-size: 11px; letter-spacing: 0.4px; text-transform: none; color: var(--accent); cursor: pointer; }
+    .desk-panel .dp-all:hover { text-decoration: underline; }
 
-    /* «Заметки» — единственный блок в боковых панелях, который не просто
-       превью с переходом на отдельный экран, а полноценно живёт прямо в
-       панели: записал — сразу ушло в Notion, стёр — сразу пропало. Никакого
-       отдельного экрана не заводили — по формату (один текст, без срока и
-       статусов) он и не нужен, а сама идея была именно "не отходя от места". */
-    .desk-panel .dp-note-form { display: flex; gap: 6px; align-items: flex-start; margin-bottom: 12px; }
-    .desk-panel .dp-note-input {
-      flex: 1; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
-      padding: 8px 10px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 12px;
-      resize: none; height: 38px; outline: none;
-    }
-    .desk-panel .dp-note-input:focus { border-color: rgba(184,115,51,0.4); }
-    .desk-panel .dp-note-submit {
-      flex-shrink: 0; width: 32px; height: 38px; border-radius: 10px; border: none;
-      background: var(--accent); color: var(--bg); display: flex; align-items: center;
-      justify-content: center; cursor: pointer;
-    }
+    /* Строки внутри карточки */
+    .desk-panel .dp-row { position: relative; margin: 0 0 6px; padding: 10px 12px; border-radius: 12px; border: 1px solid transparent; background: rgba(240,223,192,0.04); font-size: 13px; line-height: 1.35; color: var(--text); cursor: pointer; transition: background .15s, border-color .15s; }
+    .desk-panel .dp-row:last-child { margin-bottom: 0; }
+    .desk-panel .dp-row:hover { background: var(--bg-card-hover); border-color: rgba(184,115,51,0.32); color: var(--text); }
+    .desk-panel .dp-row .dp-sub { color: var(--text-muted); font-size: 11.5px; margin-top: 3px; }
+    .desk-panel .dp-row.prob { box-shadow: inset 3px 0 0 #f87171; }
+    .desk-panel .dp-row.bk { box-shadow: inset 3px 0 0 #E8A33D; }
+    .desk-panel .dp-row.task { box-shadow: inset 3px 0 0 var(--accent); }
+    .desk-panel .dp-row.task.over { box-shadow: inset 3px 0 0 #f87171; }
+    .desk-panel .dp-row.dp-ev { box-shadow: inset 3px 0 0 var(--accent); }
+    .desk-panel .dp-row.dp-person { display: flex; align-items: center; gap: 11px; }
+    .desk-panel .dp-ava { position: relative; flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(184,115,51,0.18); color: #E0A060; font-family: 'Jost', sans-serif; font-size: 13px; letter-spacing: 0.5px; }
+    .desk-panel .dp-ava i { position: absolute; right: -1px; bottom: -1px; width: 9px; height: 9px; border-radius: 50%; background: #4ade80; border: 2px solid var(--bg-card); box-sizing: border-box; }
+    .desk-panel .dp-more { margin-top: 8px; padding: 2px 4px; font-size: 12px; color: var(--accent); cursor: pointer; }
+    .desk-panel .dp-more:hover { text-decoration: underline; }
+    .desk-panel .dp-empty { display: flex; align-items: center; gap: 9px; padding: 11px 12px; border-radius: 12px; background: rgba(240,223,192,0.03); font-size: 12.5px; color: var(--text-muted); }
+    .desk-panel .dp-empty svg { flex: 0 0 auto; color: #4ade80; }
+    .desk-panel .dp-empty.dp-failed { color: #f59e0b; }
+    .desk-panel .dp-loading { padding: 8px 2px; font-size: 12px; color: var(--text-muted); }
+    .desk-panel .dp-sublabel { margin: 14px 0 8px; font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); }
+
+    /* Календарь афиши в панели */
+    .desk-panel .ec-head { margin-bottom: 10px; }
+    .desk-panel .ec-grid { gap: 4px; }
+    .desk-panel .ec-day.today { background: rgba(184,115,51,0.1); }
+    .desk-panel .ec-day.has.today { background: rgba(184,115,51,0.2); }
+    .desk-panel .ec-day.sel { background: var(--accent); }
+
+    /* «Заметки» — единственный блок панелей, который живёт целиком в самой панели:
+       записал — сразу ушло в Notion, стёр — сразу пропало (отдельного экрана нет, он тут не нужен). */
+    .desk-panel .dp-note-form { display: flex; gap: 8px; align-items: stretch; margin-bottom: 12px; }
+    .desk-panel .dp-note-input { flex: 1; min-width: 0; background: rgba(240,223,192,0.04); border: 1px solid var(--border); border-radius: 12px; padding: 11px 12px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px; resize: none; height: 44px; outline: none; transition: border-color .15s; }
+    .desk-panel .dp-note-input::placeholder { color: var(--text-muted); }
+    .desk-panel .dp-note-input:focus { border-color: rgba(184,115,51,0.5); }
+    .desk-panel .dp-note-submit { flex: 0 0 44px; height: 44px; border-radius: 12px; border: none; background: linear-gradient(145deg, #CB8A4A, #B87333); color: var(--bg); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 14px rgba(184,115,51,0.25); }
     .desk-panel .dp-note-submit:disabled { opacity: 0.5; cursor: default; }
-    .desk-panel .dp-note-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; }
-    .desk-panel .dp-note-row:last-child { border-bottom: none; }
+    .desk-panel .dp-note-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin: 0 0 6px; padding: 10px 8px 10px 12px; border-radius: 12px; background: rgba(240,223,192,0.04); box-shadow: inset 3px 0 0 rgba(184,115,51,0.5); font-size: 13px; line-height: 1.4; }
+    .desk-panel .dp-note-row:last-child { margin-bottom: 0; }
     .desk-panel .dp-note-text { flex: 1; word-break: break-word; }
-    .desk-panel .dp-note-sub { color: var(--text-muted); font-size: 11px; margin-top: 2px; }
-    .desk-panel .dp-note-del { flex-shrink: 0; cursor: pointer; color: var(--text-muted); line-height: 1; padding: 7px; margin: -5px -5px -5px 0; }
-    .desk-panel .dp-note-del:hover { color: var(--accent); }
+    .desk-panel .dp-note-sub { color: var(--text-muted); font-size: 11.5px; margin-top: 3px; }
+    .desk-panel .dp-note-del { flex-shrink: 0; cursor: pointer; color: var(--text-muted); line-height: 1; padding: 7px; margin: -4px -2px -4px 0; border-radius: 8px; }
+    .desk-panel .dp-note-del:hover { color: #f87171; background: rgba(239,68,68,0.1); }
 
-    /* 900(колонка) + 16*2(отступы) + 230*2(панели) = 1392 — при более узком
-       окне панели просто не показываем, чтобы не наезжали на контент. */
+    /* «Сервис» — сетка быстрых кнопок вместо строки с перечислением */
+    .dp-svc-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+    .dp-sv { position: relative; display: flex; align-items: center; gap: 9px; min-width: 0; padding: 9px 10px; border-radius: 12px; border: 1px solid var(--border); background: rgba(240,223,192,0.04); color: var(--text); font: inherit; font-size: 12.5px; text-align: left; cursor: pointer; transition: background .15s, border-color .15s; }
+    .dp-sv:hover { background: var(--bg-card-hover); border-color: rgba(184,115,51,0.38); }
+    .dp-sv-ic { flex: 0 0 auto; width: 28px; height: 28px; border-radius: 8px; background: rgba(184,115,51,0.14); border: 1px solid rgba(184,115,51,0.3); display: flex; align-items: center; justify-content: center; color: var(--accent); }
+    .dp-sv-ic svg { width: 14px; height: 14px; }
+    .dp-sv-t { flex: 1; min-width: 0; line-height: 1.25; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .dp-sv-b { flex: 0 0 auto; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: #E8A33D; color: #1E1004; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+
+    /* 900(колонка) + 16*2(отступы) + 230*2(панели) = 1392 — при более узком окне панели не показываем,
+       чтобы не наезжали на контент. Шире — панели растут: на 1700px и больше они по 372px. */
     @media (min-width: 1392px) {
-      .desk-panel.role-ok { display: block; }
+      :root { --dpw: clamp(230px, calc((100vw - 900px) / 2 - 28px), 372px); }
+      .desk-panel.role-ok { display: flex; }
       /* Когда справа видна боковая панель, «Управление» живёт в ней, а в главной колонке его не дублируем */
       body:has(#deskRight.role-ok) .svc-main { display: none; }
       /* В разделе «Брони» правая панель прячется, а колонка расширяется на её место: схеме и графику нужна ширина.
          Левый край колонки остаётся там же (левая панель на месте), правый — доходит до края бывшей панели. */
       body.bk-wide #deskRight { display: none; }
-      body.bk-wide:has(#deskLeft.role-ok) { max-width: 1146px; margin-left: calc(50vw - 450px); margin-right: 0; }
+      body.bk-wide:has(#deskLeft.role-ok) { max-width: calc(916px + var(--dpw)); margin-left: calc(50vw - 450px); margin-right: 0; }
     }
-    .desk-panel .dp-svc { display: flex; align-items: center; gap: 10px; padding: 9px 10px; margin: 0 -2px; border: 1px solid var(--border); border-radius: 12px; cursor: pointer; transition: background .15s; }
-    .desk-panel .dp-svc:hover { background: var(--bg-card-hover); }
-    .desk-panel .dp-svc-ic { width: 28px; height: 28px; border-radius: 8px; background: rgba(184,115,51,0.14); border: 1px solid rgba(184,115,51,0.3); display: flex; align-items: center; justify-content: center; color: var(--accent); flex-shrink: 0; }
-    .desk-panel .dp-svc-ic svg { width: 14px; height: 14px; }
-    .desk-panel .dp-svc-t { font-size: 13px; color: var(--text); }
-    .desk-panel .dp-svc-s { font-size: 10.5px; color: var(--text-muted); margin-top: 1px; line-height: 1.35; }
+    @media (max-width: 1559px) { .desk-panel .dp-label { font-size: 10px; letter-spacing: 1.1px; } }
+    @media (min-width: 1560px) {
+      .desk-panel .ec-title { font-size: 15px; }
+      .desk-panel .ec-nav { width: 30px; height: 30px; border-radius: 10px; font-size: 17px; }
+      .desk-panel .ec-wd { font-size: 10.5px; padding-bottom: 5px; }
+      .desk-panel .ec-day { font-size: 13.5px; border-radius: 11px; aspect-ratio: 1.12; }
+      .desk-panel .ec-dots { bottom: 5px; }
+      .desk-panel .ec-dots b { width: 4px; height: 4px; }
+      .desk-panel .dp-row { font-size: 13.5px; }
+    }
+    @media (min-width: 1640px) { .dp-svc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   </style>
 </head>
 <body>
@@ -2110,17 +2255,18 @@
 <aside class="desk-panel left" id="deskLeft">
   <div class="dp-date" id="dpDate"></div>
   <div class="dp-section">
-    <div class="dp-label"><span>На смене</span></div>
+    <div class="dp-label">
+      <span class="dp-lt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>На смене</span>
+      <span class="dp-count" id="dpShiftCount"></span>
+    </div>
     <div id="dpShift"><div class="dp-loading">Загружаю...</div></div>
   </div>
   <div class="dp-section">
     <div class="dp-label">
-      <span>Афиша</span>
-      <span style="display:flex;align-items:center;gap:8px;">
+      <span class="dp-lt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg>Афиша</span>
+      <span class="dp-lr">
         <span class="dp-count" id="dpEventsCount"></span>
-        <span style="cursor:pointer;line-height:0;" onclick="event.stopPropagation();openAddEvent()" title="Новое мероприятие">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        </span>
+        <button type="button" class="dp-plus" onclick="event.stopPropagation();openAddEvent()" title="Новое мероприятие" aria-label="Новое мероприятие"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
       </span>
     </div>
     <div id="dpEvents"><div class="dp-loading">Загружаю...</div></div>
@@ -2128,37 +2274,35 @@
 </aside>
 <aside class="desk-panel right" id="deskRight">
   <div class="dp-section">
-    <div class="dp-label"><span>Проблемы</span><span class="dp-count" id="dpProblemsCount"></span></div>
+    <div class="dp-label"><span class="dp-lt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3L2 20h20L12 3z"/><line x1="12" y1="10" x2="12" y2="14"/><line x1="12" y1="17" x2="12" y2="17.01"/></svg>Проблемы</span><span class="dp-count" id="dpProblemsCount"></span></div>
     <div id="dpProblems"><div class="dp-loading">Загружаю...</div></div>
   </div>
   <div class="dp-section">
-    <div class="dp-label"><span>Ждут подтверждения</span><span class="dp-count" id="dpBookingsCount"></span></div>
+    <div class="dp-label"><span class="dp-lt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg>Ждут подтверждения</span><span class="dp-count" id="dpBookingsCount"></span></div>
     <div id="dpBookings"><div class="dp-loading">Загружаю...</div></div>
   </div>
   <div class="dp-section">
     <div class="dp-label">
-      <span>Задачи</span>
-      <span style="display:flex;align-items:center;gap:8px;">
+      <span class="dp-lt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="15" x2="13" y2="15"/></svg>Задачи</span>
+      <span class="dp-lr">
         <span class="dp-count" id="dpFounderTasksCount"></span>
-        <span id="dpFounderTaskAddBtn" style="display:none;cursor:pointer;line-height:0;" onclick="event.stopPropagation();openFounderTasks(true)" title="Новая задача">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        </span>
+        <button type="button" class="dp-plus" id="dpFounderTaskAddBtn" style="display:none" onclick="event.stopPropagation();openFounderTasks(true)" title="Новая задача" aria-label="Новая задача"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
       </span>
     </div>
     <div id="dpFounderTasks"><div class="dp-loading">Загружаю...</div></div>
   </div>
   <div class="dp-section">
-    <div class="dp-label"><span>Заметки</span><span class="dp-count" id="dpNotesCount"></span></div>
+    <div class="dp-label"><span class="dp-lt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14v12l-4 4H5z"/><path d="M15 20v-4h4"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="12" y2="13"/></svg>Заметки</span><span class="dp-count" id="dpNotesCount"></span></div>
     <div class="dp-note-form">
       <textarea class="dp-note-input" id="dpNoteInput" placeholder="Записать..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitDpNote();}"></textarea>
       <button type="button" class="dp-note-submit" id="dpNoteSubmitBtn" onclick="submitDpNote()" title="Записать">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       </button>
     </div>
     <div id="dpNotes"><div class="dp-loading">Загружаю...</div></div>
   </div>
   <div class="dp-section" id="dpServiceSec" style="display:none">
-    <div class="dp-label"><span>Управление</span></div>
+    <div class="dp-label"><span class="dp-lt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>Сервис</span><span class="dp-all" onclick="openService()">Все ›</span></div>
     <div id="dpService"></div>
   </div>
 </aside>
@@ -3160,7 +3304,7 @@
   <div style="padding:0 16px">
     <div class="gt-toolbar">
       <input type="text" class="form-input" id="gtSearch" placeholder="Поиск по имени" oninput="gtUpdateFilter('search', this.value)">
-      <select class="form-input" id="gtStatus" style="max-width:180px;" onchange="gtUpdateFilter('segment', this.value)">
+      <select class="form-input gt-select" id="gtStatus" onchange="gtUpdateFilter('segment', this.value)">
         <option value="">Все сегменты</option>
         <option value="vip">VIP</option>
         <option value="champions">Чемпионы</option>
@@ -3171,10 +3315,10 @@
         <option value="lost">Потерянные</option>
         <option value="none">Без визитов</option>
       </select>
-      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-sub);cursor:pointer;white-space:nowrap;">
-        <input type="checkbox" id="gtAtRisk" onchange="gtUpdateFilter('onlyAtRisk', this.checked)"> Только риск оттока
+      <label class="gt-risk">
+        <input type="checkbox" id="gtAtRisk" onchange="gtUpdateFilter('onlyAtRisk', this.checked)"><span>Только риск оттока</span>
       </label>
-      <button class="btn-primary" style="white-space:nowrap;" onclick="exportGuestsTableXlsx()">Скачать .xlsx</button>
+      <button class="btn-primary gt-xlsx" onclick="exportGuestsTableXlsx()">Скачать .xlsx</button>
     </div>
     <div id="guestsTableContent"><div class="loading">Загружаю...</div></div>
   </div>
@@ -3210,7 +3354,7 @@
     </div>
     <div><h1 style="font-size:14px;letter-spacing:1px;">Давно не было</h1><p id="inactiveCount"></p></div>
   </div>
-  <div style="padding:0 16px"><div class="pb-note" style="margin:0 2px 12px">Риск оттока: ходили от 2 раз за год, но не были больше 30 дней. VIP — если не были больше 30 дней.</div></div>
+  <div style="padding:0 16px"><div class="sv-tip" style="margin:0 0 12px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="8" x2="12" y2="8.01"/></svg><div>Риск оттока: ходили от 2 раз за год, но не были больше 30 дней. VIP — если не были больше 30 дней.</div></div></div>
   <div style="padding:0 16px" id="inactiveGuestsContent"><div class="loading">Загружаю...</div></div>
 </div>
 
@@ -3290,7 +3434,7 @@
     <div><h1 style="font-size:14px;letter-spacing:1px;">Кто на смене</h1><p>Когда открыли и закрыли</p></div>
   </div>
   <div style="padding:0 16px">
-    <div class="chip-row" id="shDays"></div>
+    <div class="sg2" id="shDays"></div>
     <div id="shList"><div class="loading">Загружаю...</div></div>
     <button class="btn-ghost" onclick="loadShifts()">Обновить</button>
     <div style="height:16px"></div>
@@ -3939,7 +4083,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const el = document.getElementById(id);
       if (el) el.innerHTML = '<div class="dp-loading">Загружаю...</div>';
     });
-    ['dpEventsCount', 'dpProblemsCount', 'dpBookingsCount', 'dpFounderTasksCount', 'dpNotesCount'].forEach(id => {
+    ['dpShiftCount', 'dpEventsCount', 'dpProblemsCount', 'dpBookingsCount', 'dpFounderTasksCount', 'dpNotesCount'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.textContent = '';
     });
@@ -4000,6 +4144,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const res = await fetch(`${PROXY_BASE}/api/staff/service-badges?pin=${getPin()}`);
       if (!res.ok) return;
       svcBadges = await res.json();
+      renderDpService();
       if (document.getElementById('screen-service')?.classList.contains('active')) renderService();
     } catch { /* без плашек плитки работают как обычно */ }
   }
@@ -4012,6 +4157,20 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         <div class="qcard-title">${i.title}</div>
         <div class="qcard-sub${b ? ' warn' : ''}">${b ? escHtml(b.sub) : i.sub}</div>
       </div>`;
+  }
+  // «Сервис» в правой боковой панели: быстрые кнопки инструментов (с плашками «новых отзывов / дублей / меню без фото»)
+  function renderDpService() {
+    const sec = document.getElementById('dpServiceSec');
+    const box = document.getElementById('dpService');
+    if (!sec || !box) return;
+    const items = serviceItemsFor();
+    sec.style.display = items.length ? '' : 'none';
+    box.innerHTML = items.length
+      ? `<div class="dp-svc-grid">${items.map(i => {
+          const b = svcBadgeInfo(i);
+          return `<button type="button" class="dp-sv" onclick="${i.fn}" title="${escHtml(i.sub)}"><span class="dp-sv-ic">${homeIcons[i.icon] || ''}</span><span class="dp-sv-t">${escHtml(i.title)}</span>${b ? `<span class="dp-sv-b">${escHtml(b.n)}</span>` : ''}</button>`;
+        }).join('')}</div>`
+      : '';
   }
   function renderService() {
     const items = serviceItemsFor();
@@ -4147,13 +4306,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     let serviceRows = '';
     if (serviceItems.length) serviceRows = qrow(icons.service, 'Сервис', serviceItems.map(i => i.short).join(' · '), "openService()", { extraClass: 'svc-main' });
     // На широком мониторе то же самое — в правой боковой панели (справа в углу)
-    const dpSvcSec = document.getElementById('dpServiceSec');
-    if (dpSvcSec) {
-      dpSvcSec.style.display = serviceItems.length ? '' : 'none';
-      document.getElementById('dpService').innerHTML = serviceItems.length
-        ? `<div class="dp-svc" onclick="openService()"><div class="dp-svc-ic">${icons.service}</div><div><div class="dp-svc-t">Сервис</div><div class="dp-svc-s">${serviceItems.map(i => escHtml(i.short)).join(' · ')}</div></div></div>`
-        : '';
-    }
+    renderDpService();
 
     let html = '';
     // Кнопки «Открыть смену» / «Закрыть смену» — наверху главного экрана (у основателя их нет: он только смотрит)
@@ -4236,6 +4389,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // Если панелей нет в разметке (например, при частичном обновлении файла) —
   // просто ничего не делает, остальной интерфейс не затрагивает.
   let deskPanelsGen = 0;
+  const DP_OK = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg>';
+  const DP_MAX = 3; // сколько строк показывает блок панели; остальные — по ссылке «Ещё N»
+  function dpMoreHtml(total, fn) { return total > DP_MAX ? `<div class="dp-more" onclick="${fn}">Ещё ${total - DP_MAX} ›</div>` : ''; }
   const DP_FAILED = '<div class="dp-empty dp-failed">Не удалось загрузить <button type="button" class="dp-retry" onclick="loadDeskPanels()">повторить</button></div>';
   // ответ панели: ошибка сервера — исключение (панель покажет «Не удалось загрузить»), а не пустой список
   async function dpJson(res) {
@@ -4265,7 +4421,11 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     }
 
     const dateEl = document.getElementById('dpDate');
-    if (dateEl) dateEl.textContent = capFirst(new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' }));
+    if (dateEl) {
+      const nd = new Date();
+      const monthGen = nd.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }).replace(/^\d+\s*/, '');
+      dateEl.innerHTML = `<div class="dp-day">${nd.getDate()}</div><div class="dp-dm"><b>${escHtml(capFirst(nd.toLocaleDateString('ru-RU', { weekday: 'long' })))}</b><span>${escHtml(monthGen)} ${nd.getFullYear()}</span></div>`;
+    }
 
     const today = todayISO();
     const pin = getPin();
@@ -4285,11 +4445,13 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         const employees = employeesRes.ok ? await employeesRes.json() : []; // без имён обойдёмся: покажем «Сотрудник»
         if (stale()) return;
         const working = Array.isArray(shifts) ? shifts.filter(s => s.status === 'Работает') : [];
+        const shiftCountEl = document.getElementById('dpShiftCount');
+        if (shiftCountEl) shiftCountEl.textContent = working.length ? String(working.length) : '';
         if (!working.length) { el.innerHTML = '<div class="dp-empty">Никто не отмечен</div>'; return; }
         el.innerHTML = working.map(s => {
           const emp = Array.isArray(employees) ? employees.find(e => e.id === s.employeeId) : null;
           const name = emp ? emp.name : 'Сотрудник';
-          return `<div class="dp-row" onclick="openSchedule()">${escHtml(name)}${emp?.role ? `<div class="dp-sub">${escHtml(emp.role)}</div>` : ''}</div>`;
+          return `<div class="dp-row dp-person" onclick="openSchedule()"><span class="dp-ava">${escHtml(dupInitials(name))}<i></i></span><div><div>${escHtml(name)}</div>${emp?.role ? `<div class="dp-sub">${escHtml(emp.role)}</div>` : ''}</div></div>`;
         }).join('');
       } catch { if (!stale()) el.innerHTML = DP_FAILED; }
     })();
@@ -4322,9 +4484,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         const res = await fetch(`${PROXY_BASE}/api/staff/problems?pin=${pin}`);
         const list = await dpJson(res);
         if (stale()) return;
-        if (countEl) countEl.textContent = Array.isArray(list) && list.length ? String(list.length) : '';
-        if (!Array.isArray(list) || !list.length) { el.innerHTML = '<div class="dp-empty">Открытых нет</div>'; return; }
-        el.innerHTML = list.slice(0, 5).map(p => `<div class="dp-row" onclick="openProblems()">${escHtml(p.category || 'Проблема')}${p.responsible ? `<div class="dp-sub">${escHtml(p.responsible)}</div>` : ''}</div>`).join('');
+        if (countEl) { countEl.textContent = Array.isArray(list) && list.length ? String(list.length) : ''; countEl.classList.toggle('bad', Array.isArray(list) && list.length > 0); }
+        if (!Array.isArray(list) || !list.length) { el.innerHTML = `<div class="dp-empty">${DP_OK}Открытых нет</div>`; return; }
+        el.innerHTML = list.slice(0, DP_MAX).map(p => `<div class="dp-row prob" onclick="openProblems()">${escHtml(p.category || 'Проблема')}${p.responsible ? `<div class="dp-sub">${escHtml(p.responsible)}</div>` : ''}</div>`).join('') + dpMoreHtml(list.length, 'openProblems()');
       } catch { if (!stale()) el.innerHTML = DP_FAILED; }
     })();
 
@@ -4357,12 +4519,13 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         const list = await dpJson(res);
         if (stale()) return;
         if (countEl) countEl.textContent = Array.isArray(list) && list.length ? String(list.length) : '';
-        if (!Array.isArray(list) || !list.length) { el.innerHTML = '<div class="dp-empty">Задач нет</div>'; return; }
-        el.innerHTML = list.slice(0, 5).map(t => `<div class="dp-row" onclick="openFounderTasks()">${escHtml(t.text || 'Задача')}${t.deadline ? `<div class="dp-sub${humanDeadline(t.deadline).overdue ? ' pb-overdue' : ''}">${escHtml(humanDeadline(t.deadline).text)}</div>` : ''}</div>`).join('');
+        if (!Array.isArray(list) || !list.length) { el.innerHTML = `<div class="dp-empty">${DP_OK}Задач нет</div>`; return; }
+        el.innerHTML = list.slice(0, DP_MAX).map(t => { const dl = t.deadline ? humanDeadline(t.deadline) : null; return `<div class="dp-row task${dl && dl.overdue ? ' over' : ''}" onclick="openFounderTasks()">${escHtml(t.text || 'Задача')}${dl ? `<div class="dp-sub${dl.overdue ? ' pb-overdue' : ''}">${escHtml(dl.text)}</div>` : ''}</div>`; }).join('') + dpMoreHtml(list.length, 'openFounderTasks()');
       } catch { if (!stale()) el.innerHTML = DP_FAILED; }
     })();
 
     loadDpNotes();
+    loadServiceBadges(); // плашки на кнопках «Сервиса» в правой панели
   }
 
   // Панель «Ждут подтверждения» (десктоп) — по уже загруженному списку броней
@@ -4371,10 +4534,10 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const countEl = document.getElementById('dpBookingsCount');
     if (!el) return;
     const pending = Array.isArray(list) ? list.filter(b => !b.past && b.status === 'pending') : [];
-    if (countEl) countEl.textContent = pending.length ? String(pending.length) : '';
-    if (!pending.length) { el.innerHTML = '<div class="dp-empty">Все подтверждены</div>'; return; }
+    if (countEl) { countEl.textContent = pending.length ? String(pending.length) : ''; countEl.classList.toggle('warn', pending.length > 0); }
+    if (!pending.length) { el.innerHTML = `<div class="dp-empty">${DP_OK}Все подтверждены</div>`; return; }
     // имя брони вводит сам гость в гостевом приложении — экранируем
-    el.innerHTML = pending.slice(0, 5).map(b => `<div class="dp-row" onclick="openBookings()">${escHtml(b.name || 'Гость')}<div class="dp-sub">${escHtml(b.display || '')}${pendingWaitMin(b) !== null && pendingWaitMin(b) >= PENDING_WAIT_WARN_MIN ? ` · <span style="color:#f59e0b">ждёт ${escHtml(shDuration(pendingWaitMin(b)))}</span>` : ''}</div></div>`).join('');
+    el.innerHTML = pending.slice(0, DP_MAX).map(b => `<div class="dp-row bk" onclick="openBookings()">${escHtml(b.name || 'Гость')}<div class="dp-sub">${escHtml(b.display || '')}${pendingWaitMin(b) !== null && pendingWaitMin(b) >= PENDING_WAIT_WARN_MIN ? ` · <span style="color:#f59e0b">ждёт ${escHtml(shDuration(pendingWaitMin(b)))}</span>` : ''}</div></div>`).join('') + dpMoreHtml(pending.length, 'openBookings()');
   }
 
   // ─── АВТООБНОВЛЕНИЕ БРОНЕЙ ─────────────────────
@@ -4591,14 +4754,22 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const list = await res.json();
       if (!Array.isArray(list)) throw new Error('Не удалось загрузить задачи');
       if (!list.length) { el.innerHTML = '<div class="empty-state">Задач нет</div>'; return; }
-      el.innerHTML = list.map(t => {
-        const dl = t.deadline ? humanDeadline(t.deadline) : null;
+      const dls = list.map(t => t.deadline ? humanDeadline(t.deadline) : null);
+      const overN = dls.filter(d => d && d.overdue).length, soonN = dls.filter(d => d && d.soon).length;
+      const CAL = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>';
+      const CHK = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg>';
+      el.innerHTML = `<div class="vn-hero eq" style="margin-bottom:14px">
+          <div class="vn-stat main${overN ? ' alert' : ''}"><div class="vn-stat-k">Открыто</div><div class="vn-stat-v">${list.length}</div></div>
+          <div class="vn-stat"><div class="vn-stat-k">Срочно</div><div class="vn-stat-v${soonN ? ' warn' : ' off'}">${soonN}</div></div>
+          <div class="vn-stat"><div class="vn-stat-k">Просрочено</div><div class="vn-stat-v${overN ? ' bad' : ' off'}">${overN}</div></div>
+        </div>` + list.map((t, i) => {
+        const dl = dls[i];
         return `
-        <div class="visit-item">
-          <div class="visit-detail" style="font-size:14px;color:var(--text);white-space:pre-line;">${escHtml(t.text || '—')}</div>
-          ${dl ? `<div class="visit-detail ${dl.overdue ? 'pb-overdue' : dl.soon ? 'pb-soon' : ''}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>${escHtml(dl.text)}</div>` : ''}
-          <div style="display:flex;justify-content:flex-end;margin-top:10px;">
-            <button class="btn-primary" style="padding:10px 18px;font-size:12.5px;" onclick="founderTaskDone('${escJs(t.id)}')">Готово</button>
+        <div class="tk-card${dl && dl.overdue ? ' over' : dl && dl.soon ? ' soon' : ''}">
+          <div class="tk-text">${escHtml(t.text || '—')}</div>
+          <div class="tk-foot">
+            ${dl ? `<span class="sv-chip ${dl.overdue ? 'bad' : dl.soon ? 'warn' : 'dim'}">${CAL}${escHtml(dl.text)}</span>` : ''}
+            <button type="button" class="tk-btn" onclick="founderTaskDone('${escJs(t.id)}')">${CHK}Готово</button>
           </div>
         </div>`;
       }).join('');
@@ -4691,11 +4862,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       if (!Array.isArray(list)) throw new Error('Не удалось загрузить');
       if (!list.length) { el.innerHTML = '<div class="empty-state">Выполненных пока нет</div>'; return; }
       el.innerHTML = list.map(t => `
-        <div class="visit-item">
-          <div class="visit-detail" style="text-decoration:line-through;color:var(--text-muted);white-space:pre-line;">${escHtml(t.text || '—')}</div>
-          <div style="display:flex;justify-content:flex-end;margin-top:10px;">
-            <button class="btn-primary" style="padding:10px 18px;font-size:12.5px;" onclick="founderTaskUndo('${escJs(t.id)}')">Вернуть в открытые</button>
-          </div>
+        <div class="tk-card done">
+          <div class="tk-text">${escHtml(t.text || '—')}</div>
+          <div class="tk-foot"><button type="button" class="tk-btn undo" onclick="founderTaskUndo('${escJs(t.id)}')">Вернуть в открытые</button></div>
         </div>`).join('');
     } catch (e) { el.innerHTML = errorStateHtml(e.message || 'Не удалось загрузить', 'loadFounderTasksDoneContent()'); }
   }
@@ -4982,23 +5151,33 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const btn = !isToday || d.old ? ''
         : st.todo ? `<button type="button" class="bd-btn" onclick="event.stopPropagation();greetBirthday('${id}', false)">Поздравили</button>`
         : st.manual ? `<button type="button" class="bd-btn undo" onclick="event.stopPropagation();greetBirthday('${id}', true)">Снять отметку</button>` : '';
-      return `<div class="result-item bd-item${st.done ? ' done' : ''}" onclick="openGuestCard('${id}')" style="cursor:pointer">
-          <div class="result-avatar">${escHtml((g.name || '?').charAt(0).toUpperCase())}</div>
-          <div class="bd-main">
-            <div style="font-size:14px;color:var(--text);">${escHtml(g.name || '')}</div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">${[g.vip ? 'VIP' : '', g.segment || 'Без визитов'].filter(Boolean).map(escHtml).join(' · ')}${tel && st.todo ? ` · <a href="tel:${escHtml(tel)}" onclick="event.stopPropagation()" style="color:var(--accent);text-decoration:none">${escHtml(g.phone)}</a>` : (g.phone ? ' · ' + escHtml(g.phone) : '')}</div>
-            <div class="bd-st ${st.cls}">${st.done ? '✓ ' : ''}${escHtml(st.text)}</div>
+      const stCls = st.cls === 'good' ? 'ok' : st.cls === 'warn' ? 'warn' : 'dim';
+      const phone = g.phone
+        ? (tel && st.todo ? `<a class="sv-chip acc" href="tel:${escHtml(tel)}" onclick="event.stopPropagation()">${escHtml(g.phone)}</a>` : `<span class="sv-chip dim">${escHtml(g.phone)}</span>`)
+        : '';
+      return `<div class="ls-row bd-item${st.done ? ' done' : ''}" onclick="openGuestCard('${id}')">
+          <div class="ls-ava${g.vip ? ' vip' : ''}">${escHtml(dupInitials(g.name || '?'))}</div>
+          <div class="ls-body">
+            <div class="ls-name">${escHtml(g.name || '')}${g.vip ? '<span class="vip-star">★ VIP</span>' : ''}</div>
+            <div class="ls-sub">${escHtml(g.segment || 'Без визитов')}</div>
+            <div class="ls-chips"><span class="sv-chip ${stCls}">${st.done ? '✓ ' : ''}${escHtml(st.text)}</span>${phone}</div>
+            ${btn ? `<div class="bd-act">${btn}</div>` : ''}
           </div>
-          ${btn}
         </div>`;
     };
     const left = d.today.filter(g => bdStatus(g, true, d.botOn).todo).length;
+    const hero = d.old ? '' : `<div class="vn-hero eq" style="margin-bottom:4px">
+        <div class="vn-stat main"><div class="vn-stat-k">Сегодня</div><div class="vn-stat-v">${d.today.length}</div><div class="vn-stat-s">${d.today.length ? (left ? 'ждут поздравления' : 'все поздравлены') : 'именинников нет'}</div></div>
+        <div class="vn-stat"><div class="vn-stat-k">Осталось</div><div class="vn-stat-v${left ? ' warn' : ' off'}">${left}</div></div>
+        <div class="vn-stat"><div class="vn-stat-k">Завтра</div><div class="vn-stat-v${d.tomorrow.length ? '' : ' off'}">${d.tomorrow.length}</div></div>
+      </div>`;
+    const info = d.old ? '' : `<div class="sv-tip" style="margin:12px 0 0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="8" x2="12" y2="8.01"/></svg><div>${d.botOn ? `Гостей с Telegram бот поздравляет сам в ${d.botHour || 12}:00. Остальных поздравьте сами и нажмите «Поздравили».` : 'Текст поздравления для бота не заполнен («Сервис» → «Поздравления») — пока всех поздравляем сами.'}</div></div>`;
     el.innerHTML = `
-      ${d.old ? '' : `<div class="note" style="margin:0 2px 12px">${d.botOn ? `Гостей с Telegram бот поздравляет сам в ${d.botHour || 12}:00. Остальных поздравьте сами и нажмите «Поздравили».` : 'Текст поздравления для бота не заполнен («Сервис» → «Поздравления») — пока всех поздравляем сами.'}</div>`}
-      <div class="sec" style="margin-top:0">Сегодня${d.today.length ? ` · ${d.today.length}${left ? ` · осталось поздравить: ${left}` : ''}` : ''}</div>
-      ${d.today.length ? d.today.map(g => row(g, true)).join('') : '<div class="empty-state" style="padding:14px 10px">Сегодня именинников нет</div>'}
-      ${d.old ? '' : `<div class="sec">Завтра${d.tomorrow.length ? ` · ${d.tomorrow.length}` : ''}</div>
-      ${d.tomorrow.length ? d.tomorrow.map(g => row(g, false)).join('') : '<div class="empty-state" style="padding:14px 10px">Завтра именинников нет</div>'}`}`;
+      ${hero}${info}
+      <div class="mn-ch" style="margin-top:18px"><span>Сегодня</span>${d.today.length ? `<span class="sv-chip">${d.today.length}</span>` : ''}</div>
+      ${d.today.length ? `<div class="ls-card">${d.today.map(g => row(g, true)).join('')}</div>` : '<div class="empty-state" style="padding:14px 10px">Сегодня именинников нет</div>'}
+      ${d.old ? '' : `<div class="mn-ch"><span>Завтра</span>${d.tomorrow.length ? `<span class="sv-chip">${d.tomorrow.length}</span>` : ''}</div>
+      ${d.tomorrow.length ? `<div class="ls-card">${d.tomorrow.map(g => row(g, false)).join('')}</div>` : '<div class="empty-state" style="padding:14px 10px">Завтра именинников нет</div>'}`}`;
   }
   let greetBusy = false;
   async function greetBirthday(id, undo) {
@@ -7478,7 +7657,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
             ? `<button type="button" onclick="setMessageStatus('${m.id}','done')">Обработано</button>`
             : `<button type="button" onclick="setMessageStatus('${m.id}','new')">Вернуть в новые</button>`}</div>`;
       return `<div class="gm-card${m.status === 'new' ? ' is-new' : ''}">
-        <div class="gm-head"><div class="gm-name">${escHtml(who)}${m.username && m.name ? ` <span class="gm-meta">@${escHtml(m.username)}</span>` : ''}</div><div class="gm-meta">${escHtml(fmtDateTime(m.createdAt))}</div></div>
+        <div class="gm-head"><div class="ls-ava">${escHtml(dupInitials(m.name || m.username || 'Г'))}</div><div class="gm-id"><div class="gm-name">${escHtml(who)}</div><div class="gm-meta">${m.username && m.name ? `@${escHtml(m.username)} · ` : ''}${escHtml(fmtDateTime(m.createdAt))}</div></div>${m.status === 'new' ? '<span class="sv-chip acc">новое</span>' : ''}</div>
         <div class="gm-text">${escHtml(m.text)}</div>${replies}
         ${m.status === 'done' && m.doneBy ? `<div class="gm-meta" style="margin-top:8px">Обработал: ${escHtml(m.doneBy)}</div>` : ''}
         ${compose}</div>`;
@@ -7599,7 +7778,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
         el.innerHTML = tabs + reportBtn + `<div class="empty-state">${resolved ? 'За последние два месяца решённых проблем нет' : 'Открытых проблем нет'}</div>`;
         return;
       }
-      el.innerHTML = tabs + reportBtn + (resolved ? '<div class="note" style="margin:0 2px 12px">Решённые за последние два месяца. Закрыли по ошибке или проблема повторилась — верните в работу.</div>' : '') + list.map(renderProblemItem).join('');
+      el.innerHTML = tabs + reportBtn + (resolved ? '<div class="sv-tip" style="margin:0 0 14px"><div>Решённые за последние два месяца. Закрыли по ошибке или проблема повторилась — верните в работу.</div></div>' : prHeroHtml(list)) + list.map(renderProblemItem).join('');
     } catch (e) {
       el.innerHTML = tabs + reportBtn + errorStateHtml(e.message || 'Не удалось загрузить проблемы', 'openProblems(true)');
     }
@@ -7623,6 +7802,17 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     }
   }
 
+  // Плитки над открытыми проблемами: сколько всего, сколько срочных и просроченных
+  function prHeroHtml(list) {
+    const high = list.filter(p => p.severity === 'Высокая').length;
+    const over = list.filter(p => p.deadline && humanDeadline(p.deadline).overdue).length;
+    const work = list.filter(p => p.status === 'В работе').length;
+    return `<div class="vn-hero eq" style="margin-bottom:14px">
+      <div class="vn-stat main${high ? ' alert' : ''}"><div class="vn-stat-k">Открыто</div><div class="vn-stat-v">${list.length}</div><div class="vn-stat-s">в работе: ${work}</div></div>
+      <div class="vn-stat"><div class="vn-stat-k">Срочные</div><div class="vn-stat-v${high ? ' bad' : ' off'}">${high}</div></div>
+      <div class="vn-stat"><div class="vn-stat-k">Просрочено</div><div class="vn-stat-v${over ? ' bad' : ' off'}">${over}</div></div>
+    </div>`;
+  }
   function renderProblemItem(p) {
     const canAct = can('problems.manage_all') || (can('problems.work_own_role') && currentJobRole === p.responsible);
     const sevColor = PROBLEM_SEV_COLOR[p.severity] || 'var(--text-muted)';
@@ -7648,17 +7838,17 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       ? `<button type="button" class="pb-link" onclick="reassignProblem('${id}')">Переназначить</button>`
       : '';
 
-    return `<div class="visit-item pb-item">
-      <div class="pb-head">
-        <span class="pb-cat">${escHtml(p.category || 'Общее')}${p.score !== null && p.score !== undefined ? ` · оценка ${escHtml(p.score)}` : ''}</span>
+    return `<div class="pr-card" style="--sev:${sevColor}">
+      <div class="pr-head">
+        <span class="pr-cat">${escHtml(p.category || 'Общее')}${p.score !== null && p.score !== undefined ? ` · оценка ${escHtml(p.score)}` : ''}</span>
         ${p.severity ? `<span class="pb-sev" style="color:${sevColor};border-color:${sevColor}">${escHtml(p.severity)}</span>` : ''}
       </div>
-      <div class="pb-text">${escHtml(p.comment || (p.fromReview ? 'Гость не оставил комментарий — только оценку' : '—'))}</div>
+      <div class="pr-text">${escHtml(p.comment || (p.fromReview ? 'Гость не оставил комментарий — только оценку' : '—'))}</div>
       ${problemGuestHtml(p)}
-      <div class="pb-meta">
-        <span class="pb-status ${isResolved ? 'done' : p.status === 'В работе' ? 'work' : 'new'}">${escHtml(statusLabel)}</span>
-        ${p.responsible ? `<span>· ${escHtml(p.responsible)}</span>` : ''}
-        ${dl && !isResolved ? `<span class="${dl.overdue ? 'pb-overdue' : dl.soon ? 'pb-soon' : ''}">· ${escHtml(dl.text)}</span>` : ''}
+      <div class="ls-chips">
+        <span class="sv-chip ${isResolved ? 'ok' : p.status === 'В работе' ? 'acc' : 'warn'}">${escHtml(statusLabel)}</span>
+        ${p.responsible ? `<span class="sv-chip dim">${escHtml(p.responsible)}</span>` : ''}
+        ${dl && !isResolved ? `<span class="sv-chip ${dl.overdue ? 'bad' : dl.soon ? 'warn' : 'dim'}">${escHtml(dl.text)}</span>` : ''}
       </div>
       ${when ? `<div class="pb-when">Сообщили ${escHtml(when)}</div>` : ''}
       ${isResolved && p.resolvedAt ? `<div class="pb-when">Закрыл(а) ${escHtml(String(p.resolvedBy || 'сотрудник').replace(/ \(.+\)$/, ''))} · ${escHtml(timeAgo(p.resolvedAt))}</div>` : ''}
@@ -7676,7 +7866,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     if (!t || !Array.isArray(t.months)) return '';
     let html = '<div class="sec">Что пишут сотрудники</div>';
     if (!t.months.length) return html + '<div class="empty-state" style="padding:18px 10px">За последние полгода ответов нет</div>';
-    html += `<div class="note" style="margin-bottom:10px">Опрос анонимный, поэтому ответы месяца открываются все сразу, когда месяц закончился, — без даты, без оценки и в случайном порядке. Месяц, где меньше ${escHtml(String(t.minAnswers))} ответов, не открывается.</div>`;
+    html += `<div class="note" style="margin-bottom:10px">Опрос анонимный, поэтому ответы месяца открываются все сразу, когда месяц закончился, — без даты, без оценки и в случайном порядке. Месяц, где меньше ${escHtml(String(t.minAnswers || 3))} ответов, не открывается.</div>`;
     for (const m of t.months) {
       const [y, mo] = String(m.month || '').split('-');
       const title = `${RU_MONTHS_NOM[Number(mo) - 1] || m.month} ${y || ''}`.trim();
@@ -7875,7 +8065,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     if (targets.includes('dp')) {
       const el = document.getElementById('dpEvents');
       if (el) el.innerHTML = evCalHtml('dp', by) + (day ? `<div class="dp-sublabel">${escHtml(evDayHeading(day))}</div>` : '')
-        + (list.length ? list.map(e => `<div class="dp-row" onclick="openEditEvent('${escJs(e.id)}')">${escHtml(e.name || 'Мероприятие')}<div class="dp-sub">${[evTimeOf(e), e.format ? eventFormatLabel(e.format) : ''].filter(Boolean).map(escHtml).join(' · ') || 'без времени'}</div></div>`).join('') : `<div class="dp-empty">${none}</div>`);
+        + (list.length ? list.map(e => `<div class="dp-row dp-ev" onclick="openEditEvent('${escJs(e.id)}')">${escHtml(e.name || 'Мероприятие')}<div class="dp-sub">${[evTimeOf(e), e.format ? eventFormatLabel(e.format) : ''].filter(Boolean).map(escHtml).join(' · ') || 'без времени'}</div></div>`).join('') : `<div class="dp-empty">${none}</div>`);
     }
     if (targets.includes('scr')) {
       const el = document.getElementById('eventsContent');
@@ -10899,6 +11089,12 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
     let html = '';
     if (!q) {
+      const total = stoplistItems.length, stopN = stopped.length;
+      html += `<div class="vn-hero eq">
+        <div class="vn-stat main${stopN ? ' alert' : ''}"><div class="vn-stat-k">В стопе</div><div class="vn-stat-v${stopN ? ' bad' : ' ok'}">${stopN}</div><div class="vn-stat-s">${stopN ? 'до 6 утра' : 'всё в наличии'}</div></div>
+        <div class="vn-stat"><div class="vn-stat-k">В наличии</div><div class="vn-stat-v ok">${total - stopN}</div></div>
+        <div class="vn-stat"><div class="vn-stat-k">Всего</div><div class="vn-stat-v">${total}</div></div>
+      </div>`;
       html += `<div class="sl-stopbox">
         <div class="sl-stopbox-t">Сейчас в стопе${stopped.length ? ` · ${stopped.length}` : ''}</div>
         ${stopped.length ? stopped.map(stoplistRow).join('') : '<div class="sl-none">Всё в наличии</div>'}
@@ -10918,9 +11114,10 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       const subOrder = [];
       grouped.forEach(it => { if (!subOrder.includes(it.subcategory)) subOrder.push(it.subcategory); });
       const mine = canEditMenuCategory(cat);
-      return `<div class="sec" style="margin-top:18px;">${escHtml(cat || 'Без категории')}${mine ? '' : ' <span class="sl-ro">только просмотр</span>'}</div>`
+      return `<div class="mn-ch"><span>${escHtml(cat || 'Без категории')}${mine ? '' : ' <span class="sl-ro">только просмотр</span>'}</span><span class="sv-chip">${catItems.length}</span></div><div class="mn-card">`
         + plain.map(stoplistRow).join('')
-        + subOrder.map(sub => `<div class="menu-subsec">${escHtml(sub)}</div>${grouped.filter(it => it.subcategory === sub).map(stoplistRow).join('')}`).join('');
+        + subOrder.map(sub => `<div class="menu-subsec">${escHtml(sub)}</div>${grouped.filter(it => it.subcategory === sub).map(stoplistRow).join('')}`).join('')
+        + '</div>';
     }).join('');
     const y = window.scrollY;
     body.innerHTML = html;
@@ -11011,30 +11208,33 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   function renderGuestsTable() {
     const el = document.getElementById('guestsTableContent');
+    const all = Array.isArray(guestsTableData) ? guestsTableData : [];
     const rows = gtFilteredRows();
+    const vipN = rows.filter(g => g.vip).length;
+    const riskN = rows.filter(g => g.atRisk).length;
+    const hero = `<div class="vn-hero eq" style="margin-bottom:14px">
+        <div class="vn-stat main"><div class="vn-stat-k">Показано</div><div class="vn-stat-v">${rows.length}</div><div class="vn-stat-s">из ${all.length}</div></div>
+        <div class="vn-stat"><div class="vn-stat-k">VIP</div><div class="vn-stat-v${vipN ? '' : ' off'}">${vipN}</div></div>
+        <div class="vn-stat"><div class="vn-stat-k">Риск оттока</div><div class="vn-stat-v${riskN ? ' warn' : ' off'}">${riskN}</div></div>
+      </div>`;
 
     if (!rows.length) {
-      el.innerHTML = '<div class="empty-state">Никого не найдено</div>';
+      el.innerHTML = hero + '<div class="empty-state">Никого не найдено</div>';
       return;
     }
 
-    const header = `<div class="gt-row gt-head">
-      <div>Имя</div><div>Сегмент</div><div>Последний визит</div><div>Метка</div>
-    </div>`;
-
+    const head = `<div class="gt2-row gt2-head"><div>Гость</div><div>Сегмент</div><div>Последний визит</div><div>Метка</div></div>`;
     const body = rows.map(g => {
-      const lastVisitLabel = g.lastVisit
-        ? `${formatWeekShort(g.lastVisit)}${g.daysSince !== null ? ' · ' + daysAgoText(g.daysSince) : ''}`
-        : 'Визитов не было';
-      return `<div class="gt-row" onclick="openGuestCard('${escJs(g.id)}')">
-        <div>${escHtml(g.name)}${g.vip ? '<span class="vip-star">★ VIP</span>' : ''}</div>
+      const sub = [g.lastVisit ? formatWeekShort(g.lastVisit) : '', g.visitsYear ? `${g.visitsYear} ${ruPlural(g.visitsYear, 'визит', 'визита', 'визитов')} за год` : ''].filter(Boolean).join(' · ');
+      return `<div class="gt2-row gt-row" onclick="openGuestCard('${escJs(g.id)}')">
+        <div class="gt2-who"><div class="ls-ava${g.vip ? ' vip' : ''}">${escHtml(dupInitials(g.name || '?'))}</div><div class="gt2-name">${escHtml(g.name || 'Без имени')}${g.vip ? '<span class="vip-star">★ VIP</span>' : ''}</div></div>
         <div class="seg-value">${segmentPillHtml(g.segmentKey, g.segment, true)}</div>
-        <div>${lastVisitLabel}${g.visitsYear ? `<div class="gl-meta">${g.visitsYear} ${ruPlural(g.visitsYear, 'визит', 'визита', 'визитов')} за год</div>` : ''}</div>
-        <div>${g.atRisk ? '<span style="color:#f59e0b;">Риск оттока</span>' : ''}</div>
+        <div class="gt2-last">${lsDaysChip(g.daysSince)}${sub ? `<small>${escHtml(sub)}</small>` : ''}</div>
+        <div>${g.atRisk ? '<span class="sv-chip warn">Риск оттока</span>' : ''}</div>
       </div>`;
     }).join('');
 
-    el.innerHTML = header + body;
+    el.innerHTML = hero + `<div class="gt2-card">${head}${body}</div>`;
   }
 
   // Библиотека для .xlsx грузится только по клику на кнопку — мобильный
@@ -11074,6 +11274,42 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     } catch {
       notify('Не удалось сформировать файл — проверьте соединение');
     }
+  }
+
+  // ─── Общие куски списков гостей (VIP, сегменты, «Давно не было», «Недавние») ───
+  function lsDaysChip(days, long) {
+    if (days === null || days === undefined) return '<span class="sv-chip dim">визитов не было</span>';
+    if (days === 0) return '<span class="sv-chip ok">был сегодня</span>';
+    const txt = long ? `не было ${days} ${ruPlural(days, 'день', 'дня', 'дней')}` : `был ${days} дн. назад`;
+    return `<span class="sv-chip ${days > 60 ? 'bad' : days > 30 ? 'warn' : 'dim'}">${txt}</span>`;
+  }
+  function lsGuestRow(g, o = {}) {
+    const chips = [];
+    if (o.seg) chips.push(segmentPillHtml(g.segmentKey, g.segment, true));
+    chips.push(lsDaysChip(g.daysSince, o.longDays));
+    if (g.visitsYear) chips.push(`<span class="sv-chip dim">${g.visitsYear} ${ruPlural(g.visitsYear, 'визит', 'визита', 'визитов')} за год</span>`);
+    return `<div class="ls-row" onclick="openGuestCard('${escJs(g.id)}')">
+        <div class="ls-ava${g.vip ? ' vip' : ''}">${escHtml(dupInitials(g.name || '?'))}</div>
+        <div class="ls-body"><div class="ls-name">${escHtml(g.name || 'Без имени')}${g.vip && o.star ? '<span class="vip-star">★ VIP</span>' : ''}</div><div class="ls-chips">${chips.join('')}</div></div>
+        <div class="qrow-chev">›</div>
+      </div>`;
+  }
+  // Сводные плитки над списком: сколько гостей и как давно они были
+  function lsGuestHero(list, kind) {
+    const n = list.length;
+    const ago = list.map(g => g.daysSince).filter(d => d !== null && d !== undefined);
+    const fresh = list.filter(g => g.daysSince !== null && g.daysSince !== undefined && g.daysSince <= 30).length;
+    const far = ago.length ? Math.max(...ago) : null;
+    const vipN = list.filter(g => g.vip).length;
+    const t2 = kind === 'inactive'
+      ? `<div class="vn-stat"><div class="vn-stat-k">VIP</div><div class="vn-stat-v${vipN ? '' : ' off'}">${vipN}</div></div>`
+      : `<div class="vn-stat"><div class="vn-stat-k">Были</div><div class="vn-stat-v${fresh ? ' ok' : ' off'}">${fresh}</div><div class="vn-stat-s">за 30 дней</div></div>`;
+    const t3 = kind === 'inactive'
+      ? `<div class="vn-stat"><div class="vn-stat-k">Дольше всех</div><div class="vn-stat-v sm">${far === null ? '—' : far + ' дн.'}</div></div>`
+      : `<div class="vn-stat"><div class="vn-stat-k">Давно нет</div><div class="vn-stat-v${n - fresh ? ' warn' : ' off'}">${n - fresh}</div><div class="vn-stat-s">больше 30 дн.</div></div>`;
+    return `<div class="vn-hero eq" style="margin-bottom:14px">
+        <div class="vn-stat main"><div class="vn-stat-k">Гостей</div><div class="vn-stat-v">${n}</div></div>${t2}${t3}
+      </div>`;
   }
 
   // ─── СПИСОК ГОСТЕЙ: VIP ИЛИ СЕГМЕНТ ───────────────
@@ -11119,20 +11355,13 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       subEl.textContent = [`${list.length} ${ruPlural(list.length, 'гость', 'гостя', 'гостей')}`, onDate].filter(Boolean).join(' · ');
 
       let html = '';
-      if (seg) html += `<div class="note" style="margin:4px 2px 12px">${escHtml(seg.description)}</div>`;
       if (!list.length) {
-        el.innerHTML = html + `<div class="empty-state">${filter === 'vip' ? 'Гостей с тегом VIP пока нет. Администратор ставит VIP в карточке, в «Особых» тегах.' : 'В этом сегменте сейчас никого нет'}</div>`;
+        el.innerHTML = (seg ? `<div class="sv-tip" style="margin:4px 0 12px"><div>${escHtml(seg.description)}</div></div>` : '') + `<div class="empty-state">${filter === 'vip' ? 'Гостей с тегом VIP пока нет. Администратор ставит VIP в карточке, в «Особых» тегах.' : 'В этом сегменте сейчас никого нет'}</div>`;
         return;
       }
-      html += list.map(g => `
-        <div class="result-item" onclick="openGuestCard('${escJs(g.id)}')">
-          <div class="result-avatar">${escHtml((g.name || '?').charAt(0).toUpperCase())}</div>
-          <div style="flex:1;min-width:0;">
-            <div>${escHtml(g.name || 'Без имени')}${g.vip && filter !== 'vip' ? '<span class="vip-star">★ VIP</span>' : ''}</div>
-            <div class="gl-meta">${guestListMeta(g, filter)}</div>
-          </div>
-        </div>
-      `).join('');
+      html += lsGuestHero(list, 'list');
+      if (seg) html += `<div class="sv-tip" style="margin:0 0 14px"><div>${escHtml(seg.description)}</div></div>`;
+      html += `<div class="ls-card">${list.map(g => lsGuestRow(g, { seg: filter === 'vip', star: filter !== 'vip' })).join('')}</div>`;
       el.innerHTML = html;
     } catch (e) {
       if (seq !== guestListSeq) return;
@@ -11161,15 +11390,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
         return;
       }
 
-      el.innerHTML = list.map(g => `
-        <div class="result-item" onclick="openGuestCard('${escJs(g.id)}')">
-          <div class="result-avatar">${escHtml((g.name || '?').charAt(0).toUpperCase())}</div>
-          <div style="flex:1;">
-            <div>${escHtml(g.name)}${g.vip ? '<span class="vip-star">★ VIP</span>' : ''}</div>
-            <div class="gl-meta">${segmentPillHtml(g.segmentKey, g.segment, true)}<span>${g.daysSince !== null && g.daysSince !== undefined ? 'не было ' + g.daysSince + ' ' + ruPlural(g.daysSince, 'день', 'дня', 'дней') : 'визитов не записано'}${g.visitsYear ? ` · ${g.visitsYear} ${ruPlural(g.visitsYear, 'визит', 'визита', 'визитов')} за год` : ''}</span></div>
-          </div>
-        </div>
-      `).join('');
+      el.innerHTML = lsGuestHero(list, 'inactive') + `<div class="ls-card">${list.map(g => lsGuestRow(g, { seg: true, star: true, longDays: true })).join('')}</div>`;
     } catch (e) {
       el.innerHTML = errorStateHtml(e.message || 'Не удалось загрузить список', 'openInactiveGuests()');
     }
@@ -11395,25 +11616,29 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     return h ? `${h} ч${m ? ' ' + m + ' мин' : ''}` : `${m} мин`;
   }
   function renderShifts() {
-    document.getElementById('shDays').innerHTML = sh.days.map((d, i) => `<div class="chip${i === sh.sel ? ' selected' : ''}" onclick="setShiftsDay(${i})">${escHtml(d.label)}</div>`).join('');
+    document.getElementById('shDays').innerHTML = sh.days.map((d, i) => `<button type="button" class="${i === sh.sel ? 'on' : ''}" onclick="setShiftsDay(${i})">${escHtml(d.label)}</button>`).join('');
     const day = sh.days[sh.sel];
     const list = document.getElementById('shList');
     if (!day) { list.innerHTML = '<div class="empty-state">Нет данных</div>'; return; }
     if (!day.shifts.length) { list.innerHTML = `<div class="empty-state">${sh.sel === 0 ? 'Пока никто не открыл смену' : 'Вчера никто не отмечал смену'}</div>`; return; }
     const onNow = day.shifts.filter(x => x.status === 'open').length;
+    const closedN = day.shifts.filter(x => x.status === 'closed').length;
+    const forgotN = day.shifts.filter(x => x.status !== 'open' && x.status !== 'closed').length;
     const people = new Set(day.shifts.map(x => x.employee)).size;
-    const sum = sh.sel === 0
-      ? `Сейчас на смене: <b>${onNow}</b> · всего отметились: <b>${people}</b>`
-      : `Отметились: <b>${people}</b>`;
+    const hero = `<div class="vn-hero eq" style="margin-bottom:14px">
+      <div class="vn-stat main"><div class="vn-stat-k">${sh.sel === 0 ? 'На смене' : 'Отметились'}</div><div class="vn-stat-v ${(sh.sel === 0 ? onNow : people) ? 'ok' : 'off'}">${sh.sel === 0 ? onNow : people}</div><div class="vn-stat-s">${sh.sel === 0 ? `всего отметились: ${people}` : `${people} ${ruPlural(people, 'человек', 'человека', 'человек')}`}</div></div>
+      <div class="vn-stat"><div class="vn-stat-k">Закрыли</div><div class="vn-stat-v${closedN ? '' : ' off'}">${closedN}</div></div>
+      <div class="vn-stat"><div class="vn-stat-k">Забыли</div><div class="vn-stat-v${forgotN ? ' warn' : ' off'}">${forgotN}</div>${forgotN ? '<div class="vn-stat-s">не закрыли смену</div>' : ''}</div>
+    </div>`;
     const row = (x) => {
       let state;
-      if (x.status === 'open') state = `<div class="sh-state on">на смене</div>`;
-      else if (x.status === 'closed') state = `<div class="sh-state closed">закрыл ${escHtml(x.closed)}<small>${escHtml(shDuration(x.minutes))}</small></div>`;
-      else state = `<div class="sh-state forgot">не закрыта</div>`;
-      return `<div class="sh-row"><div class="sh-time">${escHtml(x.opened)}</div>`
-        + `<div class="sh-main"><div class="sh-name">${escHtml(x.employee)}</div><div class="sh-role">${escHtml(x.role)}</div></div>${state}</div>`;
+      if (x.status === 'open') state = `<span class="sv-chip ok">на смене</span>`;
+      else if (x.status === 'closed') state = `<div class="ls-side">закрыл ${escHtml(x.closed)}<small>${escHtml(shDuration(x.minutes))}</small></div>`;
+      else state = `<span class="sv-chip warn">не закрыта</span>`;
+      return `<div class="ls-row static"><div class="ls-ava">${escHtml(dupInitials(x.employee))}${x.status === 'open' ? '<i></i>' : ''}</div>`
+        + `<div class="ls-body"><div class="ls-name">${escHtml(x.employee)}</div><div class="ls-sub">${escHtml(x.role)} · с ${escHtml(x.opened)}</div></div>${state}</div>`;
     };
-    list.innerHTML = `<div class="sh-sum">${sum}</div>` + day.shifts.map(row).join('');
+    list.innerHTML = hero + `<div class="ls-card">${day.shifts.map(row).join('')}</div>`;
   }
   // Пока экран открыт, обновляем его раз в минуту — основатель видит, как люди приходят и уходят
   setInterval(() => {
@@ -13033,11 +13258,15 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       if (en.hidden) {
         html += `<div class="empty-state" style="padding:18px 10px">Ответили меньше ${escHtml(String(en.minAnswers || 3))} человек — результат не показывается, чтобы опрос оставался анонимным.</div>`;
       } else if (en.count) {
-        html += statRow('Ответов за месяц', en.count);
-        html += statRow('eNPS', en.score !== null ? signed(en.score) : null);
-        html += statRow('Промоутеры', en.promoters);
-        html += statRow('Нейтралы', en.passives);
-        html += statRow('Критики', en.detractors);
+        const eTot = (en.promoters || 0) + (en.passives || 0) + (en.detractors || 0) || 1;
+        const ePct = k => Math.round((en[k] || 0) / eTot * 1000) / 10;
+        html += `<div class="vn-hero eq" style="margin-top:6px">
+          <div class="vn-stat main"><div class="vn-stat-k">eNPS</div><div class="vn-stat-v${en.score > 0 ? ' ok' : en.score < 0 ? ' bad' : ''}">${en.score !== null && en.score !== undefined ? signed(en.score) : '—'}</div><div class="vn-stat-s">ответов: ${en.count}</div></div>
+          <div class="vn-stat"><div class="vn-stat-k">Промоутеры</div><div class="vn-stat-v${en.promoters ? ' ok' : ' off'}">${en.promoters || 0}</div></div>
+          <div class="vn-stat"><div class="vn-stat-k">Критики</div><div class="vn-stat-v${en.detractors ? ' bad' : ' off'}">${en.detractors || 0}</div></div>
+        </div>
+        <div class="fb-split"><i class="p" style="width:${ePct('promoters')}%"></i><i class="n" style="width:${ePct('passives')}%"></i><i class="d" style="width:${ePct('detractors')}%"></i></div>
+        <div class="fb-leg"><span><i class="p"></i>Промоутеры ${en.promoters || 0}</span><span><i class="n"></i>Нейтралы ${en.passives || 0}</span><span><i class="d"></i>Критики ${en.detractors || 0}</span></div>`;
       } else {
         html += '<div class="empty-state">За прошлый месяц опроса не было</div>';
       }
@@ -14026,13 +14255,14 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       return;
     }
 
-    el.innerHTML = recent.map(g => `
-      <div class="result-item" onclick="openGuestCard('${escJs(g.id)}')">
-        <div class="result-avatar">${escHtml((g.name||'?').charAt(0).toUpperCase())}</div>
-        <div style="flex:1;min-width:0">${escHtml(g.name || '')}</div>
+    el.innerHTML = `<div class="ls-card">${recent.map(g => `
+      <div class="ls-row" onclick="openGuestCard('${escJs(g.id)}')">
+        <div class="ls-ava">${escHtml(dupInitials(g.name || '?'))}</div>
+        <div class="ls-body"><div class="ls-name">${escHtml(g.name || '')}</div></div>
         ${g.last4 ? `<div class="last4-pill">···${escHtml(g.last4)}</div>` : ''}
+        <div class="qrow-chev">›</div>
       </div>
-    `).join('');
+    `).join('')}</div>`;
   }
 
   // ─── СЕГМЕНТЫ ГОСТЕЙ ПО ВИЗИТАМ ────────────────
