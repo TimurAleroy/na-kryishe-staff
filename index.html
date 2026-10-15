@@ -243,9 +243,15 @@
     .qrow-t { flex: 0 0 auto; }
     .qrow.svc-main .qrow-s { flex: 1; min-width: 0; margin-left: 2px; text-align: left; font-size: 11px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .qrow.desktop-only { display: none; }
+    /* На компьютере строка-раздел — компактная кнопка шириной в одну плитку (в той же сетке, что плитки): значок слева,
+       название и пояснение друг под другом, стрелка справа. Во всю ширину группы (как на телефоне) она выглядит растянутой. */
     @media (min-width: 700px) {
-      .qrow { grid-column: auto; }
-      .qrow.desktop-only { display: flex; }
+      .qrow { grid-column: auto; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: 'ic t ch' 'ic s ch'; column-gap: 10px; row-gap: 1px; align-items: center; padding-left: 12px; padding-right: 12px; }
+      .qrow .qrow-icon { grid-area: ic; }
+      .qrow .qrow-t { grid-area: t; align-self: end; }
+      .qrow .qrow-s, .qrow.svc-main .qrow-s { grid-area: s; align-self: start; min-width: 0; margin-left: 0; text-align: left; font-size: 11px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+      .qrow .qrow-chev { grid-area: ch; margin-left: 0; }
+      .qrow.desktop-only { display: grid; }
     }
 
     /* Группы быстрых действий */
@@ -4409,7 +4415,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // («Внимание», «Смена», «Гости» — не растягиваются по-разному). Колонок столько, сколько влезает по минимальной ширине плитки;
   // неполный ряд остаётся слева, пустое место справа — это нормально. Единственное послабление: если при полном числе колонок
   // в какой-то группе получается одинокая плитка во втором ряду (5 при 4 колонках), берём на одну колонку меньше — но сразу для всех групп.
-  // Компактные строки (Маркетинг, Аналитика) занимают по полэкрана и встают в ту же сетку. На телефоне (< 700px) ничего не трогаем.
+  // Компактные кнопки-разделы (Маркетинг, Аналитика) шириной в одну плитку встают в ту же сетку. На телефоне (< 700px) ничего не трогаем.
   function fitTileGrids() {
     const TILE_MIN = 200, TILE_GAP = 10;
     const wide = window.innerWidth >= 700;
@@ -4440,10 +4446,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const orphan = c => tileCounts.some(n => n > c && n % c === 1);
       let C = maxCols;
       if (C >= 4 && orphan(C) && !orphan(C - 1)) C -= 1;
-      const rowSpan = C >= 4 ? Math.floor(C / 2) : C;   // строки-разделы: по две в ряд
       info.forEach(x => {
         x.g.style.gridTemplateColumns = `repeat(${C}, minmax(0, 1fr))`;
-        x.shown.forEach(k => { if (k.classList.contains('qrow')) k.style.gridColumn = `span ${rowSpan}`; });
       });
     });
   }
