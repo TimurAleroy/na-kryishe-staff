@@ -2264,7 +2264,7 @@
       :root {
         --dpw: clamp(230px, calc(230px + (100vw - 1392px) * 0.2), 400px);
         --colw: min(calc(100% - 2 * (var(--dpw) + var(--dp-gap) + var(--dp-edge))), 1600px);
-        /* МАСШТАБ НА КОМПЬЮТЕРЕ — всё держится на этих числах (плитки: TILE_MIN в fitTileGrids, сейчас 200px) */
+        /* МАСШТАБ НА КОМПЬЮТЕРЕ — всё держится на этих числах (плитки: TILE_MIN в fitTileGrids, сейчас 165px) */
         --formw: 720px;   /* ширина формы и карточки одной записи */
         --btnw: 320px;    /* максимальная ширина кнопки «Сохранить / Отправить / Обновить» */
       }
@@ -4417,7 +4417,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // в какой-то группе получается одинокая плитка во втором ряду (5 при 4 колонках), берём на одну колонку меньше — но сразу для всех групп.
   // Компактные кнопки-разделы (Маркетинг, Аналитика) шириной в одну плитку встают в ту же сетку. На телефоне (< 700px) ничего не трогаем.
   function fitTileGrids() {
-    const TILE_MIN = 200, TILE_GAP = 10;
+    const TILE_MIN = 165, TILE_GAP = 10;   // 165: на типичном рабочем экране (ряд плиток около 1050–1130px) это 6 колонок по ~170–180px — Тимур выбрал именно такой размер
     const wide = window.innerWidth >= 700;
     const groups = Array.from(document.querySelectorAll('.qsec, .svc-fit'));
     if (!wide) {
@@ -4453,6 +4453,28 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
   let fitTilesRaf = 0;
   window.addEventListener('resize', () => { cancelAnimationFrame(fitTilesRaf); fitTilesRaf = requestAnimationFrame(fitTileGrids); });
+  // Ширина колонки меняется не только вместе с окном: боковые панели появляются уже после входа, «Брони» растягиваются на место
+  // правой панели и сжимаются обратно, догружаются шрифты. Раз посчитанные при другой ширине колонки потом выглядели то в 4, то
+  // в 5 плиток. Поэтому следим за самими экранами и пересчитываем плитки, как только у экрана меняется ширина (сдвиг до 2px
+  // не в счёт, и не больше 8 пересчётов в секунду — чтобы появление полосы прокрутки не раскачало сетку).
+  if (window.ResizeObserver) {
+    const fitWidths = new WeakMap();
+    let fitBurst = 0, fitBurstAt = 0;
+    const fitObserver = new ResizeObserver(entries => {
+      let changed = false;
+      for (const e of entries) {
+        const w = e.contentRect.width, prev = fitWidths.get(e.target);
+        if (prev === undefined || Math.abs(prev - w) > 2) { fitWidths.set(e.target, w); changed = true; }
+      }
+      if (!changed) return;
+      const now = Date.now();
+      if (now - fitBurstAt > 1000) { fitBurstAt = now; fitBurst = 0; }
+      if (++fitBurst > 8) return;
+      cancelAnimationFrame(fitTilesRaf);
+      fitTilesRaf = requestAnimationFrame(fitTileGrids);
+    });
+    ['screen-home', 'screen-service'].forEach(id => { const el = document.getElementById(id); if (el) fitObserver.observe(el); });
+  }
 
   // Статус-точки на «Проблемы»/«Брони»: зелёная в норме, красная — если есть открытая
   // проблема или бронь, ожидающая подтверждения. Не блокирует показ сетки — догружается следом.
