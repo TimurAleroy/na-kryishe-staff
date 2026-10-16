@@ -1375,7 +1375,7 @@
     .vn-sw input:checked + i { background: linear-gradient(135deg, #D28C48, var(--accent)); border-color: transparent; }
     .vn-sw input:checked + i::after { transform: translateX(18px); background: #FBF0DA; }
     .vn-sw input:focus-visible + i { outline: 2px solid var(--text-sub); outline-offset: 2px; }
-    .vn-week { padding: 2px 14px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); }
+    .vn-week { padding: 2px 14px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); container-type: inline-size; }
     .vn-day { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px 12px; padding: 13px 0; border-bottom: 1px solid var(--border); }
     .vn-day:last-child { border-bottom: none; }
     .vn-day-name { grid-column: 1; grid-row: 1; display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; font-size: 14.5px; color: var(--text); min-width: 0; }
@@ -1391,10 +1391,14 @@
     .vn-seg { position: absolute; top: 0; bottom: 0; background: linear-gradient(90deg, #D28C48, var(--accent)); }
     .vn-offmsg { grid-column: 1 / -1; padding: 11px 12px; border: 1px dashed rgba(240,223,192,0.13); border-radius: 12px; text-align: center; font-size: 12px; color: var(--text-muted); }
     .vn-day.off .vn-day-name { color: var(--text-muted); }
-    @media (min-width: 700px) {
-      .vn-day { grid-template-columns: 180px 300px minmax(80px, 1fr) auto; gap: 14px; }
+    /* Строка дня в одну линию (день · время · полоска · тумблер) — только когда САМ блок недели достаточно широк:
+       ширину блока ограничивает колонка экрана, а не окно, поэтому смотрим на блок (container query), а не на ширину окна. */
+    @container (min-width: 710px) {
+      .vn-day { grid-template-columns: minmax(120px, 170px) minmax(290px, 300px) minmax(60px, 1fr) auto; gap: 14px; }
       .vn-day-name, .vn-times, .vn-track, .vn-swl, .vn-offmsg { grid-row: 1; }
       .vn-day-name { grid-column: 1; } .vn-times { grid-column: 2; } .vn-track { grid-column: 3; } .vn-swl { grid-column: 4; } .vn-offmsg { grid-column: 2 / 4; }
+    }
+    @media (min-width: 700px) {
       .vn-stat.main .vn-stat-v { font-size: 24px; }
     }
     .vn-save { margin-top: 16px; }
