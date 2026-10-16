@@ -1410,6 +1410,80 @@
     .fc-r-n small { font-size: 12px; color: var(--text-muted); }
     .fc-r-m { margin-top: 2px; font-size: 11.5px; line-height: 1.4; color: var(--text-muted); }
     .fc-call { color: var(--accent); text-decoration: none; }
+    /* СТАНДАРТЫ И ОБУЧЕНИЕ: список, чтение, тест, редактор */
+    .sd-banner { margin-top: 14px; padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(245,158,11,0.35); background: rgba(245,158,11,0.07); font-size: 13px; line-height: 1.45; color: var(--text); }
+    .sd-banner b { color: #f59e0b; font-weight: 500; }
+    .sd-banner.ok { border-color: rgba(74,222,128,0.3); background: rgba(74,222,128,0.06); color: var(--text-sub); }
+    .sd-banner.bad { border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.08); }
+    .sd-banner.bad b { color: #f87171; }
+    .sd-tools { margin-top: 12px; display: flex; justify-content: flex-end; }
+    .sd-tool { padding: 8px 14px; border-radius: 100px; border: 1px solid rgba(184,115,51,0.4); background: transparent; color: var(--accent); font-family: 'Inter', sans-serif; font-size: 12.5px; cursor: pointer; }
+    .sd-cat { margin: 22px 0 10px; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); }
+    .sd-row { display: block; margin-bottom: 8px; padding: 13px 14px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); cursor: pointer; transition: background .15s; }
+    .sd-row:active { background: var(--bg-card-hover); }
+    .sd-row-t { font-size: 14.5px; line-height: 1.35; color: var(--text); overflow-wrap: anywhere; }
+    .sd-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .sd-chip { font-size: 10.5px; letter-spacing: 0.2px; padding: 2px 9px; border-radius: 100px; border: 1px solid rgba(240,223,192,0.16); color: var(--text-muted); white-space: nowrap; }
+    .sd-chip.new { color: #fbbf24; border-color: rgba(251,191,36,0.5); background: rgba(251,191,36,0.1); }
+    .sd-chip.upd { color: #fb923c; border-color: rgba(251,146,60,0.5); background: rgba(251,146,60,0.1); }
+    .sd-chip.ok { color: #4ade80; border-color: rgba(74,222,128,0.4); }
+    .sd-chip.draft { color: var(--text-sub); border-style: dashed; }
+    .sd-doc { margin-top: 14px; padding: 16px 16px 14px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); }
+    .sd-doc-meta { font-size: 10.5px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); }
+    .sd-doc-t { margin: 6px 0 12px; font-family: 'Jost', sans-serif; font-size: 21px; font-weight: 500; line-height: 1.25; color: var(--text); overflow-wrap: anywhere; }
+    .sd-body { font-size: 14px; line-height: 1.6; color: var(--text-sub); overflow-wrap: anywhere; }
+    .sd-body h3 { margin: 16px 0 6px; font-size: 14px; font-weight: 600; color: var(--text); }
+    .sd-body h3:first-child { margin-top: 0; }
+    .sd-body p { margin: 0 0 10px; }
+    .sd-body ul, .sd-body ol { margin: 0 0 10px; padding-left: 20px; }
+    .sd-body li { margin-bottom: 5px; }
+    .sd-body b { color: var(--text); font-weight: 600; }
+    .sd-done { margin-top: 12px; padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(74,222,128,0.3); background: rgba(74,222,128,0.06); font-size: 13px; color: #86efac; }
+    .sd-qs-h { margin: 20px 0 4px; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); }
+    .sd-q { margin-top: 10px; padding: 14px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); }
+    .sd-q.wrong { border-color: rgba(239,68,68,0.5); }
+    .sd-q-t { margin-bottom: 10px; font-size: 14px; line-height: 1.4; color: var(--text); overflow-wrap: anywhere; }
+    .sd-opt { display: flex; align-items: flex-start; gap: 10px; width: 100%; margin-top: 7px; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(240,223,192,0.12); background: transparent; color: var(--text-sub); text-align: left; font-family: 'Inter', sans-serif; font-size: 13.5px; line-height: 1.4; cursor: pointer; }
+    .sd-opt i { flex: 0 0 auto; width: 16px; height: 16px; margin-top: 1px; border-radius: 50%; border: 1.5px solid rgba(240,223,192,0.35); }
+    .sd-opt.on { background: var(--accent-dim); border-color: rgba(184,115,51,0.6); color: var(--text); }
+    .sd-opt.on i { border-color: var(--accent); background: radial-gradient(circle, var(--accent) 0 45%, transparent 50%); }
+    .sd-opt span { min-width: 0; overflow-wrap: anywhere; }
+    .sd-rv { margin-top: 10px; padding: 12px 14px; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border); font-size: 13px; line-height: 1.5; color: var(--text-sub); }
+    .sd-rv.right { border-color: rgba(74,222,128,0.3); }
+    .sd-rv.miss { border-color: rgba(239,68,68,0.4); }
+    .sd-rv b { color: var(--text); font-weight: 500; }
+    .sd-save { margin: 14px 0 0; }
+    .sd-save .btn-cta { margin-top: 0; }
+    .sd-erow { margin-bottom: 8px; padding: 13px 14px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); cursor: pointer; }
+    .sd-erow:active { background: var(--bg-card-hover); }
+    .sd-meter { height: 5px; margin-top: 10px; border-radius: 100px; background: rgba(240,223,192,0.08); overflow: hidden; }
+    .sd-meter i { display: block; height: 100%; background: linear-gradient(90deg, #D28C48, var(--accent)); }
+    .sd-erow-m { margin-top: 6px; display: flex; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--text-muted); }
+    .sd-erow-m button { padding: 0; border: none; background: none; color: var(--accent); font-family: 'Inter', sans-serif; font-size: 12px; cursor: pointer; }
+    .sd-add { display: flex; gap: 8px; margin-top: 12px; }
+    .sd-add button { flex: 1; padding: 12px 8px; border-radius: 14px; border: 1px dashed rgba(184,115,51,0.45); background: rgba(184,115,51,0.05); color: var(--accent); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .sd-tpl { margin-top: 10px; padding: 12px 14px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); }
+    .sd-tpl-t { font-size: 14px; color: var(--text); }
+    .sd-tpl-d { margin-top: 3px; font-size: 12px; line-height: 1.45; color: var(--text-muted); }
+    .sd-tpl button { margin-top: 10px; padding: 8px 14px; border-radius: 100px; border: 1px solid rgba(184,115,51,0.4); background: transparent; color: var(--accent); font-family: 'Inter', sans-serif; font-size: 12.5px; cursor: pointer; }
+    .sd-body-in { height: 220px !important; line-height: 1.5; resize: vertical !important; }
+    .sd-qe { margin-top: 10px; padding: 12px; border-radius: 14px; border: 1px solid rgba(240,223,192,0.12); background: rgba(240,223,192,0.03); }
+    .sd-qe-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
+    .sd-x { flex: 0 0 auto; width: 30px; height: 30px; border-radius: 50%; border: none; background: transparent; color: var(--text-muted); font-size: 18px; line-height: 1; cursor: pointer; }
+    .sd-oe { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+    .sd-oe input[type=radio] { flex: 0 0 auto; width: 18px; height: 18px; margin: 0; accent-color: #B87333; }
+    .sd-oe .form-input { flex: 1; min-width: 0; padding: 9px 12px; font-size: 14px; }
+    .sd-oadd { margin-top: 8px; padding: 6px 2px; border: none; background: none; color: var(--accent); font-family: 'Inter', sans-serif; font-size: 12.5px; cursor: pointer; }
+    .sd-qe .sd-why { margin-top: 10px; padding: 9px 12px; font-size: 13px; }
+    .sd-addq { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 10px; padding: 13px; border: 1px dashed rgba(184,115,51,0.4); border-radius: 12px; background: rgba(184,115,51,0.045); color: var(--accent); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .sd-addq:active { background: rgba(184,115,51,0.14); }
+    .sd-hint { margin-top: 6px; font-size: 11.5px; color: var(--text-muted); }
+    .sd-pg-hero { margin-top: 14px; padding: 14px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); }
+    .sd-pg-hero b { font-family: 'Jost', sans-serif; font-size: 26px; font-weight: 500; color: var(--text); font-variant-numeric: tabular-nums; }
+    .sd-pg-hero span { margin-left: 8px; font-size: 13px; color: var(--text-muted); }
+    .sd-pg-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 8px; padding: 11px 14px; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border); }
+    .sd-pg-n { min-width: 0; font-size: 14px; color: var(--text); overflow-wrap: anywhere; }
+    .sd-pg-n small { display: block; margin-top: 1px; font-size: 11.5px; color: var(--text-muted); }
     .vn-closed { display: flex; align-items: center; gap: 12px; padding: 10px 12px; margin-bottom: 8px; border: 1px solid var(--border); border-radius: 16px; background: var(--bg-card); }
     .vn-cal { flex: 0 0 auto; width: 48px; border-radius: 12px; overflow: hidden; text-align: center; background: rgba(255,255,255,0.04); border: 1px solid rgba(240,223,192,0.12); }
     .vn-cal span { display: block; padding: 3px 0; background: var(--accent); color: var(--bg); font-size: 9.5px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; }
@@ -2848,6 +2922,97 @@
   <div style="padding:0 16px" id="briefingContent"><div class="loading">Загружаю...</div></div>
 </div>
 
+<!-- СТАНДАРТЫ СЕРВИСА: читать, «Понял», тест -->
+<div class="screen" id="screen-standards">
+  <div class="header">
+    <div class="back-btn" onclick="stdBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Стандарты</h1><p id="stdSub">Как мы работаем</p></div>
+  </div>
+  <div style="padding:0 16px" id="standardsContent"><div class="loading">Загружаю...</div><div style="height:16px"></div></div>
+</div>
+
+<!-- СТАНДАРТЫ: редактор (список) -->
+<div class="screen" id="screen-standards-edit">
+  <div class="header">
+    <div class="back-btn" onclick="stdEditBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Стандарты</h1><p>Правила сервиса и тесты</p></div>
+  </div>
+  <div style="padding:0 16px" id="standardsEditContent"><div class="loading">Загружаю...</div><div style="height:16px"></div></div>
+</div>
+
+<!-- СТАНДАРТЫ: форма -->
+<div class="screen" id="screen-standard-form">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('standards-edit')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;" id="sfTitle">Новый стандарт</h1><p id="sfSub">Для сотрудников</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div class="tf-card" style="margin-top:12px">
+      <div class="form-group" style="margin-bottom:16px">
+        <label class="form-label" for="sfName">Название</label>
+        <input class="form-input" id="sfName" type="text" maxlength="120" autocomplete="off" placeholder="Например, Как встречать гостя">
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label" for="sfCat">Раздел</label>
+        <input class="form-input" id="sfCat" type="text" maxlength="40" autocomplete="off" list="sfCatList" placeholder="Например, Зал, Бар, Кальян, Jarvis">
+        <datalist id="sfCatList"></datalist>
+      </div>
+    </div>
+
+    <div class="tf-card">
+      <label class="form-label">Для кого</label>
+      <div class="tf-roles" id="sfRoles" style="margin-top:0"></div>
+      <div class="poster-note" id="sfRolesNote"></div>
+    </div>
+
+    <div class="tf-card">
+      <div class="tf-head"><label class="form-label" for="sfBody" style="margin:0">Текст</label><span class="tf-count"><span id="sfBodyLen">0</span>/8000</span></div>
+      <textarea class="form-input sd-body-in" id="sfBody" maxlength="8000" oninput="sfBodyInput()" placeholder="Что и как делаем"></textarea>
+      <div class="poster-note">Оформление: строка с «# » в начале — подзаголовок, «- » — пункт списка, «1. » — нумерованный пункт, **слово** — жирным. Пустая строка разделяет абзацы.</div>
+    </div>
+
+    <div class="tf-card">
+      <label class="form-label">Тест (по желанию)</label>
+      <div id="sfQuiz"></div>
+      <button type="button" class="sd-addq" id="sfAddQ" onclick="sfAddQ()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Добавить вопрос</button>
+      <div class="poster-note">Тест сдан, если верно не меньше 80% ответов (в тесте из 3 вопросов нужно 3 верных). Без теста сотрудник просто нажимает «Понял».</div>
+    </div>
+
+    <label class="tf-card tf-switch" id="sfBumpWrap">
+      <span class="tf-switch-t"><b>Важное изменение</b><small>Все сотрудники прочитают этот стандарт заново. Для исправления опечаток не включайте.</small></span>
+      <span class="vn-sw"><input type="checkbox" id="sfBump" aria-label="Важное изменение"><i></i></span>
+    </label>
+
+    <div class="tf-save"><button class="btn-cta" id="sfSaveBtn" onclick="sfSave()">Сохранить</button></div>
+
+    <div id="sfExtra">
+      <div class="tf-card tf-actions">
+        <button type="button" class="tf-act" id="sfPublishBtn" onclick="sfTogglePublish()"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg><span id="sfPublishText">Опубликовать<small>сотрудники увидят его в разделе «Стандарты»</small></span></button>
+        <button type="button" class="tf-act" id="sfProgressBtn" onclick="openStandardProgress(stdFormId)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.2a3.2 3.2 0 010 5.6"/></svg><span>Кто прочитал<small>по каждому сотруднику</small></span><i class="qrow-chev">›</i></button>
+        <button type="button" class="tf-act danger" onclick="sfDelete()"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 002 2h6a2 2 0 002-2l1-12M9 7V4h6v3"/></svg><span>Удалить стандарт<small>сотрудники его больше не увидят</small></span></button>
+      </div>
+    </div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- СТАНДАРТЫ: кто прочитал -->
+<div class="screen" id="screen-standard-progress">
+  <div class="header">
+    <div class="back-btn" onclick="spBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Кто прочитал</h1><p id="spSub"></p></div>
+  </div>
+  <div style="padding:0 16px" id="standardProgressContent"><div class="loading">Загружаю...</div><div style="height:16px"></div></div>
+</div>
+
 <!-- ПРОГНОЗ ЗАГРУЗКИ: неделя вперёд по броням и прошлым таким же вечерам -->
 <div class="screen" id="screen-forecast">
   <div class="header">
@@ -3832,7 +3997,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function fallbackPerms(jobRole) {
     const base = ['guests.view', 'guests.create', 'guests.edit', 'tags.use', 'visits.record', 'guests.birthdays', 'guests.vip_list', 'shift.mark', 'schedule.view', 'menu.view', 'problems.view', 'problems.report', 'problems.work_own_role'];
     const own = { 'Бармен': ['menu.stoplist_drinks'], 'Повар': ['menu.stoplist_food'], 'КМ': ['menu.stoplist_hookah'] }[jobRole] || [];
-    const admin = ['shifts.review', 'stories.manage', 'tv.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage', 'messages.view'];
+    const admin = ['shifts.review', 'stories.manage', 'tv.manage', 'standards.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage', 'messages.view'];
     const owner = ['surveys.manage', 'tags.manage', 'audit.view', 'settings.manage', 'founder_tasks.create', 'marketing.send', 'marketing.log', 'analytics.view', 'segments.view', 'feedback.view', 'guests.table', 'candidates.view'];
     if (jobRole === 'Основатель') return base.concat(admin, owner);
     if (jobRole === 'Администратор') return base.concat(admin);
@@ -4233,6 +4398,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     stoplistItems = [];
     bfData = null; bfRole = ''; bfOffset = 0; bfSeq++;
     fcData = null; fcSeq++; fcOpen = new Set();
+    stdData = null; stdOpen = null; stdResult = null; stdAnswers = []; stdSeq++; stdAdmin = null; stdForm = null; stdFormId = null;
     problemsCache = [];
     menuEditItems = [];
     storySets = [];
@@ -4298,6 +4464,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('stories.manage')) list.push({ group: G.content, icon: 'stories', short: 'сторис', title: 'Сторис', sub: 'Фото бара и ВИП-комнат', fn: 'openStoriesEdit()' });
     if (can('surveys.manage')) list.push({ group: G.content, icon: 'surveys', short: 'опросы', title: 'Опросы', sub: 'Фон, ретушь, тексты', fn: 'openSurveysEdit()' });
     if (can('tv.manage')) list.push({ group: G.content, icon: 'tv', short: 'тв-экраны', title: 'ТВ-экраны', sub: 'ВИП-комнаты и терраса: приветствие, фон, сообщения', fn: 'openTv()' });
+    if (can('standards.manage')) list.push({ group: G.team, icon: 'standards', short: 'стандарты', title: 'Стандарты', sub: 'Правила сервиса, тесты, кто прочитал', fn: "openStandardsEdit('service')" });
     if (can('tags.manage')) list.push({ group: G.guests, icon: 'tags', short: 'теги', title: 'Теги', sub: 'Список, цвета, подсказки', fn: 'openTagsEdit()' });
     if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'Логины, роли и права', fn: 'openEmployees()' });
     if (can('candidates.view')) list.push({ group: G.team, icon: 'candidates', short: 'кандидаты', title: 'Кандидаты', sub: 'Отклики на вакансии', fn: 'openCandidates()' });
@@ -4427,6 +4594,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     // Группы — по тому, как часто ими пользуются за смену: «Внимание» → «Смена» →
     // «Гости» → редкие разделы компактными строками (маркетинг, аналитика, сервис).
 
+    icons.standards = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h11a3 3 0 013 3v15H8a3 3 0 01-3-3V3z"/><path d="M9 11l2 2 4-4"/><line x1="9" y1="17" x2="14" y2="17"/></svg>';
     icons.forecast = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20v-6M10 20V9M16 20v-9"/><path d="M3 7l5-3 4 2 5-4" stroke-dasharray="2 2"/><path d="M2 20h20"/></svg>';
     icons.briefing = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h9M4 12h9M4 18h5"/><path d="M16 13l2.2 2.2L22 10.5"/></svg>';
     icons.venue = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>';
@@ -4439,6 +4607,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('schedule.view')) shiftCards += qcard(icons.schedule, 'График', 'Кто когда работает', "openSchedule()");
     // Стоп-лист: официант принимает заказы и должен знать, чего нет
     if (can('menu.view')) shiftCards += qcard(icons.stoplist, 'Стоп-лист', 'Чего нет в меню', "openStoplist()");
+    // Стандарты: читать правила сервиса и сдавать тесты — всем сотрудникам (точка и «Новых: N» — если есть непрочитанное)
+    shiftCards += qcard(icons.standards, 'Стандарты', 'Как мы работаем', "openStandards()", { dotId: 'qdotStandards', extraClass: 'qc-standards' });
 
     let guestsCards = '';
     if (can('guests.birthdays')) guestsCards += qcard(icons.birthday, 'Именинники', 'Сегодня', "openBirthdays()");
@@ -4588,6 +4758,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     quickStatusAt = Date.now();
     refreshPerms();
     if (can('shift.mark') && currentJobRole !== 'Основатель') loadMyShift();
+    loadStdBadge();
     if (can('problems.view')) try {
       const res = await fetch(`${PROXY_BASE}/api/staff/problems?pin=${getPin()}`);
       if (res.ok) {
@@ -11384,6 +11555,474 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   }
   // Стоп-лист видят все (официант принимает заказы — ему важно знать, чего нет);
   // переключает только тот, чья категория, и администрация.
+  // ─── СТАНДАРТЫ И ОБУЧЕНИЕ ─────
+  // Сотрудник читает стандарты своей роли и нажимает «Понял» или сдаёт тест (ответы проверяет сервер).
+  // Если текст поменяли «важно», стандарт снова становится «новым». Редактор — в «Сервисе» (право standards.manage).
+  let stdData = null;      // { items, newCount }
+  let stdOpen = null;      // открытый стандарт
+  let stdAnswers = [];     // выбранные варианты теста
+  let stdResult = null;    // итог проверки теста
+  let stdBusy = false;
+  let stdSeq = 0;
+  let stdAdmin = null;     // { items, roles }
+  let stdEditFrom = 'service';
+  let stdTplOpen = false;
+  let stdForm = null;      // редактируемый стандарт
+  let stdFormId = null;
+  let spFrom = 'standards-edit';
+
+  function stdDate(iso) {
+    if (!iso) return '';
+    return new Date(iso).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }).replace('.', '');
+  }
+  function stdInline(t) { return escHtml(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>'); }
+  // Текст стандарта → безопасная разметка: «# » подзаголовок, «- » пункт, «1. » нумерация, **жирный**
+  function stdRender(text) {
+    let out = '', list = null, para = [];
+    const flushPara = () => { if (para.length) { out += `<p>${para.map(stdInline).join('<br>')}</p>`; para = []; } };
+    const flushList = () => { if (list) { out += `<${list.t}>${list.items.map(i => `<li>${stdInline(i)}</li>`).join('')}</${list.t}>`; list = null; } };
+    for (const raw of String(text || '').split('\n')) {
+      const l = raw.trimEnd();
+      if (!l.trim()) { flushPara(); flushList(); continue; }
+      let m;
+      if ((m = l.match(/^#{1,3}\s+(.*)$/))) { flushPara(); flushList(); out += `<h3>${stdInline(m[1])}</h3>`; continue; }
+      if ((m = l.match(/^\s*[-•]\s+(.*)$/))) { flushPara(); if (!list || list.t !== 'ul') { flushList(); list = { t: 'ul', items: [] }; } list.items.push(m[1]); continue; }
+      if ((m = l.match(/^\s*\d+[.)]\s+(.*)$/))) { flushPara(); if (!list || list.t !== 'ol') { flushList(); list = { t: 'ol', items: [] }; } list.items.push(m[1]); continue; }
+      flushList(); para.push(l);
+    }
+    flushPara(); flushList();
+    return out;
+  }
+
+  // ── сотрудник ──
+  function updateStdDot() {
+    const n = stdData ? stdData.newCount : 0;
+    setQuickActionDot('qdotStandards', n > 0);
+    const sub = document.querySelector('.qc-standards .qcard-sub');
+    if (sub) { sub.textContent = n > 0 ? `Новых: ${n}` : 'Как мы работаем'; sub.classList.toggle('warn', n > 0); }
+  }
+  async function loadStdBadge() {
+    if (document.getElementById('screen-standards')?.classList.contains('active')) return;   // не трогаем открытый тест
+    const seq = stdSeq;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/standards?pin=${getPin()}`);
+      if (!res.ok || seq !== stdSeq) return;
+      const d = await res.json();
+      if (d && Array.isArray(d.items)) { stdData = d; updateStdDot(); }
+    } catch { /* без точки главный экран работает как обычно */ }
+  }
+  function openStandards() {
+    stdOpen = null; stdResult = null; stdAnswers = [];
+    showScreen('standards');
+    loadStandards();
+  }
+  async function loadStandards(silent) {
+    const seq = ++stdSeq;
+    const el = document.getElementById('standardsContent');
+    if (!silent && !stdData) el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/standards?pin=${getPin()}`);
+      if (seq !== stdSeq) return;
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить стандарты'));
+      const d = await res.json();
+      if (!d || !Array.isArray(d.items)) throw new Error('Не удалось загрузить стандарты');
+      stdData = d;
+      updateStdDot();
+      renderStandards();
+    } catch (e) {
+      if (seq !== stdSeq) return;
+      if (!silent) el.innerHTML = errorStateHtml(e.message || 'Не удалось загрузить стандарты', 'loadStandards()');
+    }
+  }
+  function stdBack() {
+    if (stdOpen) { stdOpen = null; stdResult = null; stdAnswers = []; renderStandards(); window.scrollTo(0, 0); return; }
+    showScreen('home');
+  }
+  function stdOpenItem(id) {
+    stdOpen = id; stdResult = null; stdAnswers = [];
+    renderStandards();
+    window.scrollTo(0, 0);
+  }
+  function stdStateChip(it) {
+    if (it.state === 'new') return '<span class="sd-chip new">Новый</span>';
+    if (it.state === 'updated') return '<span class="sd-chip upd">Обновлён</span>';
+    return `<span class="sd-chip ok">Прочитано${it.ackedAt ? ' · ' + escHtml(stdDate(it.ackedAt)) : ''}${it.total ? ' · ' + it.score + '/' + it.total : ''}</span>`;
+  }
+  function stdListHtml() {
+    const items = stdData.items;
+    let html = can('standards.manage') ? `<div class="sd-tools"><button type="button" class="sd-tool" onclick="openStandardsEdit('standards')">Редактор стандартов</button></div>` : '';
+    if (!items.length) return html + '<div class="empty-state">Стандартов пока нет. Когда администратор их опубликует, они появятся здесь</div>';
+    html += stdData.newCount
+      ? `<div class="sd-banner"><b>Новое для вас: ${stdData.newCount}.</b> Прочитайте и нажмите «Понял» или пройдите тест.</div>`
+      : '<div class="sd-banner ok">Всё прочитано. Спасибо!</div>';
+    const cats = [];
+    for (const it of items) { const c = it.category || 'Общее'; if (!cats.includes(c)) cats.push(c); }
+    for (const c of cats) {
+      html += `<div class="sd-cat">${escHtml(c)}</div>`;
+      html += items.filter(it => (it.category || 'Общее') === c).map(it => `<div class="sd-row" role="button" tabindex="0" onclick="stdOpenItem('${escJs(it.id)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();stdOpenItem('${escJs(it.id)}')}">
+        <div class="sd-row-t">${escHtml(it.title)}</div>
+        <div class="sd-chips">${stdStateChip(it)}${it.questions.length ? `<span class="sd-chip">Тест · ${it.questions.length} ${bfPl(it.questions.length, 'вопрос', 'вопроса', 'вопросов')}</span>` : ''}</div>
+      </div>`).join('');
+    }
+    return html;
+  }
+  function stdDetailHtml(it) {
+    const q = it.questions || [];
+    let h = '';
+    if (it.state === 'updated' && !stdResult) h += '<div class="sd-banner"><b>Стандарт обновили.</b> Прочитайте заново и подтвердите.</div>';
+    h += `<div class="sd-doc"><div class="sd-doc-meta">${escHtml(it.category || 'Общее')}${it.version > 1 ? ' · версия ' + it.version : ''}</div><h2 class="sd-doc-t">${escHtml(it.title)}</h2><div class="sd-body">${stdRender(it.body)}</div></div>`;
+    // сдано сейчас: разбор ответов
+    if (stdResult && stdResult.passed) {
+      const r = stdResult;
+      if (r.review) {
+        h += `<div class="sd-banner ok"><b style="color:#4ade80">Тест сдан: ${r.score} из ${r.total}.</b></div>`;
+        h += r.review.map((x, i) => `<div class="sd-rv ${x.right ? 'right' : 'miss'}"><b>${i + 1}. ${escHtml(q[i] ? q[i].q : '')}</b><br>${x.right ? '✓ Верно' : '✗ Верный ответ: ' + escHtml(q[i] ? q[i].options[x.correct] : '')}${x.why ? '<br>' + escHtml(x.why) : ''}</div>`).join('');
+      }
+      h += `<div class="sd-save"><button class="btn-cta" onclick="stdBack()">Готово</button></div>`;
+      return h + '<div style="height:16px"></div>';
+    }
+    if (it.state === 'read') {
+      h += `<div class="sd-done">✓ Вы прочитали это ${escHtml(stdDate(it.ackedAt))}${it.total ? ` · тест ${it.score} из ${it.total}` : ''}</div>`;
+      return h + `<div class="sd-save"><button class="btn-cta" onclick="stdBack()">Назад к списку</button></div><div style="height:16px"></div>`;
+    }
+    if (q.length) {
+      h += '<div class="sd-qs-h">Проверьте себя</div>';
+      if (stdResult && !stdResult.passed) {
+        h += `<div class="sd-banner bad"><b>Верно ${stdResult.score} из ${stdResult.total}, нужно не меньше ${stdResult.need}.</b> Перечитайте текст и ответьте ещё раз. Ошибки отмечены красным.</div>`;
+      }
+      const wrong = stdResult && !stdResult.passed ? stdResult.wrong : [];
+      h += q.map((x, i) => `<div class="sd-q${wrong.includes(i) ? ' wrong' : ''}"><div class="sd-q-t">${i + 1}. ${escHtml(x.q)}</div>${x.options.map((o, j) => `<button type="button" class="sd-opt${stdAnswers[i] === j ? ' on' : ''}" role="radio" aria-checked="${stdAnswers[i] === j}" onclick="stdPick(${i},${j})"><i></i><span>${escHtml(o)}</span></button>`).join('')}</div>`).join('');
+      const all = q.every((_, i) => Number.isInteger(stdAnswers[i]));
+      h += `<div class="sd-save"><button class="btn-cta" id="sdAckBtn" onclick="stdAck()" ${all ? '' : 'disabled'}>Проверить ответы</button></div>`;
+    } else {
+      h += `<div class="sd-save"><button class="btn-cta" id="sdAckBtn" onclick="stdAck()">Понял</button></div>`;
+    }
+    return h + '<div style="height:16px"></div>';
+  }
+  function renderStandards() {
+    const el = document.getElementById('standardsContent');
+    if (!el || !stdData) return;
+    const open = stdOpen ? stdData.items.find(x => x.id === stdOpen) : null;
+    if (stdOpen && !open) { stdOpen = null; stdResult = null; stdAnswers = []; }
+    el.innerHTML = open ? stdDetailHtml(open) : stdListHtml();
+  }
+  function stdPick(i, j) {
+    stdAnswers[i] = j;
+    if (stdResult && !stdResult.passed) stdResult.wrong = stdResult.wrong.filter(x => x !== i);
+    const y = window.scrollY;
+    renderStandards();
+    window.scrollTo(0, y);
+  }
+  async function stdAck() {
+    if (stdBusy) return;
+    const it = stdData && stdData.items.find(x => x.id === stdOpen);
+    if (!it) return;
+    const q = it.questions || [];
+    if (q.length && !q.every((_, i) => Number.isInteger(stdAnswers[i]))) { notify('Ответьте на все вопросы'); return; }
+    stdBusy = true;
+    const btn = document.getElementById('sdAckBtn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Проверяю...'; }
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/standards/${encodeURIComponent(it.id)}/ack?pin=${getPin()}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ version: it.version, answers: q.length ? stdAnswers : undefined })
+      });
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 409 || res.status === 404) {
+        notify(await responseError(res, 'Стандарт изменился — обновите экран'));
+        stdResult = null; stdAnswers = [];
+        await loadStandards(true);
+        return;
+      }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось сохранить отметку'));
+      const d = await res.json();
+      if (d.passed) {
+        stdResult = q.length ? d : null;
+        if (!q.length) { notify('Отмечено: прочитано', 'ok'); stdOpen = null; stdAnswers = []; }
+        await loadStandards(true);
+      } else {
+        stdResult = d;
+        (d.wrong || []).forEach(i => { stdAnswers[i] = undefined; });
+      }
+      renderStandards();
+      window.scrollTo(0, 0);
+    } catch (e) {
+      notify(e && e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи — попробуйте ещё раз');
+      renderStandards();
+    } finally {
+      stdBusy = false;
+    }
+  }
+
+  // ── редактор ──
+  function openStandardsEdit(from) {
+    stdEditFrom = from === 'standards' ? 'standards' : 'service';
+    stdTplOpen = false;
+    showScreen('standards-edit');
+    loadStandardsAdmin();
+  }
+  function stdEditBack() {
+    if (stdEditFrom === 'standards') { openStandards(); return; }
+    showScreen('service');
+  }
+  async function loadStandardsAdmin(silent) {
+    const el = document.getElementById('standardsEditContent');
+    if (!silent) el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/standards?pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить стандарты'));
+      const d = await res.json();
+      if (!d || !Array.isArray(d.items)) throw new Error('Не удалось загрузить стандарты');
+      stdAdmin = d;
+      renderStandardsEdit();
+    } catch (e) {
+      if (!silent) el.innerHTML = errorStateHtml(e.message || 'Не удалось загрузить стандарты', 'loadStandardsAdmin()');
+    }
+  }
+  const STD_TEMPLATES = [
+    {
+      key: 'jarvis', title: 'Как вести вечер в Jarvis', category: 'Jarvis', roles: ['Администратор'],
+      desc: 'Какие кнопки нажимать за вечер, чтобы прогноз и «кто не приходит» считали по правде',
+      body: '# Зачем это нужно\nJarvis узнаёт о вечере только от нас. Если не нажимать кнопки, прогноз загрузки и оценка «кто может не прийти» не смогут считать.\n\n# Что нажимать\n- Гость пришёл по брони: в брони нажмите «Пришёл». Стол на схеме станет занятым.\n- Гость пришёл без брони: на схеме выберите стол и нажмите «Посадить без брони».\n- Гость ушёл: нажмите «Гость ушёл», стол освободится на схеме.\n- Гость не пришёл: отметьте «Не пришёл» у брони.\n\n# Правило\nОтмечайте сразу, а не в конце вечера. Тогда время за столом считается верно.',
+      quiz: [
+        { q: 'Гость пришёл без брони. Что нажимаем?', options: ['На схеме выбираем стол и «Посадить без брони»', 'Создаём бронь задним числом', 'Ничего, это не важно'], correct: 0, why: 'Так стол станет занятым, а время за столом пойдёт с этой минуты.' },
+        { q: 'Когда нажимать «Гость ушёл»?', options: ['Когда гость ушёл и стол свободен', 'В конце смены сразу для всех столов', 'Только если гость попросил'], correct: 0, why: 'Тогда стол снова доступен на схеме, а время за столом посчитано верно.' },
+        { q: 'Зачем отмечать «Пришёл» и «Не пришёл»?', options: ['Чтобы прогноз и оценка неявки считали по правде', 'Чтобы начислить премию', 'Это нужно только для отчёта в Telegram'], correct: 0, why: 'Без этих отметок Jarvis не знает, кто дошёл, и не может ничего предсказать.' }
+      ]
+    },
+    {
+      key: 'allergy', title: 'Аллергии и особые гости', category: 'Гости', roles: [],
+      desc: 'Что делать с красными пометками и особыми тегами гостя',
+      body: '# Красное — это важно\nВ брифинге и в карточке гостя красным выделены аллергии и «Нон-грата». Читаем их до того, как гость сел за стол.\n\n# Аллергия\n- Перед заказом ещё раз спросите гостя об аллергиях.\n- Гость назвал новую аллергию: добавьте тег в карточку гостя, чтобы коллеги тоже знали.\n- Не уверены, что есть в составе, не гадайте: уточните у бара или кухни.\n\n# Особые гости\n- VIP: встретить по имени и сразу сообщить администратору.\n- Нон-грата: не обслуживать, сразу позвать администратора.\n- «Не беспокоить»: подходить только когда гость сам позовёт.\n\n# Если не уверены\nПозовите администратора. Лучше уточнить, чем ошибиться.',
+      quiz: [
+        { q: 'Гость говорит, что у него аллергия на орехи. Что делаем?', options: ['Ставим тег в карточку гостя и предупреждаем бар и кухню', 'Запоминаем, в карточку не вносим', 'Ничего: гость сам следит за заказом'], correct: 0, why: 'Тег увидят все коллеги, и в следующий визит гость не окажется без внимания.' },
+        { q: 'Пришёл гость с тегом «Нон-грата». Что делаем?', options: ['Не обслуживаем и сразу зовём администратора', 'Обслуживаем как обычно', 'Спрашиваем у гостя, почему он здесь'], correct: 0, why: 'Решение принимает администратор, не официант.' },
+        { q: 'У гостя тег «Не беспокоить». Когда подходим?', options: ['Только когда гость сам позовёт', 'Каждые 10 минут', 'Никогда, даже если зовёт'], correct: 0, why: 'Тег как раз про то, что гость не хочет лишнего внимания.' }
+      ]
+    },
+    {
+      key: 'stoplist', title: 'Стоп-лист', category: 'Смена', roles: [],
+      desc: 'Когда и кто отмечает, что позиции закончились',
+      body: '# Зачем\nСтоп-лист показывает, чего сейчас нет в меню. Официант принимает заказы и должен знать это до того, как пообещает гостю.\n\n# Как работает\n- Позиция закончилась: отметьте её в «Стоп-листе» сразу.\n- Отмечает тот, у кого есть право на эту категорию: бармен напитки, повар еду, КМ кальян.\n- Позиция снова есть: верните её в меню.\n\n# Правило\nНе ждите конца смены. Отметка нужна, пока гости ещё заказывают.',
+      quiz: [
+        { q: 'Закончился сироп для коктейля. Что делаем?', options: ['Сразу отмечаем позицию в стоп-листе', 'Говорим гостям по ситуации, в стоп-лист не вносим', 'Ждём конца смены'], correct: 0, why: 'Пока отметки нет, официанты принимают заказ на то, чего нет.' },
+        { q: 'Кто отмечает позиции в стоп-листе?', options: ['Тот, у кого есть право на эту категорию', 'Только основатель', 'Любой гость через приложение'], correct: 0, why: 'Право зависит от роли: напитки, еда или кальян.' }
+      ]
+    }
+  ];
+  function stdAdminRowHtml(it) {
+    const who = it.roles.length ? it.roles.join(', ') : 'Все роли';
+    const pct = it.audience > 0 ? Math.round(it.acked / it.audience * 100) : 0;
+    return `<div class="sd-erow" role="button" tabindex="0" onclick="openStandardForm('${escJs(it.id)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openStandardForm('${escJs(it.id)}')}">
+      <div class="sd-row-t">${escHtml(it.title)}</div>
+      <div class="sd-chips"><span class="sd-chip ${it.status === 'published' ? 'ok' : 'draft'}">${it.status === 'published' ? 'Опубликован' : 'Черновик'}</span><span class="sd-chip">${escHtml(who)}</span>${it.category ? `<span class="sd-chip">${escHtml(it.category)}</span>` : ''}${it.quiz.length ? `<span class="sd-chip">Тест · ${it.quiz.length}</span>` : ''}${it.version > 1 ? `<span class="sd-chip">версия ${it.version}</span>` : ''}</div>
+      ${it.status === 'published' ? `<div class="sd-meter"><i style="width:${pct}%"></i></div>
+      <div class="sd-erow-m"><span>Прочитали ${it.acked} из ${it.audience}</span><button type="button" onclick="event.stopPropagation();openStandardProgress('${escJs(it.id)}','standards-edit')">Кто прочитал</button></div>` : ''}
+    </div>`;
+  }
+  function renderStandardsEdit() {
+    const el = document.getElementById('standardsEditContent');
+    if (!el || !stdAdmin) return;
+    const items = stdAdmin.items;
+    let html = `<div class="sd-add"><button type="button" onclick="openStandardForm()">+ Новый стандарт</button><button type="button" onclick="stdToggleTpl()">${stdTplOpen ? 'Скрыть примеры' : 'Взять пример'}</button></div>`;
+    if (stdTplOpen) {
+      html += STD_TEMPLATES.map(t => `<div class="sd-tpl"><div class="sd-tpl-t">${escHtml(t.title)}</div><div class="sd-tpl-d">${escHtml(t.desc)}. Добавится черновиком: поправьте под себя и опубликуйте.</div><button type="button" onclick="stdAddTemplate('${t.key}')">Добавить черновик</button></div>`).join('');
+    }
+    if (!items.length) {
+      html += `<div class="empty-state">Стандартов пока нет. Напишите первый или возьмите пример: он добавится черновиком, сотрудники его не увидят, пока вы не опубликуете.</div>`;
+    } else {
+      html += `<div class="sd-cat">Все стандарты · ${items.length}</div>` + items.map(stdAdminRowHtml).join('');
+    }
+    el.innerHTML = html + '<div style="height:16px"></div>';
+  }
+  function stdToggleTpl() { stdTplOpen = !stdTplOpen; renderStandardsEdit(); }
+  async function stdRequest(method, url, body) {
+    const sep = url.includes('?') ? '&' : '?';
+    const res = await fetch(`${PROXY_BASE}${url}${sep}pin=${getPin()}`, { method, headers: { 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
+    if (res.status === 401) { showScreen('pin'); throw new Error('Войдите заново'); }
+    if (!res.ok) throw new Error(await responseError(res, 'Не удалось выполнить действие'));
+    return res.json();
+  }
+  const stdNetErr = e => (e && e.message && e.message !== 'Failed to fetch') ? e.message : 'Нет связи — попробуйте ещё раз';
+  async function stdAddTemplate(key) {
+    const t = STD_TEMPLATES.find(x => x.key === key);
+    if (!t || stdBusy) return;
+    stdBusy = true;
+    try {
+      const roles = t.roles.filter(r => (stdAdmin.roles || []).includes(r));
+      const d = await stdRequest('POST', '/api/admin/standards', { title: t.title, category: t.category, body: t.body, roles, quiz: t.quiz, status: 'draft' });
+      stdData = null;
+      await loadStandardsAdmin(true);
+      notify('Черновик добавлен. Проверьте текст под ваш бар', 'ok');
+      openStandardForm(d.item.id);
+    } catch (e) { notify(stdNetErr(e)); } finally { stdBusy = false; }
+  }
+
+  // ── форма ──
+  function openStandardForm(id) {
+    const cur = id ? (stdAdmin && stdAdmin.items.find(x => x.id === id)) : null;
+    if (id && !cur) { loadStandardsAdmin(true); return; }
+    stdFormId = cur ? cur.id : null;
+    stdForm = cur
+      ? { title: cur.title, category: cur.category, body: cur.body, roles: cur.roles.slice(), status: cur.status, quiz: cur.quiz.map(x => ({ q: x.q, options: x.options.slice(), correct: x.correct, why: x.why || '' })) }
+      : { title: '', category: '', body: '', roles: [], status: 'draft', quiz: [] };
+    showScreen('standard-form');
+    document.getElementById('sfTitle').textContent = cur ? 'Стандарт' : 'Новый стандарт';
+    document.getElementById('sfSub').textContent = cur ? (cur.status === 'published' ? 'Опубликован · версия ' + cur.version : 'Черновик') : 'Для сотрудников';
+    document.getElementById('sfName').value = stdForm.title;
+    document.getElementById('sfCat').value = stdForm.category;
+    document.getElementById('sfBody').value = stdForm.body;
+    document.getElementById('sfBump').checked = false;
+    const cats = [...new Set((stdAdmin ? stdAdmin.items : []).map(x => x.category).filter(Boolean))];
+    document.getElementById('sfCatList').innerHTML = cats.map(c => `<option value="${escHtml(c)}"></option>`).join('');
+    sfBodyInput();
+    sfRenderRoles();
+    sfRenderQuiz();
+    sfRenderExtra();
+  }
+  function sfBodyInput() {
+    document.getElementById('sfBodyLen').textContent = document.getElementById('sfBody').value.length;
+  }
+  function sfRenderRoles() {
+    const roles = (stdAdmin && stdAdmin.roles) || [];
+    const all = stdForm.roles.length === 0;
+    document.getElementById('sfRoles').innerHTML =
+      `<label class="tf-role"><input type="checkbox" ${all ? 'checked' : ''} onchange="sfRoleAll()"><span>Все роли</span></label>` +
+      roles.map(r => `<label class="tf-role"><input type="checkbox" data-role="${escHtml(r)}" ${stdForm.roles.includes(r) ? 'checked' : ''} onchange="sfRoleToggle()"><span>${escHtml(r)}</span></label>`).join('');
+    document.getElementById('sfRolesNote').textContent = all ? 'Стандарт увидят все сотрудники. Основатель видит всё, но в «кто прочитал» не считается.' : 'Стандарт увидят только выбранные роли.';
+  }
+  function sfRoleAll() { stdForm.roles = []; sfRenderRoles(); }
+  function sfRoleToggle() {
+    stdForm.roles = [...document.querySelectorAll('#sfRoles input[data-role]:checked')].map(i => i.getAttribute('data-role'));
+    sfRenderRoles();
+  }
+  function sfRenderExtra() {
+    const editing = !!stdFormId;
+    const pub = stdForm.status === 'published';
+    document.getElementById('sfBumpWrap').style.display = editing && pub ? '' : 'none';
+    document.getElementById('sfExtra').style.display = editing ? '' : 'none';
+    document.getElementById('sfSaveBtn').textContent = !editing ? 'Сохранить черновик' : 'Сохранить';
+    document.getElementById('sfPublishText').innerHTML = pub
+      ? 'Снять с публикации<small>сотрудники перестанут его видеть, отметки сохранятся</small>'
+      : 'Опубликовать<small>сотрудники увидят его в разделе «Стандарты»</small>';
+    document.getElementById('sfProgressBtn').style.display = pub ? '' : 'none';
+    // для нового стандарта публикация — отдельной кнопкой под «Сохранить черновик»
+    let pubNew = document.getElementById('sfPublishNew');
+    if (!editing) {
+      if (!pubNew) {
+        pubNew = document.createElement('button');
+        pubNew.type = 'button'; pubNew.id = 'sfPublishNew'; pubNew.className = 'sd-tool';
+        pubNew.style.cssText = 'display:block;width:100%;margin:0 0 12px;padding:12px';
+        pubNew.textContent = 'Сохранить и опубликовать';
+        pubNew.onclick = () => sfSave('published');
+        document.querySelector('#screen-standard-form .tf-save').after(pubNew);
+      }
+      pubNew.style.display = '';
+    } else if (pubNew) pubNew.style.display = 'none';
+  }
+  // тест: состояние живёт в stdForm.quiz, поля обновляют его без перерисовки (чтобы не терять курсор)
+  function sfRenderQuiz() {
+    const q = stdForm.quiz;
+    document.getElementById('sfQuiz').innerHTML = q.map((x, i) => `<div class="sd-qe">
+      <div class="sd-qe-h"><span>Вопрос ${i + 1}</span><button type="button" class="sd-x" aria-label="Удалить вопрос" onclick="sfDelQ(${i})">×</button></div>
+      <input class="form-input" type="text" maxlength="200" value="${escHtml(x.q)}" placeholder="Текст вопроса" oninput="stdForm.quiz[${i}].q=this.value">
+      ${x.options.map((o, j) => `<div class="sd-oe"><input type="radio" name="sfc${i}" ${x.correct === j ? 'checked' : ''} aria-label="Верный ответ" onchange="stdForm.quiz[${i}].correct=${j}"><input class="form-input" type="text" maxlength="120" value="${escHtml(o)}" placeholder="Вариант ${j + 1}" oninput="stdForm.quiz[${i}].options[${j}]=this.value">${x.options.length > 2 ? `<button type="button" class="sd-x" aria-label="Убрать вариант" onclick="sfDelOpt(${i},${j})">×</button>` : ''}</div>`).join('')}
+      ${x.options.length < 5 ? `<button type="button" class="sd-oadd" onclick="sfAddOpt(${i})">+ вариант</button>` : ''}
+      <div class="sd-hint">Точкой отметьте верный ответ</div>
+      <input class="form-input sd-why" type="text" maxlength="300" value="${escHtml(x.why)}" placeholder="Пояснение после ответа (по желанию)" oninput="stdForm.quiz[${i}].why=this.value">
+    </div>`).join('');
+    document.getElementById('sfAddQ').style.display = q.length >= 10 ? 'none' : '';
+  }
+  function sfAddQ() { if (stdForm.quiz.length >= 10) return; stdForm.quiz.push({ q: '', options: ['', ''], correct: 0, why: '' }); sfRenderQuiz(); }
+  function sfDelQ(i) { stdForm.quiz.splice(i, 1); sfRenderQuiz(); }
+  function sfAddOpt(i) { const x = stdForm.quiz[i]; if (x.options.length < 5) { x.options.push(''); sfRenderQuiz(); } }
+  function sfDelOpt(i, j) {
+    const x = stdForm.quiz[i];
+    if (x.options.length <= 2) return;
+    x.options.splice(j, 1);
+    if (x.correct === j) x.correct = 0; else if (x.correct > j) x.correct -= 1;
+    sfRenderQuiz();
+  }
+  function sfCollect(status) {
+    return {
+      title: document.getElementById('sfName').value,
+      category: document.getElementById('sfCat').value,
+      body: document.getElementById('sfBody').value,
+      roles: stdForm.roles,
+      quiz: stdForm.quiz,
+      status: status || stdForm.status
+    };
+  }
+  async function sfSave(status) {
+    if (stdBusy) return;
+    const body = sfCollect(typeof status === 'string' ? status : undefined);
+    if (!body.title.trim()) { notify('Напишите название стандарта'); document.getElementById('sfName').focus(); return; }
+    if (body.status === 'published' && !body.body.trim() && !body.quiz.length) { notify('Напишите текст стандарта, прежде чем публиковать'); document.getElementById('sfBody').focus(); return; }
+    if (stdFormId && document.getElementById('sfBump').checked) body.bump = true;
+    const btn = document.getElementById('sfSaveBtn');
+    stdBusy = true; btn.disabled = true; const label = btn.textContent; btn.textContent = 'Сохраняем...';
+    try {
+      if (stdFormId) await stdRequest('PATCH', `/api/admin/standards/${encodeURIComponent(stdFormId)}`, body);
+      else await stdRequest('POST', '/api/admin/standards', body);
+    } catch (e) {
+      stdBusy = false; btn.disabled = false; btn.textContent = label;
+      notify(stdNetErr(e));
+      return;
+    }
+    stdBusy = false; btn.disabled = false; btn.textContent = label;
+    stdData = null;
+    showSuccess('Стандарт сохранён', body.status === 'published' ? (body.bump ? 'Сотрудники прочитают его заново' : 'Сотрудники его видят') : 'Пока черновик: сотрудники его не видят');
+    openStandardsEdit(stdEditFrom);
+  }
+  async function sfTogglePublish() {
+    if (!stdFormId || !stdForm) return;
+    if (stdForm.status === 'published') {
+      if (!(await askConfirm('Снять стандарт с публикации?\n\nСотрудники перестанут его видеть. Отметки о прочтении сохранятся.', { ok: 'Снять' }))) return;
+      await sfSave('draft');
+    } else {
+      await sfSave('published');
+    }
+  }
+  async function sfDelete() {
+    if (!stdFormId || stdBusy) return;
+    const title = document.getElementById('sfName').value || 'без названия';
+    if (!(await askConfirm(`Удалить стандарт «${title}»?\n\nСотрудники его больше не увидят.`, { danger: true, ok: 'Удалить' }))) return;
+    stdBusy = true;
+    try {
+      await stdRequest('DELETE', `/api/admin/standards/${encodeURIComponent(stdFormId)}`);
+    } catch (e) { stdBusy = false; notify(stdNetErr(e)); return; }
+    stdBusy = false;
+    stdData = null;
+    notify('Стандарт удалён', 'ok');
+    openStandardsEdit(stdEditFrom);
+  }
+
+  // ── кто прочитал ──
+  async function openStandardProgress(id, from) {
+    if (!id) return;
+    spFrom = from || 'standard-form';
+    showScreen('standard-progress');
+    const el = document.getElementById('standardProgressContent');
+    document.getElementById('spSub').textContent = '';
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const d = await stdRequest('GET', `/api/admin/standards/${encodeURIComponent(id)}/progress`);
+      document.getElementById('spSub').textContent = d.title;
+      const people = d.people || [];
+      const done = people.filter(p => p.state === 'read').length;
+      let html = `<div class="sd-pg-hero"><b>${done} из ${people.length}</b><span>${people.length ? 'прочитали' : ''}</span></div>`;
+      if (!people.length) html += '<div class="empty-state">Для этого стандарта пока нет сотрудников</div>';
+      html += people.map(p => `<div class="sd-pg-row"><div class="sd-pg-n">${escHtml(p.name)}<small>${escHtml(p.role)}${p.state === 'read' && p.ackedAt ? ' · ' + escHtml(stdDate(p.ackedAt)) : ''}${p.state === 'read' && p.total ? ' · тест ' + p.score + '/' + p.total : ''}</small></div>
+        <span class="sd-chip ${p.state === 'read' ? 'ok' : p.state === 'updated' ? 'upd' : 'new'}">${p.state === 'read' ? 'Прочитал' : p.state === 'updated' ? 'Нужно перечитать' : 'Не прочитал'}</span></div>`).join('');
+      el.innerHTML = html + '<div style="height:16px"></div>';
+    } catch (e) {
+      el.innerHTML = errorStateHtml(stdNetErr(e), `openStandardProgress('${escJs(id)}','${escJs(spFrom)}')`);
+    }
+  }
+  function spBack() { showScreen(spFrom === 'standards-edit' ? 'standards-edit' : 'standard-form'); }
+
   // ─── ПРОГНОЗ ЗАГРУЗКИ ─────
   // Сервер (/api/admin/forecast) сравнивает темп набора броней с прошлыми такими же днями недели и отдаёт диапазон гостей,
   // пик по часам, подсказки и рискованные брони. Здесь — только показ. Мест в зале — по схеме (HALL_ZONES).
@@ -14564,8 +15203,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room'];
-  var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'segment-rules', 'season', 'review-rules', 'venue', 'briefing', 'forecast'];
+  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room'];
+  var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'segment-rules', 'season', 'review-rules', 'venue', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress'];
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
 
