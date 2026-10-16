@@ -1343,6 +1343,73 @@
     .vn-stat-s { margin-top: 4px; font-size: 11px; line-height: 1.35; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; }
     .vn-sec { display: flex; align-items: center; gap: 8px; }
     .vn-count { min-width: 18px; height: 18px; padding: 0 6px; border-radius: 9px; background: var(--accent-dim); color: var(--accent); font-size: 10.5px; letter-spacing: 0; line-height: 18px; text-align: center; }
+    /* БРИФИНГ СМЕНЫ: кто придёт и что подготовить. Плитки .vn-hero/.vn-stat общие с «Режимом работы» */
+    .bf-bar { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .bf-chip { height: 32px; padding: 0 13px; border-radius: 100px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-sub); font: inherit; font-size: 12.5px; cursor: pointer; }
+    .bf-chip.on { border-color: rgba(184,115,51,0.5); background: var(--accent-dim); color: var(--accent); }
+    .bf-day { margin: 14px 0 12px; font-size: 13px; color: var(--text-sub); }
+    .bf-sec { margin: 22px 0 9px; display: flex; align-items: center; gap: 8px; font-size: 10.5px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--text-muted); }
+    .bf-sec .n { min-width: 18px; height: 18px; padding: 0 6px; border-radius: 9px; background: var(--accent-dim); color: var(--accent); font-size: 10.5px; letter-spacing: 0; line-height: 18px; text-align: center; }
+    .bf-task { display: flex; align-items: flex-start; gap: 11px; padding: 11px 12px; margin-bottom: 7px; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border); cursor: pointer; }
+    .bf-task.danger { border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.07); }
+    .bf-box { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; margin-top: 1px; border-radius: 7px; border: 1.5px solid rgba(240,223,192,0.3); color: #1E1004; }
+    .bf-box svg { opacity: 0; }
+    .bf-task.done { opacity: 0.55; }
+    .bf-task.done .bf-box { background: var(--accent); border-color: transparent; }
+    .bf-task.done .bf-box svg { opacity: 1; }
+    .bf-task.done .bf-t { text-decoration: line-through; }
+    .bf-body { min-width: 0; flex: 1; }
+    .bf-t { font-size: 13.5px; line-height: 1.4; color: var(--text); overflow-wrap: anywhere; }
+    .bf-task.danger .bf-t { color: #fca5a5; }
+    .bf-m { margin-top: 3px; font-size: 11.5px; line-height: 1.35; color: var(--text-muted); overflow-wrap: anywhere; }
+    .bf-m b { color: var(--text-sub); font-weight: 500; }
+    .bf-stop { display: flex; flex-wrap: wrap; gap: 6px; }
+    .bf-stop span { padding: 4px 10px; border-radius: 100px; font-size: 12px; color: #fca5a5; border: 1px solid rgba(239,68,68,0.35); background: rgba(239,68,68,0.08); }
+    .bf-note { font-size: 12.5px; line-height: 1.45; color: var(--text-muted); }
+    .bf-g { display: flex; gap: 12px; padding: 11px 12px; margin-bottom: 7px; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border); }
+    .bf-g.open { cursor: pointer; }
+    .bf-g.gone { opacity: 0.5; }
+    .bf-g-t { flex: 0 0 48px; font-family: 'Jost', sans-serif; font-size: 17px; font-weight: 500; line-height: 1.25; color: var(--text); font-variant-numeric: tabular-nums; }
+    .bf-g-b { min-width: 0; flex: 1; }
+    .bf-g-n { font-size: 14px; color: var(--text); overflow-wrap: anywhere; }
+    .bf-g-n small { font-size: 12px; color: var(--text-muted); }
+    .bf-g-m { margin-top: 2px; font-size: 11.5px; color: var(--text-muted); }
+    /* ПРОГНОЗ ЗАГРУЗКИ: карточки дней, диапазон гостей на шкале мест, рискованные брони */
+    .fc-banner { margin-top: 14px; padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(245,158,11,0.35); background: rgba(245,158,11,0.07); font-size: 13px; line-height: 1.45; color: var(--text); }
+    .fc-banner b { color: #f59e0b; font-weight: 500; }
+    .fc-banner ul { margin: 6px 0 0 18px; color: var(--text-sub); font-size: 12.5px; }
+    .fc-card { margin-bottom: 10px; padding: 14px 14px 12px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); cursor: pointer; }
+    .fc-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+    .fc-day { font-size: 14px; color: var(--text); }
+    .fc-day small { margin-left: 6px; font-size: 12px; color: var(--text-muted); }
+    .fc-chip { flex: 0 0 auto; padding: 2px 8px; border-radius: 100px; border: 1px solid rgba(240,223,192,0.2); font-size: 10.5px; color: var(--text-muted); white-space: nowrap; }
+    .fc-chip.ok { border-color: rgba(74,222,128,0.4); color: #4ade80; }
+    .fc-chip.rough { border-color: rgba(245,158,11,0.45); color: #f59e0b; }
+    .fc-num { margin-top: 8px; font-family: 'Jost', sans-serif; font-size: 26px; font-weight: 500; line-height: 1.1; color: var(--text); font-variant-numeric: tabular-nums; }
+    .fc-num small { margin-left: 6px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 400; color: var(--text-muted); }
+    .fc-sub { margin-top: 4px; font-size: 12px; line-height: 1.4; color: var(--text-muted); }
+    .fc-bar { position: relative; margin-top: 10px; height: 8px; border-radius: 100px; background: rgba(240,223,192,0.08); overflow: hidden; }
+    .fc-band { position: absolute; top: 0; bottom: 0; background: rgba(184,115,51,0.3); }
+    .fc-fill { position: absolute; top: 0; bottom: 0; left: 0; background: linear-gradient(90deg, #D28C48, var(--accent)); }
+    .fc-fill.over { background: linear-gradient(90deg, #f87171, #ef4444); }
+    .fc-meta { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 3px 14px; font-size: 11.5px; color: var(--text-muted); }
+    .fc-meta b { color: var(--text-sub); font-weight: 500; }
+    .fc-note { margin-top: 8px; padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(245,158,11,0.3); background: rgba(245,158,11,0.07); font-size: 12.5px; line-height: 1.4; color: var(--text); }
+    .fc-note.info { border-color: var(--border); background: rgba(240,223,192,0.04); color: var(--text-sub); }
+    .fc-more { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+    .fc-hours { display: flex; align-items: flex-end; gap: 5px; margin-top: 8px; }
+    .fc-h { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 3px; }
+    .fc-h i { display: block; width: 100%; border-radius: 4px 4px 0 0; background: rgba(184,115,51,0.5); }
+    .fc-h.peak i { background: var(--accent); }
+    .fc-h span { font-size: 9.5px; color: var(--text-muted); }
+    .fc-risk { display: flex; gap: 12px; padding: 11px 12px; margin-bottom: 7px; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border); }
+    .fc-p { flex: 0 0 52px; text-align: center; font-family: 'Jost', sans-serif; font-size: 18px; line-height: 1.15; color: #fca5a5; }
+    .fc-p small { display: block; font-family: 'Inter', sans-serif; font-size: 9.5px; letter-spacing: 0.4px; color: var(--text-muted); }
+    .fc-r-b { min-width: 0; flex: 1; }
+    .fc-r-n { font-size: 14px; color: var(--text); overflow-wrap: anywhere; }
+    .fc-r-n small { font-size: 12px; color: var(--text-muted); }
+    .fc-r-m { margin-top: 2px; font-size: 11.5px; line-height: 1.4; color: var(--text-muted); }
+    .fc-call { color: var(--accent); text-decoration: none; }
     .vn-closed { display: flex; align-items: center; gap: 12px; padding: 10px 12px; margin-bottom: 8px; border: 1px solid var(--border); border-radius: 16px; background: var(--bg-card); }
     .vn-cal { flex: 0 0 auto; width: 48px; border-radius: 12px; overflow: hidden; text-align: center; background: rgba(255,255,255,0.04); border: 1px solid rgba(240,223,192,0.12); }
     .vn-cal span { display: block; padding: 3px 0; background: var(--accent); color: var(--bg); font-size: 9.5px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; }
@@ -2770,6 +2837,28 @@
   </div>
 </div>
 
+<!-- БРИФИНГ СМЕНЫ: кто придёт и что подготовить (по броням и карточкам гостей) -->
+<div class="screen" id="screen-briefing">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('home')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Брифинг смены</h1><p>Кто придёт и что подготовить</p></div>
+  </div>
+  <div style="padding:0 16px" id="briefingContent"><div class="loading">Загружаю...</div></div>
+</div>
+
+<!-- ПРОГНОЗ ЗАГРУЗКИ: неделя вперёд по броням и прошлым таким же вечерам -->
+<div class="screen" id="screen-forecast">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('home')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Прогноз загрузки</h1><p>Неделя вперёд</p></div>
+  </div>
+  <div style="padding:0 16px" id="forecastContent"><div class="loading">Считаю...</div></div>
+</div>
+
 <!-- СТОП-ЛИСТ. Видят все, переключает только тот, чья категория (бар/кухня/кальян), админ — всё -->
 <div class="screen" id="screen-stoplist">
   <div class="header">
@@ -4142,6 +4231,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     permData = null;
     candList = [];
     stoplistItems = [];
+    bfData = null; bfRole = ''; bfOffset = 0; bfSeq++;
+    fcData = null; fcSeq++; fcOpen = new Set();
     problemsCache = [];
     menuEditItems = [];
     storySets = [];
@@ -4336,10 +4427,14 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     // Группы — по тому, как часто ими пользуются за смену: «Внимание» → «Смена» →
     // «Гости» → редкие разделы компактными строками (маркетинг, аналитика, сервис).
 
+    icons.forecast = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20v-6M10 20V9M16 20v-9"/><path d="M3 7l5-3 4 2 5-4" stroke-dasharray="2 2"/><path d="M2 20h20"/></svg>';
+    icons.briefing = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h9M4 12h9M4 18h5"/><path d="M16 13l2.2 2.2L22 10.5"/></svg>';
     icons.venue = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>';
     homeIcons = icons;
     // Что показывать — решают права сотрудника (основатель выдаёт их галочками на экране «Сотрудники»)
     let shiftCards = '';
+    // Брифинг: тем, кто видит брони — кто придёт и что подготовить
+    if (can('bookings.view')) shiftCards += qcard(icons.briefing, 'Брифинг', 'Кто придёт · что готовить', "openBriefing()");
     if (can('shifts.review')) shiftCards += qcard(icons.shifts, 'Кто на смене', 'Открыл · закрыл', "openShifts()");
     if (can('schedule.view')) shiftCards += qcard(icons.schedule, 'График', 'Кто когда работает', "openSchedule()");
     // Стоп-лист: официант принимает заказы и должен знать, чего нет
@@ -4392,6 +4487,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('events.manage')) marketingRows += qrow(icons.events, 'Афиша', 'Мероприятия', "openEvents()");
     if (can('marketing.send')) marketingRows += qrow(icons.marketing, 'Рассылки', 'Через бота', "openMarketing()");
     if (can('analytics.view')) analyticsRows += qrow(icons.analytics, 'Аналитика', 'Сравнение периодов', "openAnalytics()");
+    if (can('analytics.view')) analyticsRows += qrow(icons.forecast, 'Прогноз', 'Загрузка на неделю', "openForecast()");
     if (can('segments.view')) analyticsRows += qrow(icons.segments, 'Сегменты', 'Чемпионы → потерянные', "openSegments()");
     if (can('feedback.view')) analyticsRows += qrow(icons.feedback, 'Обратная связь', 'Отзывы · eNPS', "openFeedback()");
     if (can('guests.table')) analyticsRows += qrow(icons.guestsTable, 'Таблица гостей', 'На компьютере', "openGuestsTable()", { extraClass: 'desktop-only' });
@@ -11288,6 +11384,342 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   }
   // Стоп-лист видят все (официант принимает заказы — ему важно знать, чего нет);
   // переключает только тот, чья категория, и администрация.
+  // ─── ПРОГНОЗ ЗАГРУЗКИ ─────
+  // Сервер (/api/admin/forecast) сравнивает темп набора броней с прошлыми такими же днями недели и отдаёт диапазон гостей,
+  // пик по часам, подсказки и рискованные брони. Здесь — только показ. Мест в зале — по схеме (HALL_ZONES).
+  let fcData = null;
+  let fcSeq = 0;
+  let fcOpen = new Set();   // раскрытые карточки дней
+  function fcSeats() {
+    try { return HALL_ZONES.reduce((s, z) => s + (z.tables || []).reduce((a, t) => a + (Number(t.seats) || 0), 0), 0); } catch { return 0; }
+  }
+  async function openForecast() {
+    showScreen('forecast');
+    await loadForecast();
+  }
+  async function loadForecast() {
+    const seq = ++fcSeq;
+    const el = document.getElementById('forecastContent');
+    if (!fcData) el.innerHTML = '<div class="loading">Считаю...</div>';
+    try {
+      const seats = fcSeats();
+      const res = await fetch(`${PROXY_BASE}/api/admin/forecast?days=7${seats ? '&seats=' + seats : ''}&pin=${getPin()}`);
+      if (seq !== fcSeq) return;
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось посчитать прогноз'));
+      const d = await res.json();
+      if (!d || !Array.isArray(d.days)) throw new Error('Не удалось посчитать прогноз');
+      fcData = d;
+      renderForecast();
+    } catch (e) {
+      if (seq !== fcSeq) return;
+      el.innerHTML = errorStateHtml(e.message || 'Не удалось посчитать прогноз', 'loadForecast()');
+    }
+  }
+  function fcToggle(day) { if (fcOpen.has(day)) fcOpen.delete(day); else fcOpen.add(day); renderForecast(); }
+  function fcDayLabel(day, lead) {
+    const t = new Date(day + 'T12:00:00').toLocaleDateString('ru-RU', { weekday: 'short', day: 'numeric', month: 'short' }).replace('.', '');
+    return lead === 0 ? ['Сегодня', t] : lead === 1 ? ['Завтра', t] : [capFirst(t), ''];
+  }
+  function fcRange(f) {
+    return f.totalLow === f.totalHigh ? '' : `от ${f.totalLow} до ${f.totalHigh}`;
+  }
+  function renderForecast() {
+    const el = document.getElementById('forecastContent');
+    if (!el || !fcData) return;
+    const d = fcData, seats = d.seats || 0;
+    let html = '';
+
+    if (d.readiness === 'low') {
+      html += `<div class="fc-banner"><b>Данных пока мало.</b> Прогноз для дня появится, когда накопится хотя бы 3 прошлых таких же вечера недели. Пока показываю только то, что уже забронировано.</div>`;
+    } else if (d.readiness === 'rough') {
+      html += `<div class="fc-banner"><b>Пока ориентировочно.</b> По одному дню недели набралось 3–5 прошлых вечеров; от 6 прогноз станет увереннее.</div>`;
+    }
+    if (d.advice && d.advice.length) {
+      html += `<div class="fc-banner" style="border-color:var(--border);background:rgba(240,223,192,0.04)"><b style="color:var(--text-sub)">Что улучшит прогноз</b><ul>${d.advice.map(a => `<li>${escHtml(a)}</li>`).join('')}</ul></div>`;
+    }
+
+    html += `<div class="bf-sec">Неделя вперёд</div>`;
+    html += d.days.map(x => {
+      const [dl, ds] = fcDayLabel(x.day, x.lead);
+      const open = fcOpen.has(x.day);
+      const chip = x.status === 'ok' ? `<span class="fc-chip ok">по ${x.refDays} прошлым вечерам</span>` : x.status === 'rough' ? `<span class="fc-chip rough">ориентировочно · ${x.refDays}</span>` : '<span class="fc-chip">мало данных</span>';
+      const f = x.forecast;
+      let main = '', sub = '', bar = '';
+      if (f) {
+        main = `<div class="fc-num">≈ ${f.totalMid}<small>гостей${fcRange(f) ? ' · ' + fcRange(f) : ''}</small></div>`;
+        const parts = [`по броням ≈ ${Math.round(f.bookedMid * (f.showRate == null ? 1 : f.showRate))}`];
+        if (x.walkIn) parts.push(`без брони ≈ ${x.walkIn.mid}`); else parts.push('гости без брони не записываются');
+        sub = `<div class="fc-sub">Сейчас забронировано ${x.booked.guests} ${bfPl(x.booked.guests, 'гость', 'гостя', 'гостей')} (${x.booked.bookings} ${bfPl(x.booked.bookings, 'бронь', 'брони', 'броней')}) · ${parts.join(' · ')}</div>`;
+        if (seats) {
+          const mid = Math.min(100, Math.round(f.totalMid / seats * 100)), lo = Math.min(100, Math.round(f.totalLow / seats * 100)), hi = Math.min(100, Math.round(f.totalHigh / seats * 100));
+          const tight = (x.notes || []).some(n => n.code === 'crunch');
+          bar = `<div class="fc-bar" title="Гостей за вечер к числу мест"><div class="fc-band" style="left:${lo}%;width:${Math.max(1, hi - lo)}%"></div><div class="fc-fill${tight ? ' over' : ''}" style="width:${mid}%"></div></div>
+            <div class="fc-meta"><span>Гостей за вечер к числу мест (${seats}): <b>${Math.round(f.totalMid / seats * 100)}%</b></span></div>`;
+        }
+      } else {
+        main = `<div class="fc-num">${x.booked.guests}<small>${bfPl(x.booked.guests, 'гость', 'гостя', 'гостей')} в бронях</small></div>`;
+        sub = `<div class="fc-sub">${x.booked.bookings} ${bfPl(x.booked.bookings, 'бронь', 'брони', 'броней')}. Нужно ещё ${x.need} ${bfPl(x.need, 'такой вечер', 'таких вечера', 'таких вечеров')} в истории, чтобы считать прогноз.</div>`;
+      }
+      const meta = [];
+      if (x.pace != null) meta.push(`<span>Темп: <b>${Math.round(x.pace * 100)}%</b> от обычного</span>`);
+      if (x.peak) meta.push(`<span>Пик около <b>${String(x.peak.hour).padStart(2, '0')}:00</b></span>`);
+      if (x.vip && x.vip.booked) meta.push(`<span>ВИП: <b>${x.vip.booked}</b> из ${x.vip.rooms}</span>`);
+      const notes = (x.notes || []).map(n => `<div class="fc-note${n.level === 'info' ? ' info' : ''}">${escHtml(n.text)}</div>`).join('');
+      let more = '';
+      if (open) {
+        const lines = [];
+        if (x.typical) lines.push(`Обычно в такие вечера: <b>${x.typical.guests}</b> гостей в бронях${x.typical.pickup ? `, к этому сроку набирается около ${x.typical.pickup}` : ''}.`);
+        if (f) lines.push(f.method === 'pace' ? 'Считаю по темпу набора броней.' : f.method === 'blend' ? 'До вечера далеко: половина веса у темпа, половина у обычного вечера.' : 'Брони обычно делают поздно, поэтому опираюсь на обычный вечер.');
+        if (f && f.showRate != null) lines.push(`Доходит около ${Math.round(f.showRate * 100)}% забронированных (по отметкам «Пришёл / Не пришёл»).`);
+        let hours = '';
+        if (x.hours && x.hours.length) {
+          const mx = Math.max(...x.hours.map(h => h.share), 0.01);
+          hours = `<div style="margin-top:8px">Когда приходят</div><div class="fc-hours">${x.hours.map(h => `<div class="fc-h${x.peak && h.h === x.peak.hour ? ' peak' : ''}"><i style="height:${Math.max(2, Math.round(h.share / mx * 44))}px"></i><span>${String(h.h).padStart(2, '0')}</span></div>`).join('')}</div>`;
+        }
+        more = `<div class="fc-more">${lines.join('<br>')}${hours}</div>`;
+      }
+      return `<div class="fc-card" role="button" tabindex="0" aria-expanded="${open}" onclick="fcToggle('${x.day}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();fcToggle('${x.day}')}">
+        <div class="fc-top"><div class="fc-day">${escHtml(dl)}${ds ? `<small>${escHtml(ds)}</small>` : ''}</div>${chip}</div>
+        ${main}${sub}${bar}${meta.length ? `<div class="fc-meta">${meta.join('')}</div>` : ''}${notes}${more}
+      </div>`;
+    }).join('');
+
+    html += `<div class="bf-sec">Брони, на которые стоит позвонить${d.risk && d.risk.ready && d.risk.total ? ` <span class="n">${d.risk.total}</span>` : ''}</div>`;
+    if (!d.risk || !d.risk.ready) {
+      html += `<div class="bf-note">Оценка риска неявки появится, когда накопится ${d.risk ? d.risk.need : 30} отметок «Пришёл / Не пришёл»: сейчас ${d.risk ? d.risk.marks : 0}. Нажимайте их у броней после вечера.</div>`;
+    } else if (!d.risk.list.length) {
+      html += `<div class="bf-note">Рискованных броней на ближайшую неделю нет. Обычно не приходят около ${Math.round((d.risk.baseRate || 0) * 100)}% забронировавших.</div>`;
+    } else {
+      html += d.risk.list.map(r => {
+        const [dl, ds] = fcDayLabel(r.day, Math.round((Date.parse(r.day) - Date.parse(d.today)) / 86400000));
+        const pct = Math.round(r.p * 20) * 5;
+        return `<div class="fc-risk"><div class="fc-p">${pct}%<small>неявка</small></div>
+          <div class="fc-r-b"><div class="fc-r-n">${escHtml(r.name)} <small>· ${r.guests} чел.${r.status === 'pending' ? ' · ждёт подтверждения' : ''}</small></div>
+            <div class="fc-r-m">${escHtml(dl)}${ds ? ' ' + escHtml(ds) : ''}${r.time ? ', ' + escHtml(r.time) : ''}${r.why && r.why.length ? ' · ' + r.why.map(escHtml).join(', ') : ''}${r.phone ? ` · <a class="fc-call" href="tel:${escHtml(String(r.phone).replace(/[^+\d]/g, ''))}" onclick="event.stopPropagation()">${escHtml(r.phone)}</a>` : ''}</div></div>
+        </div>`;
+      }).join('') + `<div class="bf-note" style="margin-top:4px">Оценка грубая: считается по прошлым неявкам (источник брони, размер компании, срок, знаком ли гость). Если позвонить и подтвердить, риск снимается.</div>`;
+    }
+
+    html += `<div class="bf-sec">Как считается</div><div class="bf-note">Сравниваю, сколько гостей в бронях сейчас и сколько было к этому сроку в прошлые такие же дни недели (до 8 недель), и смотрю, как вечера заканчивались. Диапазон показывает, как сильно прошлые вечера отличались друг от друга. Погоду, концерты в городе и дни зарплаты прогноз не видит.</div>`;
+    el.innerHTML = html;
+  }
+
+  // ─── БРИФИНГ СМЕНЫ ─────
+  // Перед открытием: кто придёт сегодня (или завтра) и что подготовить каждой роли. Всё считается из броней и карточек
+  // гостей (аллергии, вкусы, ДР, VIP, особые теги, «Что важно»): сервер уже отдаёт их вместе с бронью, отдельного
+  // хранилища нет. Отметки «сделано» запоминаются на этом устройстве и только на этот день (общих отметок пока нет).
+  let bfData = null;      // { all: брони, stop: позиции в стопе | null }
+  let bfRole = '';        // чьими глазами смотрим: all / floor / hookah / bar / kitchen / admin
+  let bfOffset = 0;       // 0 — сегодня, 1 — завтра
+  let bfSeq = 0;
+  const BF_ROLES = [
+    { id: 'all', name: 'Все' }, { id: 'floor', name: 'Зал' }, { id: 'hookah', name: 'Кальян' },
+    { id: 'bar', name: 'Бар' }, { id: 'kitchen', name: 'Кухня' }, { id: 'admin', name: 'Администратор' }
+  ];
+  const BF_STOP_CATS = { hookah: ['Кальян'], kitchen: ['Еда'], bar: ['Напитки', 'Коктейли', 'Алкоголь'] };
+
+  // Роль сотрудника → «чьими глазами»: по смыслу названия, точное написание не важно
+  function bfRoleOf(job) {
+    const j = String(job || '').toLowerCase();
+    if (/кальян/.test(j)) return 'hookah';
+    if (/бармен|^бар$/.test(j)) return 'bar';
+    if (/повар|кухн/.test(j)) return 'kitchen';
+    if (/официант|хостес/.test(j)) return 'floor';
+    if (/админ|основател|управляющ|менеджер/.test(j)) return 'admin';
+    return 'all';
+  }
+  function bfPl(n, one, few, many) {
+    const a = Math.abs(n) % 100, b = a % 10;
+    return a > 10 && a < 20 ? many : b === 1 ? one : b >= 2 && b <= 4 ? few : many;
+  }
+  function bfTime(b) {
+    const m = /T(\d{2}:\d{2})/.exec(String((b && b.iso) || ''));
+    return m && m[1] !== '00:00' ? m[1] : '';
+  }
+  // Порядок вечера: после полуночи — в конце, без времени — последними
+  function bfSortKey(b) {
+    const t = bfTime(b);
+    if (!t) return 9999;
+    const h = Number(t.slice(0, 2));
+    return (h < DAY_SPLIT_HOUR ? h + 24 : h) * 60 + Number(t.slice(3, 5));
+  }
+  function bfPlace(b) {
+    if (/ВИП|VIP/i.test(b.kind || '')) return b.kind;
+    if (b.table) {
+      const p = tableParts(b.table);
+      return p ? (p.word ? p.num : `${p.zone ? p.zone + ' ' : 'Стол '}${p.num}`) : String(b.table);
+    }
+    return b.kind === 'Мероприятие' ? 'Мероприятие' : 'стол не назначен';
+  }
+  function bfLow(t) { t = String(t || ''); return t.charAt(0).toLowerCase() + t.slice(1); }
+  function bfCut(t, n) { t = String(t || '').trim(); return t.length > n ? t.slice(0, n) + '…' : t; }
+
+  // «Особый» гость: есть что учесть до его прихода
+  function bfFlagged(b) {
+    const g = b.guestCard;
+    if (!g) return false;
+    return hasNonGrata(g) || (g.tagsAllergy || []).length > 0 || g.vip || isVipTagList(g.tagsSpecial)
+      || (g.birthday && g.birthday.when === 'today') || (g.tagsSpecial || []).length > 0 || !!g.important;
+  }
+
+  // Задачи по гостям. aud — каким ролям это нужно; в режиме «Все» видны все
+  function bfBuildTasks(list) {
+    const out = [];
+    for (const b of list) {
+      if (b.arrival) continue; // гостя уже отметили (пришёл / не пришёл): готовить поздно
+      const g = b.guestCard;
+      const key = b.uid || `${b.iso}|${b.name}`;
+      const base = { time: bfTime(b), who: b.name || 'Гость', place: bfPlace(b) };
+      const add = (kind, level, aud, text) => out.push({ ...base, id: `${key}:${kind}`, level, aud, text });
+      if (b.status === 'pending') add('pending', 'normal', ['admin'], 'Ждёт подтверждения: подтвердить или позвонить гостю');
+      if (!b.table && b.kind === 'Стол') add('notable', 'normal', ['admin'], 'Стол не назначен');
+      if (b.roomNote) add('room', 'normal', ['admin'], bfCut(b.roomNote, 160));
+      if (b.eventName) add('event', 'normal', ['admin', 'floor', 'bar', 'kitchen', 'hookah'], `Мероприятие «${b.eventName}»`);
+      const cm = String(b.comment || '').trim();
+      if (cm) add('comment', 'normal', ['admin', 'floor', 'bar', 'hookah'], `Комментарий гостя: ${bfCut(cm, 140)}`);
+      if (!g) continue;
+      if (hasNonGrata(g)) add('ng', 'danger', ['admin', 'floor', 'bar', 'kitchen', 'hookah'], 'Нон-грата: не обслуживать, сразу позвать администратора');
+      if ((g.tagsAllergy || []).length) add('allergy', 'danger', ['admin', 'floor', 'bar', 'kitchen', 'hookah'], `Аллергия: ${g.tagsAllergy.join(', ')}. Предупредить кухню и бар`);
+      const ns = g.bookingStats && g.bookingStats.noShows;
+      if (ns > 0) add('noshow', ns >= 2 ? 'danger' : 'normal', ['admin'], `Не приходил на бронь ${ns} ${bfPl(ns, 'раз', 'раза', 'раз')}: подтвердить звонком`);
+      if (g.vip || isVipTagList(g.tagsSpecial)) add('vip', 'normal', ['admin', 'floor', 'bar', 'hookah'], 'VIP: встретить по имени, сообщить администратору');
+      if (g.birthday && g.birthday.when === 'today') add('bday', 'good', ['admin', 'floor', 'bar', 'kitchen'], 'День рождения: приготовить комплимент и поздравить');
+      const like = g.tastesLike || [], dis = g.tastesDislike || [];
+      if (like.length || dis.length) add('taste', 'normal', ['hookah'], `Вкусы: ${[like.length ? 'любит ' + like.join(', ') : '', dis.length ? 'не предлагать ' + dis.join(', ') : ''].filter(Boolean).join('; ')}`);
+      else if (!g.segment) add('newguest', 'normal', ['hookah', 'floor'], 'Новый гость: расспросить о вкусах и записать в карточку');
+      for (const t of g.tagsSpecial || []) {
+        if (isNonGrataName(t) || isVipName(t) || t === 'День рождения') continue; // про них сказано выше
+        const h = tagHintFor('special', t);
+        if (h) add('tag:' + t, 'normal', ['admin', 'floor'], `${t}: ${bfLow(h)}`);
+      }
+      if (g.important) add('imp', 'normal', ['admin', 'floor', 'bar', 'hookah'], `Важно: ${bfCut(g.important, 160)}`);
+    }
+    // сначала красное, внутри — по времени
+    const rank = { danger: 0, normal: 1, good: 1 };
+    const tk = t => (t.time ? bfSortKey({ iso: 'T' + t.time }) : 9999);
+    return out.map((t, i) => ({ t, i })).sort((a, b) => (rank[a.t.level] - rank[b.t.level]) || (tk(a.t) - tk(b.t)) || (a.i - b.i)).map(x => x.t);
+  }
+
+  function bfDoneKey(day) { return 'bf_done_' + day; }
+  function bfDoneSet(day) {
+    try { return new Set(JSON.parse(localStorage.getItem(bfDoneKey(day)) || '[]')); } catch { return new Set(); }
+  }
+  function bfToggle(id) {
+    const day = venueDayStr(bfOffset);
+    const set = bfDoneSet(day);
+    if (set.has(id)) set.delete(id); else set.add(id);
+    try {
+      localStorage.setItem(bfDoneKey(day), JSON.stringify([...set]));
+      const keep = new Set([bfDoneKey(venueDayStr(0)), bfDoneKey(venueDayStr(1))]); // старые дни не копим
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const k = localStorage.key(i);
+        if (k && k.indexOf('bf_done_') === 0 && !keep.has(k)) localStorage.removeItem(k);
+      }
+    } catch {}
+    renderBriefing();
+  }
+  function bfSetRole(id) { bfRole = id; renderBriefing(); }
+  function bfSetDay(off) { bfOffset = off; renderBriefing(); }
+
+  async function openBriefing() {
+    if (!bfRole) bfRole = bfRoleOf(currentJobRole);
+    bfOffset = 0;
+    showScreen('briefing');
+    await loadBriefing();
+  }
+
+  async function loadBriefing() {
+    const seq = ++bfSeq;
+    const el = document.getElementById('briefingContent');
+    if (!bfData) el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const [rb, rm] = await Promise.all([
+        fetch(`${PROXY_BASE}/api/staff/bookings?pin=${getPin()}`),
+        can('menu.view') ? fetch(`${PROXY_BASE}/api/staff/menu?pin=${getPin()}`).catch(() => null) : Promise.resolve(null)
+      ]);
+      if (seq !== bfSeq) return;
+      if (rb.status === 401) { showScreen('pin'); return; }
+      if (!rb.ok) throw new Error(await responseError(rb, 'Не удалось загрузить брони'));
+      const all = await rb.json();
+      if (!Array.isArray(all)) throw new Error('Не удалось загрузить брони');
+      let stop = null; // null — стоп-лист не загрузился или не положен: раздел не показываем
+      if (rm && rm.ok) {
+        try { const items = await rm.json(); if (Array.isArray(items)) stop = items.filter(i => i && i.available === false); } catch {}
+      }
+      if (seq !== bfSeq) return;
+      bfData = { all, stop };
+      renderBriefing();
+    } catch (e) {
+      if (seq !== bfSeq) return;
+      el.innerHTML = errorStateHtml(e.message || 'Не удалось загрузить брифинг', 'loadBriefing()');
+    }
+  }
+
+  function renderBriefing() {
+    const el = document.getElementById('briefingContent');
+    if (!el || !bfData) return;
+    const day = venueDayStr(bfOffset);
+    const list = bfData.all
+      .filter(b => b && !b.cancelled && !b.walkIn && bookingVenueDay(b.iso) === day)
+      .sort((a, b) => bfSortKey(a) - bfSortKey(b) || String(a.iso).localeCompare(String(b.iso)));
+    const role = bfRole || 'all';
+    const dayText = new Date(day + 'T12:00:00').toLocaleDateString('ru-RU', { weekday: 'short', day: 'numeric', month: 'long' });
+
+    const guests = list.reduce((s, b) => s + (parseInt(b.guests, 10) || 0), 0);
+    const vipRooms = new Set(list.filter(b => /ВИП|VIP/i.test(b.kind || '')).map(b => b.kind)).size;
+    const flagged = list.filter(bfFlagged).length;
+    const first = list.map(bfTime).filter(Boolean)[0];
+    const hero = `<div class="vn-hero" style="margin-top:14px">
+      <div class="vn-stat main"><div class="vn-stat-k">Гостей вечера</div><div class="vn-stat-v">${guests}</div><div class="vn-stat-s">${list.length} ${bfPl(list.length, 'бронь', 'брони', 'броней')}${first ? ` · с ${first}` : ''}</div></div>
+      <div class="vn-stat"><div class="vn-stat-k">ВИП</div><div class="vn-stat-v">${vipRooms}</div><div class="vn-stat-s">${bfPl(vipRooms, 'комната', 'комнаты', 'комнат')} в брони</div></div>
+      <div class="vn-stat"><div class="vn-stat-k">Особых</div><div class="vn-stat-v">${flagged}</div><div class="vn-stat-s">есть что учесть</div></div>
+    </div>`;
+
+    const bar = `<div class="bf-bar" role="group" aria-label="День">${[[0, 'Сегодня'], [1, 'Завтра']].map(([o, n]) => `<button type="button" class="bf-chip${bfOffset === o ? ' on' : ''}" aria-pressed="${bfOffset === o}" onclick="bfSetDay(${o})">${n}</button>`).join('')}</div>
+      <div class="bf-bar" role="group" aria-label="Для кого">${BF_ROLES.map(r => `<button type="button" class="bf-chip${role === r.id ? ' on' : ''}" aria-pressed="${role === r.id}" onclick="bfSetRole('${r.id}')">${r.name}</button>`).join('')}</div>`;
+
+    let body = '';
+    if (!list.length) {
+      body = `<div class="empty-state">${bfOffset ? 'На завтра' : 'На сегодня'} броней пока нет</div>`;
+    } else {
+      const done = bfDoneSet(day);
+      const tasks = bfBuildTasks(list).filter(t => role === 'all' || t.aud.indexOf(role) >= 0);
+      const taskHtml = t => {
+        const isDone = done.has(t.id);
+        return `<div class="bf-task${t.level === 'danger' ? ' danger' : ''}${isDone ? ' done' : ''}" role="checkbox" aria-checked="${isDone}" tabindex="0" onclick="bfToggle('${escJs(t.id)}')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();bfToggle('${escJs(t.id)}')}">
+          <span class="bf-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17.5 19 7"/></svg></span>
+          <div class="bf-body"><div class="bf-t">${escHtml(t.text)}</div><div class="bf-m">${t.time ? `<b>${t.time}</b> · ` : ''}${escHtml(t.who)} · ${escHtml(t.place)}</div></div>
+        </div>`;
+      };
+      const urgent = tasks.filter(t => t.level === 'danger'), prep = tasks.filter(t => t.level !== 'danger');
+      if (urgent.length) body += `<div class="bf-sec">Сначала важное <span class="n">${urgent.length}</span></div>${urgent.map(taskHtml).join('')}`;
+      if (prep.length) body += `<div class="bf-sec">Подготовить <span class="n">${prep.filter(t => done.has(t.id)).length} из ${prep.length}</span></div>${prep.map(taskHtml).join('')}`;
+      if (!tasks.length) body += `<div class="bf-sec">Подготовить</div><div class="bf-note">${role === 'all' ? 'По этим гостям особых задач нет' : 'Для этой роли особых задач нет'}. Весь список гостей ниже.</div>`;
+      else body += '<div class="bf-note" style="margin-top:4px">Отметки «сделано» запоминаются на этом устройстве до конца дня.</div>';
+
+      if (bfOffset === 0 && bfData.stop) {
+        const cats = BF_STOP_CATS[role];
+        const stop = cats ? bfData.stop.filter(i => cats.indexOf(i.category) >= 0) : bfData.stop;
+        body += `<div class="bf-sec">Стоп-лист${stop.length ? ` <span class="n">${stop.length}</span>` : ''}</div>`
+          + (stop.length ? `<div class="bf-stop">${stop.map(i => `<span>${escHtml(i.name)}</span>`).join('')}</div>` : '<div class="bf-note">В стопе ничего нет</div>');
+      }
+
+      body += `<div class="bf-sec">Гости вечера <span class="n">${list.length}</span></div>` + list.map(b => {
+        const g = b.guestCard;
+        const gone = b.arrival && (b.arrival.status === 'noshow' || b.arrival.leftAt);
+        const mark = b.arrival ? (b.arrival.status === 'arrived' ? ' · пришёл' : b.arrival.status === 'noshow' ? ' · не пришёл' : '') : (b.status === 'pending' ? ' · ждёт подтверждения' : '');
+        return `<div class="bf-g${g && g.cardId ? ' open' : ''}${gone ? ' gone' : ''}"${g && g.cardId ? ` onclick="openGuestCard('${escJs(g.cardId)}')"` : ''}>
+          <div class="bf-g-t">${bfTime(b) || '—'}</div>
+          <div class="bf-g-b"><div class="bf-g-n">${escHtml(b.name || 'Гость')} <small>· ${parseInt(b.guests, 10) || '?'} чел.${escHtml(mark)}</small></div>
+            <div class="bf-g-m">${escHtml(bfPlace(b))}${g && g.segment ? ' · ' + escHtml(g.segment) : g ? ' · новый гость' : ''}</div>
+            ${bookingFlagsHtml(b, 4)}</div>
+        </div>`;
+      }).join('');
+    }
+    el.innerHTML = `<div class="bf-day">${escHtml(capFirst(dayText))}</div>${hero}${bar}${body}`;
+  }
+
   let stoplistItems = [];
   let stoplistQuery = '';
   const STOPLIST_ORDER = ['Кальян', 'Еда', 'Напитки', 'Коктейли', 'Алкоголь'];
@@ -14132,8 +14564,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room'];
-  var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'segment-rules', 'season', 'review-rules', 'venue'];
+  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room'];
+  var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'segment-rules', 'season', 'review-rules', 'venue', 'briefing', 'forecast'];
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
 
