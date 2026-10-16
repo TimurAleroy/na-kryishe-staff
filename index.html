@@ -1994,6 +1994,11 @@
     .hz-wrap { background: transparent; border: none; padding: 0; }
     .hz-svg { display: block; width: 100%; height: auto; font-family: 'Inter', sans-serif; user-select: none; -webkit-user-select: none; }
     .hz-wall { fill: none; stroke: none; }
+    /* Балкон: полоса под залом; на компьютере справа от зала колонка ВИП-комнат (как на проекте) */
+    .hz-balc { fill: rgba(240,223,192,0.025); stroke: rgba(240,223,192,0.16); stroke-width: 1; stroke-dasharray: 5 4; }
+    .hz-plan.wide { display: grid; column-gap: 12px; align-items: start; }
+    .hz-plan.wide .hz-plan-l { grid-column: 1; min-width: 0; }
+    .hz-plan.wide .hz-zonehead { flex-wrap: wrap; column-gap: 8px; row-gap: 0; }
     .hz-window { stroke: rgba(125,180,230,0.55); stroke-width: 3; stroke-linecap: round; }
     .hz-note { fill: rgba(240,223,192,0.3); font-size: 7px; letter-spacing: 2.2px; font-family: 'Jost', sans-serif; }
     .hz-counter { fill: url(#hzWoodG); opacity: 0.55; stroke: rgba(184,115,51,0.7); stroke-width: 0.8; }
@@ -5490,10 +5495,11 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
   // Временная схема столов (до подключения iiko — тогда номера должны совпасть
   // с теми, что заведены там, чтобы это был один и тот же стол в обеих системах).
-  // Общий зал — по плану (схема HALL_ZONES ниже): столы 1–13 и «Бар».
+  // Общий зал — по плану (схема HALL_ZONES ниже): столы 1–13 и «Бар»; балкон — два столика на двоих.
   // Терраса и VIP — пока просто номера, схема террасы добавится позже.
   const TABLE_GROUPS = [
     { label: 'Общий зал', tables: [...Array.from({ length: 13 }, (_, i) => `Общий зал ${i + 1}`), 'Бар'] },
+    { label: 'Балкон', tables: ['Балкон 1', 'Балкон 2'] },
     { label: 'Терраса', tables: Array.from({ length: 7 }, (_, i) => `Терраса ${i + 1}`) },
     { label: 'ВИП-комнаты', tables: Array.from({ length: 3 }, (_, i) => `VIP ${i + 1}`) }
   ];
@@ -5743,6 +5749,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const t = String(label || '').trim();
     if (!t) return null;
     if (vipNo(t)) return { num: String(vipNo(t)), zone: 'ВИП-комната', word: false };
+    const balc = hallTableFor(t);
+    if (balc && balc.zone === 'balcony') return { num: balc.key.slice(-1), zone: 'Балкон', word: false }; // и «Б2», и «балкон №2» — один и тот же стол
     const m = /^(.*?)\s*(\d+)$/.exec(t);
     if (m) return { num: m[2], zone: m[1].trim() || 'Общий зал', word: false };
     const hall = hallTableFor(t);
@@ -5859,7 +5867,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const when = whenM ? `${escHtml(whenM[2])} <small>${escHtml(whenM[1])}</small>` : escHtml(shortDate.split(' · ')[0]);
       const atTxt = cancelledAtText(c);
       const tp = tableParts(c.table);
-      const where = tp ? (tp.zone === 'ВИП-комната' ? `ВИП ${tp.num}` : (tp.word ? tp.num : `стол ${tp.num}`)) : '';
+      const where = tp ? (tp.zone === 'ВИП-комната' ? `ВИП ${tp.num}` : (tp.zone === 'Балкон' ? `балкон ${tp.num}` : tp.word ? tp.num : `стол ${tp.num}`)) : '';
       const open = c.guestCard && c.guestCard.cardId && can('guests.view') ? ` onclick="openGuestCard('${escJs(c.guestCard.cardId)}')"` : '';
       return `<div class="bk-cx-row${open ? ' link' : ''}"${open}>
           <span class="bk-cx-time">${when}</span>
@@ -5951,9 +5959,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     decor: (W, S) => [
       HZ_DEFS,
       `<rect x="2" y="2" width="${W - 4}" height="388" rx="10" class="hz-wall"/>`,
-      // окно — только вдоль столов 2 и 3, под столом 1 глухая стена
-      `<line x1="${S(205) - 37}" y1="390" x2="${W - 4}" y2="390" class="hz-window"/>`,
-      `<text x="${(S(205) - 37 + W - 4) / 2}" y="385" text-anchor="middle" class="hz-note">ОКНА</text>`,
+      // окна на схеме не рисуем (синяя линия и подпись «ОКНА» убраны): и так понятно, где окно
       // барная стойка: столешница с кромкой
       '<rect x="8" y="116" width="22" height="188" rx="5" class="hz-counter"/>',
       '<rect x="11" y="119" width="16" height="182" rx="3" class="hz-counter-top"/>',
@@ -5987,7 +5993,22 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       { key: 'Бар', short: 'Бар', seats: 6, shape: 'bar', x: 36, ax: 'L', y: 120, w: 18, h: 180, ticks: '', label: [60, 214, 'start'], labelMax: 88 }
     ]
   }, {
+    // Балкон: полоса под залом (за окнами), два столика на двоих. Всегда открыт.
+    id: 'balcony',
+    title: 'Балкон',
+    baseWidth: 400,
+    height: 84,
+    decor: (W, S) => [
+      `<rect x="2" y="2" width="${W - 4}" height="80" rx="10" class="hz-balc"/>`,
+      '<text x="14" y="73" class="hz-bar-word">БАЛКОН</text>'
+    ],
+    tables: [
+      { key: 'Балкон 1', short: 'Б1', seats: 2, shape: 'round', x: 125, y: 50, r: 18, ticks: 'lr', label: [125, 22, 'middle'], labelMax: 130 },
+      { key: 'Балкон 2', short: 'Б2', seats: 2, shape: 'round', x: 275, y: 50, r: 18, ticks: 'lr', label: [275, 22, 'middle'], labelMax: 130 }
+    ]
+  }, {
     // ВИП-комнаты: три отдельные комнаты, каждая ведёт себя как стол (брони, «За столом», «Гость ушёл», накладки)
+    // Так они стоят на телефоне — рядом в одну строку под схемой. На компьютере — колонка справа, как на проекте (HALL_VIP_COL).
     id: 'vip',
     title: 'ВИП-комнаты',
     baseWidth: 400,
@@ -5995,6 +6016,19 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     decor: () => [],
     tables: [1, 2, 3].map(n => ({ key: `VIP ${n}`, short: `ВИП ${n}`, seats: 5, shape: 'room', x: 70 + (n - 1) * 130, y: 40, w: 112, h: 60, ticks: '', label: [70 + (n - 1) * 130, 92, 'middle'], labelMax: 116 }))
   }];
+  // ВИП-комнаты колонкой справа от зала — как на плане: ВИП 3 сверху (самая большая, 14,7 м²), ВИП 2 посередине, ВИП 1 снизу (по 11,5 м²).
+  // Высота колонки = высоте зала (394), ширина 128 — рисуется в том же масштабе, что и зал.
+  const HALL_VIP_COL = (() => {
+    const w = 108, cx = 64, gap = 12, top = 4;
+    const heights = { 3: 141, 2: 111, 1: 110 }; // пропорционально площади комнат
+    let y = top;
+    const tables = [3, 2, 1].map(n => {
+      const h = heights[n], cy = y + h / 2;
+      y += h + gap;
+      return { key: `VIP ${n}`, short: `ВИП ${n}`, seats: 5, shape: 'room', x: cx, y: cy, w, h, ticks: '', label: [cx, cy + 40, 'middle'], labelMax: 100 };
+    });
+    return { id: 'vip', title: 'ВИП-комнаты', baseWidth: 128, height: 394, decor: () => [], tables };
+  })();
 
   // Раскладка зоны под ширину контейнера (px): на телефоне — как есть (ширина 400),
   // на широком экране — вширь, чтобы схема заняла всю ширину и не стала слишком высокой.
@@ -6031,14 +6065,22 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   for (const t of HALL_TABLES) {
     HALL_TABLE_BY_NORM[normTableLabel(t.key)] = t;
     if (t.zone === 'main' && /^\d+$/.test(t.short)) HALL_TABLE_BY_NORM[t.short] = t;
+    if (t.zone === 'balcony') { const n = t.key.slice(-1); for (const a of [`б${n}`, `балкон ${n}`, `балкон №${n}`]) HALL_TABLE_BY_NORM[normTableLabel(a)] = t; }
     if (t.zone === 'vip') { const n = t.key.slice(-1); for (const a of [`вип ${n}`, `вип-комната ${n}`, `вип комната ${n}`]) HALL_TABLE_BY_NORM[a] = t; }
   }
   // Как назвать место на экране: «Стол 7», «Бар», «ВИП-комната 2»
   function hallPlaceName(tb, lower) {
     if (!tb) return '';
     if (tb.zone === 'vip') return `ВИП-комната ${tb.key.slice(-1)}`;
+    if (tb.zone === 'balcony') return `${lower ? 'балкон' : 'Балкон'} ${tb.key.slice(-1)}`;
     if (tb.shape === 'bar') return 'Бар';
     return `${lower ? 'стол' : 'Стол'} ${tb.short}`;
+  }
+  // «В комнате ВИП 2», «За столом 7», «За столом «Балкон 1»» — для вопроса «мест меньше, чем гостей»
+  function hallSeatsWhere(tb) {
+    if (tb.zone === 'vip') return `В комнате ${tb.short}`;
+    if (tb.zone === 'balcony') return `За столом «${hallPlaceName(tb)}»`;
+    return `За столом ${tb.short}`;
   }
   function hallTableFor(label) {
     return label ? HALL_TABLE_BY_NORM[normTableLabel(label)] || null : null;
@@ -6290,7 +6332,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const px = min => ((min - axisStart) / 60) * PX;
 
     // строки: общий зал (столы схемы) → другие зоны (терраса, VIP…) → без стола
-    const rows = HALL_TABLES.map(t => ({ key: t.key, title: t.short, seats: t.seats, items: [], section: t.zone === 'vip' ? 'ВИП-комнаты' : 'Общий зал', vip: t.zone === 'vip' }));
+    const rows = HALL_TABLES.map(t => ({ key: t.key, title: t.short, seats: t.seats, items: [], section: t.zone === 'vip' ? 'ВИП-комнаты' : t.zone === 'balcony' ? 'Балкон' : 'Общий зал', vip: t.zone === 'vip' }));
     const byKey = Object.fromEntries(rows.map(r => [r.key, r]));
     const others = {};
     const noTable = { key: '', title: 'Без стола', items: [], noTable: true, section: 'Без стола' };
@@ -6592,6 +6634,32 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       <text x="${x0 + 5}" y="${ly + 1}">${tspans}</text></g>`;
   }
 
+  // Раскладка всей схемы под ширину контейнера (px).
+  // Телефон/узкое окно: зал, под ним балкон, ниже ВИП-комнаты в одну строку.
+  // Широкий экран: слева зал и под ним балкон, справа колонка ВИП-комнат (3 сверху, 1 снизу) в том же масштабе.
+  const HALL_WIDE_MIN = 620, HALL_PLAN_GAP = 12, HALL_P_MAX = 1.5;
+  function layoutHallPlan(containerPx) {
+    const cw = Math.max(1, containerPx || 0);
+    const wide = cw >= HALL_WIDE_MIN;
+    const balcDef = HALL_ZONES.find(z => z.id === 'balcony');
+    if (!wide) {
+      const zone = layoutZone(HALL_ZONES[0], cw);
+      return { wide: false, zone, balcZone: layoutZone(balcDef, cw, zone.width), vipZone: layoutZone(HALL_ZONES.find(z => z.id === 'vip'), cw, zone.width), vipPx: 0 };
+    }
+    const vipU = HALL_VIP_COL.baseWidth;
+    // масштаб p (пикселей на единицу схемы): как можно крупнее, но зал не выше ~600px и не меньше базовой ширины 400
+    const p = Math.min(HALL_P_MAX, (cw - HALL_PLAN_GAP) / (400 + vipU));
+    const vipPx = Math.round(vipU * p);
+    const leftPx = cw - HALL_PLAN_GAP - vipPx;
+    const W = Math.max(400, Math.round(leftPx / p));
+    return {
+      wide: true, vipPx,
+      zone: layoutZone(HALL_ZONES[0], cw, W),
+      balcZone: layoutZone(balcDef, cw, W),
+      vipZone: layoutZone(HALL_VIP_COL, cw, vipU)
+    };
+  }
+
   function renderHallPlan() {
     const body = document.getElementById('bookingsViewBody');
     if (!body || bookingsView !== 'plan') return;
@@ -6599,13 +6667,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const t = hallTime;
     const items = hallDayBookings(hallDate);
     hallLastWidth = body.clientWidth; // перерисовка по resize — только если ширина реально поменялась
-    const zone = layoutZone(HALL_ZONES[0], body.clientWidth - 14);
-    const vipZone = layoutZone(HALL_ZONES[1], body.clientWidth - 14, zone.width);
+    const lay = layoutHallPlan(body.clientWidth - 14);
+    const { zone, balcZone, vipZone } = lay;
 
     const states = {};
-    for (const tb of [...zone.tables, ...vipZone.tables]) states[tb.key] = tableStateAt(tb.key, items, t);
+    for (const tb of [...zone.tables, ...balcZone.tables, ...vipZone.tables]) states[tb.key] = tableStateAt(tb.key, items, t);
     const busyOf = z => z.tables.filter(tb => ['busy', 'pending', 'conflict'].includes(states[tb.key].state)).length;
-    const busyCount = busyOf(zone);
 
     // шкала времени — по часам работы этого дня; бронь вне часов (записали раньше открытия) тоже попадает на шкалу
     const range = venueDayRange(hallDate);
@@ -6657,6 +6724,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       return out + '</svg>';
     };
     const svg = zoneSvg(zone);
+    const balcSvg = zoneSvg(balcZone);
     const vipSvg = zoneSvg(vipZone);
 
     const offPlan = items.filter(it => !it.table && it.b.table); // стол назначен, но не на этой схеме
@@ -6684,10 +6752,21 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       ${modes}
       ${waitHtml}
       ${seatBar}
-      <div class="hz-zonehead"><span>${escHtml(zone.title)}</span><span class="note">в ${hhmm(t)} занято ${busyCount} из ${zone.tables.length}</span></div>
-      <div class="hz-wrap">${svg}</div>
-      <div class="hz-zonehead"><span>${escHtml(vipZone.title)}</span><span class="note">в ${hhmm(t)} занято ${busyOf(vipZone)} из ${vipZone.tables.length}</span></div>
-      <div class="hz-wrap">${vipSvg}</div>
+      ${(() => {
+        const head = (z, short) => `<div class="hz-zonehead"><span>${escHtml(z.title)}</span><span class="note">${short ? '' : `в ${hhmm(t)} `}занято ${busyOf(z)} из ${z.tables.length}</span></div>`;
+        // компьютер: слева зал и под ним балкон, справа колонка ВИП-комнат — как на плане; телефон: зал → балкон → ВИП
+        if (lay.wide) return `<div class="hz-plan wide" style="grid-template-columns:minmax(0,${zone.width}fr) minmax(0,${vipZone.width}fr)">
+          ${head(zone)}${head(vipZone, true)}
+          <div class="hz-wrap">${svg}</div><div class="hz-wrap">${vipSvg}</div>
+          <div class="hz-plan-l">${head(balcZone)}</div>
+          <div class="hz-wrap hz-plan-l">${balcSvg}</div>
+        </div>`;
+        return `<div class="hz-plan">
+          ${head(zone)}<div class="hz-wrap">${svg}</div>
+          ${head(balcZone)}<div class="hz-wrap">${balcSvg}</div>
+          ${head(vipZone)}<div class="hz-wrap">${vipSvg}</div>
+        </div>`;
+      })()}
       <div class="hz-legend">
         <span class="lg-h">Цвет:</span>
         <span><i class="lg confirmed"></i>подтверждена</span>
@@ -7329,7 +7408,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const hall = hallTableFor(table);
       const guests = Number(b.guests) || 0;
       if (opts.checkSeats && hall && hall.seats && guests > hall.seats &&
-          !await askConfirm(`${hall.zone === 'vip' ? 'В комнате ' + hall.short : 'За столом ' + hall.short} ${hall.seats} ${ruPlural(hall.seats, 'место', 'места', 'мест')}, а гостей ${guests}.\n\nВсё равно посадить сюда?`, { ok: 'Посадить' })) return false;
+          !await askConfirm(`${hallSeatsWhere(hall)} ${hall.seats} ${ruPlural(hall.seats, 'место', 'места', 'мест')}, а гостей ${guests}.\n\nВсё равно посадить сюда?`, { ok: 'Посадить' })) return false;
     }
     const res = await fetch(`${PROXY_BASE}/api/staff/bookings/table?pin=${getPin()}`, {
       method: 'POST',
@@ -7461,7 +7540,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const guests = guestsEl ? guestsEl.value.trim() : '';
     if (guests && !(Number(guests) >= 1 && Number(guests) <= 50)) { notify('Число гостей — от 1 до 50'); return; }
     if (guests && tb.seats && Number(guests) > tb.seats && !force &&
-        !await askConfirm(`${tb.zone === 'vip' ? 'В комнате ' + tb.short : 'За столом ' + tb.short} ${tb.seats} ${ruPlural(tb.seats, 'место', 'места', 'мест')}, а гостей ${guests}.\n\nВсё равно посадить сюда?`, { ok: 'Посадить' })) return;
+        !await askConfirm(`${hallSeatsWhere(tb)} ${tb.seats} ${ruPlural(tb.seats, 'место', 'места', 'мест')}, а гостей ${guests}.\n\nВсё равно посадить сюда?`, { ok: 'Посадить' })) return;
     walkInBusy = true;
     const btn = document.getElementById('editOverlaySave');
     if (btn) { btn.disabled = true; btn.textContent = 'Сажаем…'; }
