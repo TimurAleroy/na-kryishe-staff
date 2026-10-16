@@ -1903,6 +1903,44 @@
     .shift-btn { flex: 0 0 auto; border: 1px solid rgba(184,115,51,0.5); background: var(--accent-dim); color: var(--accent); border-radius: 100px; padding: 10px 16px; font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap; }
     .shift-btn.primary { background: var(--accent); color: #140B00; border-color: var(--accent); font-weight: 500; }
     .shift-btn:disabled { opacity: 0.5; cursor: default; }
+    /* Чек-лист смены: прохождение при открытии и закрытии, редактор в «Сервисе» */
+    .ck-prog { margin: 14px 0 6px; }
+    .ck-prog-t { display: flex; justify-content: space-between; align-items: baseline; font-size: 12.5px; color: var(--text-sub); }
+    .ck-prog-t b { font-weight: 500; color: var(--text); font-size: 14px; }
+    .ck-meter { height: 5px; margin-top: 8px; border-radius: 100px; background: rgba(240,223,192,0.08); overflow: hidden; }
+    .ck-meter i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #D28C48, var(--accent)); transition: width .2s; }
+    .ck-meter.full i { background: #4ade80; }
+    .ck-row { display: flex; align-items: flex-start; gap: 12px; width: 100%; margin-top: 8px; padding: 14px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14.5px; line-height: 1.4; text-align: left; cursor: pointer; }
+    .ck-row:active { background: var(--bg-card-hover); }
+    .ck-row .ck-box { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 7px; border: 1.5px solid rgba(240,223,192,0.35); }
+    .ck-row .ck-box svg { opacity: 0; }
+    .ck-row .ck-tx { min-width: 0; overflow-wrap: anywhere; }
+    .ck-row.on { border-color: rgba(74,222,128,0.35); background: rgba(74,222,128,0.06); }
+    .ck-row.on .ck-box { background: #4ade80; border-color: #4ade80; }
+    .ck-row.on .ck-box svg { opacity: 1; }
+    .ck-go { margin-top: 16px; }
+    .ck-skip { display: block; width: 100%; margin-top: 6px; padding: 12px; border: none; background: none; color: var(--text-muted); font-family: 'Inter', sans-serif; font-size: 13px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+    .ck-skip:disabled { opacity: 0.45; cursor: default; }
+    .ck-line.warn { color: #E8A33D; }
+    .ck-erow { margin-bottom: 8px; padding: 13px 14px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); cursor: pointer; }
+    .ck-erow:active { background: var(--bg-card-hover); }
+    .ck-erow-t { font-size: 14.5px; color: var(--text); }
+    .ck-erow-c { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .ck-note { margin: 12px 0 4px; font-size: 12.5px; line-height: 1.5; color: var(--text-muted); }
+    .ckf-row { display: flex; align-items: center; gap: 4px; margin-top: 8px; }
+    .ckf-n { flex: 0 0 22px; font-size: 12px; color: var(--text-muted); text-align: center; }
+    .ckf-row .form-input { flex: 1; min-width: 0; padding: 10px 12px; font-size: 14px; }
+    .ckf-b { flex: 0 0 auto; width: 32px; height: 38px; border: none; border-radius: 10px; background: transparent; color: var(--text-sub); font-size: 16px; line-height: 1; cursor: pointer; }
+    .ckf-b:active { background: rgba(240,223,192,0.08); }
+    .ckf-b:disabled { opacity: 0.25; cursor: default; }
+    .ckf-add { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 10px; padding: 13px; border: 1px dashed rgba(184,115,51,0.4); border-radius: 12px; background: rgba(184,115,51,0.045); color: var(--accent); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .ckf-add:active { background: rgba(184,115,51,0.14); }
+    .ckf-tools { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .ckf-tool { padding: 8px 14px; border-radius: 100px; border: 1px solid rgba(184,115,51,0.4); background: transparent; color: var(--accent); font-family: 'Inter', sans-serif; font-size: 12.5px; cursor: pointer; }
+    select.ckf-tool { appearance: none; -webkit-appearance: none; max-width: 100%; }
+    .ckf-bulk { margin-top: 12px; }
+    .ckf-bulk textarea { height: 120px; padding: 12px 14px; font-size: 14px; }
+    .ckf-empty { margin-top: 10px; padding: 14px; border-radius: 14px; border: 1px dashed rgba(240,223,192,0.18); font-size: 13px; line-height: 1.5; color: var(--text-muted); }
     .sh-sum { font-size: 12.5px; color: var(--text-sub); margin: 12px 2px 10px; line-height: 1.5; }
     .sh-sum b { color: var(--text); font-weight: 500; }
     .sh-row { display: flex; align-items: center; gap: 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 11px 12px; margin-bottom: 6px; }
@@ -3791,6 +3829,52 @@
   </div>
 </div>
 
+<!-- ЧЕК-ЛИСТ ПРИ ОТКРЫТИИ / ЗАКРЫТИИ СМЕНЫ -->
+<div class="screen" id="screen-shift-check">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('home')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;" id="ckTitle">Открытие смены</h1><p id="ckSub"></p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div class="ck-prog"><div class="ck-prog-t" id="ckProgT"></div><div class="ck-meter" id="ckMeter"><i></i></div></div>
+    <div id="ckList"></div>
+    <button type="button" class="btn-cta ck-go" id="ckGo" onclick="shiftCheckGo()">Открыть смену</button>
+    <button type="button" class="ck-skip" id="ckSkip" onclick="shiftCheckSkip()">Не всё сделано — открыть так</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- ЧЕК-ЛИСТЫ: роли -->
+<div class="screen" id="screen-checklists-edit">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('service')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Чек-листы смены</h1><p>Открытие и закрытие по ролям</p></div>
+  </div>
+  <div style="padding:0 16px" id="checklistsEditContent"><div class="loading">Загружаю...</div><div style="height:16px"></div></div>
+</div>
+
+<!-- ЧЕК-ЛИСТЫ: список одной роли -->
+<div class="screen" id="screen-checklist-form">
+  <div class="header">
+    <div class="back-btn" onclick="ckfBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;" id="ckfTitle">Роль</h1><p>Чек-лист смены</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div class="chip-row" style="margin:14px 0 4px" id="ckfTabs"></div>
+    <div class="poster-note" id="ckfNote"></div>
+    <div id="ckfList"></div>
+    <div id="ckfExtra"></div>
+    <div class="tf-save"><button class="btn-cta" id="ckfSaveBtn" onclick="ckfSave()">Сохранить</button></div>
+    <div style="height:8px"></div>
+  </div>
+</div>
+
 <!-- GUEST CARD -->
 <div class="screen" id="screen-card">
   <div class="header">
@@ -3997,7 +4081,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function fallbackPerms(jobRole) {
     const base = ['guests.view', 'guests.create', 'guests.edit', 'tags.use', 'visits.record', 'guests.birthdays', 'guests.vip_list', 'shift.mark', 'schedule.view', 'menu.view', 'problems.view', 'problems.report', 'problems.work_own_role'];
     const own = { 'Бармен': ['menu.stoplist_drinks'], 'Повар': ['menu.stoplist_food'], 'КМ': ['menu.stoplist_hookah'] }[jobRole] || [];
-    const admin = ['shifts.review', 'briefing.view', 'stories.manage', 'tv.manage', 'standards.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage', 'messages.view'];
+    const admin = ['shifts.review', 'briefing.view', 'stories.manage', 'tv.manage', 'standards.manage', 'checklists.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage', 'messages.view'];
     const owner = ['surveys.manage', 'tags.manage', 'audit.view', 'settings.manage', 'founder_tasks.create', 'marketing.send', 'marketing.log', 'analytics.view', 'segments.view', 'feedback.view', 'guests.table', 'candidates.view'];
     if (jobRole === 'Основатель') return base.concat(admin, owner);
     if (jobRole === 'Администратор') return base.concat(admin);
@@ -4359,6 +4443,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // (сотрудники, отклики, отзывы, карточка гостя), даже открыв экран в обход кнопок.
   function wipeSessionData() {
     try { localStorage.removeItem('recent_guests'); } catch {}
+    try { Object.keys(localStorage).filter(k => k.startsWith('shiftcheck:')).forEach(k => localStorage.removeItem(k)); } catch {}
+    shiftCheck = { kind: 'open', items: [], on: new Set() };
     deskPanelsGen++; // ответы на запросы прошлого сотрудника, которые ещё в пути, в панели не попадут
     guestCardSeq++;
 
@@ -4464,6 +4550,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('stories.manage')) list.push({ group: G.content, icon: 'stories', short: 'сторис', title: 'Сторис', sub: 'Фото бара и ВИП-комнат', fn: 'openStoriesEdit()' });
     if (can('surveys.manage')) list.push({ group: G.content, icon: 'surveys', short: 'опросы', title: 'Опросы', sub: 'Фон, ретушь, тексты', fn: 'openSurveysEdit()' });
     if (can('tv.manage')) list.push({ group: G.content, icon: 'tv', short: 'тв-экраны', title: 'ТВ-экраны', sub: 'ВИП-комнаты и терраса: приветствие, фон, сообщения', fn: 'openTv()' });
+    if (can('checklists.manage')) list.push({ group: G.team, icon: 'checklists', short: 'чек-листы', title: 'Чек-листы', sub: 'Открытие и закрытие смены', fn: 'openChecklistsEdit()' });
     if (can('standards.manage')) list.push({ group: G.team, icon: 'standards', short: 'стандарты', title: 'Стандарты', sub: 'Правила сервиса, тесты, кто прочитал', fn: "openStandardsEdit('service')" });
     if (can('tags.manage')) list.push({ group: G.guests, icon: 'tags', short: 'теги', title: 'Теги', sub: 'Список, цвета, подсказки', fn: 'openTagsEdit()' });
     if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'Логины, роли и права', fn: 'openEmployees()' });
@@ -4595,6 +4682,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     // «Гости» → редкие разделы компактными строками (маркетинг, аналитика, сервис).
 
     icons.standards = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h11a3 3 0 013 3v15H8a3 3 0 01-3-3V3z"/><path d="M9 11l2 2 4-4"/><line x1="9" y1="17" x2="14" y2="17"/></svg>';
+    icons.checklists = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 13l2 2 4-4"/></svg>';
     icons.forecast = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20v-6M10 20V9M16 20v-9"/><path d="M3 7l5-3 4 2 5-4" stroke-dasharray="2 2"/><path d="M2 20h20"/></svg>';
     icons.briefing = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h9M4 12h9M4 18h5"/><path d="M16 13l2.2 2.2L22 10.5"/></svg>';
     icons.venue = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>';
@@ -12825,8 +12913,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     }
   }
 
-  // Чек-листов в приложении больше нет — стираем их отметки, оставшиеся на устройстве с прежних версий
-  try { Object.keys(localStorage).filter(k => k.startsWith('checklist:')).forEach(k => localStorage.removeItem(k)); } catch {}
+  // Отметки старых чек-листов (до 02.10) стираем; отметки нынешнего чек-листа смены держим только за сегодняшний вечер
+  try { const day = venueDayStr(); Object.keys(localStorage).filter(k => k.startsWith('checklist:') || (k.startsWith('shiftcheck:') && k.split(':')[1] !== day)).forEach(k => localStorage.removeItem(k)); } catch {}
 
   // ─── СМЕНА: «открыл» и «закрыл» ───
   // Сотрудник нажимает кнопку наверху главного экрана. Основатель и администратор на экране «Кто на смене»
@@ -12864,19 +12952,59 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     }
     renderShiftBar();
   }
-  async function shiftAction(kind) {
+  // Нажатие «Открыть смену» / «Закрыть смену»: сначала берём чек-лист своей роли. Есть пункты — экран с отметками,
+  // нет — действие сразу, как раньше. Сервер сам проверяет, что всё отмечено (или нажато «Не всё сделано»).
+  async function shiftStart(kind) {
     if (myShift.busy) return;
     myShift.busy = true; renderShiftBar();
+    let items = [];
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/shift/checklist?kind=${kind}&pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.ok) {
+        const d = await res.json().catch(() => ({}));
+        items = Array.isArray(d.items) ? d.items : [];
+      } else if (res.status !== 404) { // 404 — сервер ещё без чек-листов: работаем как раньше
+        notify(await responseError(res, 'Не удалось загрузить чек-лист — попробуйте ещё раз'));
+        return;
+      }
+    } catch {
+      notify('Нет связи — попробуйте ещё раз');
+      return;
+    } finally {
+      myShift.busy = false; renderShiftBar();
+    }
+    if (items.length) { openShiftCheck(kind, items); return; }
+    if (kind === 'close' && !await askConfirm('Закрыть смену? Время ухода запишется сейчас.', { ok: 'Закрыть смену' })) return;
+    return shiftAction(kind);
+  }
+  async function shiftAction(kind, extra) {
+    if (myShift.busy) return;
+    myShift.busy = true; renderShiftBar(); renderShiftCheckIfActive();
     try {
       const res = await fetch(`${PROXY_BASE}/api/staff/shift/${kind}?pin=${getPin()}`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pin: getPin() })
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pin: getPin(), ...(extra || {}) })
       });
       if (res.status === 401) { showScreen('pin'); return; }
-      if (res.status === 409) { myShift.open = null; myShift.loaded = true; notify(await responseError(res, 'Смена не открыта')); return; }
+      if (res.status === 409) {
+        const d = await res.json().catch(() => ({}));
+        if (d && typeof d.code === 'string' && d.code.startsWith('checklist_') && Array.isArray(d.items) && d.items.length) {
+          // список изменили или он не пройден: показываем актуальный, отметки по оставшимся пунктам сохраняются
+          openShiftCheck(kind, d.items, activeScreenName() === 'shift-check' && shiftCheck.kind === kind ? shiftCheck.on : null);
+          notify(d.error || 'Чек-лист обновили — проверьте пункты');
+          return;
+        }
+        myShift.open = null; myShift.loaded = true;
+        if (activeScreenName() === 'shift-check') showScreen('home');
+        notify((d && d.error) || 'Смена не открыта');
+        return;
+      }
       if (!res.ok) { notify(await responseError(res, kind === 'open' ? 'Смена не открылась — попробуйте ещё раз' : 'Смена не закрылась — попробуйте ещё раз')); return; }
       const d = await res.json().catch(() => ({}));
       myShift.open = d.open || null;
       myShift.loaded = true;
+      shiftCheckClear(kind);
+      if (activeScreenName() === 'shift-check') showScreen('home');
       showToast(kind === 'open' ? `Смена открыта${d.open ? ' · ' + d.open.opened : ''}` : `Смена закрыта${d.closed ? ' · ' + d.closed : ''}`);
       if (kind === 'close' && d.dayClose) showDayCloseNotice(d.dayClose);
     } catch {
@@ -12884,7 +13012,81 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     } finally {
       myShift.busy = false;
       renderShiftBar();
+      renderShiftCheckIfActive();
     }
+  }
+
+  // ── Экран чек-листа при открытии и закрытии смены ──
+  // Отметки хранятся на устройстве до конца вечера: перезагрузка окна их не стирает (на сервер уходят только при открытии/закрытии).
+  var shiftCheck = { kind: 'open', items: [], on: new Set() };
+  const CK_TICK = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0d1a10" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg>';
+  function shiftCheckKey(kind) { return `shiftcheck:${venueDayStr()}:${currentEmployeeName || ''}:${kind}`; }
+  function shiftCheckSave() { try { localStorage.setItem(shiftCheckKey(shiftCheck.kind), JSON.stringify([...shiftCheck.on])); } catch {} }
+  function shiftCheckClear(kind) { try { localStorage.removeItem(shiftCheckKey(kind)); } catch {} }
+  function shiftCheckLoad(kind, items) {
+    try {
+      const saved = JSON.parse(localStorage.getItem(shiftCheckKey(kind)) || '[]');
+      const ids = new Set(items.map(x => x.id));
+      return new Set((Array.isArray(saved) ? saved : []).filter(id => ids.has(id)));
+    } catch { return new Set(); }
+  }
+  function openShiftCheck(kind, items, keepOn) {
+    const ids = new Set(items.map(x => x.id));
+    shiftCheck.kind = kind;
+    shiftCheck.items = items;
+    shiftCheck.on = keepOn ? new Set([...keepOn].filter(id => ids.has(id))) : shiftCheckLoad(kind, items);
+    shiftCheckSave();
+    if (activeScreenName() !== 'shift-check') showScreen('shift-check');
+    renderShiftCheck();
+  }
+  function renderShiftCheckIfActive() { if (activeScreenName() === 'shift-check') renderShiftCheck(); }
+  function renderShiftCheck() {
+    const { kind, items, on } = shiftCheck;
+    const open = kind === 'open';
+    const done = items.filter(x => on.has(x.id)).length;
+    const all = items.length > 0 && done === items.length;
+    document.getElementById('ckTitle').textContent = open ? 'Открытие смены' : 'Закрытие смены';
+    document.getElementById('ckSub').textContent = `${currentJobRole || 'Сотрудник'} · ${open ? 'отметьте, что готово' : 'отметьте, что сделано'}`;
+    document.getElementById('ckProgT').innerHTML = `<span>Отмечено</span><b>${done} из ${items.length}</b>`;
+    const meter = document.getElementById('ckMeter');
+    meter.className = 'ck-meter' + (all ? ' full' : '');
+    meter.firstElementChild.style.width = (items.length ? Math.round(done / items.length * 100) : 0) + '%';
+    document.getElementById('ckList').innerHTML = items.map((x, i) =>
+      `<button type="button" class="ck-row${on.has(x.id) ? ' on' : ''}" role="checkbox" aria-checked="${on.has(x.id)}" onclick="shiftCheckToggle(${i})"><span class="ck-box">${CK_TICK}</span><span class="ck-tx">${escHtml(x.text)}</span></button>`).join('');
+    const go = document.getElementById('ckGo');
+    go.textContent = open ? 'Открыть смену' : 'Закрыть смену';
+    go.disabled = !all || myShift.busy;
+    const skip = document.getElementById('ckSkip');
+    skip.style.display = all ? 'none' : '';
+    skip.textContent = open ? 'Не всё сделано — открыть так' : 'Не всё сделано — закрыть так';
+    skip.disabled = !!myShift.busy;
+  }
+  function shiftCheckToggle(i) {
+    const it = shiftCheck.items[i];
+    if (!it || myShift.busy) return;
+    if (shiftCheck.on.has(it.id)) shiftCheck.on.delete(it.id); else shiftCheck.on.add(it.id);
+    shiftCheckSave();
+    renderShiftCheck();
+  }
+  function shiftCheckPayload(skip) {
+    return {
+      seen: shiftCheck.items.map(x => x.id),
+      checked: shiftCheck.items.filter(x => shiftCheck.on.has(x.id)).map(x => x.id),
+      ...(skip ? { skip: true } : {})
+    };
+  }
+  function shiftCheckGo() {
+    if (!shiftCheck.items.length || shiftCheck.items.some(x => !shiftCheck.on.has(x.id))) return;
+    return shiftAction(shiftCheck.kind, shiftCheckPayload(false));
+  }
+  async function shiftCheckSkip() {
+    if (myShift.busy) return;
+    const left = shiftCheck.items.filter(x => !shiftCheck.on.has(x.id));
+    if (!left.length) return;
+    const open = shiftCheck.kind === 'open';
+    const ok = await askConfirm(`${open ? 'Открыть' : 'Закрыть'} смену, не всё отметив?\n\nНе отмечено: ${left.length}. Администратор увидит это на экране «Кто на смене».`, { ok: open ? 'Открыть так' : 'Закрыть так', cancel: 'Вернуться' });
+    if (!ok) return;
+    return shiftAction(shiftCheck.kind, shiftCheckPayload(true));
   }
   // После закрытия смены: что за этот вечер осталось без отметки (сервер присылает список, только если можно смотреть брони)
   async function showDayCloseNotice(dc) {
@@ -12899,11 +13101,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const ok = await askConfirm(`Перед уходом: не всё отмечено\n\n${parts.join('\n\n')}`, { ok: can('bookings.view') ? 'Открыть брони' : 'Понятно', cancel: 'Позже' });
     if (ok && can('bookings.view')) openBookings();
   }
-  function shiftOpen() { return shiftAction('open'); }
-  async function shiftClose() {
-    if (!await askConfirm('Закрыть смену? Время ухода запишется сейчас.', { ok: 'Закрыть смену' })) return;
-    return shiftAction('close');
-  }
+  function shiftOpen() { return shiftStart('open'); }
+  function shiftClose() { return shiftStart('close'); }
 
   // Экран для основателя и администратора
   var sh = { days: [], sel: 0, seq: 0 };
@@ -12957,8 +13156,10 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       if (x.status === 'open') state = `<span class="sv-chip ok">на смене</span>`;
       else if (x.status === 'closed') state = `<div class="ls-side">закрыл ${escHtml(x.closed)}<small>${escHtml(shDuration(x.minutes))}</small></div>`;
       else state = `<span class="sv-chip warn">не закрыта</span>`;
+      // как прошёл чек-лист: «Открытие: 3 из 3» или «Открытие: 1 из 3 · не отмечено: …» (жёлтым)
+      const ck = (c, word) => !c ? '' : `<div class="ls-sub ck-line${c.done < c.total ? ' warn' : ''}">${escHtml(`${word}: ${c.done} из ${c.total}${c.missed && c.missed.length ? ' · не отмечено: ' + c.missed.join(', ') : ''}`)}</div>`;
       return `<div class="ls-row static"><div class="ls-ava">${escHtml(dupInitials(x.employee))}${x.status === 'open' ? '<i></i>' : ''}</div>`
-        + `<div class="ls-body"><div class="ls-name">${escHtml(x.employee)}</div><div class="ls-sub">${escHtml(x.role)} · с ${escHtml(x.opened)}</div></div>${state}</div>`;
+        + `<div class="ls-body"><div class="ls-name">${escHtml(x.employee)}</div><div class="ls-sub">${escHtml(x.role)} · с ${escHtml(x.opened)}</div>${ck(x.openCheck, 'Открытие')}${ck(x.closeCheck, 'Закрытие')}</div>${state}</div>`;
     };
     list.innerHTML = hero + `<div class="ls-card">${day.shifts.map(row).join('')}</div>`;
   }
@@ -12967,6 +13168,195 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const scr = document.getElementById('screen-shifts');
     if (scr && scr.classList.contains('active') && !document.hidden) loadShifts(true);
   }, 60000);
+
+  // ─── ЧЕК-ЛИСТЫ СМЕНЫ: РЕДАКТОР («Сервис» → «Чек-листы») ───
+  // У каждой роли два списка: «Открытие» (проходят при нажатии «Открыть смену») и «Закрытие». Пустой список — у роли чек-листа нет.
+  var ckAdmin = null;
+  var ckf = { role: null, tab: 'open', open: [], close: [], dirty: false, busy: false, bulk: false };
+  // Примеры для начала: подставляются в список по кнопке и не сохраняются, пока их не сохранят вручную
+  const CK_EXAMPLES = {
+    'Администратор': {
+      open: ['Кальяны заправлены', 'Музыка включена', 'Барная стойка готова', 'Заказ угля сделан', 'Столы протёрты'],
+      close: ['Касса посчитана', 'Кальяны почищены', 'Уборка сделана', 'Свет и техника выключены', 'Двери закрыты']
+    },
+    'КМ': { open: ['Кальяны заправлены', 'Заказ угля сделан', 'Табаки проверены, стоп-лист обновлён'], close: ['Кальяны почищены', 'Уголь потушен', 'Стоп-лист по табакам обновлён'] },
+    'Бармен': { open: ['Барная стойка готова', 'Стоп-лист по напиткам проверен'], close: ['Бар убран', 'Стоп-лист по напиткам обновлён'] },
+    'Официант': { open: ['Столы протёрты', 'Музыка включена'], close: ['Зал убран', 'Свет и техника выключены'] },
+    'Повар': { open: ['Кухня готова', 'Стоп-лист по кухне проверен'], close: ['Кухня убрана', 'Стоп-лист по кухне обновлён'] }
+  };
+  const CK_KIND = { open: 'Открытие', close: 'Закрытие' };
+  const ckCount = (list) => list.filter(x => String(x.text).trim()).length;
+
+  function openChecklistsEdit() {
+    showScreen('checklists-edit');
+    loadChecklistsAdmin();
+  }
+  async function loadChecklistsAdmin(silent) {
+    const el = document.getElementById('checklistsEditContent');
+    if (!silent) el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/checklists?pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить чек-листы'));
+      const d = await res.json();
+      if (!d || !Array.isArray(d.roles)) throw new Error('Не удалось загрузить чек-листы');
+      ckAdmin = d;
+      renderChecklistsEdit();
+    } catch (e) {
+      if (!silent) el.innerHTML = errorStateHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером', 'loadChecklistsAdmin()');
+    }
+  }
+  function renderChecklistsEdit() {
+    const el = document.getElementById('checklistsEditContent');
+    if (!el || !ckAdmin) return;
+    const rows = ckAdmin.roles.map(r => {
+      const chip = (kind) => r[kind].length
+        ? `<span class="sd-chip ok">${CK_KIND[kind]} · ${r[kind].length}</span>`
+        : `<span class="sd-chip draft">${CK_KIND[kind]} · нет</span>`;
+      return `<div class="ck-erow" role="button" tabindex="0" onclick="openChecklistForm('${escJs(r.key)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openChecklistForm('${escJs(r.key)}')}">
+        <div class="ck-erow-t">${escHtml(r.name)}</div>
+        <div class="ck-erow-c">${chip('open')}${chip('close')}</div>
+      </div>`;
+    }).join('');
+    el.innerHTML = `<div class="ck-note">Сотрудник нажимает «Открыть смену» — и проходит список своей роли, потом смена открывается. То же при закрытии. Если у роли списка нет, смена открывается одной кнопкой. Работать в приложении можно и без открытой смены.</div>`
+      + `<div class="sd-cat">Роли</div>` + (rows || '<div class="empty-state">Ролей нет</div>') + '<div style="height:16px"></div>';
+  }
+
+  function openChecklistForm(key) {
+    const r = ckAdmin && ckAdmin.roles.find(x => x.key === key);
+    if (!r) { loadChecklistsAdmin(true); return; }
+    ckf = {
+      role: { key: r.key, name: r.name },
+      tab: ckf.tab === 'close' ? 'close' : 'open',
+      open: r.open.map(x => ({ id: x.id, text: x.text })),
+      close: r.close.map(x => ({ id: x.id, text: x.text })),
+      dirty: false, busy: false, bulk: false
+    };
+    showScreen('checklist-form');
+    document.getElementById('ckfTitle').textContent = r.name;
+    ckfRender();
+  }
+  async function ckfBack() {
+    if (ckf.dirty && !await askConfirm('Выйти без сохранения?\n\nИзменения в чек-листе пропадут.', { ok: 'Выйти', cancel: 'Остаться', danger: true })) return;
+    ckf.dirty = false;
+    showScreen('checklists-edit');
+    renderChecklistsEdit();
+  }
+  function ckfTab(kind) { ckf.tab = kind === 'close' ? 'close' : 'open'; ckf.bulk = false; ckfRender(); }
+  function ckfRender() {
+    const list = ckf[ckf.tab];
+    document.getElementById('ckfTabs').innerHTML = ['open', 'close'].map(k =>
+      `<div class="chip${ckf.tab === k ? ' selected' : ''}" role="button" tabindex="0" onclick="ckfTab('${k}')">${CK_KIND[k]}${ckCount(ckf[k]) ? ' · ' + ckCount(ckf[k]) : ''}</div>`).join('');
+    document.getElementById('ckfNote').textContent = ckf.tab === 'open'
+      ? 'Это пройдёт сотрудник перед тем, как смена откроется.'
+      : 'Это пройдёт сотрудник перед тем, как смена закроется.';
+    document.getElementById('ckfList').innerHTML = list.map((x, i) =>
+      `<div class="ckf-row"><span class="ckf-n">${i + 1}</span>`
+      + `<input class="form-input" type="text" maxlength="160" autocomplete="off" value="${escHtml(x.text)}" placeholder="Например, Столы протёрты" aria-label="Пункт ${i + 1}" oninput="ckfInput(${i},this.value)" onkeydown="ckfKey(event,${i})">`
+      + `<button type="button" class="ckf-b" aria-label="Выше" ${i === 0 ? 'disabled' : ''} onclick="ckfMove(${i},-1)">↑</button>`
+      + `<button type="button" class="ckf-b" aria-label="Ниже" ${i === list.length - 1 ? 'disabled' : ''} onclick="ckfMove(${i},1)">↓</button>`
+      + `<button type="button" class="ckf-b" aria-label="Удалить пункт" onclick="ckfDel(${i})">×</button></div>`).join('');
+    const others = ckAdmin ? ckAdmin.roles.filter(r => r.key !== ckf.role.key && r[ckf.tab].length) : [];
+    const ex = CK_EXAMPLES[ckf.role.name];
+    let extra = '';
+    if (!list.length) {
+      extra += `<div class="ckf-empty">Список пока пуст: у этой роли ${ckf.tab === 'open' ? 'смена открывается' : 'смена закрывается'} одной кнопкой. Добавьте пункты — и сотрудники будут проходить их каждый раз.</div>`;
+    }
+    if (list.length < 30) extra += `<button type="button" class="ckf-add" onclick="ckfAdd()">+ Добавить пункт</button>`;
+    let tools = '';
+    if (list.length < 30) tools += `<button type="button" class="ckf-tool" onclick="ckfBulkToggle()">${ckf.bulk ? 'Скрыть' : 'Вставить списком'}</button>`;
+    if (!list.length && ex && ex[ckf.tab]) tools += `<button type="button" class="ckf-tool" onclick="ckfExample()">Взять пример</button>`;
+    if (others.length) tools += `<select class="ckf-tool" aria-label="Скопировать из другой роли" onchange="ckfCopy(this.value);this.value=''"><option value="">Скопировать из роли…</option>${others.map(r => `<option value="${escHtml(r.key)}">${escHtml(r.name)} · ${r[ckf.tab].length}</option>`).join('')}</select>`;
+    if (tools) extra += `<div class="ckf-tools">${tools}</div>`;
+    if (ckf.bulk) extra += `<div class="ckf-bulk"><textarea class="form-input" id="ckfBulkText" placeholder="Каждый пункт с новой строки. Можно вставить из заметок: маркеры и номера уберутся сами."></textarea><button type="button" class="btn-primary btn-full" onclick="ckfBulkAdd()">Добавить в список</button></div>`;
+    document.getElementById('ckfExtra').innerHTML = extra;
+  }
+  function ckfInput(i, v) { const it = ckf[ckf.tab][i]; if (it) { it.text = v; ckf.dirty = true; } }
+  function ckfKey(e, i) {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    if (ckf[ckf.tab].length < 30) ckfAdd(i + 1);
+  }
+  function ckfAdd(at) {
+    const list = ckf[ckf.tab];
+    if (list.length >= 30) return;
+    const pos = typeof at === 'number' ? at : list.length;
+    list.splice(pos, 0, { id: null, text: '' });
+    ckf.dirty = true;
+    ckfRender();
+    const inp = document.querySelectorAll('#ckfList .form-input')[pos];
+    if (inp) inp.focus();
+  }
+  function ckfDel(i) { ckf[ckf.tab].splice(i, 1); ckf.dirty = true; ckfRender(); }
+  function ckfMove(i, d) {
+    const list = ckf[ckf.tab], j = i + d;
+    if (j < 0 || j >= list.length) return;
+    [list[i], list[j]] = [list[j], list[i]];
+    ckf.dirty = true;
+    ckfRender();
+  }
+  function ckfBulkToggle() {
+    ckf.bulk = !ckf.bulk;
+    ckfRender();
+    if (ckf.bulk) { const t = document.getElementById('ckfBulkText'); if (t) t.focus(); }
+  }
+  function ckfBulkAdd() {
+    const t = document.getElementById('ckfBulkText');
+    const lines = String(t ? t.value : '').split(/\r?\n/).map(x => x.replace(/^\s*(?:[-–—•*·▪●]+|\d+[.)])\s*/, '').trim()).filter(Boolean);
+    if (!lines.length) { notify('Впишите пункты: каждый с новой строки'); return; }
+    const list = ckf[ckf.tab];
+    const room = 30 - list.length;
+    lines.slice(0, room).forEach(x => list.push({ id: null, text: x.slice(0, 160) }));
+    if (lines.length > room) notify(`Добавлено ${room}: в списке не больше 30 пунктов`);
+    ckf.dirty = true;
+    ckf.bulk = false;
+    ckfRender();
+  }
+  function ckfExample() {
+    const ex = CK_EXAMPLES[ckf.role.name];
+    if (!ex || !ex[ckf.tab]) return;
+    ckf[ckf.tab] = ex[ckf.tab].map(text => ({ id: null, text }));
+    ckf.dirty = true;
+    ckfRender();
+    notify('Пример подставлен. Поправьте под ваш бар и нажмите «Сохранить»', 'ok');
+  }
+  async function ckfCopy(key) {
+    if (!key) return;
+    const src = ckAdmin && ckAdmin.roles.find(r => r.key === key);
+    if (!src || !src[ckf.tab].length) return;
+    if (ckCount(ckf[ckf.tab]) && !await askConfirm(`Заменить список «${CK_KIND[ckf.tab]}» пунктами роли «${src.name}»?\n\nТекущие пункты пропадут (пока не сохранено — можно выйти без сохранения).`, { ok: 'Заменить' })) return;
+    ckf[ckf.tab] = src[ckf.tab].map(x => ({ id: null, text: x.text }));
+    ckf.dirty = true;
+    ckfRender();
+  }
+  async function ckfSave() {
+    if (ckf.busy || !ckf.role) return;
+    const body = {};
+    for (const k of ['open', 'close']) body[k] = ckf[k].map(x => ({ id: x.id, text: String(x.text).trim() })).filter(x => x.text);
+    const long = [...body.open, ...body.close].find(x => x.text.length > 160);
+    if (long) { notify('Один из пунктов длиннее 160 знаков — сократите'); return; }
+    const btn = document.getElementById('ckfSaveBtn');
+    ckf.busy = true; btn.disabled = true; const label = btn.textContent; btn.textContent = 'Сохраняем...';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/checklists/${encodeURIComponent(ckf.role.key)}?pin=${getPin()}`, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+      });
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (!res.ok) { notify(await responseError(res, 'Чек-лист не сохранился — попробуйте ещё раз')); return; }
+      const saved = await res.json().catch(() => ({}));
+      if (saved && saved.role && ckAdmin) { const at = ckAdmin.roles.findIndex(r => r.key === saved.role.key); if (at >= 0) ckAdmin.roles[at] = saved.role; }
+      ckf.dirty = false;
+      showSuccess('Чек-лист сохранён', `${ckf.role.name}: открытие — ${body.open.length}, закрытие — ${body.close.length}`);
+      showScreen('checklists-edit');
+      renderChecklistsEdit();
+      loadChecklistsAdmin(true);
+    } catch {
+      notify('Нет связи — чек-лист не сохранился, попробуйте ещё раз');
+    } finally {
+      ckf.busy = false; btn.disabled = false; btn.textContent = label;
+    }
+  }
 
   // ─── ОБЩЕЕ ДЛЯ РАССЫЛОК / АНАЛИТИКИ / ОБРАТНОЙ СВЯЗИ ──
 
@@ -15203,8 +15593,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room'];
-  var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'segment-rules', 'season', 'review-rules', 'venue', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress'];
+  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room'];
+  var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'segment-rules', 'season', 'review-rules', 'venue', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form'];
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
 
