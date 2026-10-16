@@ -3997,7 +3997,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function fallbackPerms(jobRole) {
     const base = ['guests.view', 'guests.create', 'guests.edit', 'tags.use', 'visits.record', 'guests.birthdays', 'guests.vip_list', 'shift.mark', 'schedule.view', 'menu.view', 'problems.view', 'problems.report', 'problems.work_own_role'];
     const own = { 'Бармен': ['menu.stoplist_drinks'], 'Повар': ['menu.stoplist_food'], 'КМ': ['menu.stoplist_hookah'] }[jobRole] || [];
-    const admin = ['shifts.review', 'stories.manage', 'tv.manage', 'standards.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage', 'messages.view'];
+    const admin = ['shifts.review', 'briefing.view', 'stories.manage', 'tv.manage', 'standards.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage', 'messages.view'];
     const owner = ['surveys.manage', 'tags.manage', 'audit.view', 'settings.manage', 'founder_tasks.create', 'marketing.send', 'marketing.log', 'analytics.view', 'segments.view', 'feedback.view', 'guests.table', 'candidates.view'];
     if (jobRole === 'Основатель') return base.concat(admin, owner);
     if (jobRole === 'Администратор') return base.concat(admin);
@@ -4601,8 +4601,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     homeIcons = icons;
     // Что показывать — решают права сотрудника (основатель выдаёт их галочками на экране «Сотрудники»)
     let shiftCards = '';
-    // Брифинг: тем, кто видит брони — кто придёт и что подготовить
-    if (can('bookings.view')) shiftCards += qcard(icons.briefing, 'Брифинг', 'Кто придёт · что готовить', "openBriefing()");
+    // Брифинг: тем, у кого есть право «Брифинг смены» (и «Брони») — кто придёт и что подготовить
+    if (can('briefing.view') && can('bookings.view')) shiftCards += qcard(icons.briefing, 'Брифинг', 'Кто придёт · что готовить', "openBriefing()");
     if (can('shifts.review')) shiftCards += qcard(icons.shifts, 'Кто на смене', 'Открыл · закрыл', "openShifts()");
     if (can('schedule.view')) shiftCards += qcard(icons.schedule, 'График', 'Кто когда работает', "openSchedule()");
     // Стоп-лист: официант принимает заказы и должен знать, чего нет
