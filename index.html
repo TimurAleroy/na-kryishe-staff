@@ -6382,6 +6382,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     // Терраса: отдельная схема (вкладка «Терраса» рядом с «Общий зал»). План ≈ 14,35 × 9,64 м: вход — в нижней стене,
     // сверху парапет. Семь столов, номера Т1–Т7 по часовой стрелке от левого верхнего угла:
     // Т1 и Т6 — на 6 человек (слева), остальные — на 4; всего 32 места. В брони стол записан как «Терраса 1…7».
+    // Т1–Т4 стоят в один ровный ряд вдоль верхней стены (одна высота, шаг между центрами одинаковый), Т4–Т5 — в один ровный столбец справа (угол «Г»).
     // Рисуется без растяжения (ширина 400): пропорции плана важнее, на компьютере её просто ограничивает CSS.
     id: 'terrace',
     title: 'Терраса',
@@ -6397,10 +6398,10 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       '<text x="388" y="259" text-anchor="end" class="hz-bar-word">ТЕРРАСА</text>'
     ],
     tables: [
-      { key: 'Терраса 1', short: 'Т1', seats: 6, shape: 'rect', x: 52, y: 52, w: 66, h: 42, ticks: 't3b3', label: [14, 97, 'start'], labelMax: 100 },
-      { key: 'Терраса 2', short: 'Т2', seats: 4, shape: 'rect', x: 168, y: 52, w: 44, h: 42, ticks: 't2b2', label: [168, 97, 'middle'], labelMax: 100 },
-      { key: 'Терраса 3', short: 'Т3', seats: 4, shape: 'rect', x: 287, y: 56, w: 44, h: 42, ticks: 't2b2', label: [287, 101, 'middle'], labelMax: 100 },
-      { key: 'Терраса 4', short: 'Т4', seats: 4, shape: 'rect', x: 366, y: 70, w: 44, h: 42, ticks: 't2b2', label: [394, 33, 'end'], labelMax: 80 },
+      { key: 'Терраса 1', short: 'Т1', seats: 6, shape: 'rect', x: 52, y: 54, w: 66, h: 42, ticks: 't3b3', label: [14, 98, 'start'], labelMax: 90 },
+      { key: 'Терраса 2', short: 'Т2', seats: 4, shape: 'rect', x: 157, y: 54, w: 44, h: 42, ticks: 't2b2', label: [157, 98, 'middle'], labelMax: 90 },
+      { key: 'Терраса 3', short: 'Т3', seats: 4, shape: 'rect', x: 261, y: 54, w: 44, h: 42, ticks: 't2b2', label: [261, 98, 'middle'], labelMax: 90 },
+      { key: 'Терраса 4', short: 'Т4', seats: 4, shape: 'rect', x: 366, y: 54, w: 44, h: 42, ticks: 't2b2', label: [394, 98, 'end'], labelMax: 84 },
       { key: 'Терраса 5', short: 'Т5', seats: 4, shape: 'rect', x: 366, y: 183, w: 44, h: 42, ticks: 't2b2', label: [394, 226, 'end'], labelMax: 100 },
       { key: 'Терраса 6', short: 'Т6', seats: 6, shape: 'rect', x: 52, y: 207, w: 66, h: 42, ticks: 't3b3', label: [14, 250, 'start'], labelMax: 100 },
       { key: 'Терраса 7', short: 'Т7', seats: 4, shape: 'rect', x: 192, y: 166, w: 44, h: 42, ticks: 't2b2', label: [192, 209, 'middle'], labelMax: 100 }
