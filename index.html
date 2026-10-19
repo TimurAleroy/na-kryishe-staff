@@ -12876,19 +12876,31 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     el.innerHTML = hero + `<div class="gt2-card">${head}${body}</div>`;
   }
 
-  // Библиотека для .xlsx грузится только по клику на кнопку — мобильный
-  // пользователь (у него и кнопки-то нет) никогда её не скачивает.
+  // Библиотеки для .xlsx и .pptx грузятся только по клику на кнопку — мобильный
+  // пользователь (у него и кнопки-то нет) никогда их не скачивает.
+  // Адреса пробуем по очереди: сначала копия, лежащая рядом с приложением (папка vendor — не зависит от сторонних сайтов:
+  // у части провайдеров cdnjs открывается плохо или совсем не открывается), потом два внешних адреса. Каждому — не дольше 12 секунд.
+  function loadScriptChain(urls, isReady) {
+    return urls.reduce((chain, url) => chain.catch(() => new Promise((resolve, reject) => {
+      if (isReady()) return resolve();
+      const s = document.createElement('script');
+      const timer = setTimeout(() => { s.remove(); reject(new Error('timeout')); }, 12000);
+      s.onload = () => { clearTimeout(timer); isReady() ? resolve() : (s.remove(), reject(new Error('empty'))); };
+      s.onerror = () => { clearTimeout(timer); s.remove(); reject(new Error('load')); };
+      s.src = url;
+      document.head.appendChild(s);
+    })), Promise.reject(new Error('start')));
+  }
   let xlsxLibPromise = null;
   function ensureXlsxLib() {
     if (window.XLSX) return Promise.resolve();
     if (xlsxLibPromise) return xlsxLibPromise;
-    xlsxLibPromise = new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-      script.onload = () => window.XLSX ? resolve() : reject(new Error('Модуль Excel не загрузился'));
-      script.onerror = () => { script.remove(); reject(new Error('Не удалось загрузить модуль Excel. Проверьте интернет')); };
-      document.head.appendChild(script);
-    }).catch(e => { xlsxLibPromise = null; throw e; }); // после сбоя сети следующая попытка снова пробует загрузить, а не ждёт перезагрузки страницы
+    xlsxLibPromise = loadScriptChain([
+      'vendor/xlsx.full.min.js',
+      'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'
+    ], () => !!window.XLSX).catch(() => { throw new Error('Не удалось загрузить модуль Excel. Проверьте интернет'); })
+      .catch(e => { xlsxLibPromise = null; throw e; }); // после сбоя сети следующая попытка снова пробует загрузить, а не ждёт перезагрузки страницы
     return xlsxLibPromise;
   }
 
@@ -14360,13 +14372,11 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   function anLoadPptx() {
     if (window.PptxGenJS) return Promise.resolve();
-    return new Promise((resolve, reject) => {
-      const s = document.createElement('script');
-      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundle.js';
-      s.onload = () => window.PptxGenJS ? resolve() : reject(new Error('Модуль презентаций не загрузился'));
-      s.onerror = () => { s.remove(); reject(new Error('Не удалось загрузить модуль презентаций. Проверьте интернет')); };
-      document.head.appendChild(s);
-    });
+    return loadScriptChain([
+      'vendor/pptxgen.bundle.js',
+      'https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundle.js'
+    ], () => !!window.PptxGenJS).catch(() => { throw new Error('Не удалось загрузить модуль презентаций. Проверьте интернет'); });
   }
 
   // Настройки экрана на момент нажатия «Выгрузить»: пока презентация собирается (это несколько запросов подряд), период или фильтр
