@@ -331,6 +331,113 @@
     .hk-today { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 16px; }
     .hk-title { font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
 
+    /* СПРАВОЧНИК ТАБАКА (окно в форме визита и экран «Сервис» → «Табак»). Формат записи один для всех КМ — см. комментарий в JS «СПРАВОЧНИК ТАБАКА». */
+    .tb-open { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 8px; padding: 12px 14px; border-radius: 12px; border: 1px dashed rgba(184,115,51,0.55); background: var(--accent-dim); color: var(--accent); font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 500; cursor: pointer; }
+    .tb-open:active { filter: brightness(0.9); }
+    .tb-ov { position: fixed; inset: 0; z-index: 390; background: rgba(10,5,0,0.62); backdrop-filter: blur(4px); display: none; align-items: flex-end; justify-content: center; }
+    .tb-ov.show { display: flex; animation: dlgFade .15s ease; }
+    .tb-sheet { width: 100%; max-width: 560px; height: 92vh; height: min(92dvh, 780px); display: flex; flex-direction: column; background: #26150C; border: 1px solid rgba(184,115,51,0.3); border-bottom: none; border-radius: 22px 22px 0 0; box-shadow: 0 -12px 40px rgba(0,0,0,0.5); overflow: hidden; }
+    @media (min-width: 640px) { .tb-ov { align-items: center; } .tb-sheet { height: min(86vh, 760px); border-bottom: 1px solid rgba(184,115,51,0.3); border-radius: 22px; } }
+    .tb-head { display: flex; align-items: center; gap: 6px; padding: 14px 12px 10px 18px; flex-shrink: 0; }
+    .tb-title { flex: 1; min-width: 0; font-family: 'Jost', sans-serif; font-size: 16px; letter-spacing: 0.8px; color: var(--accent); }
+    .tb-ib { width: 36px; height: 36px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid var(--border); background: transparent; color: var(--text-sub); cursor: pointer; padding: 0; }
+    .tb-ib:active { background: var(--accent-dim); }
+    .tb-body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 2px 18px 14px; }
+    .tb-foot { flex-shrink: 0; padding: 12px 18px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: #26150C; }
+    .tb-prev { font-size: 13px; color: var(--text); line-height: 1.45; min-height: 19px; word-break: break-word; }
+    .tb-prev small { display: block; font-size: 11.5px; color: var(--text-muted); margin-top: 1px; }
+    .tb-foot .btn-cta { margin-top: 10px; }
+    .tb-sec { font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); margin: 16px 0 8px; display: flex; align-items: center; gap: 8px; }
+    .tb-sec:first-child { margin-top: 4px; }
+    .tb-hint { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; padding: 4px 2px; }
+    .tb-last { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; margin-bottom: 4px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-sub); font-family: 'Inter', sans-serif; font-size: 12.5px; line-height: 1.4; cursor: pointer; }
+    .tb-last b { color: var(--text); font-weight: 500; }
+    .tb-last:active { background: var(--accent-dim); }
+    .tb-mrow { display: flex; align-items: center; gap: 8px; padding: 9px 8px 9px 12px; margin-bottom: 6px; border-radius: 12px; border: 1px solid rgba(184,115,51,0.4); background: var(--accent-dim); }
+    .tb-mname { flex: 1; min-width: 0; font-size: 14px; color: var(--text); line-height: 1.35; word-break: break-word; }
+    .tb-mname i { font-style: normal; color: var(--accent); font-size: 11px; letter-spacing: 0.4px; margin-right: 5px; }
+    .tb-share { flex-shrink: 0; font-family: 'Jost', sans-serif; font-size: 13px; color: var(--accent); }
+    .tb-x { width: 30px; height: 30px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: none; background: transparent; color: var(--text-muted); cursor: pointer; border-radius: 50%; padding: 0; }
+    .tb-x:active { background: rgba(240,223,192,0.08); }
+    .tb-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+    .tb-chip { padding: 8px 13px; border-radius: 100px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-sub); font-family: 'Inter', sans-serif; font-size: 12.5px; cursor: pointer; white-space: nowrap; }
+    .tb-chip.on { background: var(--accent-dim); border-color: rgba(184,115,51,0.6); color: var(--accent); font-weight: 500; }
+    .tb-chip:active { filter: brightness(1.15); }
+    .tb-sub { font-size: 11.5px; color: var(--text-muted); margin: 10px 0 6px; }
+    .tb-sub:first-child { margin-top: 0; }
+    .tb-detbtn { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 10px 12px; margin-top: 6px; border-radius: 12px; border: 1px solid var(--border); background: transparent; color: var(--text-sub); font-family: 'Inter', sans-serif; font-size: 13px; cursor: pointer; text-align: left; }
+    .tb-detbtn span { min-width: 0; }
+    .tb-detbtn em { font-style: normal; color: var(--accent); font-size: 12px; }
+    .tb-detbox { padding: 10px 2px 2px; }
+    .tb-search { margin-top: 14px; padding: 12px 14px; font-size: 15px; }
+    .tb-brands { display: flex; gap: 6px; overflow-x: auto; margin: 10px -18px 0; padding: 0 18px 4px; scrollbar-width: none; }
+    .tb-brands::-webkit-scrollbar { display: none; }
+    .tb-brands .tb-chip { padding: 6px 12px; font-size: 12px; flex-shrink: 0; }
+    .tb-list { margin-top: 8px; }
+    .tb-item { display: flex; align-items: center; gap: 10px; padding: 11px 6px 11px 4px; border-bottom: 1px solid var(--border); cursor: pointer; }
+    .tb-item:last-child { border-bottom: none; }
+    .tb-item:active { background: var(--accent-dim); }
+    .tb-item.on { background: var(--accent-dim); }
+    .tb-item.out { opacity: 0.45; }
+    .tb-iname { flex: 1; min-width: 0; font-size: 14px; color: var(--text); line-height: 1.35; word-break: break-word; }
+    .tb-iname small { color: var(--text-muted); font-size: 11.5px; margin-left: 6px; }
+    .tb-dots { flex-shrink: 0; font-size: 9px; letter-spacing: 2px; color: var(--accent); }
+    .tb-dots .off { color: rgba(240,223,192,0.2); }
+    .tb-tick { width: 18px; flex-shrink: 0; text-align: center; color: var(--accent); font-size: 14px; }
+    .tb-more { font-size: 12px; color: var(--text-muted); text-align: center; padding: 10px 0 2px; }
+    .tb-addbtn { display: block; width: 100%; margin-top: 10px; padding: 11px 14px; border-radius: 12px; border: 1px dashed rgba(240,223,192,0.22); background: transparent; color: var(--text-sub); font-family: 'Inter', sans-serif; font-size: 13px; cursor: pointer; }
+    .tb-addbtn:active { background: var(--accent-dim); }
+    .tb-addform { margin-top: 12px; padding: 14px; border-radius: 14px; border: 1px solid rgba(184,115,51,0.4); background: rgba(184,115,51,0.06); }
+    .tb-addform .form-input { padding: 11px 13px; font-size: 14.5px; margin-bottom: 8px; }
+    .tb-addform .tb-chips { margin: 0 0 10px; }
+    .tb-addform .tb-chip { padding: 6px 11px; font-size: 12px; }
+    .tb-btnrow { display: flex; gap: 8px; margin-top: 6px; }
+    .tb-btn { flex: 1; padding: 12px 10px; border-radius: 12px; border: 1px solid var(--border); background: transparent; color: var(--text-sub); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; }
+    .tb-btn.ok { background: var(--accent-dim); color: var(--accent); border-color: rgba(184,115,51,0.5); }
+    .tb-legend { margin-top: 18px; padding: 12px 14px; border-radius: 12px; background: rgba(240,223,192,0.03); border: 1px solid var(--border); font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+    .tb-legend b { color: var(--text-sub); font-weight: 500; }
+    .tb-legend code { font-family: 'Inter', sans-serif; color: var(--text-sub); }
+    .tb-mrow2 { display: flex; align-items: center; gap: 8px; padding: 9px 2px; border-bottom: 1px solid var(--border); }
+    .tb-mrow2:last-child { border-bottom: none; }
+    .tb-hint.bad { color: #f87171; }
+    .tb-gram { display: flex; align-items: center; gap: 8px; }
+    .tb-gram .form-input { width: 120px; padding: 10px 13px; font-size: 15px; }
+    .tb-gram span { color: var(--text-muted); font-size: 13px; }
+    .tb-bowlg { width: 90px; padding: 9px 12px; font-size: 14px; text-align: right; }
+    .tb-bg { color: var(--text-muted); font-size: 13px; }
+    .tb-linkbtn { background: none; border: none; padding: 0; color: var(--accent); font-family: 'Inter', sans-serif; font-size: 12px; text-decoration: underline; cursor: pointer; }
+    #visitTbInfo { margin: 6px 2px 0; font-size: 12.5px; color: var(--accent); line-height: 1.5; }
+    .tbs-actions { margin-top: 0; }
+    .tbs-actions .tb-btn { padding: 11px 8px; font-size: 12.5px; }
+    .sd-cat.tbs-brand { display: flex; align-items: center; gap: 8px; }
+    .tbs-brand > span:first-child { flex: 1; min-width: 0; }
+    .tbs-bsum { font-size: 11px; letter-spacing: 0.4px; text-transform: none; }
+    .tbs-edit { width: 28px; height: 28px; flex-shrink: 0; border: none; background: none; color: var(--text-muted); font-size: 14px; cursor: pointer; border-radius: 8px; }
+    .tbs-edit:active { background: var(--accent-dim); }
+    .tbs-row { cursor: pointer; }
+    .tbs-g { flex-shrink: 0; min-width: 52px; text-align: right; font-family: 'Jost', sans-serif; font-size: 14px; color: var(--text); }
+    .tbs-none { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--text-muted); }
+    .tbs-flag { flex-shrink: 0; padding: 2px 8px; border-radius: 100px; font-size: 10.5px; letter-spacing: 0.3px; }
+    .tbs-flag.warn { background: rgba(245,158,11,0.14); border: 1px solid rgba(245,158,11,0.4); color: #fbbf24; }
+    .tbs-flag.bad { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.4); color: #f87171; }
+    .tf-stock { margin-top: 6px; padding: 14px 16px; border-radius: 14px; background: rgba(240,223,192,0.04); border: 1px solid var(--border); }
+    .tf-big { font-family: 'Jost', sans-serif; font-size: 30px; color: var(--text); letter-spacing: 0.5px; }
+    .tf-sub { font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-top: 2px; }
+    .tf-move { display: flex; gap: 8px; }
+    .tf-move .form-input { padding: 11px 13px; font-size: 14.5px; min-width: 0; }
+    .tf-move .form-input:first-child { width: 110px; flex-shrink: 0; }
+    .tf-move .form-input:last-child { flex: 1; }
+    .tf-btns { margin-top: 8px; flex-wrap: wrap; }
+    .tf-btns .tb-btn { padding: 11px 8px; font-size: 12.5px; }
+    .tf-hrow { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 9px 2px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text); }
+    .tf-hrow:last-child { border-bottom: none; }
+    .tf-hrow small { display: block; color: var(--text-muted); font-size: 11.5px; margin-top: 1px; word-break: break-word; }
+    .tf-hrow b { font-weight: 500; }
+    .tf-hg { text-align: right; flex-shrink: 0; font-family: 'Jost', sans-serif; font-size: 14px; }
+    .tf-hg.plus { color: #4ade80; }
+    .tf-hg.minus { color: #f87171; }
+    .tb-ta { width: 100%; min-height: 120px; resize: vertical; padding: 12px 14px; font-size: 13px; line-height: 1.5; }
+
     /* BOOKING GRID — компактные боксы (как ячейки в графике смен), чтобы
        видеть сразу все брони на экране без прокрутки. */
     .booking-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px; }
@@ -3961,7 +4068,9 @@
     <div class="hk-today" id="visitTodayInfo" style="display:none"></div>
     <div class="form-group">
       <label class="form-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M8 3v7a2 2 0 002 2v9M8 3v7"/><path d="M17 3c-1.5 0-2.5 1.5-2.5 4s1 4 2.5 4v10"/></svg>Кальян — если заказывал</label>
-      <input class="form-input" id="visitHookah" type="text" placeholder="Например: Персик со льдом">
+      <input class="form-input" id="visitHookah" type="text" placeholder="Например: Персик со льдом" oninput="tbVisitHint()">
+      <button type="button" class="tb-open" id="tbOpenBtn" onclick="tbOpen()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="18" cy="18" r="2"/></svg>Собрать из справочника</button>
+      <div id="visitTbInfo" style="display:none"></div>
       <div class="note" style="margin:6px 2px 0">Гость был без кальяна — оставьте пустым, визит всё равно запишется. Заказал второй — добавьте визит ещё раз, кальяны пронумеруются по порядку.</div>
     </div>
     <div class="form-group">
@@ -3970,6 +4079,22 @@
     </div>
     <button class="btn-cta" id="visitSubmitBtn" onclick="submitVisit()">Сохранить визит</button>
   </div>
+</div>
+
+<!-- СЕРВИС: ТАБАК (справочник вкусов и остатки в граммах) -->
+<div class="screen" id="screen-tobacco">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('service')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Табак</h1><p>Справочник и остатки в граммах</p></div>
+  </div>
+  <div style="padding:0 16px" id="tobaccoContent"><div class="loading">Загружаю...</div><div style="height:16px"></div></div>
+</div>
+
+<!-- СПРАВОЧНИК ТАБАКА (выбор вкусов для визита; окно вкуса и граммов в разделе «Табак») -->
+<div class="tb-ov" id="tbOverlay" onclick="if(event.target===this)tbClose()">
+  <div class="tb-sheet" id="tbSheet" role="dialog" aria-modal="true" aria-label="Кальян из справочника"></div>
 </div>
 
 <!-- EDIT FIELD OVERLAY -->
@@ -4095,8 +4220,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
   function fallbackPerms(jobRole) {
     const base = ['guests.view', 'guests.create', 'guests.edit', 'tags.use', 'visits.record', 'guests.birthdays', 'guests.vip_list', 'shift.mark', 'schedule.view', 'menu.view', 'problems.view', 'problems.report', 'problems.work_own_role'];
-    const own = { 'Бармен': ['menu.stoplist_drinks'], 'Повар': ['menu.stoplist_food'], 'КМ': ['menu.stoplist_hookah'] }[jobRole] || [];
-    const admin = ['shifts.review', 'briefing.view', 'stories.manage', 'tv.manage', 'standards.manage', 'checklists.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage', 'messages.view'];
+    const own = { 'Бармен': ['menu.stoplist_drinks'], 'Повар': ['menu.stoplist_food'], 'КМ': ['menu.stoplist_hookah', 'tobacco.manage'] }[jobRole] || [];
+    const admin = ['shifts.review', 'briefing.view', 'tobacco.manage', 'stories.manage', 'tv.manage', 'standards.manage', 'checklists.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage', 'messages.view'];
     const owner = ['surveys.manage', 'tags.manage', 'audit.view', 'settings.manage', 'founder_tasks.create', 'marketing.send', 'marketing.log', 'analytics.view', 'segments.view', 'feedback.view', 'guests.table', 'candidates.view'];
     if (jobRole === 'Основатель') return base.concat(admin, owner);
     if (jobRole === 'Администратор') return base.concat(admin);
@@ -4566,6 +4691,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('surveys.manage')) list.push({ group: G.content, icon: 'surveys', short: 'опросы', title: 'Опросы', sub: 'Фон, ретушь, тексты', fn: 'openSurveysEdit()' });
     if (can('tv.manage')) list.push({ group: G.content, icon: 'tv', short: 'тв-экраны', title: 'ТВ-экраны', sub: 'ВИП-комнаты и терраса: приветствие, фон, сообщения', fn: 'openTv()' });
     if (can('checklists.manage')) list.push({ group: G.team, icon: 'checklists', short: 'чек-листы', title: 'Чек-листы', sub: 'Открытие и закрытие смены', fn: 'openChecklistsEdit()' });
+    if (can('tobacco.manage')) list.push({ group: G.team, icon: 'tobacco', short: 'табак', title: 'Табак', sub: 'Вкусы и остатки в граммах', fn: 'openTobacco()' });
     if (can('standards.manage')) list.push({ group: G.team, icon: 'standards', short: 'стандарты', title: 'Стандарты', sub: 'Правила сервиса, тесты, кто прочитал', fn: "openStandardsEdit('service')" });
     if (can('tags.manage')) list.push({ group: G.guests, icon: 'tags', short: 'теги', title: 'Теги', sub: 'Список, цвета, подсказки', fn: 'openTagsEdit()' });
     if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'Логины, роли и права', fn: 'openEmployees()' });
@@ -4698,6 +4824,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
     icons.standards = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h11a3 3 0 013 3v15H8a3 3 0 01-3-3V3z"/><path d="M9 11l2 2 4-4"/><line x1="9" y1="17" x2="14" y2="17"/></svg>';
     icons.checklists = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 13l2 2 4-4"/></svg>';
+    icons.tobacco = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v3a2 2 0 01-2 2h-4a2 2 0 01-2-2V3z"/><path d="M9 8v10a3 3 0 006 0V8"/><path d="M9 13h6"/></svg>';
     icons.forecast = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20v-6M10 20V9M16 20v-9"/><path d="M3 7l5-3 4 2 5-4" stroke-dasharray="2 2"/><path d="M2 20h20"/></svg>';
     icons.briefing = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h9M4 12h9M4 18h5"/><path d="M16 13l2.2 2.2L22 10.5"/></svg>';
     icons.venue = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>';
@@ -15695,8 +15822,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room'];
-  var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'segment-rules', 'season', 'review-rules', 'venue', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form'];
+  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'tobacco'];
+  var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'segment-rules', 'season', 'review-rules', 'venue', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'tobacco'];
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
 
@@ -15738,6 +15865,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   function handleBackPress() {
     const dlg = document.querySelector('.app-dialog-ov');
     if (dlg && dlg._cancel) return dlg._cancel();
+    if (tbMode) { tbClose(); return; }
     const overlay = document.querySelector('.overlay.show');
     if (overlay) { overlay.classList.remove('show'); return; }
     const back = document.querySelector('.screen.active .back-btn');
@@ -16875,6 +17003,792 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     return String(value || '').split(' + ').map(x => x.trim()).filter(Boolean);
   }
 
+  // ─── СПРАВОЧНИК ТАБАКА ─────────────────────────────────────
+  // Справочник и остатки в граммах — общие для всех телефонов, лежат в базе Jarvis (сервер сотрудников, db/tobacco.js).
+  //
+  // ЕДИНЫЙ ФОРМАТ ЗАПИСИ (чтобы любой КМ с первого взгляда разбирал, что подали):
+  //   • один кальян:  «Бренд Вкус»                      → Darkside Бейкери
+  //   • микс:         «Бренд Вкус / Бренд Вкус»          → главный (больший) вкус первым; при равных долях — по алфавиту
+  //   • разделитель ' + ' НЕ используем в миксе — им сервер и карточка делят РАЗНЫЕ кальяны одного визита
+  //   • детали одной строкой в заметку визита:  «№2 · 60/40 · фаннел · 18 г · средний · 3 угля»
+  //     (№ — какой по счёту кальян за вечер; пропорция, чаша, граммы, крепость кальяна, число углей — всё по желанию)
+  //
+  // Граммы: КМ вводит граммы на кальян (или они подставляются по чаше — «Граммы по чашам» в разделе «Табак»), приложение делит их
+  // по пропорции микса и отправляет вместе с визитом; сервер списывает со склада. Вводить приход, списание и пересчёт — право tobacco.manage.
+  const TB_MAX_MIX = 3;
+  const TB_STARTER_BRANDS = ['Darkside', 'Tangiers', 'Musthave', 'Adalya', 'Blackburn', 'Element', 'Fumari', 'Sebero', 'Duft', 'Overdose', 'Spectrum', 'Bonche', 'Al Fakher'];
+  const TB_RATIOS = { 2: [[50, 50], [60, 40], [70, 30]], 3: [[34, 33, 33], [50, 25, 25], [40, 40, 20]] };
+  const TB_BOWLS_FALLBACK = ['фаннел', 'вортекс', 'классика'];
+  const TB_STRENGTHS = ['лёгкий', 'средний', 'крепкий'];
+  const TB_COALS = [2, 3, 4];
+  const TB_LIST_LIMIT = 60;
+  const TB_LOCAL_KEY = 'tb_catalog_v1';   // справочник, который до общей базы жил на телефоне
+  const TB_BOWL_KEY = 'tb_last_bowl';
+  let tbCat = null;          // справочник с сервера: { items, brands, bowls, withStock }
+  let TB = null;             // состояние окна выбора вкусов (null — окно выбора закрыто)
+  let TF = null;             // состояние окна вкуса (раздел «Табак»)
+  let tbMode = '';           // что показано в окне: pick | flavor | add | import | bowls
+  let tbAddCtx = 'pick';     // откуда открыто добавление вкуса: pick (из визита) | screen (из раздела «Табак»)
+  let tbBusy = false;
+  let visitTobacco = null;   // { key, canon, items: [{ flavorId, grams }], names } — уйдёт на сервер вместе с визитом
+
+  function tbNorm(s) { return String(s || '').toLowerCase().replace(/ё/g, 'е').replace(/\s+/g, ' ').trim(); }
+  // Поиск и по-русски, и по-латыни: «дарк» находит Darkside, «тан» — Tangiers (грубая транслитерация, хватает для начала слова)
+  const TB_TR = { а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ж: 'zh', з: 'z', и: 'i', й: 'y', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ф: 'f', х: 'h', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'sch', ы: 'y', э: 'e', ю: 'yu', я: 'ya', ь: '', ъ: '' };
+  function tbTr(s) { return tbNorm(s).replace(/[а-я]/g, c => TB_TR[c] ?? c); }
+  // Те же правила, что на сервере: знаки, которыми мы сами что-то делим («+», «/», «|», «;»), из названий убираем
+  function tbClean(s) { return String(s || '').replace(/[+\/|;\t\r\n]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 40); }
+  function tbStrParse(v) {
+    const s = tbNorm(v);
+    if (/^[123]$/.test(s)) return Number(s);
+    if (/^лег/.test(s)) return 1;
+    if (/^сред/.test(s)) return 2;
+    if (/^креп/.test(s)) return 3;
+    return 0;
+  }
+  const tbNum = v => { const n = Number(String(v === undefined || v === null ? '' : v).replace(',', '.').trim()); return Number.isFinite(n) ? n : NaN; };
+  const tbFmt = n => (Math.round(Number(n) * 10) / 10).toLocaleString('ru-RU', { maximumFractionDigits: 1 });
+  const tbNewKey = () => (window.crypto && crypto.randomUUID ? crypto.randomUUID() : 'k' + Date.now().toString(36) + Math.random().toString(36).slice(2, 12));
+
+  // ── Справочник: загрузка и доступ ──
+  const tbMap = f => ({ id: f.id, bid: f.brandId, b: f.brand, f: f.name, s: f.strength || 0, o: !f.inStock, low: !!f.low, empty: !!f.empty, tracked: !!f.tracked,
+    grams: typeof f.grams === 'number' ? f.grams : null, min: typeof f.minGrams === 'number' ? f.minGrams : null, used30: typeof f.used30 === 'number' ? f.used30 : null });
+  async function tbApi(method, path, body) {
+    const res = await fetch(`${PROXY_BASE}/api/staff/tobacco${path}`, { method, headers: body === undefined ? undefined : { 'Content-Type': 'application/json' }, body: body === undefined ? undefined : JSON.stringify(body) });
+    if (res.status === 403) { accessDenied(); throw new Error('Нет доступа'); }
+    if (!res.ok) throw new Error(await responseError(res, 'Не получилось — попробуйте ещё раз'));
+    return res.json();
+  }
+  async function tbLoad() {
+    const d = await tbApi('GET', '');
+    tbCat = { items: (d.flavors || []).map(tbMap), brands: d.brands || [], bowls: d.bowls || [], withStock: !!d.withStock };
+    return tbCat;
+  }
+  function tbById(id) { return tbCat ? tbCat.items.find(e => e.id === id) || null : null; }
+  function tbUpsert(flavor) {
+    if (!tbCat || !flavor) return;
+    const e = tbMap(flavor), i = tbCat.items.findIndex(x => x.id === e.id);
+    if (i >= 0) tbCat.items[i] = e; else tbCat.items.push(e);
+    if (!tbCat.brands.some(b => b.id === e.bid)) tbCat.brands.push({ id: e.bid, name: e.b });
+  }
+  function tbAllBrands() {
+    const seen = new Map();
+    ((tbCat && tbCat.brands.map(b => b.name)) || []).concat(TB_STARTER_BRANDS).forEach(b => { const k = tbNorm(b); if (k && !seen.has(k)) seen.set(k, b); });
+    return Array.from(seen.values());
+  }
+  function tbBrandCanon(name) {
+    const c = tbClean(name), k = tbNorm(c);
+    return (c && tbAllBrands().find(b => tbNorm(b) === k)) || c;
+  }
+  function tbBrandsWithItems() {
+    const seen = new Map();
+    (tbCat ? tbCat.items : []).forEach(e => { const k = tbNorm(e.b); if (!seen.has(k)) seen.set(k, e.b); });
+    return Array.from(seen.values()).sort((a, b) => a.localeCompare(b, 'ru'));
+  }
+  function tbBowls() { return tbCat && tbCat.bowls.length ? tbCat.bowls : TB_BOWLS_FALLBACK.map(name => ({ name, grams: null })); }
+  function tbBowlGrams(name) { const b = tbBowls().find(x => x.name === name); return b && b.grams ? b.grams : null; }
+  function tbLastBowl() { try { return localStorage.getItem(TB_BOWL_KEY) || ''; } catch { return ''; } }
+  function tbSaveLastBowl(v) { try { if (v) localStorage.setItem(TB_BOWL_KEY, v); else localStorage.removeItem(TB_BOWL_KEY); } catch {} }
+
+  // ── Сборка записи ──
+  function tbShares() {
+    const n = TB.mix.length;
+    const r = n >= 2 && TB.ratio >= 0 ? (TB_RATIOS[n] || [])[TB.ratio] : null;
+    return r ? r.slice() : TB.mix.map(() => 1);
+  }
+  function tbCanon() {
+    const sh = tbShares();
+    const arr = TB.mix.map((id, i) => { const e = tbById(id); return e ? { name: e.b + ' ' + e.f, share: sh[i] } : null; }).filter(Boolean);
+    arr.sort((x, y) => y.share - x.share || x.name.localeCompare(y.name, 'ru'));
+    return arr.map(x => x.name).join(' / ');
+  }
+  function tbRatioText() {
+    const n = TB.mix.length;
+    if (n < 2 || TB.ratio < 0) return '';
+    if (n === 3 && TB.ratio === 0) return 'поровну';
+    const r = (TB_RATIOS[n] || [])[TB.ratio];
+    return r ? r.join('/') : '';
+  }
+  // Граммы на кальян, разложенные по вкусам по пропорции: [11, 7] или null (граммы не указаны / нелепые)
+  function tbTotalGrams() { const g = tbNum(TB.grams); return g > 0 && g <= 200 * TB.mix.length ? Math.round(g * 10) / 10 : null; }
+  function tbSplit() {
+    const total = tbTotalGrams();
+    if (!TB.mix.length || total === null) return null;
+    const sh = tbShares(), sum = sh.reduce((a, b) => a + b, 0);
+    const parts = sh.map(x => Math.round(total * x / sum * 10) / 10);
+    const diff = Math.round((total - parts.reduce((a, b) => a + b, 0)) * 10) / 10;
+    parts[0] = Math.round((parts[0] + diff) * 10) / 10;
+    return parts.every(p => p > 0 && p <= 200) ? parts : null;
+  }
+  function tbDetailLine() {
+    const parts = [];
+    const rt = tbRatioText();
+    if (rt) parts.push(rt);
+    if (TB.bowl) parts.push(TB.bowl);
+    const tg = tbSplit() ? tbTotalGrams() : null;
+    if (tg) parts.push(tbFmt(tg) + ' г');
+    if (TB.str) parts.push(TB.str);
+    if (TB.coals) parts.push(TB.coals + ' ' + ruPlural(TB.coals, 'уголь', 'угля', 'углей'));
+    return parts.length ? ['№' + TB.n].concat(parts).join(' · ') : '';
+  }
+  function tbLastHookah() {
+    // «В прошлый раз» — не сегодняшний визит: сегодняшние кальяны КМ и так видит сверху формы
+    const today = venueDayStr();
+    const vs = ((typeof currentGuest !== 'undefined' && currentGuest && currentGuest.visits) || []).filter(v => v.date !== today && hookahList(v.hookah).length);
+    if (!vs.length) return '';
+    vs.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+    const list = hookahList(vs[0].hookah);
+    return list[list.length - 1];
+  }
+
+  // ── Окно ──
+  const TB_X = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>';
+  const TB_BACK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>';
+  function tbShow() {
+    document.getElementById('tbOverlay').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+  function tbClose() {
+    TB = null; TF = null; tbMode = '';
+    const ov = document.getElementById('tbOverlay');
+    if (ov) ov.classList.remove('show');
+    const sh = document.getElementById('tbSheet');
+    if (sh) sh.innerHTML = '';   // закрытое окно не оставляет в странице поля с теми же id
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && tbMode && !document.querySelector('.app-dialog-ov')) tbClose();
+  });
+  const tbHead = (title, back) => `<div class="tb-head">${back ? `<button class="tb-ib" onclick="${back}" aria-label="Назад">${TB_BACK}</button>` : ''}<div class="tb-title">${title}</div><button class="tb-ib" onclick="tbClose()" aria-label="Закрыть">${TB_X}</button></div>`;
+  function tbShellMsg(title, html) {
+    document.getElementById('tbSheet').innerHTML = `${tbHead(title)}<div class="tb-body">${html}</div>`;
+  }
+
+  async function tbOpen() {
+    const todays = ((currentGuest && currentGuest.visits) || []).find(v => v.date === venueDayStr());
+    const n = (todays ? hookahList(todays.hookah).length : 0) + 1;
+    TB = { mix: [], ratio: -1, bowl: '', grams: '', gramsTouched: false, str: '', coals: 0, q: '', brand: '', det: false, n };
+    tbMode = 'pick'; tbAddCtx = 'pick';
+    tbShow();
+    await tbPickLoad();
+  }
+  async function tbPickLoad() {
+    if (!TB) return;
+    tbShellMsg('Кальян из справочника', '<div class="loading">Загружаю справочник...</div>');
+    try { await tbLoad(); }
+    catch (e) {
+      if (!TB) return;
+      tbShellMsg('Кальян из справочника', `<div class="empty-state">${escHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером')}<div class="tb-btnrow" style="justify-content:center;margin-top:14px"><button class="tb-btn ok" style="flex:none;padding:12px 22px" onclick="tbPickLoad()">Повторить</button><button class="tb-btn" style="flex:none;padding:12px 22px" onclick="tbClose()">Закрыть</button></div><div class="tb-hint" style="margin-top:14px">Кальян можно записать и вручную — в поле над кнопкой.</div></div>`);
+      return;
+    }
+    if (!TB) return;
+    // чаша, которой пользовались в прошлый раз, — сразу выбрана (граммы подставятся по её стандарту)
+    const lb = tbLastBowl();
+    if (lb && tbBowls().some(b => b.name === lb)) { TB.bowl = lb; tbApplyBowlGrams(); }
+    tbRender();
+  }
+  function tbApplyBowlGrams() {
+    if (TB.gramsTouched) return;
+    const g = TB.bowl ? tbBowlGrams(TB.bowl) : null;
+    TB.grams = g ? String(g) : '';
+  }
+
+  function tbRender() {
+    if (!TB) return;
+    document.getElementById('tbSheet').innerHTML = `
+      ${tbHead('Кальян из справочника')}
+      <div class="tb-body" id="tbBody">
+        <div id="tbLast"></div>
+        <div class="tb-sec">Состав</div>
+        <div id="tbMix"></div>
+        <div id="tbDet"></div>
+        <input class="form-input tb-search" id="tbQ" type="text" inputmode="search" enterkeyhint="search" placeholder="Бренд или вкус" autocomplete="off" oninput="tbSearch(this.value)">
+        <div class="tb-brands" id="tbBrandRow"></div>
+        <div id="tbRecent"></div>
+        <div class="tb-list" id="tbList"></div>
+        <div id="tbAddBox"></div>
+        <div class="tb-legend"><b>Как записываем.</b> Кальян: <code>Бренд Вкус</code>. Микс: <code>Бренд Вкус / Бренд Вкус</code> — главный вкус первым. Детали (пропорция, чаша, граммы, крепость, угли) уходят строкой в заметку визита: <code>№2 · 60/40 · фаннел · 18 г · средний · 3 угля</code>. Граммы списываются со склада табака.</div>
+      </div>
+      <div class="tb-foot"><div class="tb-prev" id="tbPreview"></div><button class="btn-cta" id="tbDoneBtn" onclick="tbDone()">Готово</button></div>`;
+    tbUpdate();
+  }
+
+  // Перерисовка частей окна поиска — само поле поиска не трогаем (иначе на телефоне сворачивается клавиатура)
+  function tbUpdate() {
+    if (!TB || tbMode !== 'pick') return;
+    // Если окно уже прокручено — держим список на месте, когда над ним появляется строка микса
+    const body = document.getElementById('tbBody'), list = document.getElementById('tbList');
+    const before = list ? list.getBoundingClientRect().top : 0;
+    tbRenderLast(); tbRenderMix(); tbRenderDet(); tbRenderBrands(); tbRenderRecent(); tbRenderList(); tbRenderFoot();
+    if (body && list && body.scrollTop > 0) body.scrollTop += list.getBoundingClientRect().top - before;
+  }
+
+  function tbRenderLast() {
+    const el = document.getElementById('tbLast');
+    if (!el) return;
+    const last = tbLastHookah();
+    const cur = (document.getElementById('visitHookah').value || '').trim();
+    el.innerHTML =
+      (last ? `<button class="tb-last" onclick="tbUseLast()"><span>↺</span><span>Как в прошлый визит: <b>${escHtml(last)}</b></span></button>` : '') +
+      (cur ? `<div class="tb-hint">Сейчас в поле: ${escHtml(cur)} — «Готово» заменит это.</div>` : '');
+    el.style.marginBottom = last || cur ? '6px' : '';
+  }
+
+  function tbRenderMix() {
+    const el = document.getElementById('tbMix');
+    if (!el) return;
+    const n = TB.mix.length;
+    if (!n) { el.innerHTML = '<div class="tb-hint">Выберите вкус ниже. Можно до трёх — это микс.</div>'; return; }
+    const sh = tbShares();
+    const showShare = n >= 2 && TB.ratio >= 0;
+    const rows = TB.mix.map((id, i) => {
+      const e = tbById(id);
+      if (!e) return '';
+      return `<div class="tb-mrow"><div class="tb-mname"><i>${escHtml(e.b)}</i>${escHtml(e.f)}</div>${showShare ? `<span class="tb-share">${sh[i]}%</span>` : ''}<button class="tb-x" onclick="tbRemove(${i})" aria-label="Убрать">${TB_X}</button></div>`;
+    }).join('');
+    const ratios = n >= 2 ? `<div class="tb-sub">Пропорция (первый — главный)</div><div class="tb-chips">${(TB_RATIOS[n] || []).map((r, i) =>
+      `<button class="tb-chip${TB.ratio === i ? ' on' : ''}" onclick="tbSetRatio(${i})">${n === 3 && i === 0 ? 'поровну' : r.join('/')}</button>`).join('')}</div>` : '';
+    const grams = `<div class="tb-sub">Граммы на кальян</div><div class="tb-gram"><input class="form-input" id="tbGrams" type="text" inputmode="decimal" autocomplete="off" maxlength="6" placeholder="Например, 18" value="${escHtml(TB.grams)}" oninput="tbSetGrams(this.value)"><span>г</span></div><div class="tb-hint" id="tbGramHint"></div>`;
+    el.innerHTML = rows + ratios + grams;
+    tbRenderGramHint();
+  }
+  function tbRenderGramHint() {
+    const el = document.getElementById('tbGramHint');
+    if (!el || !TB) return;
+    const raw = String(TB.grams || '').trim();
+    if (!raw) { el.textContent = 'Граммы не указаны — со склада ничего не спишется.'; el.classList.remove('bad'); return; }
+    const parts = tbSplit();
+    if (!parts) { el.textContent = 'Укажите граммы числом: например, 18 (до 200 на вкус).'; el.classList.add('bad'); return; }
+    el.classList.remove('bad');
+    el.textContent = 'Спишется: ' + TB.mix.map((id, i) => { const e = tbById(id); return e ? `${e.f} ${tbFmt(parts[i])} г` : ''; }).filter(Boolean).join(' · ');
+  }
+
+  function tbRenderDet() {
+    const el = document.getElementById('tbDet');
+    if (!el) return;
+    if (!TB.mix.length) { el.innerHTML = ''; return; }
+    const sum = [TB.bowl, TB.str, TB.coals ? TB.coals + ' ' + ruPlural(TB.coals, 'уголь', 'угля', 'углей') : ''].filter(Boolean).join(' · ');
+    const chips = (arr, cur, fn) => arr.map(v => `<button class="tb-chip${cur === v ? ' on' : ''}" onclick="${fn}(${typeof v === 'number' ? v : `'${v}'`})">${v}</button>`).join('');
+    const bowlChips = tbBowls().map(b => `<button class="tb-chip${TB.bowl === b.name ? ' on' : ''}" onclick="tbSetBowl('${escJs(b.name)}')">${escHtml(b.name)}${b.grams ? ` · ${tbFmt(b.grams)} г` : ''}</button>`).join('');
+    el.innerHTML = `<button class="tb-detbtn" onclick="tbToggleDet()"><span>Детали: чаша, крепость, угли</span><em>${escHtml(sum || (TB.det ? '▴' : 'по желанию ▾'))}</em></button>` + (TB.det ? `<div class="tb-detbox">
+      <div class="tb-sub">Чаша</div><div class="tb-chips">${bowlChips}</div>
+      <div class="tb-sub">Крепость кальяна</div><div class="tb-chips">${chips(TB_STRENGTHS, TB.str, 'tbSetStr')}</div>
+      <div class="tb-sub">Угли</div><div class="tb-chips">${chips(TB_COALS, TB.coals, 'tbSetCoals')}</div>
+    </div>` : '');
+  }
+
+  function tbRenderBrands() {
+    const el = document.getElementById('tbBrandRow');
+    if (!el) return;
+    const brands = tbBrandsWithItems();
+    if (brands.length < 2) { el.innerHTML = ''; el.style.display = 'none'; return; }
+    el.style.display = '';
+    el.innerHTML = `<button class="tb-chip${!TB.brand ? ' on' : ''}" onclick="tbSetBrand('')">Все</button>` +
+      brands.map(b => `<button class="tb-chip${TB.brand && tbNorm(TB.brand) === tbNorm(b) ? ' on' : ''}" data-b="${escHtml(b)}" onclick="tbSetBrand(this.dataset.b)">${escHtml(b)}</button>`).join('');
+  }
+
+  function tbRenderRecent() {
+    const el = document.getElementById('tbRecent');
+    if (!el) return;
+    const rec = TB.q || TB.brand ? [] : tbRecentIds().map(tbById).filter(e => e && !e.o);
+    el.innerHTML = rec.length
+      ? `<div class="tb-sec" style="margin-top:14px">Недавние</div><div class="tb-chips">${rec.map(e => `<button class="tb-chip${TB.mix.includes(e.id) ? ' on' : ''}" onclick="tbPick('${e.id}')">${escHtml(e.b + ' ' + e.f)}</button>`).join('')}</div>`
+      : '';
+  }
+  // «Недавние» — то, что выбирали на этом телефоне (общий справочник хранит всё, а недавние у каждого КМ свои)
+  function tbRecentIds() { try { return JSON.parse(localStorage.getItem('tb_recent') || '[]').filter(x => typeof x === 'string').slice(0, 12); } catch { return []; } }
+  function tbRememberRecent(ids) {
+    try { localStorage.setItem('tb_recent', JSON.stringify(ids.concat(tbRecentIds().filter(x => !ids.includes(x))).slice(0, 12))); } catch {}
+  }
+
+  function tbFiltered() {
+    const toks = tbNorm(TB.q).split(' ').filter(Boolean);
+    const bk = tbNorm(TB.brand);
+    const list = tbCat.items.filter(e => {
+      if (bk && tbNorm(e.b) !== bk) return false;
+      const hay = tbNorm(e.b + ' ' + e.f), hayT = tbTr(hay);
+      return toks.every(t => hay.includes(t) || hayT.includes(tbTr(t)));
+    });
+    list.sort((a, b) => (a.o - b.o) || a.b.localeCompare(b.b, 'ru') || a.f.localeCompare(b.f, 'ru'));
+    return list;
+  }
+  function tbDotsHtml(s) { return s ? `<span class="tb-dots" title="${TB_STRENGTHS[s - 1]}">${'●'.repeat(s)}<span class="off">${'●'.repeat(3 - s)}</span></span>` : ''; }
+  const tbBadgeHtml = e => e.o ? ' · нет в наличии' : (e.empty ? ' · закончился?' : (e.low ? ' · мало' : ''));
+
+  function tbRenderList() {
+    const el = document.getElementById('tbList');
+    if (!el) return;
+    if (!tbCat.items.length) {
+      el.innerHTML = `<div class="tb-hint" style="margin-top:6px">Справочник пока пуст. Добавьте первый вкус кнопкой ниже — он сразу станет доступен всем КМ.${can('tobacco.manage') ? ' Целый список можно загрузить в разделе «Сервис» → «Табак».' : ''}</div>
+        <button class="tb-addbtn" onclick="tbOpenAdd(document.getElementById('tbQ').value)">＋ Добавить вкус</button>`;
+      return;
+    }
+    const list = tbFiltered();
+    const shown = list.slice(0, TB_LIST_LIMIT);
+    const rows = shown.map(e => `<div class="tb-item${TB.mix.includes(e.id) ? ' on' : ''}${e.o ? ' out' : ''}" onclick="tbPick('${e.id}')"><div class="tb-iname">${escHtml(e.f)}<small>${escHtml(e.b)}${tbBadgeHtml(e)}</small></div>${tbDotsHtml(e.s)}<span class="tb-tick">${TB.mix.includes(e.id) ? '✓' : ''}</span></div>`).join('');
+    el.innerHTML = (rows || '<div class="tb-hint" style="margin-top:6px">Ничего не нашли.</div>') +
+      (list.length > shown.length ? `<div class="tb-more">Показаны первые ${shown.length} из ${list.length} — уточните поиск или выберите бренд</div>` : '') +
+      `<button class="tb-addbtn" onclick="tbOpenAdd(document.getElementById('tbQ').value)">＋ Нет в списке — добавить${TB.q.trim() ? ' «' + escHtml(TB.q.trim().slice(0, 24)) + '»' : ''}</button>`;
+  }
+
+  function tbRenderFoot() {
+    const pv = document.getElementById('tbPreview'), btn = document.getElementById('tbDoneBtn');
+    if (!pv || !btn) return;
+    if (!TB.mix.length) { pv.innerHTML = '<span style="color:var(--text-muted)">Ничего не выбрано</span>'; btn.disabled = true; return; }
+    const line = tbDetailLine();
+    pv.innerHTML = escHtml(tbCanon()) + (line ? `<small>${escHtml(line)}</small>` : '');
+    btn.disabled = false;
+  }
+
+  // ── Действия выбора ──
+  function tbSearch(v) { TB.q = String(v || ''); tbRenderRecent(); tbRenderList(); }
+  function tbSetBrand(b) { TB.brand = b || ''; tbRenderBrands(); tbRenderRecent(); tbRenderList(); }
+  function tbPick(id) {
+    if (!TB) return;
+    const i = TB.mix.indexOf(id);
+    if (i >= 0) { tbRemove(i); return; }
+    const e = tbById(id);
+    if (!e) return;
+    if (e.o) { showToast('Этого вкуса нет в наличии. Если он снова есть — отметьте в «Сервис» → «Табак».'); return; }
+    if (TB.mix.length >= TB_MAX_MIX) { showToast('В миксе максимум ' + TB_MAX_MIX + ' вкуса'); return; }
+    TB.mix.push(id);
+    TB.ratio = -1;
+    tbUpdate();
+  }
+  function tbRemove(i) { TB.mix.splice(i, 1); TB.ratio = -1; if (!TB.mix.length) { TB.str = ''; TB.coals = 0; TB.det = false; } tbUpdate(); }
+  function tbSetRatio(i) { TB.ratio = TB.ratio === i ? -1 : i; tbRenderMix(); tbRenderFoot(); }
+  function tbToggleDet() { TB.det = !TB.det; tbRenderDet(); }
+  function tbSetBowl(v) {
+    TB.bowl = TB.bowl === v ? '' : v;
+    tbSaveLastBowl(TB.bowl);
+    tbApplyBowlGrams();
+    tbRenderDet(); tbRenderMix(); tbRenderFoot();
+  }
+  function tbSetStr(v) { TB.str = TB.str === v ? '' : v; tbRenderDet(); tbRenderFoot(); }
+  function tbSetCoals(v) { TB.coals = TB.coals === v ? 0 : v; tbRenderDet(); tbRenderFoot(); }
+  function tbSetGrams(v) { TB.grams = String(v || ''); TB.gramsTouched = true; tbRenderGramHint(); tbRenderFoot(); }
+
+  function tbUseLast() {
+    const last = tbLastHookah();
+    if (!last) return;
+    document.getElementById('visitHookah').value = last;
+    visitTobacco = null;
+    tbClose();
+    tbVisitHint();
+    showToast('Вставлено: ' + last);
+  }
+
+  function tbDone() {
+    if (!TB || !TB.mix.length) { showToast('Выберите хотя бы один вкус'); return; }
+    if (String(TB.grams || '').trim() && !tbSplit()) { showToast('Граммы: укажите число (например, 18) или очистите поле', true); return; }
+    const canon = tbCanon();
+    document.getElementById('visitHookah').value = canon;
+    const notes = document.getElementById('visitNotes');
+    const line = tbDetailLine();
+    // строку «№N · …» от прошлого нажатия «Готово» заменяем, остальной текст заметки не трогаем
+    const rest = String(notes.value || '').split('\n').filter(l => !/^№\d+(\s·.*)?$/.test(l.trim())).join('\n').trim();
+    notes.value = line ? (rest ? line + '\n' + rest : line) : rest;
+    // что и сколько списать: ключ новый на каждое нажатие «Готово»; при повторной отправке визита (обрыв связи) он тот же — граммы не спишутся дважды
+    const split = tbSplit();
+    visitTobacco = {
+      key: tbNewKey(), canon,
+      items: split ? TB.mix.map((id, i) => ({ flavorId: id, grams: split[i] })) : [],
+      names: split ? TB.mix.map((id, i) => { const e = tbById(id); return e ? `${e.b} ${e.f} ${tbFmt(split[i])} г` : ''; }).filter(Boolean) : []
+    };
+    tbRememberRecent(TB.mix.slice());
+    tbClose();
+    tbVisitHint();
+  }
+  // Под полем кальяна: что спишется со склада вместе с этим визитом (пока текст поля тот, что собрал справочник)
+  function tbVisitMatches() {
+    if (!visitTobacco || !visitTobacco.items.length) return false;
+    const v = document.getElementById('visitHookah');
+    return !!v && tbNorm(v.value) === tbNorm(visitTobacco.canon);
+  }
+  function tbVisitHint() {
+    const el = document.getElementById('visitTbInfo');
+    if (!el) return;
+    if (tbVisitMatches()) { el.style.display = ''; el.textContent = 'Со склада спишется: ' + visitTobacco.names.join(' · '); }
+    else el.style.display = 'none';
+  }
+
+  // ── Добавление вкуса (из окна выбора и из раздела «Табак») ──
+  function tbOpenAdd(q) {
+    const box = document.getElementById('tbAddBox');
+    if (!box) return;
+    // «darkside Бейкери» → бренд Darkside, вкус «Бейкери» (бренды из нескольких слов — тоже: «al fakher лимон»; «дарк Лимонад» — по началу слова)
+    let brand = '', flavor = String(q || '').trim();
+    const nq = tbNorm(flavor);
+    const brandsByLen = tbAllBrands().sort((a, b) => b.length - a.length);
+    let hit = brandsByLen.find(b => nq.startsWith(tbNorm(b) + ' '));
+    let words = hit ? hit.split(/\s+/).length : 0;
+    if (!hit && nq.includes(' ')) {
+      const w = nq.split(' ')[0];
+      const starts = list => list.filter(b => tbTr(b).startsWith(tbTr(w)));
+      // сначала бренды, которые уже есть в справочнике, и только потом заготовки из списка популярных
+      let cand = w.length >= 3 ? starts(((tbCat && tbCat.brands) || []).map(b => b.name)) : [];
+      if (!cand.length && w.length >= 3) cand = starts(brandsByLen);
+      if (cand.length === 1) { hit = cand[0]; words = 1; }
+    }
+    if (hit) { brand = hit; flavor = flavor.split(/\s+/).slice(words).join(' '); }
+    if (!brand && TB && TB.brand) brand = TB.brand;
+    box.innerHTML = `<div class="tb-addform">
+      <div class="tb-sub">Бренд</div>
+      <input class="form-input" id="tbAddBrand" maxlength="40" placeholder="Например: Darkside" autocomplete="off" value="${escHtml(brand)}">
+      <div class="tb-chips">${tbAllBrands().map(b => `<button class="tb-chip" data-b="${escHtml(b)}" onclick="document.getElementById('tbAddBrand').value=this.dataset.b;document.getElementById('tbAddFlavor').focus()">${escHtml(b)}</button>`).join('')}</div>
+      <div class="tb-sub">Вкус</div>
+      <input class="form-input" id="tbAddFlavor" maxlength="40" placeholder="Например: Бейкери" autocomplete="off" value="${escHtml(flavor)}">
+      <div class="tb-sub">Крепость табака (по желанию)</div>
+      <div class="tb-chips" id="tbAddStr">${TB_STRENGTHS.map((s, i) => `<button class="tb-chip" data-s="${i + 1}" onclick="tbAddStrPick(this)">${s}</button>`).join('')}</div>
+      <div class="tb-btnrow"><button class="tb-btn" onclick="tbCloseAdd()">Отмена</button><button class="tb-btn ok" id="tbAddOk" onclick="tbSubmitAdd()">${tbAddCtx === 'pick' ? 'Добавить и выбрать' : 'Добавить'}</button></div>
+    </div>`;
+    box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    const target = document.getElementById(brand ? 'tbAddFlavor' : 'tbAddBrand');
+    if (target) target.focus();
+  }
+  function tbCloseAdd() { const box = document.getElementById('tbAddBox'); if (box) box.innerHTML = ''; }
+  function tbAddStrPick(btn) {
+    const was = btn.classList.contains('on');
+    document.querySelectorAll('#tbAddStr .tb-chip').forEach(b => b.classList.remove('on'));
+    if (!was) btn.classList.add('on');
+  }
+  async function tbSubmitAdd() {
+    if (tbBusy) return;
+    const brand = tbBrandCanon(document.getElementById('tbAddBrand').value), flavor = tbClean(document.getElementById('tbAddFlavor').value);
+    if (!brand || !flavor) { showToast('Нужны и бренд, и вкус', true); return; }
+    const on = document.querySelector('#tbAddStr .tb-chip.on');
+    const btn = document.getElementById('tbAddOk');
+    tbBusy = true; if (btn) btn.disabled = true;
+    try {
+      const r = await tbApi('POST', '/flavor', { brand, name: flavor, strength: on ? Number(on.dataset.s) : 0 });
+      tbUpsert(r.flavor);
+      tbCloseAdd();
+      if (tbMode === 'pick' && TB) {
+        const q = document.getElementById('tbQ');
+        TB.q = ''; if (q) q.value = '';
+        const e = tbById(r.flavor.id);
+        if (e && !e.o && !TB.mix.includes(e.id) && TB.mix.length < TB_MAX_MIX) { TB.mix.push(e.id); TB.ratio = -1; }
+        else if (e && TB.mix.length >= TB_MAX_MIX && !TB.mix.includes(e.id)) showToast('Вкус добавлен в справочник, но в миксе уже ' + TB_MAX_MIX);
+        if (!r.created && !r.restored) showToast('Такой вкус уже был в справочнике — выбран');
+        tbUpdate();
+      } else {
+        showToast(r.created ? `Добавлено: ${r.flavor.brand} ${r.flavor.name}` : (r.restored ? 'Вернули из архива' : 'Такой вкус уже есть'));
+        tbScreenList();
+      }
+    } catch (e) {
+      if (btn) btn.disabled = false;
+      showToast(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи — вкус не добавился', true);
+    } finally { tbBusy = false; }
+  }
+
+  // ═══ Раздел «Сервис» → «Табак» (право tobacco.manage) ═══
+  let tbScreenQ = '', tbScreenFilter = 'all';
+  function openTobacco() {
+    tbScreenQ = ''; tbScreenFilter = 'all';
+    showScreen('tobacco');
+    tbScreenLoad();
+  }
+  async function tbScreenLoad(silent) {
+    const el = document.getElementById('tobaccoContent');
+    if (!silent) el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      await tbLoad();
+      tbScreenRender();
+    } catch (e) {
+      if (!silent) el.innerHTML = errorStateHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером', 'tbScreenLoad()');
+    }
+  }
+  function tbScreenRender() {
+    const el = document.getElementById('tobaccoContent');
+    if (!el || !tbCat) return;
+    const localN = tbLocalCount();
+    el.innerHTML = `
+      <div class="tb-hint" id="tbScreenStat" style="margin:12px 2px 8px"></div>
+      <div class="tb-btnrow tbs-actions"><button class="tb-btn ok" onclick="tbScreenAdd()">＋ Вкус</button><button class="tb-btn" onclick="tbBowlsOpen()">Граммы по чашам</button><button class="tb-btn" onclick="tbImportOpen()">Список</button></div>
+      <div id="tbAddBoxWrap"></div>
+      ${localN ? `<div class="tb-legend" style="margin-top:12px">На этом телефоне есть старый справочник (${localN} ${ruPlural(localN, 'вкус', 'вкуса', 'вкусов')}). <button class="tb-linkbtn" onclick="tbImportOpen(true)">Загрузить его в общий</button></div>` : ''}
+      <input class="form-input tb-search" id="tbsQ" type="text" inputmode="search" placeholder="Бренд или вкус" autocomplete="off" value="${escHtml(tbScreenQ)}" oninput="tbScreenSearch(this.value)">
+      <div class="tb-chips" style="margin:10px 0 2px" id="tbsFilters"></div>
+      <div id="tbsList"></div>
+      <div class="tb-legend">Граммы списываются сами: КМ собирает кальян в визите, указывает граммы — и они уходят со склада этого вкуса. Приход, списание (пролили, сломали) и пересчёт вносятся здесь: нажмите на вкус. Метка «мало» появляется у вкуса, когда остаток дошёл до порога, который вы задали.</div>
+      <div style="height:16px"></div>`;
+    tbScreenList();
+  }
+  function tbLocalCount() {
+    try { const o = JSON.parse(localStorage.getItem(TB_LOCAL_KEY) || 'null'); return o && Array.isArray(o.items) ? o.items.length : 0; } catch { return 0; }
+  }
+  function tbScreenSearch(v) { tbScreenQ = String(v || ''); tbScreenList(); }
+  function tbScreenSetFilter(f) { tbScreenFilter = f; tbScreenList(); }
+  function tbScreenAdd() {
+    tbMode = ''; tbAddCtx = 'screen';
+    // форму добавления показываем прямо на экране: ей нужен контейнер tbAddBox
+    const wrap = document.getElementById('tbAddBoxWrap');
+    if (!wrap) return;
+    wrap.innerHTML = '<div id="tbAddBox"></div>';
+    tbOpenAdd(tbScreenQ);
+  }
+  function tbScreenList() {
+    const list = document.getElementById('tbsList');
+    if (!list || !tbCat) return;
+    const items = tbCat.items;
+    const total = items.reduce((a, e) => a + (e.grams > 0 ? e.grams : 0), 0);
+    const lowN = items.filter(e => e.low || e.empty).length;
+    const stat = document.getElementById('tbScreenStat');
+    if (stat) stat.textContent = items.length
+      ? `${items.length} ${ruPlural(items.length, 'вкус', 'вкуса', 'вкусов')} · ${tbBrandsWithItems().length} ${ruPlural(tbBrandsWithItems().length, 'бренд', 'бренда', 'брендов')} · на складе ${tbFmt(total)} г${lowN ? ` · пора заказывать: ${lowN}` : ''}`
+      : 'Справочник пуст. Добавьте вкус или загрузите список кнопкой «Список».';
+    const fl = document.getElementById('tbsFilters');
+    if (fl) fl.innerHTML = [['all', 'Все'], ['low', 'Мало' + (lowN ? ' · ' + lowN : '')], ['out', 'Нет в наличии']].map(([k, t]) =>
+      `<button class="tb-chip${tbScreenFilter === k ? ' on' : ''}" onclick="tbScreenSetFilter('${k}')">${t}</button>`).join('');
+    const toks = tbNorm(tbScreenQ).split(' ').filter(Boolean);
+    const rows = items.filter(e => {
+      if (tbScreenFilter === 'low' && !(e.low || e.empty)) return false;
+      if (tbScreenFilter === 'out' && !e.o) return false;
+      const hay = tbNorm(e.b + ' ' + e.f), hayT = tbTr(hay);
+      return toks.every(t => hay.includes(t) || hayT.includes(tbTr(t)));
+    });
+    if (!rows.length) { list.innerHTML = `<div class="empty-state">${items.length ? 'Ничего не нашли' : 'Пока пусто'}</div>`; return; }
+    const brands = [];
+    rows.forEach(e => { let g = brands.find(x => x.bid === e.bid); if (!g) { g = { bid: e.bid, name: e.b, items: [] }; brands.push(g); } g.items.push(e); });
+    brands.sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+    list.innerHTML = brands.map(g => {
+      const sum = g.items.reduce((a, e) => a + (e.grams > 0 ? e.grams : 0), 0);
+      return `<div class="sd-cat tbs-brand"><span>${escHtml(g.name)} · ${g.items.length}</span><span class="tbs-bsum">${tbFmt(sum)} г</span><button class="tbs-edit" onclick="tbBrandRename('${g.bid}')" aria-label="Переименовать бренд" title="Переименовать бренд">✎</button></div>` +
+        g.items.sort((a, b) => a.f.localeCompare(b.f, 'ru')).map(e => {
+          const warn = e.empty ? '<span class="tbs-flag bad">закончился?</span>' : (e.low ? '<span class="tbs-flag warn">мало</span>' : '');
+          return `<div class="tb-item tbs-row${e.o ? ' out' : ''}" role="button" tabindex="0" onclick="tbFlavorOpen('${e.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();tbFlavorOpen('${e.id}')}">
+            <div class="tb-iname">${escHtml(e.f)}${e.o ? '<small> · нет в наличии</small>' : ''}</div>${tbDotsHtml(e.s)}${warn}
+            <div class="tbs-g">${e.tracked || e.grams ? tbFmt(e.grams || 0) + ' г' : '<span class="tbs-none">учёта нет</span>'}</div></div>`;
+        }).join('');
+    }).join('');
+  }
+  async function tbBrandRename(id) {
+    const b = tbCat.brands.find(x => x.id === id);
+    if (!b) return;
+    const v = await askText('Новое название бренда', { value: b.name, ok: 'Сохранить', required: true });
+    if (v === null || tbClean(v) === b.name) return;
+    try {
+      await tbApi('PUT', '/brand/' + id, { name: tbClean(v) });
+      showToast('Бренд переименован');
+      await tbScreenLoad(true);
+    } catch (e) { showToast(e.message, true); }
+  }
+
+  // ── Окно вкуса: остаток, приход, списание, пересчёт, правка, история ──
+  async function tbFlavorOpen(id) {
+    if (!tbById(id)) return;
+    TF = { id, hist: null };
+    tbMode = 'flavor';
+    tbShow();
+    tbFlavorRender();
+    tbFlavorHistory();
+  }
+  async function tbFlavorHistory() {
+    const id = TF && TF.id;
+    if (!id) return;
+    try {
+      const d = await tbApi('GET', `/flavor/${id}/history?limit=15`);
+      if (!TF || TF.id !== id) return;
+      TF.hist = d.items || [];
+    } catch { if (TF && TF.id === id) TF.hist = []; }
+    const box = document.getElementById('tfHist');
+    if (box) box.innerHTML = tbHistHtml();
+  }
+  const TB_KIND = { receipt: 'Приход', use: 'На кальян', writeoff: 'Списание', inventory: 'Пересчёт' };
+  function tbHistHtml() {
+    if (!TF || TF.hist === null) return '<div class="loading">Загружаю...</div>';
+    if (!TF.hist.length) return '<div class="tb-hint">Движений пока не было.</div>';
+    return TF.hist.map(h => {
+      const d = new Date(h.at);
+      const when = isNaN(d) ? '' : d.toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Moscow' });
+      const who = h.kind === 'use' ? (h.guest ? `${h.guest}${h.hookahN ? ' · кальян ' + h.hookahN : ''}` : h.by) : [h.by, h.note].filter(Boolean).join(' · ');
+      return `<div class="tf-hrow"><div><b>${TB_KIND[h.kind] || h.kind}</b><small>${escHtml(who)}</small></div><div class="tf-hg ${h.grams > 0 ? 'plus' : 'minus'}">${h.grams > 0 ? '+' : '−'}${tbFmt(Math.abs(h.grams))} г<small>${escHtml(when)}</small></div></div>`;
+    }).join('');
+  }
+  function tbFlavorRender() {
+    const e = TF && tbById(TF.id);
+    if (!e) { tbClose(); return; }
+    const sel = e.s;
+    document.getElementById('tbSheet').innerHTML = `
+      ${tbHead(escHtml(e.b + ' ' + e.f))}
+      <div class="tb-body" id="tbBody">
+        <div class="tf-stock"><div class="tf-big">${tbFmt(e.grams || 0)} г</div><div class="tf-sub">${e.tracked ? 'остаток по учёту' : 'учёт не начат — внесите приход или сделайте пересчёт'}${e.used30 ? ` · за 30 дней ушло ${tbFmt(e.used30)} г` : ''}${e.min ? ` · порог ${tbFmt(e.min)} г` : ''}</div></div>
+        <div class="tb-sec">Движение граммов</div>
+        <div class="tf-move"><input class="form-input" id="tfG" type="text" inputmode="decimal" autocomplete="off" placeholder="Граммы" maxlength="8"><input class="form-input" id="tfNote" type="text" autocomplete="off" placeholder="Заметка (по желанию)" maxlength="200"></div>
+        <div class="tb-btnrow tf-btns"><button class="tb-btn ok" onclick="tbMove('receipt')">Приход</button><button class="tb-btn" onclick="tbMove('writeoff')">Списать</button><button class="tb-btn" onclick="tbMove('inventory')">Осталось по факту</button></div>
+        <div class="tb-hint" style="margin-top:6px">«Приход» прибавляет граммы, «Списать» убирает (пролили, испортилось), «Осталось по факту» — пересчёт: учёт подгоняется под то, что вы взвесили.</div>
+        <div class="tb-sec">О вкусе</div>
+        <div class="tb-sub">Название</div>
+        <input class="form-input" id="tfName" maxlength="40" autocomplete="off" value="${escHtml(e.f)}" style="padding:11px 13px;font-size:14.5px">
+        <div class="tb-sub">Крепость табака</div>
+        <div class="tb-chips" id="tfStr">${TB_STRENGTHS.map((s, i) => `<button class="tb-chip${sel === i + 1 ? ' on' : ''}" data-s="${i + 1}" onclick="tbTfStr(this)">${s}</button>`).join('')}</div>
+        <div class="tb-sub">Наличие</div>
+        <div class="tb-chips"><button class="tb-chip${e.o ? '' : ' on'}" id="tfIn" data-in="${e.o ? 0 : 1}" onclick="tbTfIn(this)">${e.o ? 'Нет в наличии' : 'Есть в наличии'}</button></div>
+        <div class="tb-sub">Порог «пора заказывать», г (по желанию)</div>
+        <input class="form-input" id="tfMin" type="text" inputmode="decimal" autocomplete="off" maxlength="8" placeholder="Например, 200" value="${e.min ? tbFmt(e.min).replace(/\s/g, '') : ''}" style="padding:11px 13px;font-size:14.5px">
+        <div class="tb-btnrow" style="margin-top:12px"><button class="tb-btn ok" onclick="tbFlavorSave()">Сохранить</button><button class="tb-btn" onclick="tbFlavorArchive()">В архив</button></div>
+        <div class="tb-sec">История</div>
+        <div id="tfHist">${tbHistHtml()}</div>
+        <div style="height:12px"></div>
+      </div>`;
+  }
+  function tbTfStr(btn) {
+    const was = btn.classList.contains('on');
+    document.querySelectorAll('#tfStr .tb-chip').forEach(b => b.classList.remove('on'));
+    if (!was) btn.classList.add('on');
+  }
+  function tbTfIn(btn) {
+    const on = btn.dataset.in !== '1';
+    btn.dataset.in = on ? '1' : '0';
+    btn.classList.toggle('on', on);
+    btn.textContent = on ? 'Есть в наличии' : 'Нет в наличии';
+  }
+  async function tbMove(kind) {
+    if (tbBusy || !TF) return;
+    const g = tbNum(document.getElementById('tfG').value), note = document.getElementById('tfNote').value.trim();
+    if (!(g > 0) && !(kind === 'inventory' && g === 0)) { showToast('Укажите граммы числом больше нуля' + (kind === 'inventory' ? ' (или 0, если табака не осталось)' : ''), true); return; }
+    const e = tbById(TF.id);
+    // крупные цифры спрашиваем ещё раз: лишний ноль при вводе — самая частая ошибка
+    if (kind !== 'inventory' && g >= 5000 && !(await askConfirm(`${kind === 'receipt' ? 'Приход' : 'Списание'} ${tbFmt(g)} г — это точно столько?`, { ok: 'Да, верно' }))) return;
+    tbBusy = true;
+    try {
+      const body = kind === 'inventory' ? { flavorId: TF.id, kind, counted: g } : { flavorId: TF.id, kind, grams: g, note };
+      const r = await tbApi('POST', '/move', body);
+      tbUpsert(r.flavor);
+      showToast(!r.changed ? 'Совпало с учётом — менять нечего' : (kind === 'receipt' ? 'Приход записан' : kind === 'writeoff' ? 'Списание записано' : 'Пересчёт записан'));
+      TF.hist = null;
+      tbFlavorRender();
+      tbFlavorHistory();
+      tbScreenList();
+    } catch (err) { showToast(err.message && err.message !== 'Failed to fetch' ? err.message : 'Нет связи — не записано', true); }
+    finally { tbBusy = false; }
+  }
+  async function tbFlavorSave() {
+    if (tbBusy || !TF) return;
+    const name = tbClean(document.getElementById('tfName').value);
+    if (!name) { showToast('Название не может быть пустым', true); return; }
+    const on = document.querySelector('#tfStr .tb-chip.on');
+    const minRaw = document.getElementById('tfMin').value.trim();
+    const min = minRaw === '' ? null : tbNum(minRaw);
+    if (min !== null && !(min > 0)) { showToast('Порог — число граммов больше нуля (или оставьте пустым)', true); return; }
+    tbBusy = true;
+    try {
+      const r = await tbApi('PUT', '/flavor/' + TF.id, { name, strength: on ? Number(on.dataset.s) : 0, inStock: document.getElementById('tfIn').dataset.in === '1', minGrams: min });
+      tbUpsert(r.flavor);
+      showToast(r.changed ? 'Сохранено' : 'Изменений нет');
+      tbFlavorRender(); tbFlavorHistory(); tbScreenList();
+    } catch (err) { showToast(err.message && err.message !== 'Failed to fetch' ? err.message : 'Нет связи — не сохранено', true); }
+    finally { tbBusy = false; }
+  }
+  async function tbFlavorArchive() {
+    if (tbBusy || !TF) return;
+    const e = tbById(TF.id);
+    if (!e || !(await askConfirm(`Убрать «${e.b} ${e.f}» из справочника?\n\nОстаток и история сохранятся. Вернуть вкус можно, добавив его заново.`, { ok: 'В архив', danger: true }))) return;
+    tbBusy = true;
+    try {
+      await tbApi('PUT', '/flavor/' + TF.id, { archived: true });
+      tbClose();
+      showToast('Вкус убран в архив');
+      await tbScreenLoad(true);
+    } catch (err) { showToast(err.message && err.message !== 'Failed to fetch' ? err.message : 'Нет связи — не сохранено', true); }
+    finally { tbBusy = false; }
+  }
+
+  // ── Граммы по чашам ──
+  function tbBowlsOpen() {
+    tbMode = 'bowls'; tbShow();
+    document.getElementById('tbSheet').innerHTML = `
+      ${tbHead('Граммы по чашам')}
+      <div class="tb-body" id="tbBody">
+        <div class="tb-hint" style="margin-top:6px">Сколько грамм табака идёт на один кальян в каждой чаше. Когда КМ выбирает чашу в окне «Кальян из справочника», граммы подставляются сами (их можно поправить). Пусто — граммы вводятся вручную.</div>
+        ${tbBowls().map((b, i) => `<div class="tb-mrow2"><div class="tb-iname">${escHtml(b.name)}</div><input class="form-input tb-bowlg" data-name="${escHtml(b.name)}" data-was="${b.grams || ''}" type="text" inputmode="decimal" maxlength="6" autocomplete="off" placeholder="г" value="${b.grams ? tbFmt(b.grams).replace(/\s/g, '') : ''}"><span class="tb-bg">г</span></div>`).join('')}
+        <div class="tb-btnrow" style="margin-top:14px"><button class="tb-btn ok" onclick="tbBowlsSave()">Сохранить</button></div>
+      </div>`;
+  }
+  async function tbBowlsSave() {
+    if (tbBusy) return;
+    const rows = [...document.querySelectorAll('.tb-bowlg')];
+    const jobs = [];
+    for (const inp of rows) {
+      const raw = inp.value.trim(), was = inp.dataset.was ? Number(inp.dataset.was) : null;
+      const val = raw === '' ? null : tbNum(raw);
+      if (val !== null && !(val > 0 && val <= 200)) { showToast(`«${inp.dataset.name}»: граммы от 1 до 200`, true); return; }
+      if ((val || null) !== (was || null)) jobs.push({ name: inp.dataset.name, grams: val });
+    }
+    if (!jobs.length) { tbClose(); return; }
+    tbBusy = true;
+    try {
+      for (const j of jobs) await tbApi('PUT', '/bowl', j);
+      await tbLoad();
+      tbClose();
+      showToast('Граммы по чашам сохранены');
+    } catch (err) { showToast(err.message && err.message !== 'Failed to fetch' ? err.message : 'Нет связи — не сохранено', true); }
+    finally { tbBusy = false; }
+  }
+
+  // ── Загрузка списком / выгрузка ──
+  function tbParseImport(text) {
+    const out = []; let skipped = 0;
+    String(text || '').split(/\r?\n/).forEach(raw => {
+      const line = raw.trim();
+      if (!line) return;
+      if (/[|\t;]/.test(line)) {
+        const c = line.split(/\s*[|\t;]\s*/);
+        if (c[0] && c[1]) out.push({ brand: tbBrandCanon(c[0]), name: c[1], strength: tbStrParse(c[2]) }); else skipped++;
+      } else if (line.includes(':')) {
+        const i = line.indexOf(':');
+        const flavors = line.slice(i + 1).split(',').map(x => x.trim()).filter(Boolean);
+        if (line.slice(0, i).trim() && flavors.length) flavors.forEach(f => out.push({ brand: tbBrandCanon(line.slice(0, i)), name: f, strength: 0 })); else skipped++;
+      } else skipped++;
+    });
+    return { out, skipped };
+  }
+  function tbLocalLines() {
+    try {
+      const o = JSON.parse(localStorage.getItem(TB_LOCAL_KEY) || 'null');
+      return (o && Array.isArray(o.items) ? o.items : []).filter(x => x && x.b && x.f).map(x => `${x.b} | ${x.f} | ${x.s || ''}`).join('\n');
+    } catch { return ''; }
+  }
+  function tbImportOpen(fromPhone) {
+    tbMode = 'import'; tbShow();
+    document.getElementById('tbSheet').innerHTML = `
+      ${tbHead('Список табаков')}
+      <div class="tb-body" id="tbBody">
+        <div class="tb-hint" style="margin-top:6px">Одна строка — один вкус: <b style="color:var(--text-sub)">Бренд | Вкус | крепость</b> (1–3, можно пусто). Или короче: <b style="color:var(--text-sub)">Бренд: вкус, вкус, вкус</b>. Из Excel можно вставить два-три столбца как есть. Что уже есть в справочнике — не задвоится.</div>
+        <textarea class="form-input tb-ta" id="tbImportTa" style="margin-top:12px" placeholder="Darkside | Бейкери | 3&#10;Tangiers: Лайм, Персик"></textarea>
+        <div class="tb-btnrow"><button class="tb-btn ok" id="tbImportOk" onclick="tbImport()">Добавить в справочник</button><button class="tb-btn" onclick="tbExport()">Выгрузить текущий</button></div>
+        ${tbLocalCount() ? `<div class="tb-btnrow"><button class="tb-btn" onclick="tbFillLocal()">Подставить старый справочник с этого телефона</button></div>` : ''}
+      </div>`;
+    if (fromPhone) tbFillLocal();
+  }
+  function tbFillLocal() { const ta = document.getElementById('tbImportTa'); if (ta) { ta.value = tbLocalLines(); ta.focus(); } }
+  async function tbImport() {
+    if (tbBusy) return;
+    const ta = document.getElementById('tbImportTa');
+    const { out, skipped } = tbParseImport(ta.value);
+    if (!out.length) { showToast(skipped ? 'Не разобрал строки. Формат: Бренд | Вкус | крепость — или Бренд: вкус, вкус' : 'Вставьте список в поле выше', true); return; }
+    tbBusy = true;
+    const btn = document.getElementById('tbImportOk'); if (btn) btn.disabled = true;
+    try {
+      const r = await tbApi('POST', '/import', { items: out });
+      await tbLoad();
+      if (tbLocalCount() && ta.value.trim() === tbLocalLines().trim()) { try { localStorage.removeItem(TB_LOCAL_KEY); } catch {} }
+      tbClose();
+      tbScreenRender();
+      showToast(`Добавлено: ${r.added}` + (r.exists ? `, уже было: ${r.exists}` : '') + ((skipped + r.skipped) ? `, пропущено строк: ${skipped + r.skipped}` : '') + (r.truncated ? ' (загружены первые 500 — повторите для остальных)' : ''));
+    } catch (err) { if (btn) btn.disabled = false; showToast(err.message && err.message !== 'Failed to fetch' ? err.message : 'Нет связи — список не загрузился', true); }
+    finally { tbBusy = false; }
+  }
+  function tbExport() {
+    const ta = document.getElementById('tbImportTa');
+    const items = tbCat.items.slice().sort((a, b) => a.b.localeCompare(b.b, 'ru') || a.f.localeCompare(b.f, 'ru'));
+    if (!items.length) { showToast('Справочник пуст — копировать нечего'); return; }
+    const text = items.map(e => `${e.b} | ${e.f} | ${e.s || ''}`).join('\n');
+    ta.value = text; ta.focus(); ta.select();
+    (navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(text) : Promise.reject())
+      .then(() => showToast('Список скопирован'), () => showToast('Список в поле — выделите и скопируйте вручную'));
+  }
+
   function openAddVisit() {
     // уже записанные сегодня кальяны — чтобы КМ видел, что новый встанет под следующим номером
     const todays = (currentGuest.visits || []).find(v => v.date === venueDayStr());
@@ -16887,8 +17801,11 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
            <div class="note" style="margin-top:8px">Новый кальян встанет следом — под номером ${already.length + 1}.</div>`
         : '';
     }
+    tbClose();
+    visitTobacco = null;
     document.getElementById('visitHookah').value = '';
     document.getElementById('visitNotes').value = '';
+    tbVisitHint();
     document.getElementById('visitGuestNameHeader').textContent = currentGuest.fullName || currentGuest.name;
     showScreen('visit');
   }
@@ -17095,6 +18012,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   async function submitVisit() {
     const hookah = document.getElementById('visitHookah').value.trim();
     const notes = document.getElementById('visitNotes').value.trim();
+    // граммы уходят вместе с визитом, только если поле кальяна осталось таким, каким его собрал справочник
+    const withTb = tbVisitMatches();
 
     const btn = document.getElementById('visitSubmitBtn');
     btn.disabled = true;
@@ -17104,14 +18023,17 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       const res = await fetch(`${PROXY_BASE}/api/staff/visit?pin=${getPin()}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: getPin(), guestId: currentGuest.id, guestName: currentGuest.fullName || currentGuest.name, hookah, notes })
+        body: JSON.stringify(Object.assign({ pin: getPin(), guestId: currentGuest.id, guestName: currentGuest.fullName || currentGuest.name, hookah, notes }, withTb ? { tobacco: { key: visitTobacco.key, items: visitTobacco.items } } : {}))
       });
       if (res.status === 401) { showScreen('pin'); return; }
       if (!res.ok) { notify(await responseError(res, 'Визит не сохранился — попробуйте ещё раз')); return; }
       let saved = null;
       try { saved = await res.json(); } catch {}
       const guestLabel = currentGuest.fullName || currentGuest.name;
+      visitTobacco = null;
       showSuccess('Визит сохранён', saved && saved.bookingMarked ? `${guestLabel} · бронь отмечена «Пришёл»` : guestLabel);
+      // визит записан, а граммы со склада не списались — предупреждаем, чтобы КМ не думал, что учёт сошёлся
+      if (withTb && saved && saved.tobacco && saved.tobacco.error) setTimeout(() => notify('Визит сохранён, но граммы табака не списались: ' + saved.tobacco.error + '. Внесите списание вручную в «Сервис» → «Табак».'), 600);
       openGuestCard(currentGuest.id);
     } catch {
       notify('Нет связи — визит не сохранился. Проверьте интернет и попробуйте ещё раз.');
