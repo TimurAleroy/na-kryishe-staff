@@ -7054,8 +7054,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // Раскладка всей схемы под ширину контейнера (px).
   // Телефон/узкое окно: зал, под ним балкон, ниже ВИП-комнаты в одну строку.
   // Широкий экран: слева зал и под ним балкон, справа колонка ВИП-комнат (3 сверху, 1 снизу) в том же масштабе.
-  const HALL_WIDE_MIN = 620, HALL_PLAN_GAP = 12, HALL_P_MAX = 1.5;
-  function layoutHallPlan(containerPx) {
+  // Схема не растягивается вширь: столы стоят так, как нарисованы (ширина зала всегда 400), на большом экране она просто крупнее —
+  // до HALL_P_MAX пикселей на единицу — и прижата влево. Раньше зал растягивали на всю ширину, и между столами появлялись пустые поля.
+  // Если справа остаётся место для террасы (масштаб не меньше HALL_SIDE_P_MIN — не мельче, чем на телефоне), терраса стоит третьей колонкой
+  // рядом с ВИП-комнатами в том же масштабе, вкладки не нужны (side). Не хватает места — терраса на своей вкладке, как раньше.
+  const HALL_WIDE_MIN = 620, HALL_PLAN_GAP = 12, HALL_P_MAX = 1.6, HALL_SIDE_P_MIN = 1.0;
+  function layoutHallPlan(containerPx, wantTerr) {
     const cw = Math.max(1, containerPx || 0);
     const wide = cw >= HALL_WIDE_MIN;
     const balcDef = HALL_ZONES.find(z => z.id === 'balcony');
@@ -7065,14 +7069,16 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const zone = layoutZone(HALL_ZONES[0], cw);
       return { wide: false, zone, balcZone: layoutZone(balcDef, cw, zone.width), terrZone, vipZone: layoutZone(HALL_ZONES.find(z => z.id === 'vip'), cw, zone.width), vipPx: 0 };
     }
-    const vipU = HALL_VIP_COL.baseWidth;
-    // масштаб p (пикселей на единицу схемы): как можно крупнее, но зал не выше ~600px и не меньше базовой ширины 400
-    const p = Math.min(HALL_P_MAX, (cw - HALL_PLAN_GAP) / (400 + vipU));
+    const vipU = HALL_VIP_COL.baseWidth, terrU = terrDef.baseWidth;
+    // терраса рядом: в ряд зал + ВИП-колонка + терраса, два промежутка
+    const side = !!wantTerr && (cw - 2 * HALL_PLAN_GAP) / (400 + vipU + terrU) >= HALL_SIDE_P_MIN;
+    // масштаб p (пикселей на единицу схемы): как можно крупнее, но зал не выше ~650px
+    const p = side ? Math.min(HALL_P_MAX, (cw - 2 * HALL_PLAN_GAP) / (400 + vipU + terrU)) : Math.min(HALL_P_MAX, (cw - HALL_PLAN_GAP) / (400 + vipU));
     const vipPx = Math.round(vipU * p);
-    const leftPx = cw - HALL_PLAN_GAP - vipPx;
-    const W = Math.max(400, Math.round(leftPx / p));
+    const W = 400; // без растяжения вширь
     return {
-      wide: true, vipPx,
+      wide: true, side, vipPx,
+      planPx: side ? Math.round((W + vipU + terrU) * p) + 2 * HALL_PLAN_GAP : Math.round((W + vipU) * p) + HALL_PLAN_GAP, // ширина всего плана (с промежутками)
       zone: layoutZone(HALL_ZONES[0], cw, W),
       balcZone: layoutZone(balcDef, cw, W),
       terrZone,
@@ -7087,10 +7093,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const t = hallTime;
     const items = hallDayBookings(hallDate);
     hallLastWidth = body.clientWidth; // перерисовка по resize — только если ширина реально поменялась
-    const lay = layoutHallPlan(body.clientWidth - 14);
+    const terrCount = items.filter(it => it.table && it.table.zone === 'terrace').length; // броней дня на столах террасы
+    // терраса рядом с залом — если есть место; закрытую террасу без броней в этот день на плане не рисуем (она остаётся на вкладке)
+    const lay = layoutHallPlan(body.clientWidth - 14, terraceOn() || terrCount > 0);
     const { zone, balcZone, vipZone, terrZone } = lay;
-    // выбранный стол остался на другой вкладке (например, после смены дня) — снимаем выбор
-    { const selTb = HALL_TABLES.find(x => x.key === hallSelectedTable); if (selTb && hallAreaOf(selTb) !== hallArea) hallSelectedTable = null; }
+    // выбранный стол остался на другой вкладке (например, после смены дня) — снимаем выбор; когда зал и терраса рядом, вкладок нет
+    if (!lay.side) { const selTb = HALL_TABLES.find(x => x.key === hallSelectedTable); if (selTb && hallAreaOf(selTb) !== hallArea) hallSelectedTable = null; }
 
     const states = {};
     for (const tb of [...zone.tables, ...balcZone.tables, ...terrZone.tables, ...vipZone.tables]) states[tb.key] = tableStateAt(tb.key, items, t);
@@ -7176,8 +7184,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       </div>`;
     })() : '';
     // вкладки схемы: общий зал (с балконом и ВИП) · терраса. На «Террасе» — число броней дня на её столах
-    const terrCount = items.filter(it => it.table && it.table.zone === 'terrace').length;
-    const areaTabs = segControl([
+    const areaTabs = lay.side ? '' : segControl([
       ['hall', 'Общий зал'],
       ['terrace', `Терраса${terrClosed ? ' · закрыта' : ''}${terrCount ? ` <small title="броней на террасе в этот день">${terrCount}</small>` : ''}`]
     ], hallArea, 'setHallArea', 'seg-sm hz-areas');
@@ -7189,13 +7196,21 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       ${areaTabs}
       ${(() => {
         const head = (z, short) => `<div class="hz-zonehead"><span>${escHtml(z.title)}</span><span class="note">${short ? '' : `в ${hhmm(t)} `}занято ${busyOf(z)} из ${z.tables.length}</span></div>`;
+        const terrNote = terrClosed ? '<div class="hz-closed-note">Терраса выключена в «Сервис → Режим работы»: гости её не бронируют, записать на её столы нельзя. Столы с бронями остались активными.</div>' : '';
+        // зал, ВИП и терраса в один ряд: все три колонки в одном масштабе и в одном времени
+        if (lay.side) return `<div class="hz-plan wide side" style="grid-template-columns:minmax(0,${zone.width}fr) minmax(0,${vipZone.width}fr) minmax(0,${terrZone.width}fr);max-width:${lay.planPx}px">
+          ${head(zone)}${head(vipZone, true)}${head(terrZone)}
+          <div class="hz-wrap">${svg}</div><div class="hz-wrap">${vipSvg}</div><div class="hz-wrap">${terrSvg}${terrNote}</div>
+          <div class="hz-plan-l">${head(balcZone)}</div>
+          <div class="hz-wrap hz-plan-l">${balcSvg}</div>
+        </div>`;
         // терраса — отдельная схема на своей вкладке, в том же времени и тех же цветах
         if (hallArea === 'terrace') return `<div class="hz-plan hz-terrace">
           ${head(terrZone)}<div class="hz-wrap">${terrSvg}</div>
-          ${terrClosed ? '<div class="hz-closed-note">Терраса выключена в «Сервис → Режим работы»: гости её не бронируют, записать на её столы нельзя. Столы с бронями остались активными.</div>' : ''}
+          ${terrNote}
         </div>`;
         // компьютер: слева зал и под ним балкон, справа колонка ВИП-комнат — как на плане; телефон: зал → балкон → ВИП
-        if (lay.wide) return `<div class="hz-plan wide" style="grid-template-columns:minmax(0,${zone.width}fr) minmax(0,${vipZone.width}fr)">
+        if (lay.wide) return `<div class="hz-plan wide" style="grid-template-columns:minmax(0,${zone.width}fr) minmax(0,${vipZone.width}fr);max-width:${lay.planPx}px">
           ${head(zone)}${head(vipZone, true)}
           <div class="hz-wrap">${svg}</div><div class="hz-wrap">${vipSvg}</div>
           <div class="hz-plan-l">${head(balcZone)}</div>
