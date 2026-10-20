@@ -332,8 +332,23 @@
     .hk-title { font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
 
     /* СПРАВОЧНИК ТАБАКА (окно в форме визита и экран «Сервис» → «Табак»). Формат записи один для всех КМ — см. комментарий в JS «СПРАВОЧНИК ТАБАКА». */
-    .tb-open { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 8px; padding: 12px 14px; border-radius: 12px; border: 1px dashed rgba(184,115,51,0.55); background: var(--accent-dim); color: var(--accent); font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 500; cursor: pointer; }
-    .tb-open:active { filter: brightness(0.9); }
+    /* Кальян в форме визита: карточка выбора и собранный состав */
+    .vh-pick { display: flex; align-items: center; gap: 12px; width: 100%; padding: 13px 14px; border-radius: 16px; border: 1px solid rgba(184,115,51,0.5); background: linear-gradient(135deg, rgba(184,115,51,0.2), rgba(184,115,51,0.06)); color: var(--text); font-family: 'Inter', sans-serif; text-align: left; cursor: pointer; }
+    .vh-pick:active { filter: brightness(0.92); }
+    .vh-ico { width: 42px; height: 42px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border-radius: 13px; background: rgba(184,115,51,0.2); color: var(--accent); }
+    .vh-pt { flex: 1; min-width: 0; }
+    .vh-pt b { display: block; font-size: 15px; font-weight: 500; color: var(--text); }
+    .vh-pt small { display: block; margin-top: 2px; font-size: 12px; color: var(--text-muted); }
+    .vh-arr { font-size: 22px; line-height: 1; color: var(--accent); }
+    .vh-last { margin-top: 8px; margin-bottom: 0; }
+    .vh-sel { padding: 13px 14px; border-radius: 16px; border: 1px solid rgba(184,115,51,0.5); background: linear-gradient(135deg, rgba(184,115,51,0.2), rgba(184,115,51,0.06)); }
+    .vh-pills { display: flex; flex-direction: column; gap: 7px; }
+    .vh-pill { display: flex; align-items: center; gap: 9px; font-size: 15px; line-height: 1.35; color: var(--text); word-break: break-word; }
+    .vh-pill i { font-style: normal; width: 20px; height: 20px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--accent); color: #1a0f08; font-size: 11px; font-weight: 600; }
+    .vh-meta { margin-top: 8px; font-size: 12.5px; color: var(--accent); }
+    .vh-acts { display: flex; gap: 8px; margin-top: 11px; }
+    .vh-act { flex: 1; padding: 10px 10px; border-radius: 12px; border: 1px solid var(--border); background: rgba(0,0,0,0.12); color: var(--text-sub); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; }
+    .vh-act:active { background: var(--accent-dim); }
     .tb-ov { position: fixed; inset: 0; z-index: 390; background: rgba(10,5,0,0.62); backdrop-filter: blur(4px); display: none; align-items: flex-end; justify-content: center; }
     .tb-ov.show { display: flex; animation: dlgFade .15s ease; }
     .tb-sheet { width: 100%; max-width: 560px; height: 92vh; height: min(92dvh, 780px); display: flex; flex-direction: column; background: #26150C; border: 1px solid rgba(184,115,51,0.3); border-bottom: none; border-radius: 22px 22px 0 0; box-shadow: 0 -12px 40px rgba(0,0,0,0.5); overflow: hidden; }
@@ -343,22 +358,34 @@
     .tb-ib { width: 36px; height: 36px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid var(--border); background: transparent; color: var(--text-sub); cursor: pointer; padding: 0; }
     .tb-ib:active { background: var(--accent-dim); }
     .tb-body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 2px 18px 14px; }
-    .tb-foot { flex-shrink: 0; padding: 12px 18px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: #26150C; }
-    .tb-prev { font-size: 13px; color: var(--text); line-height: 1.45; min-height: 19px; word-break: break-word; }
+    .tb-foot { flex-shrink: 0; padding: 10px 18px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: #26150C; }
+    .tb-prev { font-size: 12px; color: var(--text-muted); line-height: 1.4; margin: 2px 0 0; word-break: break-word; }
+    .tb-prev:empty { display: none; }
     .tb-prev small { display: block; font-size: 11.5px; color: var(--text-muted); margin-top: 1px; }
-    .tb-foot .btn-cta { margin-top: 10px; }
+    .tb-foot .btn-cta { margin-top: 8px; }
     .tb-sec { font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); margin: 16px 0 8px; display: flex; align-items: center; gap: 8px; }
     .tb-sec:first-child { margin-top: 4px; }
     .tb-hint { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; padding: 4px 2px; }
     .tb-last { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; margin-bottom: 4px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-sub); font-family: 'Inter', sans-serif; font-size: 12.5px; line-height: 1.4; cursor: pointer; }
     .tb-last b { color: var(--text); font-weight: 500; }
     .tb-last:active { background: var(--accent-dim); }
-    .tb-mrow { display: flex; align-items: center; gap: 8px; padding: 9px 8px 9px 12px; margin-bottom: 6px; border-radius: 12px; border: 1px solid rgba(184,115,51,0.4); background: var(--accent-dim); }
-    .tb-mname { flex: 1; min-width: 0; font-size: 14px; color: var(--text); line-height: 1.35; word-break: break-word; }
-    .tb-mname i { font-style: normal; color: var(--accent); font-size: 11px; letter-spacing: 0.4px; margin-right: 5px; }
-    .tb-share { flex-shrink: 0; font-family: 'Jost', sans-serif; font-size: 13px; color: var(--accent); }
-    .tb-x { width: 30px; height: 30px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: none; background: transparent; color: var(--text-muted); cursor: pointer; border-radius: 50%; padding: 0; }
-    .tb-x:active { background: rgba(240,223,192,0.08); }
+    .tb-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+    .tb-empty { padding: 2px 2px 6px; }
+    .tb-pill { display: inline-flex; align-items: center; gap: 7px; max-width: 100%; padding: 3px 4px 3px 5px; border-radius: 100px; border: 1px solid rgba(184,115,51,0.55); background: var(--accent-dim); font-size: 13px; color: var(--text); line-height: 1.3; }
+    .tb-pill i { font-style: normal; width: 19px; height: 19px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--accent); color: #1a0f08; font-size: 10.5px; font-weight: 600; }
+    .tb-pill > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tb-pill em { font-style: normal; color: var(--accent); font-size: 11px; margin-right: 2px; }
+    .tb-pill b { flex-shrink: 0; font-family: 'Jost', sans-serif; font-weight: 400; font-size: 12.5px; color: var(--accent); }
+    .tb-pill .tb-x { width: 22px; height: 22px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 50%; background: rgba(240,223,192,0.09); color: var(--text-sub); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .tb-pill .tb-x:active { background: rgba(240,223,192,0.2); }
+    .tb-pill .tb-x svg { width: 12px; height: 12px; }
+    .tb-crow { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+    .tb-crow > span { width: 80px; flex-shrink: 0; font-size: 11.5px; line-height: 1.25; color: var(--text-muted); }
+    .tb-crow > span small { display: block; font-size: 10px; opacity: 0.8; }
+    .tb-crow .tb-chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; min-width: 0; }
+    .tb-crow .tb-chips::-webkit-scrollbar { display: none; }
+    .tb-crow .tb-chip { padding: 6px 13px; flex-shrink: 0; }
+    .tb-empty { padding: 2px 2px 8px; }
     .tb-chips { display: flex; flex-wrap: wrap; gap: 7px; }
     .tb-chip { padding: 8px 13px; border-radius: 100px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-sub); font-family: 'Inter', sans-serif; font-size: 12.5px; cursor: pointer; white-space: nowrap; }
     .tb-chip.on { background: var(--accent-dim); border-color: rgba(184,115,51,0.6); color: var(--accent); font-weight: 500; }
@@ -382,7 +409,21 @@
     .tb-iname small { color: var(--text-muted); font-size: 11.5px; margin-left: 6px; }
     .tb-dots { flex-shrink: 0; font-size: 9px; letter-spacing: 2px; color: var(--accent); }
     .tb-dots .off { color: rgba(240,223,192,0.2); }
-    .tb-tick { width: 18px; flex-shrink: 0; text-align: center; color: var(--accent); font-size: 14px; }
+    .tb-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .tb-tile { position: relative; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; min-height: 76px; padding: 11px 12px 9px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg-card); text-align: left; cursor: pointer; font-family: 'Inter', sans-serif; color: var(--text); }
+    .tb-tile:active { background: var(--accent-dim); }
+    .tb-tile.on { border-color: rgba(184,115,51,0.8); background: var(--accent-dim); box-shadow: inset 0 0 0 1px rgba(184,115,51,0.3); }
+    .tb-tile.out { opacity: 0.45; }
+    .tb-tile .tn { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; padding-right: 22px; font-size: 14.5px; line-height: 1.3; word-break: break-word; }
+    .tb-tile .tmeta { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-muted); }
+    .tb-tile .tbr { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tb-tile .tbg { flex-shrink: 0; white-space: nowrap; color: #fbbf24; }
+    .tb-tile .tmeta .tb-dots { margin-left: auto; }
+    .tb-tile .tnum { position: absolute; top: 8px; right: 8px; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--accent); color: #1a0f08; font-size: 11px; font-weight: 600; }
+    .tb-legend.tb-how { padding: 0; margin-top: 14px; border: 0; background: none; text-align: center; }
+    .tb-how summary { padding: 8px 14px; cursor: pointer; list-style: none; color: var(--text-muted); font-size: 11.5px; letter-spacing: 0.3px; }
+    .tb-how summary::-webkit-details-marker { display: none; }
+    .tb-how > div { padding: 0 4px 8px; text-align: left; }
     .tb-more { font-size: 12px; color: var(--text-muted); text-align: center; padding: 10px 0 2px; }
     .tb-addbtn { display: block; width: 100%; margin-top: 10px; padding: 11px 14px; border-radius: 12px; border: 1px dashed rgba(240,223,192,0.22); background: transparent; color: var(--text-sub); font-family: 'Inter', sans-serif; font-size: 13px; cursor: pointer; }
     .tb-addbtn:active { background: var(--accent-dim); }
@@ -4058,9 +4099,8 @@
     <div class="hk-today" id="visitTodayInfo" style="display:none"></div>
     <div class="form-group">
       <label class="form-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M8 3v7a2 2 0 002 2v9M8 3v7"/><path d="M17 3c-1.5 0-2.5 1.5-2.5 4s1 4 2.5 4v10"/></svg>Кальян — если заказывал</label>
-      <input class="form-input" id="visitHookah" type="text" placeholder="Например: Персик со льдом">
-      <button type="button" class="tb-open" id="tbOpenBtn" onclick="tbOpen()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="18" cy="18" r="2"/></svg>Собрать из справочника</button>
-      <div class="note" style="margin:6px 2px 0">Гость был без кальяна — оставьте пустым, визит всё равно запишется. Заказал второй — добавьте визит ещё раз, кальяны пронумеруются по порядку.</div>
+      <input type="hidden" id="visitHookah" value="">
+      <div id="vhCard"></div>
     </div>
     <div class="form-group">
       <label class="form-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Заметки</label>
@@ -17140,9 +17180,13 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     document.getElementById('tbSheet').innerHTML = `${tbHead(title)}<div class="tb-body">${html}</div>`;
   }
 
+  // Какой по счёту кальян этого гостя за сегодня будет следующим (1, если сегодня ещё ничего не записано)
+  function tbNextN() {
+    const todays = ((typeof currentGuest !== 'undefined' && currentGuest && currentGuest.visits) || []).find(v => v.date === venueDayStr());
+    return (todays ? hookahList(todays.hookah).length : 0) + 1;
+  }
   async function tbOpen() {
-    const todays = ((currentGuest && currentGuest.visits) || []).find(v => v.date === venueDayStr());
-    const n = (todays ? hookahList(todays.hookah).length : 0) + 1;
+    const n = tbNextN();
     TB = { mix: [], ratio: -1, str: '', q: '', brand: '', n };
     tbMode = 'pick'; tbAddCtx = 'pick';
     tbShow();
@@ -17158,7 +17202,44 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       return;
     }
     if (!TB) return;
+    tbPrefill();
     tbRender();
+  }
+  // Кальян уже собран в форме и КМ нажал «Изменить» — окно открывается с этим выбором (если все вкусы нашлись в справочнике)
+  function tbPrefill() {
+    const cur = String(document.getElementById('visitHookah').value || '').trim();
+    if (!cur || !TB || TB.mix.length) return;
+    const parts = cur.split(' / ').map(tbNorm).filter(Boolean);
+    if (!parts.length || parts.length > TB_MAX_MIX) return;
+    const ids = [];
+    for (const part of parts) {
+      const e = tbCat.items.find(x => tbNorm(x.b + ' ' + x.f) === part);
+      if (!e || ids.includes(e.id)) return;
+      ids.push(e.id);
+    }
+    TB.mix = ids;
+    const det = tbParseDetail(tbNotesLine(), ids.length);
+    TB.ratio = det.ratio; TB.str = det.str;
+  }
+  // Строка «№N · 60/40 · средний» из заметки визита (если есть) и её разбор
+  function tbNotesLine() {
+    return String(document.getElementById('visitNotes').value || '').split('\n').map(l => l.trim()).find(l => /^№\d+(\s·.*)?$/.test(l)) || '';
+  }
+  function tbParseDetail(line, count) {
+    const out = { ratio: -1, str: '' };
+    const m = String(line || '').trim().match(/^№\d+(.*)$/);
+    if (!m) return out;
+    m[1].split('·').map(t => t.trim()).filter(Boolean).forEach(t => {
+      const ri = (TB_RATIOS[count] || []).findIndex((rr, i) => (count === 3 && i === 0 ? 'поровну' : rr.join('/')) === t);
+      if (ri >= 0) out.ratio = ri; else if (TB_STRENGTHS.includes(t)) out.str = t;
+    });
+    return out;
+  }
+  // Заменяем в заметке строку «№N · …» от прошлого выбора, остальной текст заметки не трогаем
+  function tbSetNotesLine(line) {
+    const notes = document.getElementById('visitNotes');
+    const rest = String(notes.value || '').split('\n').filter(l => !/^№\d+(\s·.*)?$/.test(l.trim())).join('\n').trim();
+    notes.value = line ? (rest ? line + '\n' + rest : line) : rest;
   }
 
   function tbRender() {
@@ -17167,28 +17248,27 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       ${tbHead('Кальян из справочника')}
       <div class="tb-body" id="tbBody">
         <div id="tbLast"></div>
-        <div class="tb-sec">Состав</div>
-        <div id="tbMix"></div>
-        <div id="tbDet"></div>
         <input class="form-input tb-search" id="tbQ" type="text" inputmode="search" enterkeyhint="search" placeholder="Бренд или вкус" autocomplete="off" oninput="tbSearch(this.value)">
         <div class="tb-brands" id="tbBrandRow"></div>
         <div id="tbRecent"></div>
         <div class="tb-list" id="tbList"></div>
         <div id="tbAddBox"></div>
-        <div class="tb-legend"><b>Как записываем.</b> Кальян: <code>Бренд Вкус</code>. Микс: <code>Бренд Вкус / Бренд Вкус</code> — главный вкус первым. Детали (пропорция, крепость) уходят строкой в заметку визита: <code>№2 · 60/40 · средний</code>. <code>№2</code> — второй кальян этого гостя за вечер.</div>
+        <details class="tb-legend tb-how"><summary>Как записываем</summary><div>Кальян: <code>Бренд Вкус</code>. Микс: <code>Бренд Вкус / Бренд Вкус</code> — главный вкус первым. Детали (пропорция, крепость) уходят строкой в заметку визита: <code>№2 · 60/40 · средний</code>. <code>№2</code> — второй кальян этого гостя за вечер.</div></details>
       </div>
-      <div class="tb-foot"><div class="tb-prev" id="tbPreview"></div><button class="btn-cta" id="tbDoneBtn" onclick="tbDone()">Готово</button></div>`;
+      <div class="tb-foot">
+        <div id="tbMix"></div>
+        <div id="tbRatio"></div>
+        <div id="tbDet"></div>
+        <div class="tb-prev" id="tbPreview"></div>
+        <button class="btn-cta" id="tbDoneBtn" onclick="tbDone()">Готово</button>
+      </div>`;
     tbUpdate();
   }
 
   // Перерисовка частей окна поиска — само поле поиска не трогаем (иначе на телефоне сворачивается клавиатура)
   function tbUpdate() {
     if (!TB || tbMode !== 'pick') return;
-    // Если окно уже прокручено — держим список на месте, когда над ним появляется строка микса
-    const body = document.getElementById('tbBody'), list = document.getElementById('tbList');
-    const before = list ? list.getBoundingClientRect().top : 0;
-    tbRenderLast(); tbRenderMix(); tbRenderDet(); tbRenderBrands(); tbRenderRecent(); tbRenderList(); tbRenderFoot();
-    if (body && list && body.scrollTop > 0) body.scrollTop += list.getBoundingClientRect().top - before;
+    tbRenderLast(); tbRenderMix(); tbRenderRatio(); tbRenderDet(); tbRenderBrands(); tbRenderRecent(); tbRenderList(); tbRenderFoot();
   }
 
   function tbRenderLast() {
@@ -17198,31 +17278,36 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const cur = (document.getElementById('visitHookah').value || '').trim();
     el.innerHTML =
       (last ? `<button class="tb-last" onclick="tbUseLast()"><span>↺</span><span>Как в прошлый визит: <b>${escHtml(last)}</b></span></button>` : '') +
-      (cur ? `<div class="tb-hint">Сейчас в поле: ${escHtml(cur)} — «Готово» заменит это.</div>` : '');
-    el.style.marginBottom = last || cur ? '6px' : '';
+      (cur && !TB.mix.length ? `<div class="tb-hint">Сейчас в визите: ${escHtml(cur)} — «Готово» заменит это.</div>` : '');
+    el.style.marginBottom = last || (cur && !TB.mix.length) ? '6px' : '';
   }
 
   function tbRenderMix() {
     const el = document.getElementById('tbMix');
     if (!el) return;
     const n = TB.mix.length;
-    if (!n) { el.innerHTML = '<div class="tb-hint">Выберите вкус ниже. Можно до трёх — это микс.</div>'; return; }
+    if (!n) { el.innerHTML = '<div class="tb-hint tb-empty">Выберите вкус — можно до трёх, это микс.</div>'; return; }
     const sh = tbShares();
     const showShare = n >= 2 && TB.ratio >= 0;
-    const rows = TB.mix.map((id, i) => {
+    el.innerHTML = `<div class="tb-pills">${TB.mix.map((id, i) => {
       const e = tbById(id);
       if (!e) return '';
-      return `<div class="tb-mrow"><div class="tb-mname"><i>${escHtml(e.b)}</i>${escHtml(e.f)}</div>${showShare ? `<span class="tb-share">${sh[i]}%</span>` : ''}<button class="tb-x" onclick="tbRemove(${i})" aria-label="Убрать">${TB_X}</button></div>`;
-    }).join('');
-    const ratios = n >= 2 ? `<div class="tb-sub">Пропорция (первый — главный)</div><div class="tb-chips">${(TB_RATIOS[n] || []).map((r, i) =>
-      `<button class="tb-chip${TB.ratio === i ? ' on' : ''}" onclick="tbSetRatio(${i})">${n === 3 && i === 0 ? 'поровну' : r.join('/')}</button>`).join('')}</div>` : '';
-    el.innerHTML = rows + ratios;
+      return `<span class="tb-pill"><i>${i + 1}</i><span><em>${escHtml(e.b)}</em> ${escHtml(e.f)}</span>${showShare ? `<b>${sh[i]}%</b>` : ''}<button class="tb-x" onclick="tbRemove(${i})" aria-label="Убрать">${TB_X}</button></span>`;
+    }).join('')}</div>`;
+  }
+  function tbRenderRatio() {
+    const el = document.getElementById('tbRatio');
+    if (!el) return;
+    const n = TB.mix.length;
+    if (n < 2) { el.innerHTML = ''; return; }
+    el.innerHTML = `<div class="tb-crow"><span>Пропорция<small>первый — главный</small></span><div class="tb-chips">${(TB_RATIOS[n] || []).map((r, i) =>
+      `<button class="tb-chip${TB.ratio === i ? ' on' : ''}" onclick="tbSetRatio(${i})">${n === 3 && i === 0 ? 'поровну' : r.join('/')}</button>`).join('')}</div></div>`;
   }
   function tbRenderDet() {
     const el = document.getElementById('tbDet');
     if (!el) return;
     if (!TB.mix.length) { el.innerHTML = ''; return; }
-    el.innerHTML = `<div class="tb-sub">Крепость кальяна (по желанию)</div><div class="tb-chips">${TB_STRENGTHS.map(v => `<button class="tb-chip${TB.str === v ? ' on' : ''}" onclick="tbSetStr('${v}')">${v}</button>`).join('')}</div>`;
+    el.innerHTML = `<div class="tb-crow"><span>Крепость</span><div class="tb-chips">${TB_STRENGTHS.map(v => `<button class="tb-chip${TB.str === v ? ' on' : ''}" onclick="tbSetStr('${v}')">${v}</button>`).join('')}</div></div>`;
   }
 
   function tbRenderBrands() {
@@ -17261,7 +17346,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     return list;
   }
   function tbDotsHtml(s) { return s ? `<span class="tb-dots" title="${TB_STRENGTHS[s - 1]}">${'●'.repeat(s)}<span class="off">${'●'.repeat(3 - s)}</span></span>` : ''; }
-  const tbBadgeHtml = e => e.o ? ' · нет в наличии' : (e.empty ? ' · закончился?' : (e.low ? ' · мало' : ''));
+  const tbBadgeText = e => e.o ? 'нет в наличии' : (e.empty ? 'закончился?' : (e.low ? 'мало' : ''));
 
   function tbRenderList() {
     const el = document.getElementById('tbList');
@@ -17273,8 +17358,11 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     }
     const list = tbFiltered();
     const shown = list.slice(0, TB_LIST_LIMIT);
-    const rows = shown.map(e => `<div class="tb-item${TB.mix.includes(e.id) ? ' on' : ''}${e.o ? ' out' : ''}" onclick="tbPick('${e.id}')"><div class="tb-iname">${escHtml(e.f)}<small>${escHtml(e.b)}${tbBadgeHtml(e)}</small></div>${tbDotsHtml(e.s)}<span class="tb-tick">${TB.mix.includes(e.id) ? '✓' : ''}</span></div>`).join('');
-    el.innerHTML = (rows || '<div class="tb-hint" style="margin-top:6px">Ничего не нашли.</div>') +
+    const rows = shown.map(e => {
+      const k = TB.mix.indexOf(e.id), bt = tbBadgeText(e);
+      return `<button type="button" class="tb-tile${k >= 0 ? ' on' : ''}${e.o ? ' out' : ''}" onclick="tbPick('${e.id}')"><span class="tn">${escHtml(e.f)}</span><span class="tmeta"><span class="tbr">${escHtml(e.b)}</span>${bt ? `<span class="tbg">${bt}</span>` : ''}${tbDotsHtml(e.s)}</span>${k >= 0 ? `<span class="tnum">${k + 1}</span>` : ''}</button>`;
+    }).join('');
+    el.innerHTML = (rows ? `<div class="tb-grid">${rows}</div>` : '<div class="tb-hint" style="margin-top:6px">Ничего не нашли.</div>') +
       (list.length > shown.length ? `<div class="tb-more">Показаны первые ${shown.length} из ${list.length} — уточните поиск или выберите бренд</div>` : '') +
       `<button class="tb-addbtn" onclick="tbOpenAdd(document.getElementById('tbQ').value)">＋ Нет в списке — добавить${TB.q.trim() ? ' «' + escHtml(TB.q.trim().slice(0, 24)) + '»' : ''}</button>`;
   }
@@ -17282,9 +17370,9 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   function tbRenderFoot() {
     const pv = document.getElementById('tbPreview'), btn = document.getElementById('tbDoneBtn');
     if (!pv || !btn) return;
-    if (!TB.mix.length) { pv.innerHTML = '<span style="color:var(--text-muted)">Ничего не выбрано</span>'; btn.disabled = true; return; }
+    if (!TB.mix.length) { pv.textContent = ''; btn.disabled = true; return; }
     const line = tbDetailLine();
-    pv.innerHTML = escHtml(tbCanon()) + (line ? `<small>${escHtml(line)}</small>` : '');
+    pv.textContent = line ? 'В заметку: ' + line : '';
     btn.disabled = false;
   }
 
@@ -17304,13 +17392,57 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     tbUpdate();
   }
   function tbRemove(i) { TB.mix.splice(i, 1); TB.ratio = -1; if (!TB.mix.length) TB.str = ''; tbUpdate(); }
-  function tbSetRatio(i) { TB.ratio = TB.ratio === i ? -1 : i; tbRenderMix(); tbRenderFoot(); }
+  function tbSetRatio(i) { TB.ratio = TB.ratio === i ? -1 : i; tbRenderMix(); tbRenderRatio(); tbRenderFoot(); }
   function tbSetStr(v) { TB.str = TB.str === v ? '' : v; tbRenderDet(); tbRenderFoot(); }
 
-  function tbUseLast() {
+  // Кальян в визите записывается только через справочник. Скрытое поле visitHookah хранит собранную запись,
+  // а карточка под подписью показывает её: «Выбрать кальян» (и «Как в прошлый раз», если он есть) или собранный состав.
+  const VH_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v7a2 2 0 002 2v9M8 3v7"/><path d="M17 3c-1.5 0-2.5 1.5-2.5 4s1 4 2.5 4v10"/></svg>';
+  function visitHookahSync() {
+    const box = document.getElementById('vhCard'), hv = document.getElementById('visitHookah');
+    if (!box || !hv) return;
+    const cur = String(hv.value || '').trim();
+    if (!cur) {
+      const last = tbLastHookah();
+      box.innerHTML = `<button type="button" class="vh-pick" id="tbOpenBtn" onclick="tbOpen()"><span class="vh-ico">${VH_ICON}</span><span class="vh-pt"><b>Выбрать кальян</b><small>вкус, микс, пропорция, крепость</small></span><span class="vh-arr">›</span></button>` +
+        (last ? `<button type="button" class="tb-last vh-last" id="vhLastBtn" onclick="vhUseLast()"><span>↺</span><span>Как в прошлый раз: <b>${escHtml(last)}</b></span></button>` : '');
+      return;
+    }
+    const list = cur.split(' / ').filter(Boolean);
+    const line = tbNotesLine();
+    box.innerHTML = `<div class="vh-sel"><div class="vh-pills">${list.map((t, i) => `<div class="vh-pill">${list.length > 1 ? `<i>${i + 1}</i>` : ''}<span>${escHtml(t)}</span></div>`).join('')}</div>` +
+      (line ? `<div class="vh-meta">Кальян ${escHtml(line)}</div>` : '') +
+      `<div class="vh-acts"><button type="button" class="vh-act" id="tbOpenBtn" onclick="tbOpen()">Изменить</button><button type="button" class="vh-act" id="visitHookahClear" onclick="visitHookahClear()">Убрать</button></div></div>`;
+  }
+  // «Убрать» стирает кальян вместе со строкой «№N · …» в заметке, которую поставило окно подбора
+  function visitHookahClear() {
+    document.getElementById('visitHookah').value = '';
+    tbSetNotesLine('');
+    visitHookahSync();
+  }
+  // «Как в прошлый раз»: тот же кальян и, если в прошлой заметке была строка с деталями, та же пропорция и крепость
+  function tbApplyLast() {
     const last = tbLastHookah();
-    if (!last) return;
+    if (!last) return '';
+    const count = last.split(' / ').length;
+    const today = venueDayStr();
+    const prev = ((currentGuest && currentGuest.visits) || []).filter(v => v.date !== today && hookahList(v.hookah).length)
+      .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')))[0];
+    const seg = prev ? String(prev.notes || '').split(/\s\/\s(?=№\d+)/).filter(x => /^\s*№\d+/.test(x)).pop() : '';
+    const det = tbParseDetail(String(seg || '').split('\n')[0], count);
+    const parts = [];
+    if (count >= 2 && det.ratio >= 0) parts.push(count === 3 && det.ratio === 0 ? 'поровну' : TB_RATIOS[count][det.ratio].join('/'));
+    if (det.str) parts.push(det.str);
     document.getElementById('visitHookah').value = last;
+    tbSetNotesLine(parts.length ? ['№' + tbNextN()].concat(parts).join(' · ') : '');
+    visitHookahSync();
+    return last;
+  }
+  function vhUseLast() { tbApplyLast(); }
+
+  function tbUseLast() {
+    const last = tbApplyLast();
+    if (!last) return;
     tbClose();
     showToast('Вставлено: ' + last);
   }
@@ -17319,11 +17451,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     if (!TB || !TB.mix.length) { showToast('Выберите хотя бы один вкус'); return; }
     const canon = tbCanon();
     document.getElementById('visitHookah').value = canon;
-    const notes = document.getElementById('visitNotes');
-    const line = tbDetailLine();
-    // строку «№N · …» от прошлого нажатия «Готово» заменяем, остальной текст заметки не трогаем
-    const rest = String(notes.value || '').split('\n').filter(l => !/^№\d+(\s·.*)?$/.test(l.trim())).join('\n').trim();
-    notes.value = line ? (rest ? line + '\n' + rest : line) : rest;
+    tbSetNotesLine(tbDetailLine());
+    visitHookahSync();
     tbRememberRecent(TB.mix.slice());
     tbClose();
   }
@@ -17911,6 +18040,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     tbClose();
     document.getElementById('visitHookah').value = '';
     document.getElementById('visitNotes').value = '';
+    visitHookahSync();
     document.getElementById('visitGuestNameHeader').textContent = currentGuest.fullName || currentGuest.name;
     showScreen('visit');
   }
