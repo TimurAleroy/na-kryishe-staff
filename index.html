@@ -365,10 +365,6 @@
     .tb-chip:active { filter: brightness(1.15); }
     .tb-sub { font-size: 11.5px; color: var(--text-muted); margin: 10px 0 6px; }
     .tb-sub:first-child { margin-top: 0; }
-    .tb-detbtn { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 10px 12px; margin-top: 6px; border-radius: 12px; border: 1px solid var(--border); background: transparent; color: var(--text-sub); font-family: 'Inter', sans-serif; font-size: 13px; cursor: pointer; text-align: left; }
-    .tb-detbtn span { min-width: 0; }
-    .tb-detbtn em { font-style: normal; color: var(--accent); font-size: 12px; }
-    .tb-detbox { padding: 10px 2px 2px; }
     .tb-search { margin-top: 14px; padding: 12px 14px; font-size: 15px; }
     .tb-brands { display: flex; gap: 6px; overflow-x: auto; margin: 10px -18px 0; padding: 0 18px 4px; scrollbar-width: none; }
     .tb-brands::-webkit-scrollbar { display: none; }
@@ -397,14 +393,10 @@
     .tb-legend { margin-top: 18px; padding: 12px 14px; border-radius: 12px; background: rgba(240,223,192,0.03); border: 1px solid var(--border); font-size: 12px; color: var(--text-muted); line-height: 1.6; }
     .tb-legend b { color: var(--text-sub); font-weight: 500; }
     .tb-legend code { font-family: 'Inter', sans-serif; color: var(--text-sub); }
-    .tb-mrow2 { display: flex; align-items: center; gap: 8px; padding: 9px 2px; border-bottom: 1px solid var(--border); }
-    .tb-mrow2:last-child { border-bottom: none; }
     .tb-hint.bad { color: #f87171; }
     .tb-gram { display: flex; align-items: center; gap: 8px; }
     .tb-gram .form-input { width: 120px; padding: 10px 13px; font-size: 15px; }
     .tb-gram span { color: var(--text-muted); font-size: 13px; }
-    .tb-bowlg { width: 90px; padding: 9px 12px; font-size: 14px; text-align: right; }
-    .tb-bg { color: var(--text-muted); font-size: 13px; }
     .tb-linkbtn { background: none; border: none; padding: 0; color: var(--accent); font-family: 'Inter', sans-serif; font-size: 12px; text-decoration: underline; cursor: pointer; }
     #visitTbInfo { margin: 6px 2px 0; font-size: 12.5px; color: var(--accent); line-height: 1.5; }
     .tbs-actions { margin-top: 0; }
@@ -17020,24 +17012,21 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   //   • один кальян:  «Бренд Вкус»                      → Darkside Бейкери
   //   • микс:         «Бренд Вкус / Бренд Вкус»          → главный (больший) вкус первым; при равных долях — по алфавиту
   //   • разделитель ' + ' НЕ используем в миксе — им сервер и карточка делят РАЗНЫЕ кальяны одного визита
-  //   • детали одной строкой в заметку визита:  «№2 · 60/40 · фаннел · 18 г · средний · 3 угля»
-  //     (№ — какой по счёту кальян за вечер; пропорция, чаша, граммы, крепость кальяна, число углей — всё по желанию)
+  //   • детали одной строкой в заметку визита:  «№2 · 60/40 · 18 г · средний»
+  //     (№ — какой по счёту кальян этого гостя за вечер; пропорция, граммы на кальян, крепость кальяна — всё, кроме №, по желанию)
   //
-  // Граммы: КМ вводит граммы на кальян (или они подставляются по чаше — «Граммы по чашам» в разделе «Табак»), приложение делит их
+  // Граммы: КМ вводит граммы на кальян, приложение делит их
   // по пропорции микса и отправляет вместе с визитом; сервер списывает со склада. Вводить приход, списание и пересчёт — право tobacco.manage.
   const TB_MAX_MIX = 3;
   const TB_STARTER_BRANDS = ['Darkside', 'Tangiers', 'Musthave', 'Adalya', 'Blackburn', 'Element', 'Fumari', 'Sebero', 'Duft', 'Overdose', 'Spectrum', 'Bonche', 'Al Fakher'];
   const TB_RATIOS = { 2: [[50, 50], [60, 40], [70, 30]], 3: [[34, 33, 33], [50, 25, 25], [40, 40, 20]] };
-  const TB_BOWLS_FALLBACK = ['фаннел', 'вортекс', 'классика'];
   const TB_STRENGTHS = ['лёгкий', 'средний', 'крепкий'];
-  const TB_COALS = [2, 3, 4];
   const TB_LIST_LIMIT = 60;
   const TB_LOCAL_KEY = 'tb_catalog_v1';   // справочник, который до общей базы жил на телефоне
-  const TB_BOWL_KEY = 'tb_last_bowl';
-  let tbCat = null;          // справочник с сервера: { items, brands, bowls, withStock }
+  let tbCat = null;          // справочник с сервера: { items, brands, withStock }
   let TB = null;             // состояние окна выбора вкусов (null — окно выбора закрыто)
   let TF = null;             // состояние окна вкуса (раздел «Табак»)
-  let tbMode = '';           // что показано в окне: pick | flavor | add | import | bowls
+  let tbMode = '';           // что показано в окне: pick | flavor | add | import
   let tbAddCtx = 'pick';     // откуда открыто добавление вкуса: pick (из визита) | screen (из раздела «Табак»)
   let tbBusy = false;
   let visitTobacco = null;   // { key, canon, items: [{ flavorId, grams }], names } — уйдёт на сервер вместе с визитом
@@ -17071,7 +17060,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   }
   async function tbLoad() {
     const d = await tbApi('GET', '');
-    tbCat = { items: (d.flavors || []).map(tbMap), brands: d.brands || [], bowls: d.bowls || [], withStock: !!d.withStock };
+    tbCat = { items: (d.flavors || []).map(tbMap), brands: d.brands || [], withStock: !!d.withStock };
     return tbCat;
   }
   function tbById(id) { return tbCat ? tbCat.items.find(e => e.id === id) || null : null; }
@@ -17095,11 +17084,6 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     (tbCat ? tbCat.items : []).forEach(e => { const k = tbNorm(e.b); if (!seen.has(k)) seen.set(k, e.b); });
     return Array.from(seen.values()).sort((a, b) => a.localeCompare(b, 'ru'));
   }
-  function tbBowls() { return tbCat && tbCat.bowls.length ? tbCat.bowls : TB_BOWLS_FALLBACK.map(name => ({ name, grams: null })); }
-  function tbBowlGrams(name) { const b = tbBowls().find(x => x.name === name); return b && b.grams ? b.grams : null; }
-  function tbLastBowl() { try { return localStorage.getItem(TB_BOWL_KEY) || ''; } catch { return ''; } }
-  function tbSaveLastBowl(v) { try { if (v) localStorage.setItem(TB_BOWL_KEY, v); else localStorage.removeItem(TB_BOWL_KEY); } catch {} }
-
   // ── Сборка записи ──
   function tbShares() {
     const n = TB.mix.length;
@@ -17134,11 +17118,9 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const parts = [];
     const rt = tbRatioText();
     if (rt) parts.push(rt);
-    if (TB.bowl) parts.push(TB.bowl);
     const tg = tbSplit() ? tbTotalGrams() : null;
     if (tg) parts.push(tbFmt(tg) + ' г');
     if (TB.str) parts.push(TB.str);
-    if (TB.coals) parts.push(TB.coals + ' ' + ruPlural(TB.coals, 'уголь', 'угля', 'углей'));
     return parts.length ? ['№' + TB.n].concat(parts).join(' · ') : '';
   }
   function tbLastHookah() {
@@ -17177,7 +17159,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   async function tbOpen() {
     const todays = ((currentGuest && currentGuest.visits) || []).find(v => v.date === venueDayStr());
     const n = (todays ? hookahList(todays.hookah).length : 0) + 1;
-    TB = { mix: [], ratio: -1, bowl: '', grams: '', gramsTouched: false, str: '', coals: 0, q: '', brand: '', det: false, n };
+    TB = { mix: [], ratio: -1, grams: '', str: '', q: '', brand: '', n };
     tbMode = 'pick'; tbAddCtx = 'pick';
     tbShow();
     await tbPickLoad();
@@ -17192,15 +17174,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       return;
     }
     if (!TB) return;
-    // чаша, которой пользовались в прошлый раз, — сразу выбрана (граммы подставятся по её стандарту)
-    const lb = tbLastBowl();
-    if (lb && tbBowls().some(b => b.name === lb)) { TB.bowl = lb; tbApplyBowlGrams(); }
     tbRender();
-  }
-  function tbApplyBowlGrams() {
-    if (TB.gramsTouched) return;
-    const g = TB.bowl ? tbBowlGrams(TB.bowl) : null;
-    TB.grams = g ? String(g) : '';
   }
 
   function tbRender() {
@@ -17217,7 +17191,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
         <div id="tbRecent"></div>
         <div class="tb-list" id="tbList"></div>
         <div id="tbAddBox"></div>
-        <div class="tb-legend"><b>Как записываем.</b> Кальян: <code>Бренд Вкус</code>. Микс: <code>Бренд Вкус / Бренд Вкус</code> — главный вкус первым. Детали (пропорция, чаша, граммы, крепость, угли) уходят строкой в заметку визита: <code>№2 · 60/40 · фаннел · 18 г · средний · 3 угля</code>. Граммы списываются со склада табака.</div>
+        <div class="tb-legend"><b>Как записываем.</b> Кальян: <code>Бренд Вкус</code>. Микс: <code>Бренд Вкус / Бренд Вкус</code> — главный вкус первым. Детали (пропорция, граммы, крепость) уходят строкой в заметку визита: <code>№2 · 60/40 · 18 г · средний</code>. <code>№2</code> — второй кальян этого гостя за вечер. Граммы списываются со склада табака.</div>
       </div>
       <div class="tb-foot"><div class="tb-prev" id="tbPreview"></div><button class="btn-cta" id="tbDoneBtn" onclick="tbDone()">Готово</button></div>`;
     tbUpdate();
@@ -17258,7 +17232,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     }).join('');
     const ratios = n >= 2 ? `<div class="tb-sub">Пропорция (первый — главный)</div><div class="tb-chips">${(TB_RATIOS[n] || []).map((r, i) =>
       `<button class="tb-chip${TB.ratio === i ? ' on' : ''}" onclick="tbSetRatio(${i})">${n === 3 && i === 0 ? 'поровну' : r.join('/')}</button>`).join('')}</div>` : '';
-    const grams = `<div class="tb-sub">Граммы на кальян</div><div class="tb-gram"><input class="form-input" id="tbGrams" type="text" inputmode="decimal" autocomplete="off" maxlength="6" placeholder="Например, 18" value="${escHtml(TB.grams)}" oninput="tbSetGrams(this.value)"><span>г</span></div><div class="tb-hint" id="tbGramHint"></div>`;
+    const grams = `<div class="tb-sub">Граммы на кальян</div><div class="tb-gram"><input class="form-input" id="tbGrams" type="text" inputmode="decimal" autocomplete="off" maxlength="6" placeholder="Напр. 18" value="${escHtml(TB.grams)}" oninput="tbSetGrams(this.value)"><span>г</span></div><div class="tb-hint" id="tbGramHint"></div>`;
     el.innerHTML = rows + ratios + grams;
     tbRenderGramHint();
   }
@@ -17277,14 +17251,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const el = document.getElementById('tbDet');
     if (!el) return;
     if (!TB.mix.length) { el.innerHTML = ''; return; }
-    const sum = [TB.bowl, TB.str, TB.coals ? TB.coals + ' ' + ruPlural(TB.coals, 'уголь', 'угля', 'углей') : ''].filter(Boolean).join(' · ');
-    const chips = (arr, cur, fn) => arr.map(v => `<button class="tb-chip${cur === v ? ' on' : ''}" onclick="${fn}(${typeof v === 'number' ? v : `'${v}'`})">${v}</button>`).join('');
-    const bowlChips = tbBowls().map(b => `<button class="tb-chip${TB.bowl === b.name ? ' on' : ''}" onclick="tbSetBowl('${escJs(b.name)}')">${escHtml(b.name)}${b.grams ? ` · ${tbFmt(b.grams)} г` : ''}</button>`).join('');
-    el.innerHTML = `<button class="tb-detbtn" onclick="tbToggleDet()"><span>Детали: чаша, крепость, угли</span><em>${escHtml(sum || (TB.det ? '▴' : 'по желанию ▾'))}</em></button>` + (TB.det ? `<div class="tb-detbox">
-      <div class="tb-sub">Чаша</div><div class="tb-chips">${bowlChips}</div>
-      <div class="tb-sub">Крепость кальяна</div><div class="tb-chips">${chips(TB_STRENGTHS, TB.str, 'tbSetStr')}</div>
-      <div class="tb-sub">Угли</div><div class="tb-chips">${chips(TB_COALS, TB.coals, 'tbSetCoals')}</div>
-    </div>` : '');
+    el.innerHTML = `<div class="tb-sub">Крепость кальяна (по желанию)</div><div class="tb-chips">${TB_STRENGTHS.map(v => `<button class="tb-chip${TB.str === v ? ' on' : ''}" onclick="tbSetStr('${v}')">${v}</button>`).join('')}</div>`;
   }
 
   function tbRenderBrands() {
@@ -17365,18 +17332,10 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     TB.ratio = -1;
     tbUpdate();
   }
-  function tbRemove(i) { TB.mix.splice(i, 1); TB.ratio = -1; if (!TB.mix.length) { TB.str = ''; TB.coals = 0; TB.det = false; } tbUpdate(); }
+  function tbRemove(i) { TB.mix.splice(i, 1); TB.ratio = -1; if (!TB.mix.length) TB.str = ''; tbUpdate(); }
   function tbSetRatio(i) { TB.ratio = TB.ratio === i ? -1 : i; tbRenderMix(); tbRenderFoot(); }
-  function tbToggleDet() { TB.det = !TB.det; tbRenderDet(); }
-  function tbSetBowl(v) {
-    TB.bowl = TB.bowl === v ? '' : v;
-    tbSaveLastBowl(TB.bowl);
-    tbApplyBowlGrams();
-    tbRenderDet(); tbRenderMix(); tbRenderFoot();
-  }
   function tbSetStr(v) { TB.str = TB.str === v ? '' : v; tbRenderDet(); tbRenderFoot(); }
-  function tbSetCoals(v) { TB.coals = TB.coals === v ? 0 : v; tbRenderDet(); tbRenderFoot(); }
-  function tbSetGrams(v) { TB.grams = String(v || ''); TB.gramsTouched = true; tbRenderGramHint(); tbRenderFoot(); }
+  function tbSetGrams(v) { TB.grams = String(v || ''); tbRenderGramHint(); tbRenderFoot(); }
 
   function tbUseLast() {
     const last = tbLastHookah();
@@ -17514,7 +17473,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const localN = tbLocalCount();
     el.innerHTML = `
       <div class="tb-hint" id="tbScreenStat" style="margin:12px 2px 8px"></div>
-      <div class="tb-btnrow tbs-actions"><button class="tb-btn ok" onclick="tbScreenAdd()">＋ Вкус</button><button class="tb-btn" onclick="tbBowlsOpen()">Граммы по чашам</button><button class="tb-btn" onclick="tbImportOpen()">Список</button></div>
+      <div class="tb-btnrow tbs-actions"><button class="tb-btn ok" onclick="tbScreenAdd()">＋ Вкус</button><button class="tb-btn" onclick="tbImportOpen()">Список</button></div>
       <div id="tbAddBoxWrap"></div>
       ${localN ? `<div class="tb-legend" style="margin-top:12px">На этом телефоне есть старый справочник (${localN} ${ruPlural(localN, 'вкус', 'вкуса', 'вкусов')}). <button class="tb-linkbtn" onclick="tbImportOpen(true)">Загрузить его в общий</button></div>` : ''}
       <input class="form-input tb-search" id="tbsQ" type="text" inputmode="search" placeholder="Бренд или вкус" autocomplete="off" value="${escHtml(tbScreenQ)}" oninput="tbScreenSearch(this.value)">
@@ -17700,38 +17659,6 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       tbClose();
       showToast('Вкус убран в архив');
       await tbScreenLoad(true);
-    } catch (err) { showToast(err.message && err.message !== 'Failed to fetch' ? err.message : 'Нет связи — не сохранено', true); }
-    finally { tbBusy = false; }
-  }
-
-  // ── Граммы по чашам ──
-  function tbBowlsOpen() {
-    tbMode = 'bowls'; tbShow();
-    document.getElementById('tbSheet').innerHTML = `
-      ${tbHead('Граммы по чашам')}
-      <div class="tb-body" id="tbBody">
-        <div class="tb-hint" style="margin-top:6px">Сколько грамм табака идёт на один кальян в каждой чаше. Когда КМ выбирает чашу в окне «Кальян из справочника», граммы подставляются сами (их можно поправить). Пусто — граммы вводятся вручную.</div>
-        ${tbBowls().map((b, i) => `<div class="tb-mrow2"><div class="tb-iname">${escHtml(b.name)}</div><input class="form-input tb-bowlg" data-name="${escHtml(b.name)}" data-was="${b.grams || ''}" type="text" inputmode="decimal" maxlength="6" autocomplete="off" placeholder="г" value="${b.grams ? tbFmt(b.grams).replace(/\s/g, '') : ''}"><span class="tb-bg">г</span></div>`).join('')}
-        <div class="tb-btnrow" style="margin-top:14px"><button class="tb-btn ok" onclick="tbBowlsSave()">Сохранить</button></div>
-      </div>`;
-  }
-  async function tbBowlsSave() {
-    if (tbBusy) return;
-    const rows = [...document.querySelectorAll('.tb-bowlg')];
-    const jobs = [];
-    for (const inp of rows) {
-      const raw = inp.value.trim(), was = inp.dataset.was ? Number(inp.dataset.was) : null;
-      const val = raw === '' ? null : tbNum(raw);
-      if (val !== null && !(val > 0 && val <= 200)) { showToast(`«${inp.dataset.name}»: граммы от 1 до 200`, true); return; }
-      if ((val || null) !== (was || null)) jobs.push({ name: inp.dataset.name, grams: val });
-    }
-    if (!jobs.length) { tbClose(); return; }
-    tbBusy = true;
-    try {
-      for (const j of jobs) await tbApi('PUT', '/bowl', j);
-      await tbLoad();
-      tbClose();
-      showToast('Граммы по чашам сохранены');
     } catch (err) { showToast(err.message && err.message !== 'Failed to fetch' ? err.message : 'Нет связи — не сохранено', true); }
     finally { tbBusy = false; }
   }
