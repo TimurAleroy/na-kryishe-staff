@@ -393,12 +393,7 @@
     .tb-legend { margin-top: 18px; padding: 12px 14px; border-radius: 12px; background: rgba(240,223,192,0.03); border: 1px solid var(--border); font-size: 12px; color: var(--text-muted); line-height: 1.6; }
     .tb-legend b { color: var(--text-sub); font-weight: 500; }
     .tb-legend code { font-family: 'Inter', sans-serif; color: var(--text-sub); }
-    .tb-hint.bad { color: #f87171; }
-    .tb-gram { display: flex; align-items: center; gap: 8px; }
-    .tb-gram .form-input { width: 120px; padding: 10px 13px; font-size: 15px; }
-    .tb-gram span { color: var(--text-muted); font-size: 13px; }
     .tb-linkbtn { background: none; border: none; padding: 0; color: var(--accent); font-family: 'Inter', sans-serif; font-size: 12px; text-decoration: underline; cursor: pointer; }
-    #visitTbInfo { margin: 6px 2px 0; font-size: 12.5px; color: var(--accent); line-height: 1.5; }
     .tbs-actions { margin-top: 0; }
     .tbs-actions .tb-btn { padding: 11px 8px; font-size: 12.5px; }
     .sd-cat.tbs-brand { display: flex; align-items: center; gap: 8px; }
@@ -4060,9 +4055,8 @@
     <div class="hk-today" id="visitTodayInfo" style="display:none"></div>
     <div class="form-group">
       <label class="form-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><path d="M8 3v7a2 2 0 002 2v9M8 3v7"/><path d="M17 3c-1.5 0-2.5 1.5-2.5 4s1 4 2.5 4v10"/></svg>Кальян — если заказывал</label>
-      <input class="form-input" id="visitHookah" type="text" placeholder="Например: Персик со льдом" oninput="tbVisitHint()">
+      <input class="form-input" id="visitHookah" type="text" placeholder="Например: Персик со льдом">
       <button type="button" class="tb-open" id="tbOpenBtn" onclick="tbOpen()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="18" cy="18" r="2"/></svg>Собрать из справочника</button>
-      <div id="visitTbInfo" style="display:none"></div>
       <div class="note" style="margin:6px 2px 0">Гость был без кальяна — оставьте пустым, визит всё равно запишется. Заказал второй — добавьте визит ещё раз, кальяны пронумеруются по порядку.</div>
     </div>
     <div class="form-group">
@@ -17012,11 +17006,11 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   //   • один кальян:  «Бренд Вкус»                      → Darkside Бейкери
   //   • микс:         «Бренд Вкус / Бренд Вкус»          → главный (больший) вкус первым; при равных долях — по алфавиту
   //   • разделитель ' + ' НЕ используем в миксе — им сервер и карточка делят РАЗНЫЕ кальяны одного визита
-  //   • детали одной строкой в заметку визита:  «№2 · 60/40 · 18 г · средний»
-  //     (№ — какой по счёту кальян этого гостя за вечер; пропорция, граммы на кальян, крепость кальяна — всё, кроме №, по желанию)
+  //   • детали одной строкой в заметку визита:  «№2 · 60/40 · средний»
+  //     (№ — какой по счёту кальян этого гостя за вечер; пропорция и крепость кальяна — по желанию)
   //
-  // Граммы: КМ вводит граммы на кальян, приложение делит их
-  // по пропорции микса и отправляет вместе с визитом; сервер списывает со склада. Вводить приход, списание и пересчёт — право tobacco.manage.
+  // Граммов в визите нет: остаток склада ведётся приходом и пересчётом («Сервис» → «Табак», право tobacco.manage);
+  // разница между пересчётами — это и есть расход.
   const TB_MAX_MIX = 3;
   const TB_STARTER_BRANDS = ['Darkside', 'Tangiers', 'Musthave', 'Adalya', 'Blackburn', 'Element', 'Fumari', 'Sebero', 'Duft', 'Overdose', 'Spectrum', 'Bonche', 'Al Fakher'];
   const TB_RATIOS = { 2: [[50, 50], [60, 40], [70, 30]], 3: [[34, 33, 33], [50, 25, 25], [40, 40, 20]] };
@@ -17029,7 +17023,6 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   let tbMode = '';           // что показано в окне: pick | flavor | add | import
   let tbAddCtx = 'pick';     // откуда открыто добавление вкуса: pick (из визита) | screen (из раздела «Табак»)
   let tbBusy = false;
-  let visitTobacco = null;   // { key, canon, items: [{ flavorId, grams }], names } — уйдёт на сервер вместе с визитом
 
   function tbNorm(s) { return String(s || '').toLowerCase().replace(/ё/g, 'е').replace(/\s+/g, ' ').trim(); }
   // Поиск и по-русски, и по-латыни: «дарк» находит Darkside, «тан» — Tangiers (грубая транслитерация, хватает для начала слова)
@@ -17103,23 +17096,10 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const r = (TB_RATIOS[n] || [])[TB.ratio];
     return r ? r.join('/') : '';
   }
-  // Граммы на кальян, разложенные по вкусам по пропорции: [11, 7] или null (граммы не указаны / нелепые)
-  function tbTotalGrams() { const g = tbNum(TB.grams); return g > 0 && g <= 200 * TB.mix.length ? Math.round(g * 10) / 10 : null; }
-  function tbSplit() {
-    const total = tbTotalGrams();
-    if (!TB.mix.length || total === null) return null;
-    const sh = tbShares(), sum = sh.reduce((a, b) => a + b, 0);
-    const parts = sh.map(x => Math.round(total * x / sum * 10) / 10);
-    const diff = Math.round((total - parts.reduce((a, b) => a + b, 0)) * 10) / 10;
-    parts[0] = Math.round((parts[0] + diff) * 10) / 10;
-    return parts.every(p => p > 0 && p <= 200) ? parts : null;
-  }
   function tbDetailLine() {
     const parts = [];
     const rt = tbRatioText();
     if (rt) parts.push(rt);
-    const tg = tbSplit() ? tbTotalGrams() : null;
-    if (tg) parts.push(tbFmt(tg) + ' г');
     if (TB.str) parts.push(TB.str);
     return parts.length ? ['№' + TB.n].concat(parts).join(' · ') : '';
   }
@@ -17159,7 +17139,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   async function tbOpen() {
     const todays = ((currentGuest && currentGuest.visits) || []).find(v => v.date === venueDayStr());
     const n = (todays ? hookahList(todays.hookah).length : 0) + 1;
-    TB = { mix: [], ratio: -1, grams: '', str: '', q: '', brand: '', n };
+    TB = { mix: [], ratio: -1, str: '', q: '', brand: '', n };
     tbMode = 'pick'; tbAddCtx = 'pick';
     tbShow();
     await tbPickLoad();
@@ -17191,7 +17171,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
         <div id="tbRecent"></div>
         <div class="tb-list" id="tbList"></div>
         <div id="tbAddBox"></div>
-        <div class="tb-legend"><b>Как записываем.</b> Кальян: <code>Бренд Вкус</code>. Микс: <code>Бренд Вкус / Бренд Вкус</code> — главный вкус первым. Детали (пропорция, граммы, крепость) уходят строкой в заметку визита: <code>№2 · 60/40 · 18 г · средний</code>. <code>№2</code> — второй кальян этого гостя за вечер. Граммы списываются со склада табака.</div>
+        <div class="tb-legend"><b>Как записываем.</b> Кальян: <code>Бренд Вкус</code>. Микс: <code>Бренд Вкус / Бренд Вкус</code> — главный вкус первым. Детали (пропорция, крепость) уходят строкой в заметку визита: <code>№2 · 60/40 · средний</code>. <code>№2</code> — второй кальян этого гостя за вечер.</div>
       </div>
       <div class="tb-foot"><div class="tb-prev" id="tbPreview"></div><button class="btn-cta" id="tbDoneBtn" onclick="tbDone()">Готово</button></div>`;
     tbUpdate();
@@ -17232,21 +17212,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     }).join('');
     const ratios = n >= 2 ? `<div class="tb-sub">Пропорция (первый — главный)</div><div class="tb-chips">${(TB_RATIOS[n] || []).map((r, i) =>
       `<button class="tb-chip${TB.ratio === i ? ' on' : ''}" onclick="tbSetRatio(${i})">${n === 3 && i === 0 ? 'поровну' : r.join('/')}</button>`).join('')}</div>` : '';
-    const grams = `<div class="tb-sub">Граммы на кальян</div><div class="tb-gram"><input class="form-input" id="tbGrams" type="text" inputmode="decimal" autocomplete="off" maxlength="6" placeholder="Напр. 18" value="${escHtml(TB.grams)}" oninput="tbSetGrams(this.value)"><span>г</span></div><div class="tb-hint" id="tbGramHint"></div>`;
-    el.innerHTML = rows + ratios + grams;
-    tbRenderGramHint();
+    el.innerHTML = rows + ratios;
   }
-  function tbRenderGramHint() {
-    const el = document.getElementById('tbGramHint');
-    if (!el || !TB) return;
-    const raw = String(TB.grams || '').trim();
-    if (!raw) { el.textContent = 'Граммы не указаны — со склада ничего не спишется.'; el.classList.remove('bad'); return; }
-    const parts = tbSplit();
-    if (!parts) { el.textContent = 'Укажите граммы числом: например, 18 (до 200 на вкус).'; el.classList.add('bad'); return; }
-    el.classList.remove('bad');
-    el.textContent = 'Спишется: ' + TB.mix.map((id, i) => { const e = tbById(id); return e ? `${e.f} ${tbFmt(parts[i])} г` : ''; }).filter(Boolean).join(' · ');
-  }
-
   function tbRenderDet() {
     const el = document.getElementById('tbDet');
     if (!el) return;
@@ -17335,21 +17302,17 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   function tbRemove(i) { TB.mix.splice(i, 1); TB.ratio = -1; if (!TB.mix.length) TB.str = ''; tbUpdate(); }
   function tbSetRatio(i) { TB.ratio = TB.ratio === i ? -1 : i; tbRenderMix(); tbRenderFoot(); }
   function tbSetStr(v) { TB.str = TB.str === v ? '' : v; tbRenderDet(); tbRenderFoot(); }
-  function tbSetGrams(v) { TB.grams = String(v || ''); tbRenderGramHint(); tbRenderFoot(); }
 
   function tbUseLast() {
     const last = tbLastHookah();
     if (!last) return;
     document.getElementById('visitHookah').value = last;
-    visitTobacco = null;
     tbClose();
-    tbVisitHint();
     showToast('Вставлено: ' + last);
   }
 
   function tbDone() {
     if (!TB || !TB.mix.length) { showToast('Выберите хотя бы один вкус'); return; }
-    if (String(TB.grams || '').trim() && !tbSplit()) { showToast('Граммы: укажите число (например, 18) или очистите поле', true); return; }
     const canon = tbCanon();
     document.getElementById('visitHookah').value = canon;
     const notes = document.getElementById('visitNotes');
@@ -17357,30 +17320,9 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     // строку «№N · …» от прошлого нажатия «Готово» заменяем, остальной текст заметки не трогаем
     const rest = String(notes.value || '').split('\n').filter(l => !/^№\d+(\s·.*)?$/.test(l.trim())).join('\n').trim();
     notes.value = line ? (rest ? line + '\n' + rest : line) : rest;
-    // что и сколько списать: ключ новый на каждое нажатие «Готово»; при повторной отправке визита (обрыв связи) он тот же — граммы не спишутся дважды
-    const split = tbSplit();
-    visitTobacco = {
-      key: tbNewKey(), canon,
-      items: split ? TB.mix.map((id, i) => ({ flavorId: id, grams: split[i] })) : [],
-      names: split ? TB.mix.map((id, i) => { const e = tbById(id); return e ? `${e.b} ${e.f} ${tbFmt(split[i])} г` : ''; }).filter(Boolean) : []
-    };
     tbRememberRecent(TB.mix.slice());
     tbClose();
-    tbVisitHint();
   }
-  // Под полем кальяна: что спишется со склада вместе с этим визитом (пока текст поля тот, что собрал справочник)
-  function tbVisitMatches() {
-    if (!visitTobacco || !visitTobacco.items.length) return false;
-    const v = document.getElementById('visitHookah');
-    return !!v && tbNorm(v.value) === tbNorm(visitTobacco.canon);
-  }
-  function tbVisitHint() {
-    const el = document.getElementById('visitTbInfo');
-    if (!el) return;
-    if (tbVisitMatches()) { el.style.display = ''; el.textContent = 'Со склада спишется: ' + visitTobacco.names.join(' · '); }
-    else el.style.display = 'none';
-  }
-
   // ── Добавление вкуса (из окна выбора и из раздела «Табак») ──
   function tbOpenAdd(q) {
     const box = document.getElementById('tbAddBox');
@@ -17479,7 +17421,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       <input class="form-input tb-search" id="tbsQ" type="text" inputmode="search" placeholder="Бренд или вкус" autocomplete="off" value="${escHtml(tbScreenQ)}" oninput="tbScreenSearch(this.value)">
       <div class="tb-chips" style="margin:10px 0 2px" id="tbsFilters"></div>
       <div id="tbsList"></div>
-      <div class="tb-legend">Граммы списываются сами: КМ собирает кальян в визите, указывает граммы — и они уходят со склада этого вкуса. Приход, списание (пролили, сломали) и пересчёт вносятся здесь: нажмите на вкус. Метка «мало» появляется у вкуса, когда остаток дошёл до порога, который вы задали.</div>
+      <div class="tb-legend">Склад ведём вручную. Приход — когда привезли табак: нажмите на вкус → «Приход». Раз в неделю — пересчёт: взвесьте остаток и нажмите на вкус → «Осталось по факту»; разница с прошлым разом и есть расход, он виден в строке «за 30 дней ушло». «Списать» — если пролили или испортилось. Метка «мало» появляется, когда остаток дошёл до порога, который вы задали.</div>
       <div style="height:16px"></div>`;
     tbScreenList();
   }
@@ -17502,9 +17444,10 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const items = tbCat.items;
     const total = items.reduce((a, e) => a + (e.grams > 0 ? e.grams : 0), 0);
     const lowN = items.filter(e => e.low || e.empty).length;
+    const used = items.reduce((x, e) => x + (e.used30 > 0 ? e.used30 : 0), 0);
     const stat = document.getElementById('tbScreenStat');
     if (stat) stat.textContent = items.length
-      ? `${items.length} ${ruPlural(items.length, 'вкус', 'вкуса', 'вкусов')} · ${tbBrandsWithItems().length} ${ruPlural(tbBrandsWithItems().length, 'бренд', 'бренда', 'брендов')} · на складе ${tbFmt(total)} г${lowN ? ` · пора заказывать: ${lowN}` : ''}`
+      ? `${items.length} ${ruPlural(items.length, 'вкус', 'вкуса', 'вкусов')} · ${tbBrandsWithItems().length} ${ruPlural(tbBrandsWithItems().length, 'бренд', 'бренда', 'брендов')} · на складе ${tbFmt(total)} г${used > 0 ? ` · за 30 дней ушло ${tbFmt(used)} г` : ''}${lowN ? ` · пора заказывать: ${lowN}` : ''}`
       : 'Справочник пуст. Добавьте вкус или загрузите список кнопкой «Список».';
     const fl = document.getElementById('tbsFilters');
     if (fl) fl.innerHTML = [['all', 'Все'], ['low', 'Мало' + (lowN ? ' · ' + lowN : '')], ['out', 'Нет в наличии']].map(([k, t]) =>
@@ -17585,7 +17528,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
         <div class="tb-sec">Движение граммов</div>
         <div class="tf-move"><input class="form-input" id="tfG" type="text" inputmode="decimal" autocomplete="off" placeholder="Граммы" maxlength="8"><input class="form-input" id="tfNote" type="text" autocomplete="off" placeholder="Заметка (по желанию)" maxlength="200"></div>
         <div class="tb-btnrow tf-btns"><button class="tb-btn ok" onclick="tbMove('receipt')">Приход</button><button class="tb-btn" onclick="tbMove('writeoff')">Списать</button><button class="tb-btn" onclick="tbMove('inventory')">Осталось по факту</button></div>
-        <div class="tb-hint" style="margin-top:6px">«Приход» прибавляет граммы, «Списать» убирает (пролили, испортилось), «Осталось по факту» — пересчёт: учёт подгоняется под то, что вы взвесили.</div>
+        <div class="tb-hint" style="margin-top:6px">«Приход» прибавляет граммы, «Списать» убирает (пролили, испортилось), «Осталось по факту» — пересчёт: учёт подгоняется под то, что вы взвесили, а разница с прошлым разом считается расходом.</div>
         <div class="tb-sec">О вкусе</div>
         <div class="tb-sub">Название</div>
         <input class="form-input" id="tfName" maxlength="40" autocomplete="off" value="${escHtml(e.f)}" style="padding:11px 13px;font-size:14.5px">
@@ -17739,10 +17682,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
         : '';
     }
     tbClose();
-    visitTobacco = null;
     document.getElementById('visitHookah').value = '';
     document.getElementById('visitNotes').value = '';
-    tbVisitHint();
     document.getElementById('visitGuestNameHeader').textContent = currentGuest.fullName || currentGuest.name;
     showScreen('visit');
   }
@@ -17949,9 +17890,6 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   async function submitVisit() {
     const hookah = document.getElementById('visitHookah').value.trim();
     const notes = document.getElementById('visitNotes').value.trim();
-    // граммы уходят вместе с визитом, только если поле кальяна осталось таким, каким его собрал справочник
-    const withTb = tbVisitMatches();
-
     const btn = document.getElementById('visitSubmitBtn');
     btn.disabled = true;
     btn.textContent = 'Сохраняем...';
@@ -17960,17 +17898,14 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       const res = await fetch(`${PROXY_BASE}/api/staff/visit?pin=${getPin()}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(Object.assign({ pin: getPin(), guestId: currentGuest.id, guestName: currentGuest.fullName || currentGuest.name, hookah, notes }, withTb ? { tobacco: { key: visitTobacco.key, items: visitTobacco.items } } : {}))
+        body: JSON.stringify(Object.assign({ pin: getPin(), guestId: currentGuest.id, guestName: currentGuest.fullName || currentGuest.name, hookah, notes }))
       });
       if (res.status === 401) { showScreen('pin'); return; }
       if (!res.ok) { notify(await responseError(res, 'Визит не сохранился — попробуйте ещё раз')); return; }
       let saved = null;
       try { saved = await res.json(); } catch {}
       const guestLabel = currentGuest.fullName || currentGuest.name;
-      visitTobacco = null;
       showSuccess('Визит сохранён', saved && saved.bookingMarked ? `${guestLabel} · бронь отмечена «Пришёл»` : guestLabel);
-      // визит записан, а граммы со склада не списались — предупреждаем, чтобы КМ не думал, что учёт сошёлся
-      if (withTb && saved && saved.tobacco && saved.tobacco.error) setTimeout(() => notify('Визит сохранён, но граммы табака не списались: ' + saved.tobacco.error + '. Внесите списание вручную в «Сервис» → «Табак».'), 600);
       openGuestCard(currentGuest.id);
     } catch {
       notify('Нет связи — визит не сохранился. Проверьте интернет и попробуйте ещё раз.');
