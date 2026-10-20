@@ -365,6 +365,9 @@
     .tb-chip:active { filter: brightness(1.15); }
     .tb-sub { font-size: 11.5px; color: var(--text-muted); margin: 10px 0 6px; }
     .tb-sub:first-child { margin-top: 0; }
+    .tb-tabs { display: flex; gap: 8px; margin: 10px 16px 0; }
+    .tb-tab { flex: 1; padding: 10px 8px; border-radius: 12px; border: 1px solid var(--border); background: transparent; color: var(--text-sub); font-family: 'Inter', sans-serif; font-size: 13.5px; cursor: pointer; }
+    .tb-tab.on { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
     .tb-search { margin-top: 14px; padding: 12px 14px; font-size: 15px; }
     .tb-brands { display: flex; gap: 6px; overflow-x: auto; margin: 10px -18px 0; padding: 0 18px 4px; scrollbar-width: none; }
     .tb-brands::-webkit-scrollbar { display: none; }
@@ -4073,8 +4076,9 @@
     <div class="back-btn" onclick="showScreen('service')">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
-    <div><h1 style="font-size:14px;letter-spacing:1px;">Табак</h1><p>Справочник и остатки в граммах</p></div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Табак</h1><p>Табак и угли: справочник и остатки</p></div>
   </div>
+  <div class="tb-tabs" role="tablist"><button class="tb-tab on" id="tbTabT" role="tab" aria-selected="true" onclick="tbScreenTabSet('tobacco')">Табак</button><button class="tb-tab" id="tbTabC" role="tab" aria-selected="false" onclick="tbScreenTabSet('coals')">Угли</button></div>
   <div style="padding:0 16px" id="tobaccoContent"><div class="loading">Загружаю...</div><div style="height:16px"></div></div>
 </div>
 
@@ -4677,7 +4681,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('surveys.manage')) list.push({ group: G.content, icon: 'surveys', short: 'опросы', title: 'Опросы', sub: 'Фон, ретушь, тексты', fn: 'openSurveysEdit()' });
     if (can('tv.manage')) list.push({ group: G.content, icon: 'tv', short: 'тв-экраны', title: 'ТВ-экраны', sub: 'ВИП-комнаты и терраса: приветствие, фон, сообщения', fn: 'openTv()' });
     if (can('checklists.manage')) list.push({ group: G.team, icon: 'checklists', short: 'чек-листы', title: 'Чек-листы', sub: 'Открытие и закрытие смены', fn: 'openChecklistsEdit()' });
-    if (can('tobacco.manage')) list.push({ group: G.team, icon: 'tobacco', short: 'табак', title: 'Табак', sub: 'Вкусы и остатки в граммах', fn: 'openTobacco()' });
+    if (can('tobacco.manage')) list.push({ group: G.team, icon: 'tobacco', short: 'табак', title: 'Табак', sub: 'Вкусы, остатки табака и углей', fn: 'openTobacco()' });
     if (can('standards.manage')) list.push({ group: G.team, icon: 'standards', short: 'стандарты', title: 'Стандарты', sub: 'Правила сервиса, тесты, кто прочитал', fn: "openStandardsEdit('service')" });
     if (can('tags.manage')) list.push({ group: G.guests, icon: 'tags', short: 'теги', title: 'Теги', sub: 'Список, цвета, подсказки', fn: 'openTagsEdit()' });
     if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'Логины, роли и права', fn: 'openEmployees()' });
@@ -17121,7 +17125,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     document.body.style.overflow = 'hidden';
   }
   function tbClose() {
-    TB = null; TF = null; tbMode = '';
+    TB = null; TF = null; CF = null; tbMode = '';
     const ov = document.getElementById('tbOverlay');
     if (ov) ov.classList.remove('show');
     const sh = document.getElementById('tbSheet');
@@ -17396,6 +17400,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   let tbScreenQ = '', tbScreenFilter = 'all';
   function openTobacco() {
     tbScreenQ = ''; tbScreenFilter = 'all';
+    tbScreenTab = 'tobacco'; tbTabsRender();
     showScreen('tobacco');
     tbScreenLoad();
   }
@@ -17404,9 +17409,10 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     if (!silent) el.innerHTML = '<div class="loading">Загружаю...</div>';
     try {
       await tbLoad();
+      if (tbScreenTab !== 'tobacco') return;
       tbScreenRender();
     } catch (e) {
-      if (!silent) el.innerHTML = errorStateHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером', 'tbScreenLoad()');
+      if (!silent && tbScreenTab === 'tobacco') el.innerHTML = errorStateHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером', 'tbScreenLoad()');
     }
   }
   function tbScreenRender() {
@@ -17667,6 +17673,227 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     ta.value = text; ta.focus(); ta.select();
     (navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(text) : Promise.reject())
       .then(() => showToast('Список скопирован'), () => showToast('Список в поле — выделите и скопируйте вручную'));
+  }
+
+  // ─── УГЛИ: позиции и учёт в коробках ────────────────────────────────────────
+  // Вкладка «Угли» на экране «Табак»; права те же (tobacco.manage). Остаток — сумма журнала на сервере (db/coals.js):
+  // приход «+», списание «−», пересчёт «осталось по факту» (разница с учётом — это расход). Окно позиции — то же окно tbSheet.
+  let tbScreenTab = 'tobacco';   // tobacco | coals
+  let clCat = null;              // [{ id, n, boxes, min, used30, tracked, low, empty }]
+  let CF = null;                 // окно позиции: { id, hist }
+  let clBusy = false;
+  const CL_KIND = { receipt: 'Приход', writeoff: 'Списание', inventory: 'Пересчёт' };
+  const clFmt = n => (Math.round(Number(n) * 100) / 100).toLocaleString('ru-RU', { maximumFractionDigits: 2 });
+  const clMap = x => ({ id: x.id, n: x.name, boxes: Number(x.boxes) || 0, min: typeof x.minBoxes === 'number' ? x.minBoxes : null, used30: Number(x.used30) || 0, tracked: !!x.tracked, low: !!x.low, empty: !!x.empty });
+  async function clApi(method, path, body) {
+    const res = await fetch(`${PROXY_BASE}/api/staff/coals${path}`, { method, headers: body === undefined ? undefined : { 'Content-Type': 'application/json' }, body: body === undefined ? undefined : JSON.stringify(body) });
+    if (res.status === 403) { accessDenied(); throw new Error('Нет доступа'); }
+    if (!res.ok) throw new Error(await responseError(res, 'Не получилось — попробуйте ещё раз'));
+    return res.json();
+  }
+  async function clLoad() {
+    const d = await clApi('GET', '');
+    clCat = (d.items || []).map(clMap);
+    return clCat;
+  }
+  function clById(id) { return clCat ? clCat.find(e => e.id === id) || null : null; }
+  function clUpsert(item) {
+    if (!clCat || !item) return;
+    const e = clMap(item), i = clCat.findIndex(x => x.id === e.id);
+    if (i >= 0) clCat[i] = e; else clCat.push(e);
+    clCat.sort((a, b) => a.n.localeCompare(b.n, 'ru'));
+  }
+  const clErr = err => err && err.message && err.message !== 'Failed to fetch' ? err.message : 'Нет связи — не сохранено';
+
+  // ── Вкладки «Табак | Угли» ──
+  function tbTabsRender() {
+    const t = document.getElementById('tbTabT'), c = document.getElementById('tbTabC');
+    if (!t || !c) return;
+    t.classList.toggle('on', tbScreenTab === 'tobacco'); c.classList.toggle('on', tbScreenTab === 'coals');
+    t.setAttribute('aria-selected', tbScreenTab === 'tobacco' ? 'true' : 'false'); c.setAttribute('aria-selected', tbScreenTab === 'coals' ? 'true' : 'false');
+  }
+  function tbScreenTabSet(t) {
+    if (tbScreenTab === t) return;
+    tbScreenTab = t;
+    tbTabsRender();
+    if (t === 'coals') clScreenLoad(); else tbScreenLoad();
+  }
+
+  // ── Экран «Угли» ──
+  async function clScreenLoad(silent) {
+    const el = document.getElementById('tobaccoContent');
+    if (!el) return;
+    if (!silent) el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      await clLoad();
+      if (tbScreenTab !== 'coals') return;
+      clScreenRender();
+    } catch (e) {
+      if (!silent && tbScreenTab === 'coals') el.innerHTML = errorStateHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером', 'clScreenLoad()');
+    }
+  }
+  function clScreenRender() {
+    const el = document.getElementById('tobaccoContent');
+    if (!el || !clCat) return;
+    el.innerHTML = `
+      <div class="tb-hint" id="clStat" style="margin:12px 2px 8px"></div>
+      <div class="tb-btnrow tbs-actions"><button class="tb-btn ok" onclick="clAddOpen()">＋ Позиция</button></div>
+      <div id="clAddWrap"></div>
+      <div id="clList"></div>
+      <div class="tb-legend">Угли считаем коробками. Завели позицию (например, «Cocoloco 25 мм») — нажмите на неё: «Приход», когда привезли; раз в неделю «Осталось по факту» — посчитайте коробки (можно по половинкам: 3,5); разница с прошлым разом и есть расход, он виден в строке «за 30 дней ушло». «Списать» — если рассыпали или испортились. Метка «мало» появляется, когда остаток дошёл до порога, который вы задали.</div>
+      <div style="height:16px"></div>`;
+    clList();
+  }
+  function clList() {
+    const list = document.getElementById('clList');
+    if (!list || !clCat) return;
+    const total = clCat.reduce((a, e) => a + (e.boxes > 0 ? e.boxes : 0), 0);
+    const used = clCat.reduce((a, e) => a + (e.used30 > 0 ? e.used30 : 0), 0);
+    const lowN = clCat.filter(e => e.low || e.empty).length;
+    const stat = document.getElementById('clStat');
+    if (stat) stat.textContent = clCat.length
+      ? `${clCat.length} ${ruPlural(clCat.length, 'позиция', 'позиции', 'позиций')} · на складе ${clFmt(total)} кор.${used > 0 ? ` · за 30 дней ушло ${clFmt(used)} кор.` : ''}${lowN ? ` · пора заказывать: ${lowN}` : ''}`
+      : 'Угли пока не заведены. Добавьте первую позицию.';
+    if (!clCat.length) { list.innerHTML = ''; return; }
+    list.innerHTML = clCat.map(e => {
+      const warn = e.empty ? '<span class="tbs-flag bad">закончились?</span>' : (e.low ? '<span class="tbs-flag warn">мало</span>' : '');
+      return `<div class="tb-item tbs-row clrow" role="button" tabindex="0" onclick="clItemOpen('${e.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();clItemOpen('${e.id}')}">
+        <div class="tb-iname">${escHtml(e.n)}</div>${warn}
+        <div class="tbs-g">${e.tracked || e.boxes ? clFmt(e.boxes) + ' кор.' : '<span class="tbs-none">учёта нет</span>'}</div></div>`;
+    }).join('');
+  }
+
+  // ── Новая позиция ──
+  function clAddOpen() {
+    const wrap = document.getElementById('clAddWrap');
+    if (!wrap) return;
+    wrap.innerHTML = `<div class="tb-addform">
+      <div class="tb-sub" style="margin-top:0">Название углей</div>
+      <input class="form-input" id="clAddName" maxlength="40" placeholder="Например: Cocoloco 25 мм" autocomplete="off">
+      <div class="tb-sub">Порог «пора заказывать», коробок (по желанию)</div>
+      <input class="form-input" id="clAddMin" type="text" inputmode="decimal" maxlength="8" placeholder="Например, 2" autocomplete="off">
+      <div class="tb-btnrow"><button class="tb-btn" onclick="clAddClose()">Отмена</button><button class="tb-btn ok" id="clAddOk" onclick="clAddSubmit()">Добавить</button></div>
+    </div>`;
+    const n = document.getElementById('clAddName'); if (n) n.focus();
+  }
+  function clAddClose() { const w = document.getElementById('clAddWrap'); if (w) w.innerHTML = ''; }
+  async function clAddSubmit() {
+    if (clBusy) return;
+    const name = String(document.getElementById('clAddName').value || '').replace(/\s+/g, ' ').trim();
+    const minRaw = document.getElementById('clAddMin').value.trim();
+    if (!name) { showToast('Укажите название углей', true); return; }
+    const min = minRaw === '' ? null : tbNum(minRaw);
+    if (min !== null && !(min > 0)) { showToast('Порог — число коробок больше нуля (или оставьте пустым)', true); return; }
+    clBusy = true;
+    try {
+      const r = await clApi('POST', '/item', { name, minBoxes: min });
+      clUpsert(r.item);
+      clAddClose();
+      clList();
+      showToast(r.created ? 'Позиция добавлена' : (r.restored ? 'Позиция возвращена из архива' : 'Такая позиция уже есть'));
+    } catch (err) { showToast(clErr(err), true); }
+    finally { clBusy = false; }
+  }
+
+  // ── Окно позиции: остаток, приход, списание, пересчёт, правка, история ──
+  async function clItemOpen(id) {
+    if (!clById(id)) return;
+    CF = { id, hist: null };
+    tbMode = 'coal';
+    tbShow();
+    clItemRender();
+    clItemHistory();
+  }
+  async function clItemHistory() {
+    const id = CF && CF.id;
+    if (!id) return;
+    try {
+      const d = await clApi('GET', `/item/${id}/history?limit=15`);
+      if (!CF || CF.id !== id) return;
+      CF.hist = d.items || [];
+    } catch { if (CF && CF.id === id) CF.hist = []; }
+    const box = document.getElementById('cfHist');
+    if (box) box.innerHTML = clHistHtml();
+  }
+  function clHistHtml() {
+    if (!CF || CF.hist === null) return '<div class="loading">Загружаю...</div>';
+    if (!CF.hist.length) return '<div class="tb-hint">Движений пока не было.</div>';
+    return CF.hist.map(h => {
+      const d = new Date(h.at);
+      const when = isNaN(d) ? '' : d.toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Moscow' });
+      const who = [h.by, h.note].filter(Boolean).join(' · ');
+      return `<div class="tf-hrow"><div><b>${CL_KIND[h.kind] || h.kind}</b><small>${escHtml(who)}</small></div><div class="tf-hg ${h.boxes > 0 ? 'plus' : 'minus'}">${h.boxes > 0 ? '+' : '−'}${clFmt(Math.abs(h.boxes))} кор.<small>${escHtml(when)}</small></div></div>`;
+    }).join('');
+  }
+  function clItemRender() {
+    const e = CF && clById(CF.id);
+    if (!e) { tbClose(); return; }
+    document.getElementById('tbSheet').innerHTML = `
+      ${tbHead(escHtml(e.n))}
+      <div class="tb-body" id="tbBody">
+        <div class="tf-stock"><div class="tf-big">${clFmt(e.boxes)} кор.</div><div class="tf-sub">${e.tracked ? 'остаток по учёту' : 'учёт не начат — внесите приход или сделайте пересчёт'}${e.used30 ? ` · за 30 дней ушло ${clFmt(e.used30)} кор.` : ''}${e.min ? ` · порог ${clFmt(e.min)} кор.` : ''}</div></div>
+        <div class="tb-sec">Движение коробок</div>
+        <div class="tf-move"><input class="form-input" id="cfB" type="text" inputmode="decimal" autocomplete="off" placeholder="Коробки" maxlength="8"><input class="form-input" id="cfNote" type="text" autocomplete="off" placeholder="Заметка (по желанию)" maxlength="200"></div>
+        <div class="tb-btnrow tf-btns"><button class="tb-btn ok" onclick="clMove('receipt')">Приход</button><button class="tb-btn" onclick="clMove('writeoff')">Списать</button><button class="tb-btn" onclick="clMove('inventory')">Осталось по факту</button></div>
+        <div class="tb-hint" style="margin-top:6px">«Приход» прибавляет коробки, «Списать» убирает (рассыпали, испортились), «Осталось по факту» — пересчёт: учёт подгоняется под то, что вы насчитали, а разница с прошлым разом считается расходом. Коробки можно дробные: 3,5.</div>
+        <div class="tb-sec">О позиции</div>
+        <div class="tb-sub">Название</div>
+        <input class="form-input" id="cfName" maxlength="40" autocomplete="off" value="${escHtml(e.n)}" style="padding:11px 13px;font-size:14.5px">
+        <div class="tb-sub">Порог «пора заказывать», коробок (по желанию)</div>
+        <input class="form-input" id="cfMin" type="text" inputmode="decimal" autocomplete="off" maxlength="8" placeholder="Например, 2" value="${e.min ? clFmt(e.min).replace(/\s/g, '') : ''}" style="padding:11px 13px;font-size:14.5px">
+        <div class="tb-btnrow" style="margin-top:12px"><button class="tb-btn ok" onclick="clItemSave()">Сохранить</button><button class="tb-btn" onclick="clItemArchive()">В архив</button></div>
+        <div class="tb-sec">История</div>
+        <div id="cfHist">${clHistHtml()}</div>
+        <div style="height:12px"></div>
+      </div>`;
+  }
+  async function clMove(kind) {
+    if (clBusy || !CF) return;
+    const g = tbNum(document.getElementById('cfB').value), note = document.getElementById('cfNote').value.trim();
+    if (!(g > 0) && !(kind === 'inventory' && g === 0)) { showToast('Укажите коробки числом больше нуля' + (kind === 'inventory' ? ' (или 0, если углей не осталось)' : ''), true); return; }
+    // крупные цифры спрашиваем ещё раз: лишний ноль при вводе — самая частая ошибка
+    if (kind !== 'inventory' && g >= 200 && !(await askConfirm(`${kind === 'receipt' ? 'Приход' : 'Списание'} ${clFmt(g)} кор. — это точно столько?`, { ok: 'Да, верно' }))) return;
+    clBusy = true;
+    try {
+      const body = kind === 'inventory' ? { itemId: CF.id, kind, counted: g } : { itemId: CF.id, kind, boxes: g, note };
+      const r = await clApi('POST', '/move', body);
+      clUpsert(r.item);
+      showToast(!r.changed ? 'Совпало с учётом — менять нечего' : (kind === 'receipt' ? 'Приход записан' : kind === 'writeoff' ? 'Списание записано' : 'Пересчёт записан'));
+      CF.hist = null;
+      clItemRender();
+      clItemHistory();
+      clList();
+    } catch (err) { showToast(clErr(err), true); }
+    finally { clBusy = false; }
+  }
+  async function clItemSave() {
+    if (clBusy || !CF) return;
+    const name = String(document.getElementById('cfName').value || '').replace(/\s+/g, ' ').trim();
+    if (!name) { showToast('Название не может быть пустым', true); return; }
+    const minRaw = document.getElementById('cfMin').value.trim();
+    const min = minRaw === '' ? null : tbNum(minRaw);
+    if (min !== null && !(min > 0)) { showToast('Порог — число коробок больше нуля (или оставьте пустым)', true); return; }
+    clBusy = true;
+    try {
+      const r = await clApi('PUT', '/item/' + CF.id, { name, minBoxes: min });
+      clUpsert(r.item);
+      showToast(r.changed ? 'Сохранено' : 'Изменений нет');
+      clItemRender(); clItemHistory(); clList();
+    } catch (err) { showToast(clErr(err), true); }
+    finally { clBusy = false; }
+  }
+  async function clItemArchive() {
+    if (clBusy || !CF) return;
+    const e = clById(CF.id);
+    if (!e || !(await askConfirm(`Убрать «${e.n}» из списка?\n\nОстаток и история сохранятся. Вернуть позицию можно, добавив её заново.`, { ok: 'В архив', danger: true }))) return;
+    clBusy = true;
+    try {
+      await clApi('PUT', '/item/' + CF.id, { archived: true });
+      tbClose();
+      showToast('Позиция убрана в архив');
+      await clScreenLoad(true);
+    } catch (err) { showToast(clErr(err), true); }
+    finally { clBusy = false; }
   }
 
   function openAddVisit() {
