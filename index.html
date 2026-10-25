@@ -2959,6 +2959,12 @@ html[data-theme="dark"] input[type="date"].form-input::-webkit-calendar-picker-i
    Теперь выбранный день всегда залит акцентом, как и остальные выбранные */
 .desk-panel .ec-day.has.today.sel, .desk-panel .ec-day.today.sel { background: var(--accent); }
 
+/* Схема зала: диваны в одном стиле с мебелью террасы — спокойные серые (цвет текста темы с прозрачностью), как столы и стулья.
+   Раньше они были коричневыми с медной спинкой и в светлой и тёмной темах выбивались из схемы */
+.hz-svg .hz-sofa { fill: rgba(var(--fg-rgb),0.09); stroke: rgba(var(--fg-rgb),0.24); stroke-width: 0.8; }
+.hz-svg .hz-sofa-back { fill: rgba(var(--fg-rgb),0.2); stroke: rgba(var(--fg-rgb),0.3); stroke-width: 0.6; }
+.hz-svg .hz-sofa-line { stroke: rgba(var(--fg-rgb),0.22); stroke-width: 1; }
+
 /* ─── ОФОРМЛЕНИЕ: кнопка, окно выбора, плавная смена ─────────────────────────────────────── */
 .theme-btn { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 34px; height: 34px; margin-left: 8px; padding: 0; border-radius: 100px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-sub); cursor: pointer; transition: color .15s, border-color .15s, background-color .15s; }
 .theme-btn:hover { color: var(--accent); border-color: rgba(var(--ac),0.4); }
@@ -3007,9 +3013,10 @@ html[data-theme="dark"] input[type="date"].form-input::-webkit-calendar-picker-i
 }
 @keyframes thUp { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
 
-/* Смена темы: цвета перетекают за полсекунды, а не щёлкают (включается на момент переключения) */
-html.theme-anim, html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after { transition: background-color .4s ease, border-color .4s ease, color .4s ease, fill .4s ease, stroke .4s ease, box-shadow .4s ease !important; }
-@media (prefers-reduced-motion: reduce) { html.theme-anim, html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after { transition: none !important; } .th-ov.on, .th-sheet { animation: none !important; } }
+/* Смена темы: на экране остаётся снимок «было», и он за 0,3 с наплывом переходит в «стало» (View Transitions, считает видеокарта).
+   Цвета на самих элементах не анимируются — это и подвешивало телефон. Где браузер так не умеет, тема просто ставится сразу */
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .3s; animation-timing-function: ease; mix-blend-mode: normal; }
+@media (prefers-reduced-motion: reduce) { ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; } .th-ov.on, .th-sheet { animation: none !important; } }
 </style>
 <style id="fx-css">
 /* ═══ АНИМАЦИЯ НА КОМПЬЮТЕРЕ ═══════════════════════════════════════════════════════
@@ -19058,7 +19065,6 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   var KEY = 'jv-theme';
   var BAR = { classic: '#1E1004', light: '#F2F3F7', dark: '#0D0E12' };   // цвет фона каждой темы (для Telegram и строки браузера)
   var root = document.documentElement;
-  var animTimer = 0;
 
   function getPref() {
     try { var p = localStorage.getItem(KEY); return (p === 'light' || p === 'dark' || p === 'auto') ? p : 'classic'; } catch (e) { return 'classic'; }
@@ -19087,16 +19093,23 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     if (auto) auto.checked = pref === 'auto';
   }
 
-  function apply(animate) {
-    var pref = getPref(), theme = resolve(pref);
-    if (animate) {   // плавная смена цветов на полсекунды (как переключение в iOS)
-      root.classList.add('theme-anim');
-      clearTimeout(animTimer);
-      animTimer = setTimeout(function () { root.classList.remove('theme-anim'); }, 520);
-    }
+  function paint(pref, theme) {
     root.setAttribute('data-theme', theme);
     paintBars(theme);
     syncSheet(pref, theme);
+  }
+
+  // Смена темы. Раньше цвета плавно «переезжали» через transition на каждом элементе страницы — на телефоне это подвешивало
+  // экран на полсекунды (тысячи элементов × цвет, рамка, тень). Теперь тема ставится мгновенно, а если браузер умеет
+  // View Transitions — поверх идёт короткое наплывание картинки «было → стало», которое считает видеокарта, а не страница.
+  function apply(animate) {
+    var pref = getPref(), theme = resolve(pref);
+    var calm = false;
+    try { calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { /* считаем, что движение можно */ }
+    if (animate && !calm && typeof document.startViewTransition === 'function' && root.getAttribute('data-theme') !== theme) {
+      try { document.startViewTransition(function () { paint(pref, theme); }); return; } catch (e) { /* ниже поставим сразу */ }
+    }
+    paint(pref, theme);
   }
 
   window.getThemePref = getPref;
