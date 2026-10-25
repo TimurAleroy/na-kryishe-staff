@@ -2668,6 +2668,30 @@
     }
     @media (min-width: 1900px) { .dp-svc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   </style>
+<style id="fx-css">
+/* ═══ АНИМАЦИЯ НА КОМПЬЮТЕРЕ ═══════════════════════════════════════════════════════
+   Работает только на широком экране с мышью и без «уменьшить движение»: скрипт #fx-js в конце страницы
+   вешает на <html> класс fx. Появление — классы fx-a (снизу), fx-l / fx-r (боковые панели слева / справа):
+   скрипт ставит их на первые ~1,7 с после открытия экрана (на <body> в это время стоит fx-in).
+   Анимируются только прозрачность и сдвиг; когда анимация закончилась, элемент остаётся в обычном виде. */
+@keyframes fxRise   { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes fxSlideL { from { opacity: 0; transform: translateX(-14px); } to { opacity: 1; transform: none; } }
+@keyframes fxSlideR { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: none; } }
+@keyframes fxGrowX  { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.fx-in .fx-a { animation: fxRise .55s cubic-bezier(.2,.7,.2,1) backwards; animation-delay: calc(var(--fx-i, 0) * 38ms); }
+.fx-in .fx-l { animation: fxSlideL .6s cubic-bezier(.2,.7,.2,1) backwards; animation-delay: calc(var(--fx-i, 0) * 70ms); }
+.fx-in .fx-r { animation: fxSlideR .6s cubic-bezier(.2,.7,.2,1) backwards; animation-delay: calc(var(--fx-i, 0) * 70ms); }
+/* полоски (заполненность, доли): растут слева направо */
+.fx-in :is(.fc-fill, .sv-bar-line > i, .mk-bar > *, .sg-bar > *, .an-top-bar, .sr-bar > *) { transform-origin: left center; animation: fxGrowX .9s cubic-bezier(.2,.8,.2,1) .25s backwards; }
+/* наведение мыши: карточка чуть приподнимается */
+.fx .qcard { transition: transform .22s cubic-bezier(.2,.7,.2,1), filter .15s; }
+.fx .qcard:hover { transform: translateY(-3px); }
+.fx .qcard:active { transform: scale(0.97); }
+.fx .qrow { transition: background .15s, transform .2s cubic-bezier(.2,.7,.2,1); }
+.fx .qrow:hover { transform: translateY(-2px); }
+.fx .fc-card { transition: transform .22s cubic-bezier(.2,.7,.2,1); }
+.fx .fc-card:hover { transform: translateY(-2px); }
+</style>
 </head>
 <body>
 
@@ -18417,6 +18441,125 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   // При открытии приложения: если вкладка помнит вход — продолжаем; иначе быстрый PIN (если включён на этом
   // телефоне) или логин и пароль. Уволенный сотрудник не войдёт: ключ и быстрый вход на сервере стёрты.
   authInit();
+</script>
+<script id="fx-js">
+/* ═══ АНИМАЦИЯ НА КОМПЬЮТЕРЕ ═══════════════════════════════════════════════════════
+   Что делает: при открытии экрана на ~1,7 с метит его карточки классом fx-a (стили — в #fx-css): они выезжают
+   по очереди; боковые панели администратора выезжают при открытии главной; целые числа в счётчиках отсчитываются
+   от нуля. Приложение не трогает: следит только за классом .active у экранов и за добавлением новых блоков,
+   и только в эти ~1,7 с. Любая ошибка здесь гасится — приложение работает как раньше.
+   Включается: ширина от 700px + мышь + нет «уменьшить движение» (условия — в FX_QUERY).
+   Чтобы включить и на телефоне, замените FX_QUERY на '(prefers-reduced-motion: no-preference)'. */
+(function () {
+  'use strict';
+  try {
+    var FX_QUERY = '(min-width: 700px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)';
+    var WINDOW_MS = 1700;       // сколько секунд после открытия экрана новые блоки тоже выезжают
+    var MAX_TAGGED = 70;        // потолок меток на один экран (в длинных списках анимируем только начало)
+    var SEL_RISE = '.header, .sec, .search-box, .qgroup-label, .qcard, .qrow, .shift-bar, .vn-stat, .sv-card, .tf-card, .ls-card, .mn-card, .an-card, .acc-card, .sr-card, .fc-card, .pr-card, .tk-card, .gm-card, .gt2-card, .tg2-card, .ep-card, .sch-mine-card, .visit-item, .result-item, .emp-row, .log-item, .sg-stat, .fb-stat';
+    var SEL_PANEL = '.dp-date, .dp-section';
+    var COUNT_SEL = '.dp-count, .vn-stat-v, .sv-bar-top b';
+    var SKIP_IN = '.app-dialog-ov, .tb-ov, .overlay, .fx-a, .fx-l, .fx-r';
+
+    var root = document.documentElement, body = document.body;
+    var winTimer = 0, obs = null, tagged = 0, seq = 0;
+
+    function enabled() {
+      try { return window.matchMedia(FX_QUERY).matches; } catch (e) { return false; }
+    }
+
+    function tag(el, cls, step) {
+      if (tagged >= MAX_TAGGED || !el || el.closest(SKIP_IN)) return;
+      var r = el.getBoundingClientRect();
+      if (!r.width || !r.height || r.top > window.innerHeight + 80) return; // скрыт или далеко внизу
+      el.style.setProperty('--fx-i', String(Math.min(seq++, 18)));
+      el.classList.add(cls);
+      tagged++;
+    }
+
+    function countUp(el) {
+      var s = (el.textContent || '').trim();
+      if (!/^\d{1,6}$/.test(s) || s === el._fxWrote) return; // не число, либо это наша же запись
+      var n = +s;
+      if (n < 3) return;
+      if (el._fxRaf) cancelAnimationFrame(el._fxRaf);
+      var t0 = performance.now() + 120, dur = 900;
+      function put(v) { var t = String(v); el._fxWrote = t; el.textContent = t; }
+      put(0);
+      (function step(now) {
+        var p = Math.min(1, Math.max(0, (now - t0) / dur));
+        var e = 1 - Math.pow(1 - p, 3);
+        put(p >= 1 ? n : Math.round(n * e));
+        if (p < 1) el._fxRaf = requestAnimationFrame(step); else el._fxRaf = 0;
+      })(performance.now());
+    }
+
+    function onMut(muts) {
+      seq = 0;
+      for (var i = 0; i < muts.length; i++) {
+        var m = muts[i];
+        if (m.type !== 'childList') continue;
+        var tg = m.target;
+        if (tg.nodeType === 1 && tg.matches(COUNT_SEL)) countUp(tg);
+        for (var j = 0; j < m.addedNodes.length; j++) {
+          var n = m.addedNodes[j];
+          if (n.nodeType !== 1) continue;
+          if (n.matches(SEL_RISE)) tag(n, 'fx-a');
+          n.querySelectorAll(SEL_RISE).forEach(function (el) { tag(el, 'fx-a'); });
+          if (n.matches(COUNT_SEL)) countUp(n);
+          n.querySelectorAll(COUNT_SEL).forEach(countUp);
+        }
+      }
+    }
+
+    function leave() {
+      body.classList.remove('fx-in');
+      if (obs) { obs.disconnect(); obs = null; }
+    }
+
+    function enter(screen) {
+      if (!enabled()) { root.classList.remove('fx'); leave(); return; }
+      root.classList.add('fx');
+      clearTimeout(winTimer);
+      leave();
+      document.querySelectorAll('.fx-a, .fx-l, .fx-r').forEach(function (el) { el.classList.remove('fx-a', 'fx-l', 'fx-r'); });
+      void body.offsetWidth; // сброс, чтобы анимация шла заново и у тех же самых блоков
+      tagged = 0; seq = 0;
+      screen.querySelectorAll(SEL_RISE).forEach(function (el) { tag(el, 'fx-a'); });
+      screen.querySelectorAll(COUNT_SEL).forEach(countUp);
+      if (screen.id === 'screen-home') { // боковые панели администратора — только при открытии главной
+        ['deskLeft', 'deskRight'].forEach(function (id, k) {
+          var p = document.getElementById(id);
+          if (!p) return;
+          seq = 0;
+          p.querySelectorAll(SEL_PANEL).forEach(function (el) { tag(el, k ? 'fx-r' : 'fx-l'); });
+          p.querySelectorAll(COUNT_SEL).forEach(countUp);
+        });
+      }
+      body.classList.add('fx-in');
+      obs = new MutationObserver(onMut);
+      obs.observe(body, { childList: true, subtree: true });
+      winTimer = setTimeout(leave, WINDOW_MS);
+    }
+
+    // Следим за экранами: появился класс active — запускаем появление (экран входа не трогаем)
+    var screens = document.querySelectorAll('.screen');
+    var watch = new MutationObserver(function (muts) {
+      // showScreen() снимает active со всех экранов и тут же ставит на нужный: если итог для экрана не изменился
+      // (открыли тот же экран ещё раз) — это не новое открытие, заново не анимируем.
+      var first = new Map();
+      muts.forEach(function (m) { if (!first.has(m.target)) first.set(m.target, m.oldValue || ''); });
+      first.forEach(function (oldClass, el) {
+        if (!el.classList.contains('active') || el.id === 'screen-pin') return;
+        if (oldClass.split(/\s+/).indexOf('active') >= 0) return;
+        enter(el);
+      });
+    });
+    screens.forEach(function (s) { watch.observe(s, { attributes: true, attributeFilter: ['class'], attributeOldValue: true }); });
+  } catch (err) {
+    try { console.warn('fx: анимация отключена —', err); } catch (e) { /* без журнала */ }
+  }
+})();
 </script>
 </body>
 </html>
