@@ -2692,6 +2692,35 @@
 .fx .fc-card { transition: transform .22s cubic-bezier(.2,.7,.2,1); }
 .fx .fc-card:hover { transform: translateY(-2px); }
 </style>
+<style id="rail-css">
+/* ═══ БОКОВАЯ ПОЛОСА РАЗДЕЛОВ (компьютер) ═════════════════════════════════════════════
+   Узкая колонка иконок у левого края окна: Главная, Брони, Гости, Афиша, График, Аналитика, Сервис и «Выйти».
+   Какие разделы показать — решает скрипт #rail-js по тем же правам, что у плиток главной. Видна только на ширине
+   от 1060px (слева от колонки в 900px остаётся место); в Telegram и на телефоне её нет.
+   Когда у администратора слева стоят боковые панели (ширина от 1392px), левая панель и колонка сдвигаются
+   вправо на --railw, правая панель остаётся на месте — полоса им не мешает. */
+:root { --rail: 72px; --railw: 88px; }
+.desk-rail { display: none; position: fixed; left: 0; top: 0; bottom: 0; width: var(--rail); box-sizing: border-box; padding: 20px 0; flex-direction: column; align-items: center; gap: 6px; background: rgba(24,13,4,0.82); border-right: 1px solid var(--border); z-index: 11; }
+@media (min-width: 1060px) { html.rail .desk-rail { display: flex; } }
+.rail-btn { position: relative; flex: none; width: 46px; height: 46px; padding: 0; border: 0; border-radius: 14px; background: transparent; color: #A4876D; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background-color .18s ease, color .18s ease, transform .15s ease; -webkit-tap-highlight-color: transparent; }
+.rail-btn:hover { background: rgba(240,223,192,0.07); color: var(--text); }
+.rail-btn:active { transform: scale(.94); }
+.rail-btn:focus-visible { outline: 2px solid rgba(184,115,51,0.7); outline-offset: 2px; }
+.rail-btn.on { background: rgba(184,115,51,0.26); color: var(--text); }
+.rail-btn.on::before { content: ''; position: absolute; left: -13px; top: 13px; width: 3px; height: 20px; border-radius: 0 3px 3px 0; background: #D49A5E; }
+.rail-btn.rail-bottom { margin-top: auto; }
+.rail-dot { display: none; position: absolute; top: 8px; right: 8px; width: 9px; height: 9px; border-radius: 50%; background: #E8A33D; border: 2px solid var(--bg); box-sizing: border-box; }
+.rail-dot.on { display: block; }
+.rail-tip { position: absolute; left: 100%; top: 50%; margin-left: 12px; padding: 7px 11px; border-radius: 9px; background: #2A160F; border: 1px solid rgba(184,115,51,0.4); color: var(--text); font-size: 12.5px; line-height: 1; white-space: nowrap; opacity: 0; transform: translate(-4px, -50%); pointer-events: none; transition: opacity .18s ease, transform .18s ease; }
+.rail-btn:hover .rail-tip, .rail-btn:focus-visible .rail-tip { opacity: 1; transform: translate(0, -50%); }
+@media (min-width: 1392px) {
+  html.rail .desk-panel.left { left: calc(50% - var(--colw) / 2 - var(--dp-gap) - var(--dpw) + var(--railw)); }
+  html.rail body:has(#deskLeft.role-ok) { max-width: calc(var(--colw) - var(--railw)); margin-left: calc(50% - var(--colw) / 2 + var(--railw)); margin-right: 0; }
+  html.rail body.bk-wide:has(#deskLeft.role-ok) { max-width: calc(var(--colw) + var(--dp-gap) + var(--dpw) - var(--railw)); margin-left: calc(50% - var(--colw) / 2 + var(--railw)); margin-right: 0; }
+}
+.fx .desk-rail .rail-btn { animation: fxSlideL .55s cubic-bezier(.2,.7,.2,1) backwards; animation-delay: calc(var(--i, 0) * 55ms + 80ms); }
+@media (prefers-reduced-motion: reduce) { .rail-btn, .rail-tip { transition: none; } }
+</style>
 </head>
 <body>
 
@@ -2699,6 +2728,7 @@
      JS-ом (loadDeskPanels), и только администратору; у остальных ролей
      класс role-ok никогда не выставляется, так что панели не показываются
      даже на широком экране. -->
+<nav class="desk-rail" id="deskRail" aria-label="Разделы"></nav>
 <aside class="desk-panel left" id="deskLeft">
   <div class="dp-date" id="dpDate"></div>
   <div class="dp-section">
@@ -18441,6 +18471,103 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   // При открытии приложения: если вкладка помнит вход — продолжаем; иначе быстрый PIN (если включён на этом
   // телефоне) или логин и пароль. Уволенный сотрудник не войдёт: ключ и быстрый вход на сервере стёрты.
   authInit();
+</script>
+<script id="rail-js">
+/* ═══ БОКОВАЯ ПОЛОСА РАЗДЕЛОВ (компьютер) ═════════════════════════════════════════════
+   Строит кнопки в <nav id="deskRail"> по правам сотрудника (те же can(...), что у плиток главной) и подсвечивает
+   раздел, в котором человек сейчас. Стили — в #rail-css. Приложение не трогает: следит за классом .active у экранов
+   и за плитками главной (чтобы повторить жёлтую точку у «Брони»). Любая ошибка гасится — приложение работает как раньше. */
+(function () {
+  'use strict';
+  try {
+    var nav = document.getElementById('deskRail');
+    if (!nav) return;
+    var root = document.documentElement;
+    var SVG = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+    var ITEMS = [
+      { key: 'home', label: 'Главная', icon: SVG + '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
+        ok: function () { return true; }, go: function () { showScreen('home'); }, screens: ['home'] },
+      { key: 'bookings', label: 'Брони', icon: SVG + '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+        ok: function () { return can('bookings.view'); }, go: function () { openBookings(); }, screens: ['bookings', 'booking-detail', 'add-booking'] },
+      { key: 'guests', label: 'Гости', icon: SVG + '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.4 3.2-5.5 6.5-5.5s5.9 2.1 6.5 5.5"/><circle cx="17.5" cy="9" r="2.5"/><path d="M17 14.5c2.4.2 4 1.8 4.5 4.5"/></svg>',
+        ok: function () { return can('guests.table') || can('guests.view'); },
+        go: function () { if (can('guests.table')) openGuestsTable(); else openRecentGuests(); },
+        screens: ['guests-table', 'recent-guests', 'guests-by-status', 'inactive-guests', 'birthdays', 'card', 'new-guest', 'visit', 'candidates'] },
+      { key: 'events', label: 'Афиша', icon: SVG + '<path d="M12 3l1.3 5.7L19 10l-5.7 1.3L12 17l-1.3-5.7L5 10l5.7-1.3L12 3z"/></svg>',
+        ok: function () { return can('events.manage'); }, go: function () { openEvents(); }, screens: ['events', 'add-event'] },
+      { key: 'schedule', label: 'График', icon: SVG + '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+        ok: function () { return can('schedule.view'); }, go: function () { openSchedule(); }, screens: ['schedule', 'add-shift'] },
+      { key: 'analytics', label: 'Аналитика', icon: SVG + '<path d="M5 20V11M11 20V4M17 20v-6M3 20h18"/></svg>',
+        ok: function () { return can('analytics.view'); }, go: function () { openAnalytics(); }, screens: ['analytics', 'forecast', 'segments', 'feedback'] },
+      { key: 'service', label: 'Сервис', icon: SVG + '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>',
+        ok: function () { return serviceItemsFor().length > 0; }, go: function () { openService(); }, screens: ['service'] }
+    ];
+    var LOGOUT = { key: 'logout', label: 'Выйти', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
+      go: function () { logout(); }, screens: [] };
+    var sig = '', cur = '';
+
+    function safe(fn) { try { return !!fn(); } catch (e) { return false; } }
+
+    function btn(it, i, bottom) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'rail-btn' + (bottom ? ' rail-bottom' : '');
+      b.dataset.key = it.key;
+      b.setAttribute('aria-label', it.label);
+      b.style.setProperty('--i', String(i));
+      b.innerHTML = it.icon + (it.key === 'bookings' ? '<span class="rail-dot"></span>' : '') + '<span class="rail-tip">' + it.label + '</span>';
+      b.addEventListener('click', function () { try { it.go(); } catch (e) { try { console.warn('rail:', e); } catch (e2) { /* без журнала */ } } });
+      return b;
+    }
+
+    function mark(name) {
+      if (name) cur = name;
+      var key = '';
+      ITEMS.forEach(function (it) { if (it.screens.indexOf(cur) >= 0) key = it.key; });
+      nav.querySelectorAll('.rail-btn').forEach(function (b) {
+        var on = b.dataset.key === key;
+        b.classList.toggle('on', on);
+        if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+      });
+    }
+
+    function syncDots() {
+      var d = nav.querySelector('.rail-btn[data-key="bookings"] .rail-dot');
+      var src = document.getElementById('qdotBookings');
+      if (d) d.classList.toggle('on', !!(src && src.classList.contains('alert')));
+    }
+
+    function build() {
+      var vis = ITEMS.filter(function (it) { return safe(it.ok); });
+      var s = vis.map(function (it) { return it.key; }).join(',');
+      if (s === sig) return;
+      sig = s;
+      nav.textContent = '';
+      vis.forEach(function (it, i) { nav.appendChild(btn(it, i, false)); });
+      nav.appendChild(btn(LOGOUT, vis.length, true));
+      syncDots();
+      mark();
+    }
+
+    // Экран сменился: на входе полосы нет, на остальных — есть, подсвечен свой раздел
+    var watch = new MutationObserver(function () {
+      var el = document.querySelector('.screen.active');
+      var name = el ? el.id.replace(/^screen-/, '') : '';
+      if (!name) return;
+      if (name === 'pin') { root.classList.remove('rail'); sig = ''; return; }
+      root.classList.add('rail');
+      build();
+      mark(name);
+    });
+    document.querySelectorAll('.screen').forEach(function (s) { watch.observe(s, { attributes: true, attributeFilter: ['class'] }); });
+
+    // Плитки главной пересобрались или у «Брони» зажглась точка — повторяем на полосе
+    var grid = document.getElementById('quickActionsGrid');
+    if (grid) new MutationObserver(function () { if (root.classList.contains('rail')) { build(); syncDots(); } }).observe(grid, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+  } catch (err) {
+    try { console.warn('rail: полоса отключена —', err); } catch (e) { /* без журнала */ }
+  }
+})();
 </script>
 <script id="fx-js">
 /* ═══ АНИМАЦИЯ НА КОМПЬЮТЕРЕ ═══════════════════════════════════════════════════════
