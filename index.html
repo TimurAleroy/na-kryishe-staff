@@ -1247,6 +1247,7 @@
     .sl-stop { display: inline-block; font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--c-red2); border: 1px solid rgba(var(--c-red-rgb),0.45); border-radius: 100px; padding: 1px 7px; margin-left: 6px; text-decoration: none; vertical-align: 1px; }
     .menu-item-name.unavailable .sl-stop { text-decoration: none; }
     .sl-stop.hid { color: var(--text-muted); border-color: var(--border); }
+    .mn-tv { display: inline-block; font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--accent); border: 1px solid rgba(var(--ac),0.5); background: rgba(var(--ac),0.1); border-radius: 100px; padding: 1px 7px; margin-left: 6px; }
     .sl-stopbox { background: rgba(var(--c-red-rgb),0.06); border: 1px solid rgba(var(--c-red-rgb),0.25); border-radius: 14px; padding: 12px 14px 4px; }
     .sl-stopbox-t { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--c-red2); margin-bottom: 2px; }
     .sl-none { font-size: 13px; color: var(--text-sub); padding: 8px 0 10px; }
@@ -2279,6 +2280,8 @@
     .tvp-w { font-size: 2.3cqw; font-weight: 300; color: #C9A880; margin-top: 3cqw; line-height: 1.5; max-width: 82%; }
     .tvp-logo { width: 22%; aspect-ratio: 1 / 1.1; border: 1px dashed rgba(240,223,192,0.35); border-radius: 1cqw; display: flex; align-items: center; justify-content: center; font-size: 1.8cqw; color: rgba(240,223,192,0.5); margin-bottom: 3cqw; }
     .tvp-ev { flex-direction: row; align-items: center; gap: 4cqw; text-align: left; }
+    .tvp-mn { flex-direction: row-reverse; }
+    .tvp-mn .tvp-evp { background-size: cover; background-position: center; }
     .tvp-evp { flex: 0 0 26%; aspect-ratio: 4 / 5; border-radius: 1.6cqw; background: #1b0f05; border: 1px solid rgba(240,223,192,0.12); display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Lora', serif; font-size: 8cqw; color: #F0DFC0; line-height: 1; }
     .tvp-evp small { font-family: 'Inter', sans-serif; font-size: 1.8cqw; letter-spacing: .5cqw; color: #B87333; margin-top: .6cqw; }
     .tvp-evi { flex: 1; min-width: 0; }
@@ -4321,6 +4324,14 @@ select[aria-expanded="true"] { border-color: rgba(var(--ac), 0.55) !important; b
         <div class="chip" data-value="false" onclick="selectChip(this,'miAvailChips')">В стопе</div>
       </div>
       <div class="emp-hint">«В стопе» — гость позицию не видит, и сама она не вернётся: так убирают позицию из меню. Если нужно закрыть её только на смену, переключите её на экране «Стоп-лист» — утром вернётся сама. Порядок позиций меняют стрелки ▲▼ в списке меню.</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">На экранах ТВ</label>
+      <div class="chip-row" id="miTvChips">
+        <div class="chip selected" data-value="false" onclick="selectChip(this,'miTvChips')">Не показывать</div>
+        <div class="chip" data-value="true" onclick="selectChip(this,'miTvChips')">Показывать</div>
+      </div>
+      <div class="emp-hint">Позиция по очереди появится на телевизорах в ВИП-комнатах и на террасе, пока она в наличии. Показываются название, состав и фото, цена на экране не видна. Выбрать, на каких экранах показывать меню, можно в «Сервисе» → «ТВ-экраны».</div>
     </div>
     <button class="btn-cta" id="miSubmitBtn" onclick="submitMenuItem()">Сохранить</button>
     <button class="btn-ghost" id="miCopyBtn" onclick="copyMenuItem()" style="display:none;margin-top:10px;">Сделать копию позиции</button>
@@ -10004,8 +10015,9 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   const MENU_EDIT_CATEGORIES = ['Еда', 'Коктейли', 'Алкоголь', 'Напитки', 'Кальян'];
   let menuEditItems = [];
   let menuEditQuery = '';
-  let menuEditFilter = 'all'; // all | nophoto | noprice
+  let menuEditFilter = 'all'; // all | nophoto | noprice | tv
   let editingMenuItemId = null;
+  let miInitialTv = false;   // галочка «на экранах ТВ» в тот момент, когда открыли форму: отправляем, только если сотрудник сам переключил
   let miInitialAvail = true; // наличие в тот момент, когда открыли форму: отправляем его, только если сотрудник сам переключил
   const menuPhoto = { url: '', blob: null, preview: '', remove: false };
 
@@ -10052,7 +10064,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     return `<div class="emp-row mn-row${it.available ? '' : ' off'}" onclick="openMenuItemForm('${id}')">
         ${thumb}
         <div class="emp-body">
-          <div class="emp-name">${escHtml(it.name)}${it.available ? '' : stopBadge(it)}</div>
+          <div class="emp-name">${escHtml(it.name)}${it.available ? '' : stopBadge(it)}${it.showOnTv ? ' <span class="mn-tv" title="Показывается на экранах ТВ">ТВ</span>' : ''}</div>
         </div>
         <div class="mi-price${hasPrice ? '' : ' none'}">${hasPrice ? escHtml(String(it.price)) + ' ₽' : 'нет цены'}</div>
         <div class="mi-mv">
@@ -10075,15 +10087,18 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const noPriceN = menuEditItems.filter(it => it.price === null || it.price === undefined).length;
     if (menuEditFilter === 'nophoto' && !noPhotoN) menuEditFilter = 'all';
     if (menuEditFilter === 'noprice' && !noPriceN) menuEditFilter = 'all';
+    const tvN = menuEditItems.filter(it => it.showOnTv).length;
+    if (menuEditFilter === 'tv' && !tvN) menuEditFilter = 'all';
     const fchip = (key, label) => `<div class="chip${menuEditFilter === key ? ' selected' : ''}" onclick="setMenuFilter('${key}')">${label}</div>`;
     const filtersEl = document.getElementById('menuEditFilters');
-    if (filtersEl) filtersEl.innerHTML = (noPhotoN || noPriceN)
-      ? fchip('all', 'Все') + (noPhotoN ? fchip('nophoto', `Без фото · ${noPhotoN}`) : '') + (noPriceN ? fchip('noprice', `Без цены · ${noPriceN}`) : '')
+    if (filtersEl) filtersEl.innerHTML = (noPhotoN || noPriceN || tvN)
+      ? fchip('all', 'Все') + (noPhotoN ? fchip('nophoto', `Без фото · ${noPhotoN}`) : '') + (noPriceN ? fchip('noprice', `Без цены · ${noPriceN}`) : '') + (tvN ? fchip('tv', `На экранах ТВ · ${tvN}`) : '')
       : '';
     const filtered = !!q || menuEditFilter !== 'all';
     const items = menuEditItems.filter(it => (!q || String(it.name || '').toLowerCase().replace(/ё/g, 'е').includes(q))
       && (menuEditFilter !== 'nophoto' || !it.photo)
-      && (menuEditFilter !== 'noprice' || it.price === null || it.price === undefined));
+      && (menuEditFilter !== 'noprice' || it.price === null || it.price === undefined)
+      && (menuEditFilter !== 'tv' || it.showOnTv));
     if (!items.length) { el.innerHTML = '<div class="empty-state">Ничего не нашлось</div>'; return; }
     const byCategory = {};
     items.forEach(it => { (byCategory[it.category] = byCategory[it.category] || []).push(it); });
@@ -10270,6 +10285,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const avail = it ? it.available : true;
     miInitialAvail = avail;
     document.querySelectorAll('#miAvailChips .chip').forEach(c => c.classList.toggle('selected', (c.dataset.value === 'true') === avail));
+    miInitialTv = !!(it && it.showOnTv);
+    document.querySelectorAll('#miTvChips .chip').forEach(c => c.classList.toggle('selected', (c.dataset.value === 'true') === miInitialTv));
     document.getElementById('miSubmitBtn').textContent = 'Сохранить';
     document.getElementById('miDeleteBtn').style.display = it ? 'block' : 'none';
     document.getElementById('miCopyBtn').style.display = it ? 'block' : 'none';
@@ -10360,6 +10377,9 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     // как позицию поставили в стоп (или вернули из стопа) на другом телефоне, затирала бы это старым значением.
     const availNow = document.querySelector('#miAvailChips .chip.selected')?.dataset.value !== 'false';
     if (!isEdit || availNow !== miInitialAvail) body.available = availNow;
+    // то же с галочкой «на экранах ТВ»: у новой позиции — только если включили; у старой — только если переключили
+    const tvNow = document.querySelector('#miTvChips .chip.selected')?.dataset.value === 'true';
+    if (isEdit ? tvNow !== miInitialTv : tvNow) body.showOnTv = tvNow;
     const btn = document.getElementById('miSubmitBtn');
     btn.disabled = true;
     btn.textContent = 'Сохраняем...';
@@ -11589,7 +11609,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     ['welcomeSub', 'Фраза под именем', 'Ваша комната готова'],
     ['bdayBig', 'Поздравление: заголовок', 'С днём рождения,'],
     ['bdayWish', 'Поздравление: пожелание', 'Пусть этот вечер будет таким, каким вы его задумали. Мы рядом, если понадобится что-то ещё.'],
-    ['eventCta', 'Подпись под афишей', 'Бронь стола — в нашем приложении']
+    ['eventCta', 'Подпись под афишей', 'Бронь стола — в нашем приложении'],
+    ['menuTag', 'Подпись над меню', 'Из нашего меню']
   ];
   const TV_IC = {
     tv: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="12.5" rx="2.5"/><path d="M8.5 20.5h7M12 17v3.5"/></svg>',
@@ -11647,7 +11668,11 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   function renderTvRoom() {
     const r = tvCur;
     tvTexts = { ...r.texts }; tvMsgText = r.message || '';
-    const scList = (r.shared ? [['idle', 'Заставка'], ['event', 'Афиша'], ['msg', 'Сообщение']] : [['welcome', 'Приветствие'], ['idle', 'Заставка'], ['bday', 'Поздравление'], ['event', 'Афиша'], ['msg', 'Сообщение']]);
+    const scList = (r.shared ? [['idle', 'Заставка'], ['event', 'Афиша'], ['menu', 'Меню'], ['msg', 'Сообщение']] : [['welcome', 'Приветствие'], ['idle', 'Заставка'], ['bday', 'Поздравление'], ['event', 'Афиша'], ['menu', 'Меню'], ['msg', 'Сообщение']]);
+    // Сцена «Меню»: на экране — позиции, отмеченные галочкой в «Меню»; в превью — первая из них (или пример)
+    const mnList = Array.isArray(r.menu) ? r.menu : [];
+    const mn0 = mnList[0] || { name: 'Мохито', category: 'Коктейли', subcategory: '', volume: '300 мл', composition: 'Ром, лайм, мята, содовая', photo: '' };
+    const mnMeta = [mn0.subcategory || mn0.category, mn0.volume].filter(Boolean).join(' · ');
     if (!scList.some(x => x[0] === tvTabCur)) tvTabCur = scList[0][0];
     const nowGuest = r.now && r.now.guest;
     const seatedLine = r.seated ? (r.seated.arrived ? 'За столом: ' : 'Бронь подтверждена, гость ещё не отмечен: ') + escHtml(r.seated.name || 'гость') + (r.seated.birthday ? ' · день рождения' : '') : 'Сейчас в комнате нет гостя (подтверждённой брони на ближайшее время тоже нет)';
@@ -11678,6 +11703,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
         <div class="tvp-body tvp-sc" data-sc="idle"><div class="tvp-logo">логотип</div><div class="tvp-big ed" contenteditable="true" data-k="idleTag" data-ph="Добро пожаловать домой" data-max="80" style="font-size:3.4cqw"></div></div>
         ${r.shared ? '' : `<div class="tvp-body tvp-sc" data-sc="bday"><div class="tvp-k">Сегодня особенный вечер</div><div class="tvp-big ed" contenteditable="true" data-k="bdayBig" data-ph="С днём рождения," data-max="80"></div><div class="tvp-n">${escHtml((r.seated && r.seated.name) || 'Анна')}</div><div class="tvp-w ed" contenteditable="true" data-k="bdayWish" data-ph="Пусть этот вечер будет таким, каким вы его задумали. Мы рядом, если понадобится что-то ещё." data-max="200"></div></div>`}
         <div class="tvp-body tvp-sc tvp-ev" data-sc="event"><div class="tvp-evp">15<small>ОКТ</small></div><div class="tvp-evi"><div class="tvp-k" style="margin-bottom:0">Live</div><div class="tvp-evt">Вечер живой музыки</div><div class="tvp-evd">15 октября · начало в 21:00</div><div class="tvp-evb ed" contenteditable="true" data-k="eventCta" data-ph="Бронь стола — в нашем приложении" data-max="80"></div></div></div>
+        <div class="tvp-body tvp-sc tvp-ev tvp-mn" data-sc="menu"><div class="tvp-evp"${mn0.photo ? ` style="background-image:url('${escHtml(mn0.photo)}')"` : ''}>${mn0.photo ? '' : '<small>фото</small>'}</div><div class="tvp-evi"><div class="tvp-k ed" contenteditable="true" data-k="menuTag" data-ph="Из нашего меню" data-max="80" style="margin-bottom:0"></div><div class="tvp-evt">${escHtml(mn0.name)}</div><div class="tvp-evd">${escHtml(mnMeta)}</div>${mn0.composition ? `<div class="tvp-evd" style="margin-top:1.4cqw;color:#F0DFC0">${escHtml(mn0.composition)}</div>` : ''}</div></div>
         <div class="tvp-body tvp-sc" data-sc="msg"><div style="width:9%;height:1px;background:#B87333;margin-bottom:3cqw"></div><div class="tvp-big ed" contenteditable="true" data-k="msg" data-ph="Например: Ваш кальян сейчас принесут" data-max="160" style="font-size:4.4cqw;max-width:86%"></div></div>
       </div></div>
       <div class="poster-note" id="tvPrevNote">Пустой текст — стандартный (он виден серым). Имя гостя подставляется само: «Анна» здесь для примера.</div>
@@ -11710,6 +11736,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       <div class="sv-card">
         ${sw('tvShowIdle', r.showIdle, 'Заставка с логотипом')}
         ${sw('tvShowEvent', r.showEvent, 'Афиша ближайших мероприятий')}
+        ${sw('tvShowMenu', r.showMenu, 'Позиции меню', mnList.length ? `Сейчас отмечено позиций: ${mnList.length}. Показываются по очереди, без цен.` : 'Пока ничего не отмечено — сцена не появится. Включите «На экранах ТВ» в карточке позиции меню.')}
         <div class="sv-line"><div class="sv-lt"><span class="sv-t">Секунд на каждую сцену</span><span class="sv-s">От 5 до 60</span></div>
           <div class="nm"><button type="button" class="nmb" onclick="tvBump(-1)" aria-label="Меньше">${RV_IC.minus}</button><input class="form-input" type="number" inputmode="numeric" id="tvSec" min="5" max="60" value="${r.sceneSec}"><button type="button" class="nmb" onclick="tvBump(1)" aria-label="Больше">${RV_IC.plus}</button><span class="rr-u">сек.</span></div></div>
         ${sw('tvEnabled', r.enabled, 'Экран включён', 'Выключите — телевизор покажет чёрный экран')}
@@ -11761,6 +11788,13 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     document.querySelectorAll('#tvTabs .tvp-tab').forEach(b => b.classList.toggle('on', b.dataset.sc === k));
     document.querySelectorAll('#tvPrev .tvp-sc').forEach(b => b.classList.toggle('on', b.dataset.sc === k));
     const row = tvIn('tvMsgRow'); if (row) row.style.display = k === 'msg' ? '' : 'none';
+    const note = tvIn('tvPrevNote');
+    if (note) {
+      const mnN = tvCur && Array.isArray(tvCur.menu) ? tvCur.menu.length : 0;
+      note.textContent = k === 'menu'
+        ? (mnN ? `На экране позиции меню по очереди (сейчас отмечено: ${mnN}). Здесь показана первая. Какие позиции показывать — отметьте в «Меню», в карточке позиции.` : 'Пока ни одна позиция меню не отмечена, поэтому сцена на экране не появится. Это пример: отметьте позиции в «Меню», в карточке позиции, поле «На экранах ТВ».')
+        : 'Пустой текст — стандартный (он виден серым). Имя гостя подставляется само: «Анна» здесь для примера.';
+    }
   }
   function tvBgSrc() {
     if (tvBgNew.remove) return null;
@@ -11836,7 +11870,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const wb = tvIn('tvWelcomeBefore');
     return {
       ...(wb ? { welcomeBefore: Number(wb.value) } : {}),
-      enabled: tvIn('tvEnabled').checked, showIdle: tvIn('tvShowIdle').checked, showEvent: tvIn('tvShowEvent').checked,
+      enabled: tvIn('tvEnabled').checked, showIdle: tvIn('tvShowIdle').checked, showEvent: tvIn('tvShowEvent').checked, showMenu: tvIn('tvShowMenu').checked,
       blur: Number(tvIn('tvBlur').value), bright: Number(tvIn('tvBright').value), veil: Number(tvIn('tvVeil').value),
       sceneSec: Number(tvIn('tvSec').value), texts
     };
