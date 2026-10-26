@@ -2676,23 +2676,22 @@
       /* flex: 0 0 auto + max-width: значки не сжимаются, поиск уступает им место (не меньше 320 px); не влезли — переносятся друг под друга */
       html.rail .home-attn.on { display: flex; flex: 0 0 auto; max-width: calc(100% - 336px); flex-wrap: wrap; gap: 8px; margin-top: 6px; }
     }
-    .attn-chip { --ac-rgb: var(--c-red-rgb); --ac-c: var(--c-red); position: relative; display: inline-flex; align-items: center; gap: 9px; height: 36px; padding: 0 15px 0 7px; border-radius: 100px; border: 1px solid rgba(var(--ac-rgb), 0.4); background: linear-gradient(180deg, rgba(var(--ac-rgb), 0.17), rgba(var(--ac-rgb), 0.08)); color: var(--text); font-family: 'Inter', sans-serif; font-size: 12.5px; line-height: 1; white-space: nowrap; cursor: pointer; box-shadow: 0 8px 20px -12px rgba(var(--ac-rgb), 0.8); transition: border-color 0.15s ease, transform 0.15s ease; }
+    /* только иконки: кружок 36 px, число — значком в углу, подробности — в подсказке при наведении (data-tip) */
+    .attn-chip { --ac-rgb: var(--c-red-rgb); --ac-c: var(--c-red); position: relative; display: inline-block; width: 36px; height: 36px; padding: 0; border-radius: 50%; border: 1px solid rgba(var(--ac-rgb), 0.42); background: linear-gradient(180deg, rgba(var(--ac-rgb), 0.2), rgba(var(--ac-rgb), 0.09)); color: var(--ac-c); cursor: pointer; box-shadow: 0 8px 20px -12px rgba(var(--ac-rgb), 0.85); transition: border-color 0.15s ease, transform 0.15s ease; }
     .attn-chip.warn { --ac-rgb: var(--c-amber-rgb); --ac-c: var(--c-amber); }
     .attn-chip.info { --ac-rgb: var(--ac); --ac-c: var(--accent); }
-    .attn-chip.has-n { padding-right: 7px; }
-    .attn-chip:hover { border-color: rgba(var(--ac-rgb), 0.7); transform: translateY(-1px); }
+    .attn-chip:hover { border-color: rgba(var(--ac-rgb), 0.78); transform: translateY(-1px); }
     .attn-chip:focus-visible { outline: 2px solid var(--ac-c); outline-offset: 2px; }
-    .attn-chip .ac-ico { position: relative; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; background: rgba(var(--ac-rgb), 0.2); color: var(--ac-c); }
-    .attn-chip .ac-ico svg { width: 13px; height: 13px; display: block; }
-    .attn-chip.bad .ac-ico::after { content: ''; position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid var(--ac-c); opacity: 0; animation: attnPing 2.4s ease-out infinite; }
-    .attn-chip .ac-n { font-weight: 600; }
-    .attn-chip .ac-s { margin-left: 6px; color: var(--text-sub); }
-    .attn-chip .ac-c { min-width: 22px; height: 22px; padding: 0 7px; box-sizing: border-box; border-radius: 100px; display: grid; place-items: center; background: rgba(var(--ac-rgb), 0.24); color: var(--text); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
-    .home-attn.compact .ac-s { display: none; }   /* значков несколько — у системных только названия: цвет и подсказка говорят остальное */
+    .attn-chip .ac-ico { position: absolute; inset: 0; border-radius: 50%; display: grid; place-items: center; }
+    .attn-chip .ac-ico svg { width: 17px; height: 17px; display: block; }
+    .attn-chip.bad .ac-ico::after { content: ''; position: absolute; inset: -1px; border-radius: 50%; border: 1.5px solid var(--ac-c); opacity: 0; animation: attnPing 2.4s ease-out infinite; }
+    .attn-chip .ac-c { position: absolute; top: -6px; right: -6px; min-width: 18px; height: 18px; padding: 0 5px; box-sizing: border-box; border-radius: 100px; display: grid; place-items: center; background: var(--bg); border: 1.5px solid rgba(var(--ac-rgb), 0.85); color: var(--text); font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
+    .attn-chip::after { content: attr(data-tip); position: absolute; top: calc(100% + 10px); left: 50%; width: max-content; max-width: 280px; padding: 9px 12px; border-radius: 10px; background: var(--bg-pop); border: 1px solid var(--border); box-shadow: 0 12px 28px -10px rgba(0,0,0,0.5); color: var(--text); font-family: 'Inter', sans-serif; font-size: 12px; line-height: 1.4; text-align: left; white-space: pre-line; opacity: 0; transform: translateX(-50%) translateY(-4px); pointer-events: none; transition: opacity 0.15s ease, transform 0.15s ease; z-index: 30; }
+    .attn-chip:hover::after, .attn-chip:focus-visible::after { opacity: 1; transform: translateX(-50%); }
     .attn-chip.fresh { animation: attnIn 0.45s cubic-bezier(.2,.8,.3,1) both; }
     @keyframes attnIn { from { opacity: 0; transform: translateX(-8px) scale(0.96); } to { opacity: 1; transform: none; } }
     @keyframes attnPing { 0% { transform: scale(1); opacity: 0.65; } 70%, 100% { transform: scale(1.9); opacity: 0; } }
-    @media (prefers-reduced-motion: reduce) { .attn-chip.fresh, .attn-chip.bad .ac-ico::after { animation: none; } .attn-chip { transition: none; } }
+    @media (prefers-reduced-motion: reduce) { .attn-chip.fresh, .attn-chip.bad .ac-ico::after { animation: none; } .attn-chip, .attn-chip::after { transition: none; } }
     /* «Вечер сегодня» — сводка в правой панели: гости, ближайшая бронь, опоздавшие, афиша, смена */
     .dp-bf-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-bottom: 8px; }
     .dp-bf-tile { padding: 10px 4px 9px; border-radius: 12px; background: rgba(var(--fg-rgb),0.04); text-align: center; }
@@ -5686,13 +5685,14 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   const ATTN_FAILS = 2;                // сколько проверок подряд без ответа, прежде чем показать «Нет связи»
   const ATTN_SYS_EVERY_MS = 5 * 60 * 1000;
   const ATTN_BD_EVERY_MS = 10 * 60 * 1000;
-  const ATTN_MAX_CHIPS = 3;            // больше четырёх значков — три и «Ещё N»
+  const ATTN_MAX_CHIPS = 5;            // больше шести значков — пять и «⋯ N»
   var attnFails = 0, attnDb = false, attnSys = [], attnBk = null, attnBd = null;
   var attnPingAt = 0, attnPingBusy = false, attnSysAt = 0, attnSysBusy = false, attnBdAt = 0, attnBdBusy = false;
   var attnShown = {};                  // что уже показано: у нового значка короткое появление
   const ATTN_IC = {
     net: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 9a15 15 0 0 1 4-2.6M21.5 9a15 15 0 0 0-8-3.9M5.5 12.5a10 10 0 0 1 2.7-1.8M18.5 12.5a10 10 0 0 0-3.3-2M9 16a5 5 0 0 1 6 0"/><circle cx="12" cy="19.2" r="0.6" fill="currentColor"/><path d="M3 3l18 18"/></svg>',
     clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',
+    more: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="18" cy="12" r="1.8"/></svg>',
     cake: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M5 20v-7a2 2 0 012-2h10a2 2 0 012 2v7"/><path d="M5 15.5c2 1.5 3.5 1.5 5.2 0 1.7 1.5 3.3 1.5 5.2 0 1.4 1.1 2.6 1.3 3.6 1"/><path d="M12 11V7.5M12 4.2c.9.9 1 1.7 0 2.5-1-.8-.9-1.6 0-2.5z"/></svg>'
   };
   // как называть строки экрана «Состояние» на значке: [иконка, что не так при сбое, что не так при замечании]
@@ -5793,15 +5793,15 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     let shown = items;
     if (items.length > ATTN_MAX_CHIPS + 1) {
       const rest = items.slice(ATTN_MAX_CHIPS);
-      shown = items.slice(0, ATTN_MAX_CHIPS).concat([{ k: '_more', tone: rest.some(i => i.tone === 'bad') ? 'bad' : 'warn', ic: SYS_IC.warn, t: 'Ещё ' + rest.length, tip: rest.map(i => i.t + (i.c ? ' · ' + i.c : '') + (i.s ? ': ' + i.s : '')).join('\n'), go: rest[0].go }]);
+      shown = items.slice(0, ATTN_MAX_CHIPS).concat([{ k: '_more', tone: rest.some(i => i.tone === 'bad') ? 'bad' : 'warn', ic: ATTN_IC.more, t: 'Ещё', c: rest.length, tip: rest.map(i => i.t + (i.s ? ' — ' + i.s : '') + (i.c ? ' · ' + i.c : '')).join('\n'), go: rest[0].go }]);
     }
-    const html = shown.map(i => `<button type="button" class="attn-chip ${i.tone}${i.c ? ' has-n' : ''}${attnShown[i.k] ? '' : ' fresh'}" title="${escHtml(i.tip || '')}" onclick="${i.go}"><span class="ac-ico">${i.ic || ''}</span><span class="ac-n">${escHtml(i.t)}</span>${i.s ? `<span class="ac-s">${escHtml(i.s)}</span>` : ''}${i.c ? `<span class="ac-c">${i.c}</span>` : ''}</button>`).join('');
+    const label = i => i.t + (i.s ? ' — ' + i.s : '') + (i.c ? ' · ' + i.c : '');
+    const html = shown.map(i => `<button type="button" class="attn-chip ${i.tone}${attnShown[i.k] ? '' : ' fresh'}" data-tip="${escHtml(label(i) + (i.tip ? '\n' + i.tip : ''))}" aria-label="${escHtml(label(i))}" onclick="${i.go}"><span class="ac-ico">${i.ic || ''}</span>${i.c ? `<span class="ac-c">${i.c}</span>` : ''}</button>`).join('');
     attnShown = Object.fromEntries(shown.map(i => [i.k, 1]));
     if (el._html === html) return;
     el._html = html;
     el.innerHTML = html;
     el.classList.toggle('on', shown.length > 0);
-    el.classList.toggle('compact', shown.length > 1);
   }
   setInterval(attnKick, 60000);
   setInterval(renderAttn, 60000);   // «опаздывают» зависит и от времени (наступил следующий день заведения), не только от новых данных
