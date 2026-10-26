@@ -2965,8 +2965,13 @@ html[data-theme="dark"] input[type="date"].form-input::-webkit-calendar-picker-i
 .hz-svg .hz-sofa-back { fill: rgba(var(--fg-rgb),0.2); stroke: rgba(var(--fg-rgb),0.3); stroke-width: 0.6; }
 .hz-svg .hz-sofa-line { stroke: rgba(var(--fg-rgb),0.22); stroke-width: 1; }
 
-/* Кнопка «Оформление» в шапке главной нужна только там, где нет левой полосы (телефон, узкое окно). Где полоса есть — кнопка в ней одна */
-@media (min-width: 1060px) { html.rail .theme-btn { display: none; } }
+/* Кнопки «Мой вход», «Выйти» и «Оформление» в шапке главной нужны только там, где нет левой полосы (телефон, узкое окно).
+   Где полоса есть, они внизу полосы и в шапке не дублируются */
+@media (min-width: 1060px) { html.rail .access-btn, html.rail .logout-btn, html.rail .theme-btn { display: none; } }
+
+/* Барная стойка в том же стиле, что диваны и мебель террасы: спокойный серый вместо коричневого дерева */
+.hz-svg .hz-counter { fill: rgba(var(--fg-rgb),0.09); opacity: 1; stroke: rgba(var(--fg-rgb),0.24); stroke-width: 0.8; }
+.hz-svg .hz-counter-top { fill: rgba(var(--fg-rgb),0.14); stroke: rgba(var(--fg-rgb),0.3); stroke-width: 0.6; }
 
 /* ─── ОФОРМЛЕНИЕ: кнопка, окно выбора, плавная смена ─────────────────────────────────────── */
 .theme-btn { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 34px; height: 34px; margin-left: 8px; padding: 0; border-radius: 100px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-sub); cursor: pointer; transition: color .15s, border-color .15s, background-color .15s; }
@@ -18990,6 +18995,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       go: function () { logout(); }, screens: [] };
     var THEME = { key: 'theme', label: 'Оформление', icon: SVG + '<circle cx="12" cy="12" r="9"/><path d="M12 3v18a9 9 0 0 0 0-18z" fill="currentColor" stroke="none"/></svg>',
       go: function () { openThemeSheet(); }, screens: [] };
+    var ACCESS = { key: 'access', label: 'Мой вход', icon: SVG + '<circle cx="8" cy="15" r="4"/><path d="M10.8 12.2L20 3"/><path d="M17 6l3 3"/><path d="M14 9l2 2"/></svg>',
+      go: function () { openAccess(); }, screens: ['access'] };
     var sig = '', cur = '';
 
     function safe(fn) { try { return !!fn(); } catch (e) { return false; } }
@@ -19009,7 +19016,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     function mark(name) {
       if (name) cur = name;
       var key = '';
-      ITEMS.forEach(function (it) { if (it.screens.indexOf(cur) >= 0) key = it.key; });
+      ITEMS.concat([ACCESS]).forEach(function (it) { if (it.screens.indexOf(cur) >= 0) key = it.key; });
       nav.querySelectorAll('.rail-btn').forEach(function (b) {
         var on = b.dataset.key === key;
         b.classList.toggle('on', on);
@@ -19030,8 +19037,9 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       sig = s;
       nav.textContent = '';
       vis.forEach(function (it, i) { nav.appendChild(btn(it, i, false)); });
-      nav.appendChild(btn(THEME, vis.length, true));
-      nav.appendChild(btn(LOGOUT, vis.length + 1, false));
+      nav.appendChild(btn(ACCESS, vis.length, true));
+      nav.appendChild(btn(THEME, vis.length + 1, false));
+      nav.appendChild(btn(LOGOUT, vis.length + 2, false));
       syncDots();
       mark();
     }
