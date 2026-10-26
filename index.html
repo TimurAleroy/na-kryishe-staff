@@ -3867,6 +3867,7 @@ html[data-theme="dark"] input[type="date"].form-input::-webkit-calendar-picker-i
 
     <div class="sec">Где открыт мой аккаунт</div>
     <div class="acc-card" id="accSessions"><div class="loading">Загружаю...</div></div>
+    <button type="button" class="btn-ghost" id="accCloseOthersBtn" onclick="accCloseOthers()" style="display:none;margin-top:0;margin-bottom:6px">Закрыть остальные входы</button>
 
     <button type="button" class="btn-ghost" onclick="logout()">Выйти</button>
     <button type="button" class="btn-ghost danger" id="accLogoutAllBtn" onclick="accLogoutAll()">Выйти на всех устройствах</button>
@@ -6517,7 +6518,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
   // ─── ИМЕНИННИКИ: сегодня и завтра, кто поздравлен ─────
   // У кого есть Telegram — поздравляет бот (в 12:00, если текст заполнен). Остальных поздравляют сами
-  // (звонок, WhatsApp) и нажимают «Поздравили» — чтобы двое не поздравили одного гостя и никто не остался без поздравления.
+  // (звонок, WhatsApp) и нажимают «Поздравить» — чтобы двое не поздравили одного гостя и никто не остался без поздравления.
   let birthdaysData = null;
   function bdStatus(g, isToday, botOn) {
     const gr = g.greeted;
@@ -6560,7 +6561,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const id = escJs(g.id);
       const tel = (g.phone || '').replace(/[^\d+]/g, '');
       const btn = !isToday || d.old ? ''
-        : st.todo ? `<button type="button" class="bd-btn" onclick="event.stopPropagation();greetBirthday('${id}', false)">Поздравили</button>`
+        : st.todo ? `<button type="button" class="bd-btn" onclick="event.stopPropagation();greetBirthday('${id}', false)">Поздравить</button>`
         : st.manual ? `<button type="button" class="bd-btn undo" onclick="event.stopPropagation();greetBirthday('${id}', true)">Снять отметку</button>` : '';
       const stCls = st.cls === 'good' ? 'ok' : st.cls === 'warn' ? 'warn' : 'dim';
       const phone = g.phone
@@ -6582,7 +6583,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         <div class="vn-stat"><div class="vn-stat-k">Осталось</div><div class="vn-stat-v${left ? ' warn' : ' off'}">${left}</div></div>
         <div class="vn-stat"><div class="vn-stat-k">Завтра</div><div class="vn-stat-v${d.tomorrow.length ? '' : ' off'}">${d.tomorrow.length}</div></div>
       </div>`;
-    const info = d.old ? '' : `<div class="sv-tip" style="margin:12px 0 0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="8" x2="12" y2="8.01"/></svg><div>${d.botOn ? `Гостей с Telegram бот поздравляет сам в ${d.botHour || 12}:00. Остальных поздравьте сами и нажмите «Поздравили».` : 'Текст поздравления для бота не заполнен («Сервис» → «Поздравления») — пока всех поздравляем сами.'}</div></div>`;
+    const info = d.old ? '' : `<div class="sv-tip" style="margin:12px 0 0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="8" x2="12" y2="8.01"/></svg><div>${d.botOn ? `Гостей с Telegram бот поздравляет сам в ${d.botHour || 12}:00. Остальных поздравьте сами (звонок, WhatsApp) и нажмите «Поздравить» — отметка сохранится, и никто не поздравит гостя дважды.` : 'Текст поздравления для бота не заполнен («Сервис» → «Поздравления») — пока всех поздравляем сами.'}</div></div>`;
     el.innerHTML = `
       ${hero}${info}
       <div class="mn-ch" style="margin-top:18px"><span>Сегодня</span>${d.today.length ? `<span class="sv-chip">${d.today.length}</span>` : ''}</div>
@@ -16547,7 +16548,10 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       if (!res.ok) throw new Error('x');
       const d = await res.json();
       if (!d.devices.length && getDeviceToken()) { setDeviceToken(''); renderAccQuick(); } // сервер устройство уже забыл
-      const sess = d.sessions.map(x => `<div class="acc-row"><div class="acc-main">${escHtml(capFirst(x.device || 'устройство'))}${x.current ? ' · это устройство' : ''}<div class="acc-sub">${x.current ? 'сейчас' : 'был ' + escHtml(timeAgo(x.lastSeenAt))}</div></div></div>`).join('');
+      const sess = d.sessions.map(x => `<div class="acc-row"><div class="acc-main">${escHtml(capFirst(x.device || 'устройство'))}${x.current ? ' · это устройство' : ''}<div class="acc-sub">${x.current ? 'сейчас' : 'был ' + escHtml(timeAgo(x.lastSeenAt))}</div></div>${x.current ? '' : `<button type="button" class="acc-mini" onclick="accCloseSession('${escJs(x.id)}', '${escJs(capFirst(x.device || 'устройство'))}')">Закрыть</button>`}</div>`).join('');
+      const others = d.sessions.filter(x => !x.current).length;   // «Закрыть остальные» — только если есть что закрывать
+      const closeBtn = document.getElementById('accCloseOthersBtn');
+      if (closeBtn) { closeBtn.style.display = others ? '' : 'none'; closeBtn.textContent = others > 1 ? `Закрыть остальные входы (${others})` : 'Закрыть остальные входы'; }
       const devs = d.devices.map(x => `<div class="acc-row"><div class="acc-main">Быстрый вход: ${escHtml(x.device || 'устройство')}<div class="acc-sub">${x.lastUsedAt ? 'использовался ' + escHtml(timeAgo(x.lastUsedAt)) : 'ещё не использовался'}</div></div><button type="button" class="acc-mini" onclick="accRemoveDevice('${escJs(x.id)}')">Отключить</button></div>`).join('');
       el.innerHTML = (sess || '<div class="acc-s">Открытых входов нет</div>') + devs;
     } catch {
@@ -16560,6 +16564,32 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       const res = await fetch(`${PROXY_BASE}/api/auth/devices/${encodeURIComponent(id)}`, { method: 'DELETE' });
       if (!res.ok) { notify(await responseError(res, 'Не удалось отключить')); return; }
     } catch { notify('Не удалось отключить — проверьте соединение'); return; }
+    loadAccSessions();
+  }
+
+  // Закрыть один из других входов (забытый компьютер, чужой или потерянный телефон). Это устройство не затрагивается.
+  async function accCloseSession(id, label) {
+    if (!await askConfirm(`Закрыть вход «${label}»?\n\nНа том устройстве придётся войти заново. Если там включён быстрый вход, он отключится.`, { ok: 'Закрыть', danger: true })) return;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/auth/sessions/${encodeURIComponent(id)}`, { method: 'DELETE' });
+      if (!res.ok) { notify(await responseError(res, 'Не удалось закрыть вход')); loadAccSessions(); return; }
+      notify('Вход закрыт', 'ok');
+    } catch { notify('Не удалось закрыть — проверьте соединение'); return; }
+    loadAccSessions();
+  }
+
+  // Закрыть все входы, кроме этого (в отличие от «Выйти на всех устройствах», это устройство остаётся в аккаунте)
+  async function accCloseOthers() {
+    if (!await askConfirm('Закрыть входы на остальных устройствах?\n\nЭтот телефон или компьютер останется в аккаунте. На остальных придётся войти заново, быстрый вход там отключится.', { ok: 'Закрыть', danger: true })) return;
+    const btn = document.getElementById('accCloseOthersBtn');
+    if (btn) btn.disabled = true;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/auth/sessions/close-others`, { method: 'POST' });
+      if (!res.ok) { notify(await responseError(res, 'Не удалось закрыть входы')); if (btn) btn.disabled = false; return; }
+      const r = await res.json().catch(() => ({}));
+      notify(r.sessions ? `Закрыто входов: ${r.sessions}` : 'Других входов не было', 'ok');
+    } catch { notify('Не удалось закрыть — проверьте соединение'); if (btn) btn.disabled = false; return; }
+    if (btn) btn.disabled = false;
     loadAccSessions();
   }
 
