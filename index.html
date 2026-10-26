@@ -2667,6 +2667,32 @@
     .desk-panel .dp-note-del { flex-shrink: 0; cursor: pointer; color: var(--text-muted); line-height: 1; padding: 7px; margin: -4px -2px -4px 0; border-radius: 8px; }
     .desk-panel .dp-note-del:hover { color: var(--c-red2); background: rgba(var(--c-red-rgb),0.1); }
 
+    /* Индикатор на главной (компьютер), справа от поиска. Пока всё спокойно, его нет вообще; случилось что-то — появляются значки.
+       Строка поиска и значки лежат в одной flex-строке: поиск при необходимости сужается, но не меньше 320 px */
+    .home-attn { display: none; }
+    @media (min-width: 1060px) {
+      html.rail .home-searchrow { display: flex; align-items: flex-start; gap: 16px; }
+      html.rail .home-searchrow .search-box { flex: 1 1 540px; min-width: 320px; max-width: 540px; }
+      /* flex: 0 0 auto + max-width: значки не сжимаются, поиск уступает им место (не меньше 320 px); не влезли — переносятся друг под друга */
+      html.rail .home-attn.on { display: flex; flex: 0 0 auto; max-width: calc(100% - 336px); flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+    }
+    .attn-chip { --ac-rgb: var(--c-red-rgb); --ac-c: var(--c-red); position: relative; display: inline-flex; align-items: center; gap: 9px; height: 36px; padding: 0 15px 0 7px; border-radius: 100px; border: 1px solid rgba(var(--ac-rgb), 0.4); background: linear-gradient(180deg, rgba(var(--ac-rgb), 0.17), rgba(var(--ac-rgb), 0.08)); color: var(--text); font-family: 'Inter', sans-serif; font-size: 12.5px; line-height: 1; white-space: nowrap; cursor: pointer; box-shadow: 0 8px 20px -12px rgba(var(--ac-rgb), 0.8); transition: border-color 0.15s ease, transform 0.15s ease; }
+    .attn-chip.warn { --ac-rgb: var(--c-amber-rgb); --ac-c: var(--c-amber); }
+    .attn-chip.info { --ac-rgb: var(--ac); --ac-c: var(--accent); }
+    .attn-chip.has-n { padding-right: 7px; }
+    .attn-chip:hover { border-color: rgba(var(--ac-rgb), 0.7); transform: translateY(-1px); }
+    .attn-chip:focus-visible { outline: 2px solid var(--ac-c); outline-offset: 2px; }
+    .attn-chip .ac-ico { position: relative; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; background: rgba(var(--ac-rgb), 0.2); color: var(--ac-c); }
+    .attn-chip .ac-ico svg { width: 13px; height: 13px; display: block; }
+    .attn-chip.bad .ac-ico::after { content: ''; position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid var(--ac-c); opacity: 0; animation: attnPing 2.4s ease-out infinite; }
+    .attn-chip .ac-n { font-weight: 600; }
+    .attn-chip .ac-s { margin-left: 6px; color: var(--text-sub); }
+    .attn-chip .ac-c { min-width: 22px; height: 22px; padding: 0 7px; box-sizing: border-box; border-radius: 100px; display: grid; place-items: center; background: rgba(var(--ac-rgb), 0.24); color: var(--text); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .home-attn.compact .ac-s { display: none; }   /* значков несколько — у системных только названия: цвет и подсказка говорят остальное */
+    .attn-chip.fresh { animation: attnIn 0.45s cubic-bezier(.2,.8,.3,1) both; }
+    @keyframes attnIn { from { opacity: 0; transform: translateX(-8px) scale(0.96); } to { opacity: 1; transform: none; } }
+    @keyframes attnPing { 0% { transform: scale(1); opacity: 0.65; } 70%, 100% { transform: scale(1.9); opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { .attn-chip.fresh, .attn-chip.bad .ac-ico::after { animation: none; } .attn-chip { transition: none; } }
     /* «Вечер сегодня» — сводка в правой панели: гости, ближайшая бронь, опоздавшие, афиша, смена */
     .dp-bf-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-bottom: 8px; }
     .dp-bf-tile { padding: 10px 4px 9px; border-radius: 12px; background: rgba(var(--fg-rgb),0.04); text-align: center; }
@@ -3251,6 +3277,7 @@ html[data-theme="dark"] input[type="date"].form-input::-webkit-calendar-picker-i
     </button>
   </div>
   <div style="padding:0 16px">
+    <div class="home-searchrow">
     <div class="search-box" id="homeSearchBox" style="margin-bottom:8px;">
       <div class="search-field" id="searchField">
         <input class="search-input" id="searchInput" type="search" enterkeyhint="search" autocomplete="off" placeholder="Имя или телефон" oninput="updateSearchHint()" onkeydown="if(event.key==='Enter') doSearch(); else if(event.key==='Escape') clearSearch()">
@@ -3259,6 +3286,8 @@ html[data-theme="dark"] input[type="date"].form-input::-webkit-calendar-picker-i
         </button>
       </div>
       <button class="btn-primary" onclick="doSearch()">Найти</button>
+    </div>
+    <div class="home-attn" id="homeAttn" role="status" aria-live="polite"></div>
     </div>
     <div class="search-under" id="homeSearchUnder">
       <span class="search-hint" id="searchHint">Можно ввести 4 последние цифры номера</span>
@@ -4989,6 +5018,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     setPerms(data.perms, currentJobRole);
     permsSig = [...currentPerms].sort().join(',');
     applyRoleUI();
+    attnKick(true);
     loadTagCatalog(true);
     // Если открыли по QR из служебного помещения (?enps=1) — сразу на анонимный
     // опрос, минуя обычный экран. Вход только подтвердил что это сотрудник —
@@ -5136,6 +5166,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (resultsSection) resultsSection.style.display = 'none';
     ['deskLeft', 'deskRight'].forEach(id => document.getElementById(id)?.classList.remove('role-ok'));
     dpBriefReset();
+    attnReset();
     ['dpShift', 'dpEvents', 'dpProblems', 'dpBookings', 'dpFounderTasks', 'dpNotes'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.innerHTML = '<div class="dp-loading">Загружаю...</div>';
@@ -5645,6 +5676,138 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   setInterval(renderDpBrief, 60000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) renderDpBrief(); });
 
+  // ─── ИНДИКАТОР НА ГЛАВНОЙ (компьютер) ──────────────────────────────────────
+  // Правее строки поиска. Всё спокойно — его нет вообще; что-то случилось — появляются значки, и пропадают сами, когда причина ушла.
+  //  · «Нет интернета» / «Нет связи» / «База данных» — всем: лёгкая проверка /health раз в минуту (без пароля и без Telegram).
+  //  · Боты, админ-чат, сообщения гостям, копии — основателю: тот же запрос, что делает экран «Состояние», раз в 5 минут.
+  //  · «Опаздывают» — у кого открыты брони: из броней, которые приложение и так обновляет раз в 30 секунд (гость предупредил, что опаздывает).
+  //  · «ДР» — у кого открыты именинники: сколько гостей празднует сегодня, проверка раз в 10 минут.
+  const ATTN_FAILS = 2;                // сколько проверок подряд без ответа, прежде чем показать «Нет связи»
+  const ATTN_SYS_EVERY_MS = 5 * 60 * 1000;
+  const ATTN_BD_EVERY_MS = 10 * 60 * 1000;
+  const ATTN_MAX_CHIPS = 3;            // больше четырёх значков — три и «Ещё N»
+  var attnFails = 0, attnDb = false, attnSys = [], attnBk = null, attnBd = null;
+  var attnPingAt = 0, attnPingBusy = false, attnSysAt = 0, attnSysBusy = false, attnBdAt = 0, attnBdBusy = false;
+  var attnShown = {};                  // что уже показано: у нового значка короткое появление
+  const ATTN_IC = {
+    net: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 9a15 15 0 0 1 4-2.6M21.5 9a15 15 0 0 0-8-3.9M5.5 12.5a10 10 0 0 1 2.7-1.8M18.5 12.5a10 10 0 0 0-3.3-2M9 16a5 5 0 0 1 6 0"/><circle cx="12" cy="19.2" r="0.6" fill="currentColor"/><path d="M3 3l18 18"/></svg>',
+    clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',
+    cake: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M5 20v-7a2 2 0 012-2h10a2 2 0 012 2v7"/><path d="M5 15.5c2 1.5 3.5 1.5 5.2 0 1.7 1.5 3.3 1.5 5.2 0 1.4 1.1 2.6 1.3 3.6 1"/><path d="M12 11V7.5M12 4.2c.9.9 1 1.7 0 2.5-1-.8-.9-1.6 0-2.5z"/></svg>'
+  };
+  // как называть строки экрана «Состояние» на значке: [иконка, что не так при сбое, что не так при замечании]
+  const ATTN_SYS = {
+    'База данных': ['db', 'не отвечает', 'есть замечание'],
+    'Сервер сотрудников': ['server', 'не отвечает', 'есть замечание'],
+    'Гостевой сервер': ['globe', 'не отвечает', 'есть замечание'],
+    'Бот сотрудников': ['bot', 'не отвечает', 'есть замечание'],
+    'Бот гостей': ['bot', 'не отвечает', 'есть замечание'],
+    'Админ-чат': ['chat', 'не доходит', 'есть замечание'],
+    'Сообщения гостям': ['mail', 'не дошли', 'часть не дошла'],
+    'Резервная копия базы': ['backup', 'нет копии', 'давно не делалась']
+  };
+  function attnDesk() { return window.matchMedia('(min-width: 1060px)').matches; }
+  function attnSetSys(groups) {
+    attnSys = groups.flatMap(g => g.rows).filter(r => r.st !== 'ok');
+    renderAttn();
+  }
+  function attnSetBookings(list) { attnBk = list; renderAttn(); }
+  function attnReset() {
+    attnFails = 0; attnDb = false; attnSys = []; attnBk = null; attnBd = null; attnShown = {};
+    attnPingAt = 0; attnSysAt = 0; attnBdAt = 0;
+    const el = document.getElementById('homeAttn');
+    if (el) { el._html = ''; el.innerHTML = ''; el.classList.remove('on'); }
+  }
+  // Лёгкая проверка связи: /health отвечает без пароля и без Telegram. 503 — сервер жив, но не достаёт до базы.
+  async function attnPing(force) {
+    if (attnPingBusy || document.hidden || !getPin() || !attnDesk()) return;
+    if (!force && Date.now() - attnPingAt < 15000) return;
+    attnPingBusy = true; attnPingAt = Date.now();
+    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 8000);
+    try {
+      const res = await fetch(`${PROXY_BASE}/health`, { signal: ctl.signal, cache: 'no-store' });
+      attnFails = 0;
+      attnDb = res.status === 503;
+    } catch { attnFails++; }
+    finally { clearTimeout(timer); attnPingBusy = false; renderAttn(); }
+  }
+  // Полная проверка для основателя: тот же запрос, что делает экран «Состояние»
+  async function attnCheckSystem() {
+    if (attnSysBusy || document.hidden || !getPin() || !attnDesk() || currentJobRole !== 'Основатель') return;
+    attnSysBusy = true; attnSysAt = Date.now();
+    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 20000);
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/founder/system-status?pin=${getPin()}`, { signal: ctl.signal, cache: 'no-store' });
+      if (!res.ok) return;   // нет доступа или сервер занят — прошлый результат остаётся, о связи скажет проверка выше
+      attnSetSys(sysBuildGroups(await res.json()));
+    } catch { /* не вышло проверить — оставляем прошлый результат */ }
+    finally { clearTimeout(timer); attnSysBusy = false; }
+  }
+  // Именинники сегодня (список на сегодня — тот же запрос, что открывает экран «Именинники»)
+  async function attnCheckBirthdays() {
+    if (attnBdBusy || document.hidden || !getPin() || !attnDesk() || !can('guests.birthdays')) return;
+    attnBdBusy = true; attnBdAt = Date.now();
+    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 12000);
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/birthdays?pin=${getPin()}`, { signal: ctl.signal, cache: 'no-store' });
+      if (!res.ok) return;
+      const list = await res.json();
+      attnBd = Array.isArray(list) ? list : (list && Array.isArray(list.today) ? list.today : []);
+      renderAttn();
+    } catch { /* не вышло — оставляем прошлый результат */ }
+    finally { clearTimeout(timer); attnBdBusy = false; }
+  }
+  function attnKick(force) {
+    attnPing(force === true);
+    if (force === true || Date.now() - attnSysAt > ATTN_SYS_EVERY_MS) attnCheckSystem();
+    if (force === true || Date.now() - attnBdAt > ATTN_BD_EVERY_MS) attnCheckBirthdays();
+  }
+  function renderAttn() {
+    const el = document.getElementById('homeAttn');
+    if (!el) return;
+    const items = [];   // { p — очерёдность (меньше — левее), k — ключ, tone, ic, t — название, s — что случилось, c — число, tip, go }
+    try {
+      if (navigator.onLine === false) items.push({ p: 0, k: 'net', tone: 'bad', ic: ATTN_IC.net, t: 'Нет интернета', s: 'проверьте Wi-Fi', tip: 'Устройство не в сети. Как появится связь, значок исчезнет сам', go: 'attnKick(true)' });
+      else if (attnFails >= ATTN_FAILS) items.push({ p: 0, k: 'net', tone: 'bad', ic: ATTN_IC.net, t: 'Нет связи', s: 'с сервером', tip: 'Сервер не отвечает. Нажмите, чтобы проверить снова', go: 'attnKick(true)' });
+      else {
+        const seen = {};
+        if (attnDb) { seen.db = 1; items.push({ p: 0, k: 'db', tone: 'bad', ic: SYS_IC.db, t: 'База данных', s: 'не отвечает', tip: 'Сервер на связи, но не может достать до базы. Записи могут не сохраняться', go: 'attnKick(true)' }); }
+        for (const r of attnSys) {
+          const m = ATTN_SYS[r.t] || ['warn', 'сбой', 'есть замечание'];
+          if (seen[r.t] || (r.t === 'База данных' && seen.db)) continue;
+          seen[r.t] = 1;
+          items.push({ p: r.st === 'bad' ? 1 : 4, k: r.t, tone: r.st === 'bad' ? 'bad' : 'warn', ic: SYS_IC[m[0]] || SYS_IC.warn, t: r.t === 'Резервная копия базы' ? 'Копия базы' : r.t, s: r.st === 'bad' ? m[1] : m[2], tip: r.s, go: 'openSystemStatus()' });
+        }
+        const names = list => list.slice(0, 5).map(b => b.name || 'Гость').join(', ') + (list.length > 5 ? ' и ещё ' + (list.length - 5) : '');
+        // гость предупредил, что опаздывает (только сегодняшний вечер и пока его не посадили)
+        if (attnBk !== null && can('bookings.view')) {
+          const now = venueNow();
+          const late = attnBk.filter(b => b && !b.past && !b.cancelled && b.status !== 'cancelled' && b.arrival?.status !== 'noshow' && bookingVenueDay(b.iso) === now.day && bookingLate(b));
+          if (late.length) items.push({ p: 2, k: 'late', tone: 'warn', ic: ATTN_IC.clock, t: 'Опаздывают', c: late.length, tip: 'Гость предупредил, что опаздывает: ' + names(late), go: 'openBookings()' });
+        }
+        // именинники сегодня
+        if (attnBd && attnBd.length && can('guests.birthdays')) items.push({ p: 3, k: 'bd', tone: 'info', ic: ATTN_IC.cake, t: 'ДР', c: attnBd.length, tip: 'Сегодня день рождения: ' + names(attnBd), go: 'openBirthdays()' });
+        items.sort((x, y) => x.p - y.p);
+      }
+    } catch (e) { /* индикатор ничего не должен ломать: при ошибке просто не показываем */ }
+    let shown = items;
+    if (items.length > ATTN_MAX_CHIPS + 1) {
+      const rest = items.slice(ATTN_MAX_CHIPS);
+      shown = items.slice(0, ATTN_MAX_CHIPS).concat([{ k: '_more', tone: rest.some(i => i.tone === 'bad') ? 'bad' : 'warn', ic: SYS_IC.warn, t: 'Ещё ' + rest.length, tip: rest.map(i => i.t + (i.c ? ' · ' + i.c : '') + (i.s ? ': ' + i.s : '')).join('\n'), go: rest[0].go }]);
+    }
+    const html = shown.map(i => `<button type="button" class="attn-chip ${i.tone}${i.c ? ' has-n' : ''}${attnShown[i.k] ? '' : ' fresh'}" title="${escHtml(i.tip || '')}" onclick="${i.go}"><span class="ac-ico">${i.ic || ''}</span><span class="ac-n">${escHtml(i.t)}</span>${i.s ? `<span class="ac-s">${escHtml(i.s)}</span>` : ''}${i.c ? `<span class="ac-c">${i.c}</span>` : ''}</button>`).join('');
+    attnShown = Object.fromEntries(shown.map(i => [i.k, 1]));
+    if (el._html === html) return;
+    el._html = html;
+    el.innerHTML = html;
+    el.classList.toggle('on', shown.length > 0);
+    el.classList.toggle('compact', shown.length > 1);
+  }
+  setInterval(attnKick, 60000);
+  setInterval(renderAttn, 60000);   // «опаздывают» зависит и от времени (наступил следующий день заведения), не только от новых данных
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) { renderAttn(); attnKick(); } });
+  window.addEventListener('online', () => attnKick(true));
+  window.addEventListener('offline', renderAttn);
+
   async function loadDeskPanels() {
     const gen = ++deskPanelsGen;
     const stale = () => gen !== deskPanelsGen; // панели перезапросили или сотрудник вышел — этот ответ уже не нужен
@@ -5777,6 +5940,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // Панель «Ждут подтверждения» (десктоп) — по уже загруженному списку броней
   function renderDpBookings(list) {
     dpBriefSet({ bookings: Array.isArray(list) ? list : [] });
+    attnSetBookings(Array.isArray(list) ? list : []);
     const el = document.getElementById('dpBookings');
     const countEl = document.getElementById('dpBookingsCount');
     if (!el) return;
@@ -10423,19 +10587,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const pills = [...bad, ...warn].map(r => `<span class="sv-chip ${r.st}">${escHtml(r.t)}</span>`).join('');
     return `<div class="sv-hero ${lvl}"><div class="sv-hero-ico">${SYS_IC[lvl]}</div><div class="sv-hero-body"><div class="sv-hero-k">Состояние системы</div><div class="sv-hero-t">${title}</div><div class="sv-hero-s">${sub}</div>${pills ? `<div class="sv-pills">${pills}</div>` : ''}</div></div>`;
   }
-  async function loadSystemStatus() {
-    const el = document.getElementById('sysContent');
-    const chk = document.getElementById('sysChecked');
-    const btn = document.getElementById('sysRecheck');
-    el.innerHTML = '<div class="loading">Проверяю…</div>';
-    chk.textContent = 'Проверяю…';
-    if (btn) btn.disabled = true;
-    try {
-      const res = await fetch(`${PROXY_BASE}/api/founder/system-status?pin=${getPin()}`);
-      if (res.status === 401) { showScreen('pin'); return; }
-      if (res.status === 403) { accessDenied(); return; }
-      if (!res.ok) throw new Error(await responseError(res, 'Не удалось проверить систему'));
-      const d = await res.json();
+  // Строки экрана «Состояние» из ответа сервера: [{ name, rows: [{ ic, st: ok|warn|bad, t, s }] }]
+  function sysBuildGroups(d) {
       const groups = [
         { name: 'Серверы и база', ic: 'server', rows: [] },
         { name: 'Боты и чат', ic: 'bot', rows: [] },
@@ -10486,6 +10639,23 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       } else {
         add(2, 'backup', 'warn', 'Резервная копия базы', 'Нет данных. Автоматические копии ещё не настроены — это нужно сделать до открытия бара');
       }
+      return groups;
+  }
+  async function loadSystemStatus() {
+    const el = document.getElementById('sysContent');
+    const chk = document.getElementById('sysChecked');
+    const btn = document.getElementById('sysRecheck');
+    el.innerHTML = '<div class="loading">Проверяю…</div>';
+    chk.textContent = 'Проверяю…';
+    if (btn) btn.disabled = true;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/founder/system-status?pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось проверить систему'));
+      const d = await res.json();
+      const groups = sysBuildGroups(d);
+      attnSetSys(groups);   // экран уже всё проверил — индикатор на главной не ждёт своей очереди
       el.innerHTML = sysHeroHtml(groups)
         + groups.filter(g => g.rows.length).map(g => `<div class="sv-gl">${g.name}</div><div class="sv-card">${g.rows.map(sysRowHtml).join('')}</div>`).join('');
       chk.textContent = `Проверено в ${new Date(d.checkedAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`;
