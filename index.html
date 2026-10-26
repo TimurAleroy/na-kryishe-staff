@@ -2699,7 +2699,6 @@
     .dp-bf-tile.zero b { color: var(--text-muted); }
     .dp-bf-tile span { display: block; margin-top: 6px; font-size: 9.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
     .desk-panel .dp-row.bf-late { box-shadow: inset 3px 0 0 var(--c-gold); }
-    .desk-panel .dp-row.bf-ev { box-shadow: inset 3px 0 0 var(--accent); }
     .desk-panel .dp-row .dp-bf-k { margin-bottom: 3px; font-size: 9.5px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted); }
     .desk-panel .dp-row .dp-bf-v { overflow-wrap: anywhere; }
     .desk-panel .dp-row .dp-bf-v b { font-family: 'Jost', sans-serif; font-weight: 500; font-size: 1.12em; letter-spacing: 0.3px; color: var(--accent); margin-right: 4px; font-variant-numeric: tabular-nums; }
@@ -5615,13 +5614,14 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   document.addEventListener('visibilitychange', () => { if (!document.hidden) renderDeskDate(); });
 
   // ─── «ВЕЧЕР СЕГОДНЯ» — сводка вверху правой панели ─────────────────────
-  // Ничего нового у сервера не просит: собирается из того, что панели и так загрузили (брони, афиша, график смены).
+  // Только брони: гости, брони, пришли, ближайшая бронь, опоздавшие. Смена и афиша здесь не повторяются — они в левой панели.
+  // Ничего нового у сервера не просит: собирается из броней, которые панель и так загрузила.
   // Брони приходят каждые 30 секунд вместе с проверкой опозданий, поэтому сводка живёт сама; раз в минуту
   // пересчитывается «ближайшая бронь» (время идёт). Блок, которого нет по правам сотрудника, в сводке не показываем.
-  var dpBriefData = { bookings: null, events: null, shift: null };
+  var dpBriefData = { bookings: null };
   function dpBriefSet(part) { Object.assign(dpBriefData, part); renderDpBrief(); }
   function dpBriefReset() {
-    dpBriefData = { bookings: null, events: null, shift: null };
+    dpBriefData = { bookings: null };
     const box = document.getElementById('dpBrief');
     if (box) { box._html = ''; box.innerHTML = '<div class="dp-loading">Загружаю...</div>'; }
   }
@@ -5629,10 +5629,10 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const box = document.getElementById('dpBrief');
     if (!box || !document.getElementById('deskRight')?.classList.contains('role-ok')) return;
     const d = dpBriefData;
-    if (d.bookings === null && d.events === null && d.shift === null) return;   // пока ничего не пришло — остаётся «Загружаю...»
+    if (d.bookings === null) return;   // пока брони не пришли — остаётся «Загружаю...»
     const now = venueNow();
     let html = '';
-    if (d.bookings !== null && can('bookings.view')) {
+    if (can('bookings.view')) {
       const day = (Array.isArray(d.bookings) ? d.bookings : []).filter(b => !b.past && !b.cancelled && b.status !== 'cancelled'
         && b.arrival?.status !== 'noshow' && bookingVenueDay(b.iso) === now.day);
       const guests = day.reduce((n, b) => n + (Number(b.guests) || 0), 0);
@@ -5654,20 +5654,6 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         html += `<div class="dp-empty">${day.length ? 'Все гости уже пришли' : 'Броней на вечер нет'}</div>`;
       }
       if (late) html += `<div class="dp-row bf-late" onclick="openBookings()"><div class="dp-bf-k">Предупредили</div><div class="dp-bf-v">Опаздывают: ${late}</div></div>`;
-    }
-    if (d.events !== null && can('events.manage')) {
-      const evs = (Array.isArray(d.events) ? d.events : []).filter(e => evDayOf(e) === now.day);
-      evs.slice(0, 2).forEach(e => {
-        const tm = evTimeOf(e);
-        html += `<div class="dp-row bf-ev" onclick="openEditEvent('${escJs(e.id)}')"><div class="dp-bf-k">В афише сегодня</div><div class="dp-bf-v">${tm ? `<b>${escHtml(tm)}</b>` : ''}${escHtml(e.name || 'Мероприятие')}</div></div>`;
-      });
-      if (!evs.length) html += `<div class="dp-empty">Мероприятий сегодня нет</div>`;
-    }
-    if (d.shift !== null && can('schedule.view')) {
-      const n = d.shift;
-      html += n
-        ? `<div class="dp-row" onclick="openSchedule()"><div class="dp-bf-k">На смене</div><div class="dp-bf-v">${n} ${ruPlural(n, 'человек', 'человека', 'человек')}</div></div>`
-        : `<div class="dp-empty">На смене никто не отмечен</div>`;
     }
     if (box._html === html) return;     // ничего не изменилось — не трогаем (иначе строка мигала бы раз в минуту)
     box._html = html;
@@ -5832,7 +5818,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     }
 
     const briefSec = document.getElementById('dpBriefSec');
-    if (briefSec) briefSec.style.display = (can('bookings.view') || can('events.manage') || can('schedule.view')) ? '' : 'none';
+    if (briefSec) briefSec.style.display = can('bookings.view') ? '' : 'none';
 
     renderDeskDate();
 
@@ -5856,7 +5842,6 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         const working = Array.isArray(shifts) ? shifts.filter(s => s.status === 'Работает') : [];
         const shiftCountEl = document.getElementById('dpShiftCount');
         if (shiftCountEl) shiftCountEl.textContent = working.length ? String(working.length) : '';
-        dpBriefSet({ shift: working.length });
         if (!working.length) { el.innerHTML = '<div class="dp-empty">Никто не отмечен</div>'; return; }
         el.innerHTML = working.map(s => {
           const emp = Array.isArray(employees) ? employees.find(e => e.id === s.employeeId) : null;
@@ -5882,7 +5867,6 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         if (countEl) countEl.textContent = Array.isArray(list) && list.length ? String(list.length) : '';
         if (!Array.isArray(list)) { el.innerHTML = DP_FAILED; return; }
         window._eventsCache = list;
-        dpBriefSet({ events: list });
         renderEvCal('dp');
       } catch { if (!stale()) el.innerHTML = DP_FAILED; }
     })();
