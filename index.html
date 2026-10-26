@@ -2973,6 +2973,10 @@ html[data-theme="dark"] input[type="date"].form-input::-webkit-calendar-picker-i
 .hz-svg .hz-counter { fill: rgba(var(--fg-rgb),0.09); opacity: 1; stroke: rgba(var(--fg-rgb),0.24); stroke-width: 0.8; }
 .hz-svg .hz-counter-top { fill: rgba(var(--fg-rgb),0.14); stroke: rgba(var(--fg-rgb),0.3); stroke-width: 0.6; }
 
+/* Поиск на главной: на компьютере строка не растягивается на всю колонку — имя или телефон помещаются в ~540 px.
+   Подсказка и «Новый гость» выровнены по той же ширине; на телефоне всё как было */
+@media (min-width: 700px) { #homeSearchBox, #homeSearchUnder { max-width: 540px; } }
+
 /* ─── ОФОРМЛЕНИЕ: кнопка, окно выбора, плавная смена ─────────────────────────────────────── */
 .theme-btn { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 34px; height: 34px; margin-left: 8px; padding: 0; border-radius: 100px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-sub); cursor: pointer; transition: color .15s, border-color .15s, background-color .15s; }
 .theme-btn:hover { color: var(--accent); border-color: rgba(var(--ac),0.4); }
