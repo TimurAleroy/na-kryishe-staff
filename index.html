@@ -2293,6 +2293,8 @@
     .svl:active { background: var(--bg-card-hover); }
     .svl-th { flex: 0 0 auto; width: 48px; height: 62px; border-radius: 11px; background: linear-gradient(160deg, #5a3716, #140B00) center / cover; border: 1px solid rgba(240,223,192,0.16); display: flex; align-items: center; justify-content: center; color: var(--accent); }
     .svl-th.none { background: var(--accent-dim); }
+    .svl-th { overflow: hidden; }
+    .svl-th video { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
     .svl-body { flex: 1; min-width: 0; }
     .svl-t { font-size: 14.5px; line-height: 1.3; color: var(--text); }
     .svl-c { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
@@ -3983,11 +3985,12 @@ select[aria-expanded="true"] { border-color: rgba(var(--ac), 0.55) !important; b
         <button type="button" class="btn-primary tv-rm" style="flex:1;" onclick="removeSurveyBg()" id="svRemoveBtn">Стандартный</button>
       </div>
       <div class="poster-note" id="svBgNote"></div>
-      <input type="file" id="svBgInput" accept="image/*" style="display:none" onchange="onSurveyBgFile(this.files[0]); this.value='';">
+      <div class="poster-note">Фото или видео. Видео — до 40 МБ и 60 секунд: сервер сам сделает его лёгким, без звука и с плавным повтором, чтобы не тормозило.</div>
+      <input type="file" id="svBgInput" accept="video/mp4,video/quicktime,video/webm,image/*" style="display:none" onchange="onSurveyBgFile(this.files[0]); this.value='';">
     </div></div>
     <div class="sv-gl">Оформление</div>
     <div class="sv-card">
-      <div class="sv-line"><div class="sv-lt"><span class="sv-t">Ретушь фона</span><span class="sv-s">Включено: фон слегка размыт, текст и оценки читаются лучше. Выключено: фото показывается как есть.</span></div><label class="vn-sw"><input type="checkbox" id="svRetouch" onchange="svChanged()"><i></i></label></div>
+      <div class="sv-line"><div class="sv-lt"><span class="sv-t">Ретушь фона</span><span class="sv-s">Включено: фон слегка размыт, текст и оценки читаются лучше. Выключено: фото или видео показывается как есть.</span></div><label class="vn-sw"><input type="checkbox" id="svRetouch" onchange="svChanged()"><i></i></label></div>
       <div class="tv-rg"><div class="tv-rg-h"><span>Затемнение фона</span><b><span id="svDimVal">70</span>%</b></div>
         <input type="range" class="sv-range" id="svDim" min="0" max="95" step="5" oninput="svChanged()">
         <div class="sv-range-l"><span>светлее</span><span>темнее</span></div></div>
@@ -11401,10 +11404,186 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     }
   }
 
+  // ─── ВИДЕО В ФОНЕ ОПРОСА ───
+  // Одинаковый код в приложении сотрудников и в гостевом приложении.
+  // Главная причина тормозов — CSS-фильтр blur() на играющем видео: телефон пересчитывает размытие каждого кадра на весь экран.
+  // Поэтому «ретушь» для видео делаем иначе: сам ролик играет крошечным невидимым квадратиком, а кадр рисуется в совсем маленький холст
+  // и ступенями ×2 растягивается (каждая ступень сглаживает). Так же размыт фон на телевизоре. Нагрузка — копейки.
+  // Без ретуши видео показывается как есть, без всяких фильтров.
+  var VBG = (function () {
+    var K = 1.3;          // сила размытия: чем больше, тем меньше холст и тем мягче картинка (подобрано сравнением с blur(8px): ошибка минимальна при 1.3)
+    var BLUR = 8;         // px — как у фото с ретушью
+    var POS_Y = 0.3;      // как background-position: center 30%
+    var CSS_ID = 'vbg-css';
+
+    function css() {
+      if (document.getElementById(CSS_ID)) return;
+      var st = document.createElement('style');
+      st.id = CSS_ID;
+      st.textContent =
+        '.vbg-v{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;opacity:0;transition:opacity .4s ease;pointer-events:none;display:block;border:0}' +
+        '.vbg-v.ready{opacity:1}' +
+        '.vbg-cv>.vbg-v{width:4px;height:4px;opacity:.01;transition:none}' +
+        '.vbg-cv>.vbg-v.ready{opacity:.01}' +
+        '.vbg-c{position:absolute;left:0;top:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .4s ease;pointer-events:none}' +
+        '.vbg-c.ready{opacity:1}' +
+        '.vbg-fb>.vbg-v{width:100%;height:100%;opacity:1}' +
+        '.vbg-fb.vbg-blur>.vbg-v{filter:blur(' + BLUR + 'px)}';
+      (document.head || document.documentElement).appendChild(st);
+    }
+    function smooth(x) { x.imageSmoothingEnabled = true; try { x.imageSmoothingQuality = 'high'; } catch (e) {} }
+
+    function stop(host) {
+      var s = host && host._vbg;
+      if (!s) return;
+      s.dead = true;
+      cancelAnimationFrame(s.raf);
+      clearInterval(s.guard); clearTimeout(s.wd);
+      document.removeEventListener('visibilitychange', s.onVis);
+      ['touchstart', 'pointerdown', 'click', 'keydown'].forEach(function (e) { document.removeEventListener(e, s.unlock, true); });
+      try { s.v.pause(); s.v.removeAttribute('src'); s.v.load(); } catch (e) {}
+      if (s.v.parentNode) s.v.parentNode.removeChild(s.v);
+      if (s.cv && s.cv.parentNode) s.cv.parentNode.removeChild(s.cv);
+      host._vbg = null;
+      host.classList.remove('vbg-cv', 'vbg-fb', 'vbg-blur');
+    }
+
+    // Холст нужного размера: сначала маленький, потом ступени ×2 до ~280 точек в ширину, последний растягивается браузером на весь фон
+    function size(s) {
+      var h = s.host, vw = h.clientWidth || 360, vh = h.clientHeight || 640;
+      var w = Math.max(16, Math.min(640, Math.round(vw / (1 + BLUR * K))));
+      var key = w + 'x' + vw + 'x' + vh;
+      if (key === s.key && s.cs.length) return;
+      s.key = key;
+      var ws = [w], hs = [Math.max(12, Math.round(w * vh / vw))];
+      while (ws[ws.length - 1] < 280) { ws.push(Math.min(960, ws[ws.length - 1] * 2)); hs.push(Math.max(12, Math.round(ws[ws.length - 1] * vh / vw))); }
+      if (ws.length === 1) { ws.push(w); hs.push(hs[0]); }
+      s.cs = []; s.xs = [];
+      for (var i = 0; i < ws.length; i++) {
+        var last = i === ws.length - 1;
+        var c = last ? s.cv : document.createElement('canvas');
+        c.width = ws[i]; c.height = hs[i];
+        s.cs.push(c); s.xs.push(c.getContext('2d', last ? { alpha: false } : undefined));
+      }
+      // первая ступень (сжатие кадра видео в крошечный холст) — с хорошим сглаживанием, иначе мелькает рябь;
+      // остальные только растягивают в 2 раза, им хватает быстрого (так ~в 3 раза дешевле на каждый кадр)
+      for (i = 0; i < s.xs.length; i++) { smooth(s.xs[i]); if (i > 0) { try { s.xs[i].imageSmoothingQuality = 'low'; } catch (e) {} } }
+      s.xs[s.xs.length - 1].fillStyle = '#140a02'; s.xs[s.xs.length - 1].fillRect(0, 0, s.cv.width, s.cv.height);
+      s.lastT = -1;
+    }
+
+    function tick(now) {
+      var s = this;
+      if (s.dead || !s.cvMode) return;
+      s.raf = requestAnimationFrame(s.tick);
+      if (now - s.lastDraw < 30) return;                      // не чаще ~33 раз в секунду
+      s.lastDraw = now;
+      if (++s.n % 45 === 0) size(s);                          // размер окна мог поменяться
+      var v = s.v;
+      if (document.hidden || !s.host.clientWidth || v.readyState < 2 || !v.videoWidth) return;
+      var t = v.currentTime; if (t === s.lastT) return; s.lastT = t;   // кадр не сменился — не перерисовываем
+      var vw = v.videoWidth, vh = v.videoHeight, ta = (s.host.clientWidth || 360) / (s.host.clientHeight || 640), cw = vw, ch = vh, cx = 0, cy = 0;
+      if (vw / vh > ta) { cw = vh * ta; cx = (vw - cw) / 2; } else { ch = vw / ta; cy = (vh - ch) * POS_Y; }   // как object-fit: cover
+      try {
+        s.xs[0].drawImage(v, cx, cy, cw, ch, 0, 0, s.cs[0].width, s.cs[0].height);
+        for (var i = 1; i < s.cs.length; i++) s.xs[i].drawImage(s.cs[i - 1], 0, 0, s.cs[i - 1].width, s.cs[i - 1].height, 0, 0, s.cs[i].width, s.cs[i].height);
+        s.draws++;
+        if (!s.cv.classList.contains('ready')) { s.cv.classList.add('ready'); ready(s); }
+      } catch (e) {}
+    }
+
+    function ready(s) {
+      if (s.isReady) return;
+      s.isReady = true;
+      if (s.cb && s.cb.onReady) { try { s.cb.onReady(); } catch (e) {} }
+    }
+
+    // Режим показа: с ретушью — холст, без ретуши — само видео; если холст не завёлся — видео с фильтром (хуже, но видно)
+    function layout(s) {
+      var h = s.host;
+      s.cvMode = s.retouch && !s.fallback && s.canvasOk;
+      h.classList.toggle('vbg-cv', s.cvMode);
+      h.classList.toggle('vbg-fb', !!s.fallback);
+      h.classList.toggle('vbg-blur', !!s.retouch);
+      if (s.cvMode) {
+        if (!s.cv.parentNode) h.appendChild(s.cv);
+        size(s);
+        s.lastT = -1;
+        cancelAnimationFrame(s.raf);
+        s.raf = requestAnimationFrame(s.tick);
+        // если за 3 секунды кадры так и не нарисовались — показываем само видео
+        clearTimeout(s.wd);
+        if (!s.draws) s.wd = setTimeout(function () { if (!s.dead && s.cvMode && !s.draws && s.v.currentTime > 0) { s.fallback = true; layout(s); } }, 3000);
+      } else {
+        cancelAnimationFrame(s.raf);
+        clearTimeout(s.wd);
+        if (s.cv && s.cv.parentNode) s.cv.parentNode.removeChild(s.cv);
+        s.cv && s.cv.classList.remove('ready');
+        if (s.v.classList.contains('ready')) ready(s);
+      }
+    }
+
+    function play(s) {
+      var p; try { p = s.v.play(); } catch (e) {}
+      if (p && p.catch) p.catch(function () {
+        // телефон не дал запустить само (экономия заряда, нет касания): запустим при первом касании экрана
+        if (s.dead || s.armed) return;
+        s.armed = true;
+        s.unlock = function () { if (!s.dead) { try { s.v.play(); } catch (e) {} } };
+        ['touchstart', 'pointerdown', 'click', 'keydown'].forEach(function (e) { document.addEventListener(e, s.unlock, true); });
+      });
+    }
+
+    // host — элемент фона (position: absolute/fixed/relative); url — ссылка на видео; retouch — размыть; cb: { onReady, onFail }
+    function show(host, url, retouch, cb) {
+      if (!host || !url) return null;
+      var s = host._vbg;
+      if (s && s.url === url) { s.retouch = !!retouch; s.cb = cb || s.cb; layout(s); return s; }
+      stop(host);
+      css();
+      var v = document.createElement('video');
+      v.className = 'vbg-v';
+      v.muted = true; v.defaultMuted = true; v.loop = true; v.autoplay = true; v.playsInline = true; v.preload = 'auto';
+      ['muted', 'playsinline', 'webkit-playsinline', 'aria-hidden'].forEach(function (a) { v.setAttribute(a, a === 'aria-hidden' ? 'true' : ''); });
+      v.disablePictureInPicture = true;
+      try { v.controls = false; v.setAttribute('disableremoteplayback', ''); } catch (e) {}
+      var cv = document.createElement('canvas'); cv.className = 'vbg-c'; cv.setAttribute('aria-hidden', 'true');
+      var ok = false;
+      try { ok = !!(cv.getContext && cv.getContext('2d', { alpha: false })); } catch (e) { ok = false; }
+      s = host._vbg = { host: host, v: v, cv: cv, url: url, retouch: !!retouch, cb: cb || {}, canvasOk: ok, cs: [], xs: [], key: '', raf: 0, n: 0, draws: 0,
+        lastT: -1, lastDraw: 0, dead: false, fallback: false, isReady: false, cvMode: false, wd: 0, armed: false, unlock: null, guard: 0, parked: false };
+      s.tick = tick.bind(s);
+      s.onVis = function () { if (!document.hidden && !s.dead && s.v.paused) play(s); };
+      document.addEventListener('visibilitychange', s.onVis);
+      // экран с фоном закрыли (display: none) или вкладка ушла в фон — ролик на паузу, чтобы не тратить заряд; вернулись — играем дальше
+      s.guard = setInterval(function () {
+        if (s.dead) return;
+        var vis = s.host.clientWidth > 0 && !document.hidden;
+        if (!vis && !s.v.paused) { s.v.pause(); s.parked = true; }
+        else if (vis && s.parked) { s.parked = false; play(s); }
+      }, 1000);
+      v.addEventListener('playing', function () { v.classList.add('ready'); if (!s.cvMode) ready(s); });
+      v.addEventListener('error', function () {
+        if (s.dead) return;
+        var f = s.cb && s.cb.onFail;
+        stop(host);
+        if (f) { try { f(); } catch (e) {} }
+      });
+      host.appendChild(v);
+      layout(s);
+      v.src = url;
+      play(s);
+      return s;
+    }
+
+    return { show: show, stop: stop };
+  })();
+
   // ─── СЕРВИС: ОПРОСЫ (фон, ретушь, затемнение, тексты) ───
   var svList = [];
   var svKind = '';
-  var svBg = { url: '', blob: null, preview: '', remove: false };
+  // type — что сейчас на сервере ('image' | 'video'); video/mime — про только что выбранный файл
+  var svBg = { url: '', type: '', blob: null, preview: '', mime: '', video: false, remove: false };
   const SV_DEFAULTS = {
     guest_review: {
       heading: 'Ваш отзыв', intro: 'Пара минут — и мы станем лучше. Честно, это правда читают.',
@@ -11436,7 +11615,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       if (res.status === 403) { accessDenied(); return; }
       if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить опросы'));
       svList = (await res.json()).surveys || [];
-      el.innerHTML = svList.map(v => `<div class="svl" onclick="openSurveyForm('${escJs(v.kind)}')"><div class="svl-th${v.background ? '' : ' none'}"${v.background ? ` style="background-image:url('${escHtml(v.background)}')"` : ''}>${v.background ? '' : (homeIcons.surveys || '')}</div><div class="svl-body"><div class="svl-t">${escHtml(v.title)}</div><div class="svl-c"><span class="sv-chip${v.background ? ' acc' : ''}">${v.background ? 'свой фон' : 'стандартный фон'}</span><span class="sv-chip${v.retouch ? ' acc' : ''}">${v.retouch ? 'с ретушью' : 'без ретуши'}</span></div></div><div class="qrow-chev">›</div></div>`).join('')
+      el.innerHTML = svList.map(v => `<div class="svl" onclick="openSurveyForm('${escJs(v.kind)}')"><div class="svl-th${v.background ? '' : ' none'}"${v.background && v.backgroundType !== 'video' ? ` style="background-image:url('${escHtml(v.background)}')"` : ''}>${v.background ? (v.backgroundType === 'video' ? `<video src="${escHtml(v.background)}#t=0.1" muted playsinline preload="metadata"></video>` : '') : (homeIcons.surveys || '')}</div><div class="svl-body"><div class="svl-t">${escHtml(v.title)}</div><div class="svl-c"><span class="sv-chip${v.background ? ' acc' : ''}">${v.background ? (v.backgroundType === 'video' ? 'видео-фон' : 'свой фон') : 'стандартный фон'}</span><span class="sv-chip${v.retouch ? ' acc' : ''}">${v.retouch ? 'с ретушью' : 'без ретуши'}</span></div></div><div class="qrow-chev">›</div></div>`).join('')
         + '<div class="sv-tip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><div>Фон, ретушь, затемнение и тексты. Вопросы и шкалы не меняются: от них зависят CSI, NPS и eNPS.</div></div>';
     } catch (e) {
       el.innerHTML = errorStateHtml(e.message || 'Не удалось загрузить опросы', 'loadSurveys()');
@@ -11460,7 +11639,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     document.getElementById('svThanksText').value = v.thanksText || '';
     document.getElementById('svThanksText').placeholder = d.thanksText;
     if (svBg.preview) URL.revokeObjectURL(svBg.preview);
-    svBg = { url: v.background || '', blob: null, preview: '', remove: false };
+    svBg = { url: v.background || '', type: v.background ? (v.backgroundType || 'image') : '', blob: null, preview: '', mime: '', video: false, remove: false };
     svChanged();
     svRenderLink(v);
     showScreen('survey-form');
@@ -11531,9 +11710,18 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const dim = Number(document.getElementById('svDim').value);
     document.getElementById('svDimVal').textContent = String(dim);
     const src = svBg.preview || (!svBg.remove ? svBg.url : '');
+    const srcVideo = !!src && (svBg.preview ? svBg.video : svBg.type === 'video');
     const img = document.getElementById('svPrevImg');
-    img.style.backgroundImage = src ? `url("${src}")` : (svKind === 'guest_review' ? 'linear-gradient(160deg,#4a2e12 0%,#140B00 100%)' : 'none');
-    img.classList.toggle('retouch', retouch && !!src);
+    if (srcVideo) {
+      // видео: ретушь делает маленький холст, а не CSS-фильтр (на играющем видео он тормозит)
+      img.style.backgroundImage = 'linear-gradient(160deg,#4a2e12 0%,#140B00 100%)';
+      img.classList.remove('retouch');
+      VBG.show(img, src, retouch);
+    } else {
+      VBG.stop(img);
+      img.style.backgroundImage = src ? `url("${src}")` : (svKind === 'guest_review' ? 'linear-gradient(160deg,#4a2e12 0%,#140B00 100%)' : 'none');
+      img.classList.toggle('retouch', retouch && !!src);
+    }
     document.getElementById('svPrevScrim').style.background = svScrimCss(dim);
     document.getElementById('svPrevH').textContent = document.getElementById('svHeading').value.trim() || d.heading;
     document.getElementById('svPrevT').textContent = document.getElementById('svIntro').value.trim() || d.intro;
@@ -11542,23 +11730,45 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     document.getElementById('svPickBtn').textContent = src ? 'Заменить фон' : 'Загрузить фон';
     const note = document.getElementById('svBgNote');
     note.classList.remove('warn');
-    note.textContent = svBg.blob ? 'Новый фон — сохранится кнопкой ниже' : (svBg.remove ? 'Вернётся стандартный фон после сохранения' : (svBg.url ? 'Свой фон' : d.defaultBg + (svKind === 'guest_review' ? '. Ретушь и затемнение действуют и на него' : '')));
+    note.textContent = svBg.blob ? (svBg.video ? 'Новое видео — сохранится кнопкой ниже' : 'Новый фон — сохранится кнопкой ниже') : (svBg.remove ? 'Вернётся стандартный фон после сохранения' : (svBg.url ? (svBg.type === 'video' ? 'Свой фон — видео' : 'Свой фон') : d.defaultBg + (svKind === 'guest_review' ? '. Ретушь и затемнение действуют и на него' : '')));
   }
   function pickSurveyBg() { document.getElementById('svBgInput').click(); }
   function removeSurveyBg() {
     if (svBg.preview) URL.revokeObjectURL(svBg.preview);
-    svBg.blob = null; svBg.preview = ''; svBg.remove = !!svBg.url;
+    svBg.blob = null; svBg.preview = ''; svBg.mime = ''; svBg.video = false; svBg.remove = !!svBg.url;
     svChanged();
   }
   async function onSurveyBgFile(file) {
     if (!file) return;
     const note = document.getElementById('svBgNote');
-    if (file.type && !file.type.startsWith('image/')) { note.textContent = 'Это не картинка — выберите фото (JPG, PNG)'; note.classList.add('warn'); return; }
+    const warn = (t) => { note.textContent = t; note.classList.add('warn'); };
+    if (isVideoFile(file)) {
+      // видео: проверяем размер и длину здесь, чтобы не гонять по сети файл, который сервер всё равно не примет
+      if (file.size > TV_VIDEO_MAX_BYTES) { warn(`Видео ${(file.size / 1024 / 1024).toFixed(1)} МБ — нужно не больше 40 МБ. Сожмите или обрежьте.`); return; }
+      note.classList.remove('warn'); note.textContent = 'Проверяю видео…';
+      const url = URL.createObjectURL(file);
+      const info = await new Promise(resolve => {
+        const v = document.createElement('video'); v.preload = 'metadata'; v.muted = true;
+        const t = setTimeout(() => resolve(null), 8000);
+        v.onloadedmetadata = () => { clearTimeout(t); resolve({ sec: v.duration, w: v.videoWidth }); };
+        v.onerror = () => { clearTimeout(t); resolve(null); };
+        v.src = url;
+      });
+      if (!info || !isFinite(info.sec) || !info.w) { URL.revokeObjectURL(url); warn('Не получилось открыть это видео. Нужен MP4 (H.264) или MOV с телефона.'); return; }
+      if (info.sec > TV_VIDEO_MAX_SEC + 0.5) { URL.revokeObjectURL(url); warn(`Видео ${Math.round(info.sec)} сек — нужно не длиннее 60. Обрежьте его.`); return; }
+      if (svBg.preview) URL.revokeObjectURL(svBg.preview);
+      const ext = ((file.name || '').match(/\.(\w+)$/) || [])[1];
+      svBg.blob = file; svBg.preview = url; svBg.video = true; svBg.remove = false;
+      svBg.mime = /^video\//.test(file.type || '') ? file.type : (ext && ext.toLowerCase() === 'webm' ? 'video/webm' : ext && ext.toLowerCase() === 'mov' ? 'video/quicktime' : 'video/mp4');
+      svChanged();
+      return;
+    }
+    if (file.type && !file.type.startsWith('image/')) { warn('Нужно фото (JPG, PNG) или видео (MP4)'); return; }
     note.textContent = 'Готовлю фото…';
     try {
       const { blob } = await compressPoster(file, 1600);
       if (svBg.preview) URL.revokeObjectURL(svBg.preview);
-      svBg.blob = blob; svBg.preview = URL.createObjectURL(blob); svBg.remove = false;
+      svBg.blob = blob; svBg.preview = URL.createObjectURL(blob); svBg.mime = 'image/jpeg'; svBg.video = false; svBg.remove = false;
       svChanged();
     } catch {
       note.textContent = 'Не получилось открыть это фото. Сохраните его как JPG или PNG и выберите снова.';
@@ -11571,6 +11781,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     if (btn.disabled || !svKind) return;
     btn.disabled = true;
     btn.textContent = 'Сохраняем...';
+    let bgNote = '';
     const body = {
       retouch: document.getElementById('svRetouch').checked,
       dim: Number(document.getElementById('svDim').value),
@@ -11585,11 +11796,12 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       });
       if (!res.ok) throw new Error(await responseError(res, 'Не удалось сохранить опрос'));
       if (svBg.blob) {
-        btn.textContent = 'Загружаем фон...';
+        btn.textContent = svBg.video ? 'Загружаем и обрабатываем видео (до минуты)...' : 'Загружаем фон...';
         const r = await fetch(`${PROXY_BASE}/api/admin/surveys/${encodeURIComponent(svKind)}/background?pin=${getPin()}`, {
-          method: 'POST', headers: { 'Content-Type': 'image/jpeg' }, body: svBg.blob
+          method: 'POST', headers: { 'Content-Type': svBg.video ? svBg.mime : 'image/jpeg' }, body: svBg.blob
         });
         if (!r.ok) throw new Error('Настройки сохранены, но фон не загрузился: ' + await responseError(r, 'ошибка загрузки'));
+        try { const j = await r.json(); if (j && j.note) bgNote = j.note; } catch {}
       } else if (svBg.remove) {
         const r = await fetch(`${PROXY_BASE}/api/admin/surveys/${encodeURIComponent(svKind)}/background?pin=${getPin()}`, { method: 'DELETE' });
         if (!r.ok) throw new Error('Настройки сохранены, но фон не убрался: ' + await responseError(r, 'ошибка'));
@@ -11602,7 +11814,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     }
     btn.disabled = false;
     btn.textContent = 'Сохранить';
-    showSuccess('Опрос сохранён', 'Новое оформление уже у гостей');
+    showSuccess('Опрос сохранён', bgNote || 'Новое оформление уже у гостей');
     openSurveysEdit();
   }
 
@@ -12212,11 +12424,20 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       const bg = document.getElementById('enpsBg');
       const img = document.getElementById('enpsBgImg');
       if (c.background) {
-        img.style.backgroundImage = `url("${c.background}")`;
-        img.classList.toggle('retouch', !!c.retouch);
+        if (c.backgroundType === 'video') {
+          // видео: ретушь делает маленький холст, а не CSS-фильтр
+          img.style.backgroundImage = 'none';
+          img.classList.remove('retouch');
+          VBG.show(img, c.background, !!c.retouch);
+        } else {
+          VBG.stop(img);
+          img.style.backgroundImage = `url("${c.background}")`;
+          img.classList.toggle('retouch', !!c.retouch);
+        }
         document.getElementById('enpsBgScrim').style.background = svScrimCss(c.dim);
         bg.classList.add('on');
       } else {
+        VBG.stop(img);
         bg.classList.remove('on');
       }
       const set = (id, v) => { if (v) document.getElementById(id).textContent = v; };
