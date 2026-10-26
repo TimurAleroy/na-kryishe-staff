@@ -10384,6 +10384,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     btn.disabled = true;
     btn.textContent = 'Сохраняем...';
     let itemId = editingMenuItemId;
+    let tvMarkProblem = '';
     try {
       const res = await fetch(isEdit
         ? `${PROXY_BASE}/api/admin/menu/${encodeURIComponent(editingMenuItemId)}?pin=${getPin()}`
@@ -10395,6 +10396,12 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || 'Не удалось сохранить позицию');
       if (!isEdit) itemId = data.id || null;
+      // отметку «на экранах ТВ» отправили, а сервер её не принял: старый сервер (нет tvSkipped в ответе) или нет миграции 041
+      if (body.showOnTv !== undefined && (data.tvSkipped === undefined || data.tvSkipped === true)) {
+        tvMarkProblem = data.tvSkipped === true
+          ? 'В базе нет миграции 041, поэтому отметка «На экранах ТВ» не сохранилась. Нужно обновить jarvis (версия базы в «Сервис» должна стать 041_tv_menu).'
+          : 'Сервер ещё без обновления, поэтому отметка «На экранах ТВ» не сохранилась. Нужно выложить свежий staff-proxy и перезапустить его.';
+      }
     } catch (e) {
       btn.disabled = false;
       btn.textContent = 'Сохранить';
@@ -10421,7 +10428,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     btn.disabled = false;
     btn.textContent = 'Сохранить';
     if (photoProblem) notify(`Позиция сохранена, но с фото проблема:\n${photoProblem}`);
-    showSuccess(isEdit ? 'Сохранено' : 'Позиция добавлена', name);
+    if (tvMarkProblem) notify(`Позиция сохранена, но:\n${tvMarkProblem}`);
+    else showSuccess(isEdit ? 'Сохранено' : 'Позиция добавлена', name);
     editingMenuItemId = null;
     resetMenuPhoto('');
     openMenuEdit();
@@ -11665,6 +11673,13 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     showScreen('tv-room');
   }
   function tvIn(id) { return document.getElementById(id); }
+  // Почему «Позиции меню» не сохраняются: старый сервер (не знает поля) или база без миграции 041. Говорим об этом прямо.
+  function tvMenuProblem(r) {
+    if (!r) return '';
+    if (r.showMenu === undefined) return '<b>Сервер ещё без обновления.</b> Он не знает про сцену «Меню», поэтому переключатель «Позиции меню» не запоминается. Нужно выложить свежий staff-proxy и перезапустить его.';
+    if (r.menuColumns === false) return '<b>В базе нет миграции 041.</b> Пока её нет, «Позиции меню» и отметки «На экранах ТВ» не сохраняются. Нужно обновить jarvis (в приложении «Сервис» версия базы должна стать 041_tv_menu).';
+    return '';
+  }
   function renderTvRoom() {
     const r = tvCur;
     tvTexts = { ...r.texts }; tvMsgText = r.message || '';
@@ -11682,7 +11697,9 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const heroS = r.shared ? 'Общий экран на террасе: заставка, афиша и сообщения для всех гостей. Приветствия по имени нет.' : `${seatedLine}<br>${showLine}`;
     const sw = (id, on, title, hint) => `<div class="sv-line"><div class="sv-lt"><span class="sv-t">${title}</span>${hint ? `<span class="sv-s">${hint}</span>` : ''}</div><label class="vn-sw"><input type="checkbox" id="${id}"${on ? ' checked' : ''}><i></i></label></div>`;
     const rng = (id, label, valHtml, min, max, step, val, l, rr_) => `<div class="tv-rg"><div class="tv-rg-h"><span>${label}</span><b>${valHtml}</b></div><input type="range" class="sv-range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}" oninput="tvPreview()"><div class="sv-range-l"><span>${l}</span><span>${rr_}</span></div></div>`;
+    const tvProblem = tvMenuProblem(r);
     document.getElementById('tvRoomBody').innerHTML = `
+      ${tvProblem ? `<div class="sv-warn" style="margin-top:6px"><div>${tvProblem}</div></div>` : ''}
       <div class="sv-hero ${heroCls}" style="margin-top:6px"><div class="sv-hero-ico">${TV_IC.tv}</div><div class="sv-hero-body"><div class="sv-hero-k">${r.shared ? 'Проектор' : 'Телевизор'}</div><div class="sv-hero-t" style="font-size:18px">${heroT}</div><div class="sv-hero-s">${heroS}</div></div></div>
       ${r.shared ? '' : `<div class="sv-gl">${TV_IC.user}Приветствие гостя</div>
       <div class="sv-card">
@@ -11824,7 +11841,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     tvIn('tvRemoveBtn').style.display = src ? '' : 'none';
     tvIn('tvPickBtn').textContent = src ? 'Заменить фон' : 'Загрузить фон';
     const note = tvIn('tvBgNote');
-    if (!note.classList.contains('warn')) note.textContent = tvBgNew.blob ? 'Новый фон — сохранится кнопкой «Сохранить» ниже' : (tvBgNew.remove ? 'Вернётся стандартный фон после сохранения' : (tvCur.bg ? (tvCur.bg.type === 'video' ? 'Свой фон: видео' : 'Свой фон: фото') : 'Стандартный фон. Видео до 15 МБ и 60 секунд (звук не нужен) или фото.'));
+    if (!note.classList.contains('warn')) note.textContent = tvBgNew.blob ? 'Новый фон — сохранится кнопкой «Сохранить» ниже' : (tvBgNew.remove ? 'Вернётся стандартный фон после сохранения' : (tvCur.bg ? (tvCur.bg.type === 'video' ? 'Свой фон: видео' : 'Свой фон: фото') : 'Стандартный фон. Видео до 40 МБ и 60 секунд (звук не нужен) или фото.'));
   }
   function tvBgWarn(text) { const n = tvIn('tvBgNote'); n.textContent = text; n.classList.add('warn'); }
   function tvRemoveBg() {
@@ -11899,8 +11916,10 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       return;
     }
     btn.disabled = false; btn.textContent = 'Сохранить';
-    showSuccess('Экран сохранён', bgNote || 'Телевизор обновится в течение 15 секунд');
     await tvReload();
+    const tvProb = tvMenuProblem(tvCur);
+    if (tvProb) notify('Остальное сохранено, но «Позиции меню» не запомнились:\n' + tvProb.replace(/<[^>]+>/g, ''));
+    else showSuccess('Экран сохранён', bgNote || 'Телевизор обновится в течение 15 секунд');
   }
   async function tvReload() {
     const n = tvCur.room;
