@@ -360,19 +360,34 @@
     .svc-glabel { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin: 20px 2px 0; }
     .svc-glabel:first-child { margin-top: 4px; }
 
+    /* Результаты поиска: компактные карточки сеткой (на телефоне и в узкой колонке — по одной в ряд) */
+    #searchResults { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 8px 10px; }
+    #searchResults > :not(.result-item) { grid-column: 1 / -1; }
     .result-item {
       background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px 16px;
+      border-radius: 16px;
+      padding: 12px 14px;
       margin-bottom: 8px;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 12px;
+      min-width: 0;
+      transition: border-color .15s, background .15s, transform .15s;
     }
-    .result-item:active { background: var(--bg-card-hover); }
-    .result-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--accent-dim); color: var(--accent); display: flex; align-items: center; justify-content: center; font-family: 'Jost', sans-serif; font-size: 15px; flex-shrink: 0; }
+    #searchResults > .result-item { margin-bottom: 0; }
+    .result-item:hover { border-color: rgba(var(--ac), 0.45); background: var(--bg-card-hover); transform: translateY(-1px); }
+    .result-item:active { background: var(--bg-card-hover); transform: none; }
+    .result-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .result-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--accent-dim); color: var(--accent); display: flex; align-items: center; justify-content: center; font-family: 'Jost', sans-serif; font-size: 16px; flex-shrink: 0; }
+    .result-main { flex: 1; min-width: 0; }
+    .result-name { font-size: 15px; line-height: 1.25; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .result-name mark { background: none; color: var(--accent); font-weight: 500; }
+    .result-sub { margin-top: 3px; font-family: 'Jost', sans-serif; font-size: 12.5px; letter-spacing: 1px; color: var(--text-muted); }
+    .result-go { flex: 0 0 auto; width: 16px; height: 16px; color: var(--text-muted); transition: color .15s, transform .15s; }
+    .result-item:hover .result-go { color: var(--accent); transform: translateX(2px); }
+    @media (prefers-reduced-motion: reduce) { .result-item, .result-go { transition: none; } .result-item:hover { transform: none; } }
 
     .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 13px; line-height: 1.6; }
 
@@ -3106,6 +3121,35 @@ html[data-theme="dark"] input[type="date"].form-input::-webkit-calendar-picker-i
 }
 .fx .desk-rail .rail-btn { animation: fxSlideL .55s cubic-bezier(.2,.7,.2,1) backwards; animation-delay: calc(var(--i, 0) * 55ms + 80ms); }
 @media (prefers-reduced-motion: reduce) { .rail-btn, .rail-tip { transition: none; } }
+</style>
+
+<style id="selpop-css">
+/* Выпадающие списки: окно в стиле остальных окон приложения (--bg-pop, тонкая акцентная рамка, мягкая тень) */
+.sp-pop { position: fixed; z-index: 2000; box-sizing: border-box; display: flex; flex-direction: column; padding: 6px;
+  background: var(--bg-pop); border: 1px solid rgba(var(--ac), 0.3); border-radius: 16px;
+  box-shadow: 0 18px 44px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.22);
+  opacity: 0; transform: translateY(-4px) scale(0.985); transform-origin: top left;
+  transition: opacity .12s ease, transform .14s ease; }
+.sp-pop.up { transform: translateY(4px) scale(0.985); transform-origin: bottom left; }
+.sp-pop.in { opacity: 1; transform: none; }
+.sp-list { overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: rgba(var(--fg-rgb), 0.22) transparent; }
+.sp-list::-webkit-scrollbar { width: 6px; }
+.sp-list::-webkit-scrollbar-thumb { background: rgba(var(--fg-rgb), 0.22); border-radius: 6px; }
+.sp-opt { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 9px 12px; border-radius: 10px;
+  font: 400 14px/1.3 'Inter', sans-serif; color: var(--text); cursor: pointer; user-select: none; -webkit-user-select: none; overflow-wrap: anywhere; }
+.sp-opt + .sp-opt { margin-top: 2px; }
+.sp-opt.on { background: rgba(var(--ac), 0.13); }
+.sp-opt.sel { color: var(--accent); font-weight: 500; }
+.sp-opt.dis { opacity: 0.38; cursor: default; }
+.sp-opt.dis.on { background: none; }
+.sp-opt.empty { color: var(--text-muted); }
+.sp-opt .sp-ck { flex: 0 0 auto; width: 15px; height: 15px; color: var(--accent); visibility: hidden; }
+.sp-opt.sel .sp-ck { visibility: visible; }
+.sp-grp { padding: 11px 12px 5px; font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); }
+.sp-grp:first-child { padding-top: 6px; }
+/* пока список открыт, поле подсвечено, как при вводе */
+select[aria-expanded="true"] { border-color: rgba(var(--ac), 0.55) !important; box-shadow: 0 0 0 3px rgba(var(--ac), 0.12); }
+@media (prefers-reduced-motion: reduce) { .sp-pop { transition: none; } }
 </style>
 </head>
 <body>
@@ -9683,7 +9727,11 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     document.getElementById('evName').value = '';
     document.getElementById('evDescription').value = '';
     document.getElementById('evFormat').value = '';
-    evDay = ''; evTime = '21:00'; renderEvWhen();
+    // День, выбранный в календаре афиши (подсвечен), сразу подставляется в форму: второй раз вводить не нужно.
+    // Прошедший день не подставляем — там мероприятие уже не создать.
+    const picked = EV_CAL.sel;
+    evDay = (picked && /^\d{4}-\d{2}-\d{2}$/.test(picked) && picked >= venueCalendarDay()) ? picked : '';
+    evTime = '21:00'; renderEvWhen();
     document.getElementById('evSubmitBtn').textContent = 'Создать';
     document.getElementById('evDeleteBtn').style.display = 'none';
     resetEventPoster('');
@@ -16793,6 +16841,31 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     return errorStateHtml(serverText && /[а-яё]/i.test(serverText) ? serverText : 'Поиск не выполнился — проверьте связь и попробуйте ещё раз. Пока поиск не сработал, новую карточку не создавайте: гость может уже быть в базе.', retryCall);
   }
 
+  // Карточка найденного гостя: аватар, имя (совпадение с запросом выделено), «···1234» под именем, стрелка.
+  // Нажатие и Enter открывают карточку гостя.
+  function guestResultHtml(g, query) {
+    const raw = String(g.name || '');
+    const digits = String(g.phone || '').replace(/\D/g, '');
+    const last4 = digits.length >= 4 ? digits.slice(-4) : '';
+    // выделяем в имени слова из запроса (по сырому тексту, потом экранируем кусками — без риска сломать разметку)
+    const low = raw.toLowerCase(), marks = [];
+    String(query || '').toLowerCase().split(/\s+/).filter(Boolean).forEach(w => {
+      let i = low.indexOf(w);
+      while (i >= 0) { marks.push([i, i + w.length]); i = low.indexOf(w, i + w.length); }
+    });
+    marks.sort((x, y) => x[0] - y[0]);
+    const merged = [];
+    marks.forEach(m => { const t = merged[merged.length - 1]; if (t && m[0] <= t[1]) t[1] = Math.max(t[1], m[1]); else merged.push(m.slice()); });
+    let html = '', pos = 0;
+    merged.forEach(m => { html += escHtml(raw.slice(pos, m[0])) + '<mark>' + escHtml(raw.slice(m[0], m[1])) + '</mark>'; pos = m[1]; });
+    html += escHtml(raw.slice(pos));
+    return `<div class="result-item" role="button" tabindex="0" onclick="openGuestCard('${escJs(g.id)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+      <div class="result-avatar">${escHtml((raw || '?').charAt(0).toUpperCase())}</div>
+      <div class="result-main"><div class="result-name" title="${escHtml(raw)}">${html}</div>${last4 ? `<div class="result-sub">···${last4}</div>` : ''}</div>
+      <svg class="result-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+    </div>`;
+  }
+
   async function runLast4Search(digits, resultsEl) {
     showResultsSection();
     resultsEl.innerHTML = '<div class="loading">Ищу по номеру...</div>';
@@ -16810,14 +16883,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       }
 
       resultsEl.innerHTML = matches.map(g => {
-        if (g.source === 'card') {
-          return `
-          <div class="result-item" onclick="openGuestCard('${escJs(g.id)}')">
-            <div class="result-avatar">${escHtml((g.name||'?').charAt(0).toUpperCase())}</div>
-            <div style="flex:1;">${escHtml(g.name || '')}</div>
-            <div style="flex-shrink:0;background:var(--accent-dim);border:1px solid rgba(var(--ac),0.35);color:var(--accent);font-family:'Jost',sans-serif;font-size:13px;letter-spacing:1px;border-radius:100px;padding:6px 12px;">···${digits}</div>
-          </div>`;
-        }
+        if (g.source === 'card') return guestResultHtml(g, '');
         return renderGeneralGuestCard(g);
       }).join('');
     } catch {
@@ -16868,17 +16934,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
         return;
       }
 
-      resultsEl.innerHTML = results.map(g => {
-        const digits = (g.phone || '').replace(/\D/g, '');
-        const last4 = digits.length >= 4 ? digits.slice(-4) : '';
-        return `
-        <div class="result-item" onclick="openGuestCard('${escJs(g.id)}')">
-          <div class="result-avatar">${escHtml((g.name || '?').charAt(0).toUpperCase())}</div>
-          <div style="flex:1;">${escHtml(g.name || '')}</div>
-          ${last4 ? `<div style="flex-shrink:0;background:var(--accent-dim);border:1px solid rgba(var(--ac),0.35);color:var(--accent);font-family:'Jost',sans-serif;font-size:13px;letter-spacing:1px;border-radius:100px;padding:6px 12px;">···${last4}</div>` : ''}
-        </div>
-      `;
-      }).join('');
+      resultsEl.innerHTML = results.map(g => guestResultHtml(g, name)).join('');
     } catch {
       resultsEl.innerHTML = searchFailedHtml('', 'doSearch()');
     }
@@ -19495,6 +19551,200 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   } catch (err) {
     try { console.warn('fx: анимация отключена —', err); } catch (e) { /* без журнала */ }
   }
+})();
+</script>
+
+<script>
+/* Выпадающие списки: свой список вместо системного окна (только где есть мышь). Подробности — в sel_part.py */
+(function () {
+  'use strict';
+  var fine = window.matchMedia ? window.matchMedia('(hover: hover) and (pointer: fine)') : null;
+  var pop = null, list = null, cur = null, items = [], act = -1, typed = '', typedAt = 0, watch = 0;
+  var CHECK = '<svg class="sp-ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12.5 9.5 18 20 6.5"/></svg>';
+
+  function eligible(sel) {
+    return !!sel && sel.tagName === 'SELECT' && !sel.multiple && !(sel.size > 1) && !sel.disabled
+      && !sel.hasAttribute('data-native') && sel.getClientRects().length > 0;
+  }
+  function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  function collect(sel) {
+    var out = [];
+    Array.prototype.forEach.call(sel.children, function (ch) {
+      if (ch.tagName === 'OPTGROUP') {
+        if (ch.label) out.push({ group: true, label: ch.label });
+        Array.prototype.forEach.call(ch.children, function (o) { add(o, ch.disabled); });
+      } else add(ch, false);
+    });
+    function add(o, groupOff) {
+      if (!o || o.tagName !== 'OPTION' || o.hidden) return;
+      var label = (o.label || o.textContent || '').trim();
+      out.push({ opt: o, label: label, empty: !label, disabled: o.disabled || !!groupOff });
+    }
+    return out;
+  }
+
+  function open(sel) {
+    close();
+    cur = sel;
+    items = collect(sel);
+    if (!items.some(function (it) { return it.opt; })) { cur = null; return; }
+    pop = document.createElement('div');
+    pop.className = 'sp-pop';
+    pop.setAttribute('role', 'listbox');
+    list = document.createElement('div');
+    list.className = 'sp-list';
+    var html = '';
+    items.forEach(function (it, i) {
+      if (it.group) { html += '<div class="sp-grp">' + esc(it.label) + '</div>'; return; }
+      var on = it.opt.selected;
+      it.selected = on;
+      html += '<div class="sp-opt' + (on ? ' sel' : '') + (it.disabled ? ' dis' : '') + (it.empty ? ' empty' : '') + '" role="option" aria-selected="' + on + '" data-i="' + i + '"><span>'
+        + (it.empty ? '—' : esc(it.label)) + '</span>' + CHECK + '</div>';
+    });
+    list.innerHTML = html;
+    pop.appendChild(list);
+    pop.style.visibility = 'hidden';
+    document.body.appendChild(pop);
+    place();
+    act = -1;
+    items.forEach(function (it, i) { if (it.selected && act < 0) act = i; });
+    if (act < 0) next(1, -1);
+    paint(true);
+    pop.style.visibility = '';
+    requestAnimationFrame(function () { if (pop) pop.classList.add('in'); });
+    sel.setAttribute('aria-expanded', 'true');
+    sel.setAttribute('aria-haspopup', 'listbox');
+    window.addEventListener('scroll', onScroll, true);
+    window.addEventListener('resize', close);
+    window.addEventListener('blur', close);
+    watch = setInterval(function () { if (!cur || !cur.isConnected || !eligible(cur)) close(); }, 400);
+  }
+
+  // Место: под полем; не хватает места — над ним. Ширина — не уже поля.
+  function place() {
+    var r = cur.getBoundingClientRect();
+    var vw = document.documentElement.clientWidth, vh = window.innerHeight;
+    pop.style.minWidth = Math.round(r.width) + 'px';
+    pop.style.maxWidth = Math.min(460, vw - 16) + 'px';
+    list.style.maxHeight = '';
+    var natural = list.scrollHeight + 14;
+    var below = vh - r.bottom - 10, above = r.top - 10;
+    var up = natural > below && above > below;
+    var room = Math.max(120, up ? above : below);
+    list.style.maxHeight = Math.min(340, room - 14) + 'px';
+    var w = pop.offsetWidth, h = pop.offsetHeight;
+    var left = Math.max(8, Math.min(r.left, vw - w - 8));
+    pop.style.left = Math.round(left) + 'px';
+    pop.style.top = Math.round(up ? Math.max(8, r.top - 6 - h) : r.bottom + 6) + 'px';
+    pop.classList.toggle('up', up);
+  }
+
+  function paint(scroll) {
+    var nodes = list.querySelectorAll('.sp-opt');
+    Array.prototype.forEach.call(nodes, function (n) { n.classList.toggle('on', Number(n.getAttribute('data-i')) === act); });
+    if (scroll && act >= 0) {
+      var n = list.querySelector('.sp-opt[data-i="' + act + '"]');
+      if (n) {
+        var top = n.offsetTop, bot = top + n.offsetHeight;
+        if (top < list.scrollTop) list.scrollTop = Math.max(0, top - 6);
+        else if (bot > list.scrollTop + list.clientHeight) list.scrollTop = bot - list.clientHeight + 6;
+        if (!list.scrollTop && bot > list.clientHeight) list.scrollTop = Math.max(0, top - Math.round(list.clientHeight / 2) + n.offsetHeight);
+      }
+    }
+  }
+
+  // Переход к следующей доступной строке (без кругового перехода, как в системном списке)
+  function next(dir, from) {
+    var i = from === undefined ? act : from, n = items.length;
+    for (;;) {
+      i += dir;
+      if (i < 0 || i >= n) return;
+      if (items[i].opt && !items[i].disabled) { act = i; return; }
+    }
+  }
+
+  function close() {
+    if (watch) { clearInterval(watch); watch = 0; }
+    window.removeEventListener('scroll', onScroll, true);
+    window.removeEventListener('resize', close);
+    window.removeEventListener('blur', close);
+    if (cur) { cur.removeAttribute('aria-expanded'); }
+    if (pop && pop.parentNode) pop.parentNode.removeChild(pop);
+    pop = list = cur = null; items = []; act = -1;
+  }
+  function onScroll(e) { if (pop && !pop.contains(e.target)) close(); }
+
+  function choose(i) {
+    var it = items[i];
+    if (!it || !it.opt || it.disabled || !cur) return;
+    var sel = cur, changed = sel.selectedIndex !== it.opt.index;
+    close();
+    if (changed) {
+      sel.selectedIndex = it.opt.index;
+      sel.dispatchEvent(new Event('input', { bubbles: true }));
+      sel.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    try { sel.focus({ preventScroll: true }); } catch (e) {}
+  }
+
+  // Окно, как у системного списка: открывается на нажатие мыши по полю
+  window.addEventListener('mousedown', function (e) {
+    if (!fine || !fine.matches || e.button !== 0) return;
+    if (pop && pop.contains(e.target)) { e.preventDefault(); e.stopPropagation(); return; }
+    var sel = e.target && e.target.closest ? e.target.closest('select') : null;
+    if (eligible(sel)) {
+      e.preventDefault();                       // не даём открыться системному окну
+      try { sel.focus({ preventScroll: true }); } catch (er) {}
+      if (cur === sel) close(); else open(sel);
+      return;
+    }
+    if (pop) close();
+  }, true);
+
+  window.addEventListener('click', function (e) {
+    if (!pop || !pop.contains(e.target)) return;
+    e.stopPropagation();
+    var n = e.target.closest('.sp-opt');
+    if (n) choose(Number(n.getAttribute('data-i')));
+  }, true);
+
+  window.addEventListener('mousemove', function (e) {
+    if (!pop || !pop.contains(e.target)) return;
+    var n = e.target.closest('.sp-opt');
+    if (!n) return;
+    var i = Number(n.getAttribute('data-i'));
+    if (i !== act && !items[i].disabled) { act = i; paint(false); }
+  }, true);
+
+  window.addEventListener('keydown', function (e) {
+    if (!fine || !fine.matches) return;
+    if (!pop) {
+      var t = e.target;
+      if (eligible(t) && !e.ctrlKey && !e.metaKey && (e.key === 'Enter' || e.key === ' ' || e.key === 'F4' || (e.altKey && e.key === 'ArrowDown'))) {
+        e.preventDefault(); e.stopPropagation(); open(t);
+      }
+      return;
+    }
+    var k = e.key;
+    if (k === 'Escape') { e.preventDefault(); e.stopPropagation(); var s = cur; close(); try { s.focus({ preventScroll: true }); } catch (er) {} return; }
+    if (k === 'Tab') { close(); return; }
+    if (k === 'ArrowDown' || k === 'ArrowUp') { e.preventDefault(); e.stopPropagation(); next(k === 'ArrowDown' ? 1 : -1); paint(true); return; }
+    if (k === 'Home' || k === 'End') { e.preventDefault(); e.stopPropagation(); next(k === 'Home' ? 1 : -1, k === 'Home' ? -1 : items.length); paint(true); return; }
+    if (k === 'Enter' || (k === ' ' && !typed)) { e.preventDefault(); e.stopPropagation(); choose(act); return; }
+    if (k.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {   // быстрый поиск по первым буквам, как в системном списке
+      e.preventDefault(); e.stopPropagation();
+      var now = Date.now();
+      typed = (now - typedAt > 700 ? '' : typed) + k.toLowerCase(); typedAt = now;
+      var n = items.length, from = Math.max(act, 0), i, hit = -1;
+      for (var j = 0; j < n && hit < 0; j++) {
+        i = (typed.length > 1 ? from + j : from + 1 + j) % n;
+        if (items[i].opt && !items[i].disabled && items[i].label.toLowerCase().indexOf(typed) === 0) hit = i;
+      }
+      if (hit >= 0) { act = hit; paint(true); }
+      setTimeout(function () { if (Date.now() - typedAt >= 700) typed = ''; }, 720);
+    }
+  }, true);
 })();
 </script>
 </body>
