@@ -1002,6 +1002,37 @@
     .ss-w-st { margin-top: 5px; font-size: 11.5px; color: var(--text-muted); }
     .ss-w-st.on { color: var(--c-green); }
 
+    /* ЧАЕВЫЕ: «Мои чаевые» (лента сотрудника) и «Сервис» → «Чаевые» (отчёт и настройки). Только переменные темы — работает во всех трёх. */
+    .tp-coin { flex: 0 0 auto; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--accent-dim); color: var(--accent); }
+    .tp-amt { font-family: 'Jost', sans-serif; font-size: 19px; font-weight: 500; line-height: 1.2; color: var(--c-green); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .tp-row-new { animation: tpFlash 2.8s ease-out; }
+    @keyframes tpFlash { 0% { background: var(--accent-dim); transform: translateY(-8px); opacity: 0; } 10% { transform: none; opacity: 1; } 100% { background: transparent; } }
+    .tp-team { margin-top: 10px; padding: 11px 14px; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border); font-size: 12.5px; line-height: 1.45; color: var(--text-sub); }
+    .tp-team b { color: var(--text); font-weight: 500; }
+    .tp-bars { display: flex; align-items: flex-end; gap: 4px; padding: 14px 12px 10px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); }
+    .tp-bar { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; }
+    .tp-bar i { display: block; width: 100%; max-width: 28px; border-radius: 6px 6px 3px 3px; background: var(--accent); opacity: 0.5; }
+    .tp-bar.now i { opacity: 1; }
+    .tp-bar span { height: 12px; font-size: 10px; line-height: 12px; color: var(--text-muted); white-space: nowrap; }
+    .tp-meter { margin-top: 7px; height: 4px; border-radius: 4px; background: var(--border); overflow: hidden; }
+    .tp-meter i { display: block; height: 100%; border-radius: 4px; background: var(--accent); }
+    .tp-card { padding: 14px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); }
+    .tp-lbl { margin-bottom: 8px; font-size: 12px; color: var(--text-muted); }
+    .tp-note { margin-top: 8px; font-size: 12px; line-height: 1.45; color: var(--text-sub); }
+    .tp-note.warn { color: var(--c-amber); }
+    .tp-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tp-chip { display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 14px; border-radius: 100px; border: 1px solid var(--border); background: transparent; color: var(--text-sub); font: 500 13px/1 'Inter', sans-serif; cursor: pointer; }
+    .tp-chip.on { border-color: var(--accent); background: var(--accent-dim); color: var(--text); }
+    .tp-chip .x { margin-left: 2px; font-size: 17px; line-height: 1; color: var(--text-muted); }
+    .tp-add { display: flex; gap: 8px; margin-top: 10px; }
+    .tp-add .form-input { flex: 1; min-width: 0; }
+    .tp-add button { flex: 0 0 auto; padding: 0 18px; }
+    .tp-num { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .tp-card .poster-actions { flex-wrap: wrap; }
+    .tp-card .poster-actions .btn-primary { min-width: 0; flex: 1 1 130px; padding: 12px 8px; white-space: normal; line-height: 1.25; }
+    .tp-shiftnow { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tp-shiftnow span { padding: 4px 10px; border-radius: 100px; border: 1px solid var(--border); font-size: 12px; color: var(--text-sub); }
+
     /* Поздравления */
     .bd-field { margin-top: 10px; padding: 13px 14px 14px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); }
     .bd-fh { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 9px; }
@@ -4267,6 +4298,35 @@ select[aria-expanded="true"] { border-color: rgba(var(--ac), 0.55) !important; b
   </div>
 </div>
 
+<!-- ЧАЕВЫЕ: «Мои чаевые» — лента и итоги сотрудника (право tips.view) -->
+<div class="screen" id="screen-tips-mine">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('home')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Мои чаевые</h1><p>Лента обновляется сама</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div id="tpmContent" style="margin-top:6px"><div class="loading">Загружаю...</div></div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- ЧАЕВЫЕ: «Сервис» → «Чаевые» — отчёт для администрации и настройки (право tips.manage) -->
+<div class="screen" id="screen-tips-admin">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('service')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Чаевые</h1><p>Отчёт, суммы, кто принимает, QR для гостей</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div id="tpaTabs"></div>
+    <div id="tpaBody"><div class="loading">Загружаю...</div></div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
 <div class="screen" id="screen-review-rules">
   <div class="header">
     <div class="back-btn" onclick="showScreen('service')">
@@ -4836,8 +4896,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
   function fallbackPerms(jobRole) {
     const base = ['guests.view', 'guests.create', 'guests.edit', 'tags.use', 'visits.record', 'guests.birthdays', 'guests.vip_list', 'shift.mark', 'schedule.view', 'menu.view', 'problems.view', 'problems.report', 'problems.work_own_role'];
-    const own = { 'Бармен': ['menu.stoplist_drinks'], 'Повар': ['menu.stoplist_food'], 'КМ': ['menu.stoplist_hookah', 'tobacco.manage'] }[jobRole] || [];
-    const admin = ['shifts.review', 'briefing.view', 'tobacco.manage', 'stories.manage', 'tv.manage', 'standards.manage', 'checklists.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage', 'messages.view'];
+    const own = { 'Бармен': ['menu.stoplist_drinks', 'tips.view'], 'Повар': ['menu.stoplist_food'], 'КМ': ['menu.stoplist_hookah', 'tobacco.manage', 'tips.view'], 'Официант': ['tips.view'] }[jobRole] || [];
+    const admin = ['shifts.review', 'briefing.view', 'tobacco.manage', 'tips.view', 'tips.manage', 'stories.manage', 'tv.manage', 'standards.manage', 'checklists.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage', 'messages.view'];
     const owner = ['surveys.manage', 'tags.manage', 'audit.view', 'settings.manage', 'founder_tasks.create', 'marketing.send', 'marketing.log', 'analytics.view', 'segments.view', 'feedback.view', 'guests.table', 'candidates.view'];
     if (jobRole === 'Основатель') return base.concat(admin, owner);
     if (jobRole === 'Администратор') return base.concat(admin);
@@ -5311,6 +5371,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('tv.manage')) list.push({ group: G.content, icon: 'tv', short: 'тв-экраны', title: 'ТВ-экраны', sub: 'ВИП-комнаты и терраса: приветствие, фон, сообщения', fn: 'openTv()' });
     if (can('checklists.manage')) list.push({ group: G.team, icon: 'checklists', short: 'чек-листы', title: 'Чек-листы', sub: 'Открытие и закрытие смены', fn: 'openChecklistsEdit()' });
     if (can('tobacco.manage')) list.push({ group: G.team, icon: 'tobacco', short: 'табак', title: 'Табак', sub: 'Вкусы, остатки табака и углей', fn: 'openTobacco()' });
+    if (can('tips.manage')) list.push({ group: G.team, icon: 'tips', short: 'чаевые', title: 'Чаевые', sub: 'Отчёт, суммы, кто принимает, QR', fn: 'openTipsAdmin()' });
     if (can('standards.manage')) list.push({ group: G.team, icon: 'standards', short: 'стандарты', title: 'Стандарты', sub: 'Правила сервиса, тесты, кто прочитал', fn: "openStandardsEdit('service')" });
     if (can('tags.manage')) list.push({ group: G.guests, icon: 'tags', short: 'теги', title: 'Теги', sub: 'Список, цвета, подсказки', fn: 'openTagsEdit()' });
     if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'Логины, роли и права', fn: 'openEmployees()' });
@@ -5477,6 +5538,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     icons.forecast = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20v-6M10 20V9M16 20v-9"/><path d="M3 7l5-3 4 2 5-4" stroke-dasharray="2 2"/><path d="M2 20h20"/></svg>';
     icons.briefing = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h9M4 12h9M4 18h5"/><path d="M16 13l2.2 2.2L22 10.5"/></svg>';
     icons.venue = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>';
+    icons.tips = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 17V7h3.2a2.7 2.7 0 010 5.4H10M8.5 14.6h5.2"/></svg>';
     homeIcons = icons;
     // Что показывать — решают права сотрудника (основатель выдаёт их галочками на экране «Сотрудники»)
     let shiftCards = '';
@@ -5486,6 +5548,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('schedule.view')) shiftCards += qcard(icons.schedule, 'График', 'Кто когда работает', "openSchedule()");
     // Стоп-лист: официант принимает заказы и должен знать, чего нет
     if (can('menu.view')) shiftCards += qcard(icons.stoplist, 'Стоп-лист', 'Чего нет в меню', "openStoplist()");
+    if (can('tips.view') && currentJobRole !== 'Основатель') shiftCards += qcard(icons.tips, 'Мои чаевые', 'Лента и итоги', "openTipsMine()");
     // Стандарты: читать правила сервиса и сдавать тесты — всем сотрудникам (точка и «Новых: N» — если есть непрочитанное)
     shiftCards += qcard(icons.standards, 'Стандарты', 'Как мы работаем', "openStandards()", { dotId: 'qdotStandards', extraClass: 'qc-standards' });
 
@@ -5635,6 +5698,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     quickStatusAt = Date.now();
     refreshPerms();
     if (can('shift.mark') && currentJobRole !== 'Основатель') loadMyShift();
+    if (can('tips.view') && currentJobRole !== 'Основатель') tipsWatchStart();
     loadStdBadge();
     if (can('problems.view')) try {
       const res = await fetch(`${PROXY_BASE}/api/staff/problems?pin=${getPin()}`);
@@ -14542,6 +14606,314 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     if (scr && scr.classList.contains('active') && !document.hidden) loadShifts(true);
   }, 60000);
 
+  // ─── ЧАЕВЫЕ ───────────────────────────────────────
+  // Гость оставляет чаевые у себя в приложении (по QR на столе или у стойки). Сотрудник видит свои в «Мои чаевые» (право tips.view):
+  // итоги и живую ленту; кто оставил — не показываем. Администрация («Сервис» → «Чаевые», право tips.manage): отчёт, настройки, ссылка и QR.
+  // Оплата пока не подключена: чаевые идут в тестовом режиме — помечены «тест», деньги не списываются (db/tips.js).
+  const TIP_MONTHS = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+  const tipRub = n => String(Math.round(Number(n) || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
+  function tipDay(day, today) {
+    if (day === today) return 'Сегодня';
+    const m = String(day).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!m) return String(day || '');
+    const y = new Date(today + 'T00:00:00Z'); y.setUTCDate(y.getUTCDate() - 1);
+    if (day === y.toISOString().slice(0, 10)) return 'Вчера';
+    return `${+m[3]} ${TIP_MONTHS[+m[2] - 1]}`;
+  }
+  const TIP_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 17V7h3.2a2.7 2.7 0 010 5.4H10M8.5 14.6h5.2"/></svg>';
+
+  // ── «Мои чаевые» ──
+  var tpm = { data: null, seq: 0, lastId: null, fresh: new Set(), tick: 0 };
+  function openTipsMine() {
+    showScreen('tips-mine');
+    if (tpm.data) renderTipsMine(); else document.getElementById('tpmContent').innerHTML = '<div class="loading">Загружаю...</div>';
+    loadTipsMine();
+  }
+  // Новые чаевые: приложение само спрашивает ленту (раз в 10 с, пока открыт экран; раз в 30 с — на других экранах) и показывает «+300 ₽»
+  function tipsNoteFresh(d) {
+    if (tpm.lastId !== null && d.lastId > tpm.lastId) {
+      const fresh = d.items.filter(i => i.id > tpm.lastId);
+      if (fresh.length) {
+        fresh.forEach(i => tpm.fresh.add(i.id));
+        const sum = fresh.reduce((s, i) => s + i.amount, 0);
+        showToast(`+${tipRub(sum)} · ${fresh.length > 1 ? fresh.length + ' чаевых' : 'чаевые'}${d.demo ? ' (тест)' : ''}`, false);
+        try { tg?.HapticFeedback?.notificationOccurred('success'); } catch {}
+        setTimeout(() => fresh.forEach(i => tpm.fresh.delete(i.id)), 5000);
+      }
+    }
+    tpm.lastId = d.lastId;
+  }
+  async function loadTipsMine(quiet) {
+    const seq = ++tpm.seq;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/tips/mine?pin=${getPin()}`, { cache: 'no-store' });
+      if (seq !== tpm.seq) return;
+      if (res.status === 401) { if (!quiet) showScreen('pin'); return; }
+      if (res.status === 403) { if (!quiet) accessDenied(); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить чаевые'));
+      const d = await res.json();
+      if (seq !== tpm.seq) return;
+      tipsNoteFresh(d);
+      tpm.data = d;
+      if (activeScreenName() === 'tips-mine') renderTipsMine();
+    } catch (e) {
+      if (quiet || seq !== tpm.seq) return;
+      document.getElementById('tpmContent').innerHTML = errorStateHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером', 'loadTipsMine()');
+    }
+  }
+  function renderTipsMine() {
+    const d = tpm.data, el = document.getElementById('tpmContent');
+    if (!d || !el) return;
+    const hero = `<div class="vn-hero eq">
+      <div class="vn-stat main"><div class="vn-stat-k">Сегодня</div><div class="vn-stat-v ${d.today.sum ? 'ok' : 'off'}">${tipRub(d.today.sum)}</div></div>
+      <div class="vn-stat"><div class="vn-stat-k">Чаевых</div><div class="vn-stat-v${d.today.count ? '' : ' off'}">${d.today.count}</div></div>
+      <div class="vn-stat"><div class="vn-stat-k">За месяц</div><div class="vn-stat-v sm${d.month.sum ? '' : ' off'}">${tipRub(d.month.sum)}</div></div>
+    </div>`;
+    const tip = (t) => `<div class="sv-tip" style="margin:10px 0 0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.01"/></svg><div>${t}</div></div>`;
+    let notes = '';
+    if (!d.enabled) notes += tip('Чаевые пока не включены администрацией. Когда включат, они появятся здесь сразу, как гость отправит.');
+    else if (!d.eligible) notes += tip('Ваша должность не принимает чаевые. Общий отчёт — у администрации.');
+    if (d.demo) notes += tip('Тестовый режим: оплата ещё не подключена, деньги не списываются. Записи помечены «тест».');
+    const team = d.team && d.team.count ? `<div class="tp-team">Общие на всю команду сегодня: <b>${tipRub(d.team.sum)}</b> (${d.team.count}). Их делит администрация.</div>` : '';
+    let feed;
+    if (!d.items.length) {
+      feed = '<div class="empty-state">Пока чаевых нет.<br>Они появятся здесь сразу, как только гость отправит.</div>';
+    } else {
+      let html = '', last = null;
+      d.items.forEach(i => {
+        if (i.day !== last) { if (last !== null) html += '</div>'; html += `<div class="sv-gl" style="margin-top:16px">${escHtml(tipDay(i.day, d.day))}</div><div class="ls-card">`; last = i.day; }
+        html += `<div class="ls-row static${tpm.fresh.has(i.id) ? ' tp-row-new' : ''}"><div class="tp-coin">${TIP_ICON}</div>`
+          + `<div class="ls-body"><div class="tp-amt">+${tipRub(i.amount)}</div><div class="ls-sub">${escHtml(i.time)}</div></div>`
+          + (i.demo ? '<span class="sv-chip">тест</span>' : '') + '</div>';
+      });
+      feed = html + '</div>';
+    }
+    el.innerHTML = hero + notes + team + feed;
+  }
+  function tipsWatchStart() { tpm.tick = 0; loadTipsMine(true); }
+  setInterval(() => {
+    if (document.hidden || !can('tips.view') || !getPin()) return;
+    const scr = activeScreenName();
+    if (!scr || scr === 'pin') return;
+    tpm.tick++;
+    const every = Math.max(1, Math.round(((tpm.data && tpm.data.interval) || 10) / 10));   // сколько десятисекундных тактов ждать
+    if (scr === 'tips-mine' ? tpm.tick % every === 0 : tpm.tick % Math.max(3, every) === 0) loadTipsMine(true);
+  }, 10000);
+
+  // ── «Сервис» → «Чаевые» ──
+  var tpa = { tab: 'report', period: 'week', report: null, st: null, cfg: null, saved: '', rseq: 0, sseq: 0 };
+  const tipsClone = o => JSON.parse(JSON.stringify(o));
+  const tipsKey = () => JSON.stringify(tpa.cfg);
+  function openTipsAdmin() {
+    tpa.tab = 'report'; tpa.report = null;
+    showScreen('tips-admin');
+    renderTipsAdmin();
+    loadTipsReport();
+    if (!tpa.cfg || tipsKey() === tpa.saved) loadTipsSettings();
+  }
+  function tipsTab(t) {
+    tpa.tab = t;
+    renderTipsAdmin();
+    if (t === 'settings' && (!tpa.cfg || tipsKey() === tpa.saved)) loadTipsSettings(true);
+    if (t === 'report') loadTipsReport(true);
+  }
+  function tipsSetPeriod(p) { tpa.period = p; tpa.report = null; renderTipsAdmin(); loadTipsReport(); }
+  async function tipsApi(path, opts) {
+    const res = await fetch(`${PROXY_BASE}${path}${path.includes('?') ? '&' : '?'}pin=${getPin()}`, Object.assign({ cache: 'no-store' }, opts || {}));
+    if (res.status === 401) { showScreen('pin'); throw new Error('auth'); }
+    if (res.status === 403) { accessDenied(); throw new Error('auth'); }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'Не получилось — попробуйте ещё раз');
+    return data;
+  }
+  async function loadTipsReport(quiet) {
+    const seq = ++tpa.rseq;
+    try {
+      const r = await tipsApi(`/api/admin/tips/report?period=${tpa.period}`);
+      if (seq !== tpa.rseq) return;
+      tpa.report = r; tpa.rerr = '';
+      if (activeScreenName() === 'tips-admin' && tpa.tab === 'report') renderTipsAdmin();
+    } catch (e) {
+      if (e.message === 'auth' || quiet || seq !== tpa.rseq) return;
+      tpa.rerr = e.message === 'Failed to fetch' ? 'Нет связи с сервером' : e.message;
+      renderTipsAdmin();
+    }
+  }
+  async function loadTipsSettings(quiet) {
+    const seq = ++tpa.sseq;
+    try {
+      const st = await tipsApi('/api/admin/tips/settings');
+      if (seq !== tpa.sseq) return;
+      tpa.st = st; tpa.cfg = tipsClone(st.config); tpa.saved = tipsKey(); tpa.serr = '';
+      if (activeScreenName() === 'tips-admin') renderTipsAdmin();
+    } catch (e) {
+      if (e.message === 'auth' || quiet || seq !== tpa.sseq) return;
+      tpa.serr = e.message === 'Failed to fetch' ? 'Нет связи с сервером' : e.message;
+      renderTipsAdmin();
+    }
+  }
+  function renderTipsAdmin() {
+    const tabs = [['report', 'Отчёт'], ['settings', 'Настройки']];
+    document.getElementById('tpaTabs').innerHTML = `<div class="sg2">${tabs.map(([k, l]) => `<button type="button" class="${tpa.tab === k ? 'on' : ''}" onclick="tipsTab('${k}')">${l}</button>`).join('')}</div>`;
+    document.getElementById('tpaBody').innerHTML = tpa.tab === 'report' ? tipsReportHtml() : tipsSettingsHtml();
+  }
+  const TIP_INFO = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.01"/></svg>';
+
+  function tipsReportHtml() {
+    if (tpa.rerr && !tpa.report) return errorStateHtml(tpa.rerr, 'loadTipsReport()');
+    const r = tpa.report;
+    if (!r) return '<div class="loading">Загружаю...</div>';
+    const t = r.totals;
+    const seg = `<div class="sg2" style="margin-top:0">${[['today', 'Сегодня'], ['week', 'Неделя'], ['month', 'Месяц']].map(([k, l]) => `<button type="button" class="${tpa.period === k ? 'on' : ''}" onclick="tipsSetPeriod('${k}')">${l}</button>`).join('')}</div>`;
+    const hero = `<div class="vn-hero eq">
+      <div class="vn-stat main"><div class="vn-stat-k">Всего</div><div class="vn-stat-v ${t.sum ? 'ok' : 'off'}">${tipRub(t.sum)}</div></div>
+      <div class="vn-stat"><div class="vn-stat-k">Чаевых</div><div class="vn-stat-v${t.count ? '' : ' off'}">${t.count}</div></div>
+      <div class="vn-stat"><div class="vn-stat-k">Средний</div><div class="vn-stat-v sm${t.count ? '' : ' off'}">${tipRub(t.avg)}</div></div>
+    </div>`;
+    let bars = '';
+    if (r.days.length > 1) {
+      const max = Math.max(1, ...r.days.map(d => d.sum)), step = Math.ceil(r.days.length / 8);
+      bars = `<div class="sv-gl">По дням</div><div class="tp-bars">${r.days.map((d, i) => {
+        const h = d.sum ? Math.max(6, Math.round(d.sum / max * 88)) : 2;
+        const label = (i % step === 0 || i === r.days.length - 1) ? +d.day.slice(8) : '';
+        return `<div class="tp-bar${d.day === r.today ? ' now' : ''}" title="${escHtml(tipDay(d.day, r.today))}: ${escHtml(tipRub(d.sum))}"><i style="height:${h}px"></i><span>${label}</span></div>`;
+      }).join('')}</div>`;
+    }
+    const maxE = Math.max(1, ...r.employees.map(e => e.sum));
+    const empRows = r.employees.map(e => `<div class="ls-row static"><div class="ls-ava">${escHtml(dupInitials(e.name))}</div>
+      <div class="ls-body"><div class="ls-name">${escHtml(e.name)}${e.removed ? ' <span class="sv-chip">не работает</span>' : ''}</div><div class="ls-sub">${escHtml(e.role || '')} · чаевых: ${e.count}</div><div class="tp-meter"><i style="width:${Math.max(3, Math.round(e.sum / maxE * 100))}%"></i></div></div>
+      <div class="ls-side">${tipRub(e.sum)}<small>до ${tipRub(e.biggest)}</small></div></div>`).join('');
+    const teamRow = t.teamCount ? `<div class="ls-row static"><div class="ls-ava">ВК</div><div class="ls-body"><div class="ls-name">Вся команда</div><div class="ls-sub">Общие чаевые · чаевых: ${t.teamCount} · делит администрация</div></div><div class="ls-side">${tipRub(t.teamSum)}</div></div>` : '';
+    const people = (empRows || teamRow) ? `<div class="sv-gl">Кому</div><div class="ls-card">${empRows}${teamRow}</div>` : '';
+    const last = r.latest.slice(0, 30).map(x => `<div class="ls-row static"><div class="ls-body"><div class="ls-name">${x.recipient === 'team' ? 'Вся команда' : escHtml(x.name || 'Сотрудник')}${x.status === 'demo' ? ' <span class="sv-chip">тест</span>' : ''}</div><div class="ls-sub">${escHtml(tipDay(x.day, r.today))}, ${escHtml(x.time)}${x.role ? ' · ' + escHtml(x.role) : ''}</div></div><div class="ls-side">${tipRub(x.amount)}</div></div>`).join('');
+    const latest = last ? `<div class="sv-gl">Последние чаевые</div><div class="ls-card">${last}</div>` : '';
+    const empty = (!t.count) ? '<div class="empty-state">За этот период чаевых нет.</div>' : '';
+    let demo = '';
+    if (r.demoTotalCount) {
+      demo = `<div class="sv-tip">${TIP_INFO}<div>В отчёте есть тестовые чаевые (${r.demoTotalCount} шт.): оплата не подключена, деньги не списывались. Перед открытием их стоит убрать, чтобы остались только настоящие.</div></div>
+        <button type="button" class="btn-ghost" style="margin-top:10px" onclick="tipsClearDemo()">Убрать тестовые (${r.demoTotalCount})</button>`;
+    } else if (r.demo) {
+      demo = `<div class="sv-tip">${TIP_INFO}<div>Оплата не подключена: чаевые идут в тестовом режиме и помечаются «тест».</div></div>`;
+    }
+    return seg + hero + empty + bars + people + latest + demo;
+  }
+  async function tipsClearDemo() {
+    const n = tpa.report ? tpa.report.demoTotalCount : 0;
+    if (!await askConfirm(`Убрать тестовые чаевые?\n\nБудет удалено записей: ${n}. Настоящие (оплаченные) чаевые не тронем. Вернуть удалённое нельзя.`, { ok: 'Убрать', danger: true })) return;
+    try {
+      const out = await tipsApi('/api/admin/tips/clear-demo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+      showToast(`Тестовые чаевые убраны: ${out.removed}`, false);
+      tpm.data = null; tpm.lastId = null;
+      loadTipsReport(true);
+    } catch (e) { if (e.message !== 'auth') showToast(e.message === 'Failed to fetch' ? 'Нет связи — не удалилось' : e.message, true); }
+  }
+
+  const TIP_MODES = [['both', 'Сотрудник или команда'], ['person', 'Только сотрудник'], ['team', 'Только команда']];
+  const TIP_MODE_NOTE = {
+    both: 'Гость выбирает: любого, кто сегодня на смене, или всю команду.',
+    person: 'Гость выбирает сотрудника. Если на смене никого нет, чаевые временно закрыты.',
+    team: 'Одна общая сумма для всех. Сотрудников гость не видит.'
+  };
+  function tipsSettingsHtml() {
+    if (tpa.serr && !tpa.cfg) return errorStateHtml(tpa.serr, 'loadTipsSettings()');
+    const st = tpa.st, c = tpa.cfg;
+    if (!st || !c) return '<div class="loading">Загружаю...</div>';
+    const dirty = tipsKey() !== tpa.saved;
+    const badRange = c.max < c.min || c.amounts.some(a => a < c.min || a > c.max);
+    const gl = (t) => `<div class="sv-gl" style="margin-top:20px">${t}</div>`;
+    const master = `<label class="ss-w${c.enabled ? '' : ' off'}"><span class="ss-w-ico">${TIP_ICON}</span>
+      <div class="ss-w-b"><div class="ss-w-t">Принимать чаевые</div><div class="ss-w-s">Гость открывает ссылку или QR и выбирает, кому и сколько</div>
+      <div class="ss-w-st${c.enabled ? ' on' : ''}">${c.enabled ? (st.demo ? 'Включено — тестовый режим, деньги не списываются' : 'Включено') : 'Выключено — гость видит «чаевые не принимаются»'}</div></div>
+      <span class="vn-sw"><input type="checkbox"${c.enabled ? ' checked' : ''} onchange="tipsEnable(this.checked)"><i></i></span></label>`;
+    const modes = `<div class="tp-chips">${TIP_MODES.map(([k, l]) => `<button type="button" class="tp-chip${c.mode === k ? ' on' : ''}" onclick="tipsSet('mode','${k}')">${l}</button>`).join('')}</div><div class="tp-note">${TIP_MODE_NOTE[c.mode]}</div>`;
+    const roles = `<div class="tp-chips">${st.roles.map(r => `<button type="button" class="tp-chip${c.roles.includes(r.key) ? ' on' : ''}" onclick="tipsRole('${r.key}')">${escHtml(r.title)}</button>`).join('')}</div>
+      <div class="tp-note">Гость видит только тех из этих должностей, кто сегодня на смене.</div>`;
+    const shifted = st.onShift.length
+      ? `<div class="tp-shiftnow">${st.onShift.map(e => `<span>${escHtml(String(e.name).split(/\s+/)[0])} · ${escHtml(String(e.role).toLowerCase())}</span>`).join('')}</div><div class="tp-note">Так список выглядит у гостя прямо сейчас: в графике «Работает» или смена открыта.</div>`
+      : '<div class="tp-note warn">Сейчас на смене никого из выбранных должностей — гостю показывать некого (останется «Вся команда», если она разрешена).</div>';
+    const amounts = `<div class="tp-chips">${c.amounts.map((a, i) => `<button type="button" class="tp-chip on" onclick="tipsAmtDel(${i})" title="Убрать">${tipRub(a)}<span class="x">×</span></button>`).join('')}</div>
+      ${c.amounts.length < 6 ? `<div class="tp-add"><input class="form-input" id="tpaAmtNew" type="number" inputmode="numeric" min="1" placeholder="Сумма, ₽" onkeydown="if(event.key==='Enter'){event.preventDefault();tipsAmtAdd();}"><button type="button" class="btn-primary" onclick="tipsAmtAdd()">Добавить</button></div>` : '<div class="tp-note">Готовых сумм — не больше шести.</div>'}`;
+    const custom = `<label class="ss-w${c.allowCustom ? '' : ' off'}" style="margin-top:10px"><span class="ss-w-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/></svg></span>
+      <div class="ss-w-b"><div class="ss-w-t">Своя сумма</div><div class="ss-w-s">Гость может набрать любую сумму на клавиатуре</div></div>
+      <span class="vn-sw"><input type="checkbox"${c.allowCustom ? ' checked' : ''} onchange="tipsSet('allowCustom',this.checked)"><i></i></span></label>`;
+    const limits = `<div class="tp-num"><div><div class="tp-lbl">Наименьшая сумма, ₽</div><input class="form-input" type="number" inputmode="numeric" min="1" value="${c.min}" onchange="tipsSet('min',Math.round(Number(this.value)))"></div>
+      <div><div class="tp-lbl">Наибольшая сумма, ₽</div><input class="form-input" type="number" inputmode="numeric" min="1" value="${c.max}" onchange="tipsSet('max',Math.round(Number(this.value)))"></div></div>
+      ${badRange ? '<div class="tp-note warn">Готовые суммы должны укладываться между наименьшей и наибольшей — поправьте, и кнопка «Сохранить» откроется.</div>' : ''}`;
+    let link;
+    if (st.link) {
+      link = `<div class="sv-link">${escHtml(st.link)}</div><div class="sv-qr">${qrSvg(st.link)}</div>
+        <div class="poster-actions" style="margin-top:10px"><button type="button" class="btn-primary" style="flex:1" onclick="tipsCopyLink()">Копировать ссылку</button><button type="button" class="btn-primary" style="flex:1" onclick="tipsPrintQr()">Распечатать QR</button></div>
+        <div class="tp-note">Поставьте QR на стол или у стойки: гость сканирует, Telegram открывает экран чаевых. Пока чаевые выключены, он покажет «не принимаются».</div>`;
+    } else {
+      link = '<div class="poster-note warn">Ссылка пока недоступна — не удалось узнать имя бота. Откройте экран позже.</div>';
+    }
+    const demoTip = st.demo ? `<div class="sv-tip">${TIP_INFO}<div>Оплата ещё не подключена. Включайте чаевые, чтобы проверить экран командой: записи идут в тестовом режиме и в отчёте помечены «тест». Гостям включайте, когда оплата заработает.</div></div>` : '';
+    return `<div style="margin-top:14px">${master}</div>`
+      + gl('Кому можно оставить') + `<div class="tp-card">${modes}</div>`
+      + gl('Кто принимает чаевые') + `<div class="tp-card">${roles}<div class="tp-lbl" style="margin-top:14px">Сейчас на смене</div>${shifted}</div>`
+      + gl('Суммы') + `<div class="tp-card"><div class="tp-lbl">Готовые суммы · нажмите, чтобы убрать</div>${amounts}</div>${custom}`
+      + gl('Границы') + `<div class="tp-card">${limits}</div>`
+      + gl('Ссылка и QR для гостей') + `<div class="tp-card">${link}</div>`
+      + `<div class="vn-save${dirty ? ' dirty' : ''}"><button class="btn-cta" id="tpaSaveBtn"${dirty && !badRange ? '' : ' disabled'} onclick="saveTips()">Сохранить</button></div>`
+      + demoTip;
+  }
+  function tipsSet(k, v) { tpa.cfg[k] = v; renderTipsAdmin(); }
+  async function tipsEnable(on) {
+    if (on && tpa.st && tpa.st.demo && !await askConfirm('Включить чаевые в тестовом режиме?\n\nОплата не подключена: деньги не списываются, записи помечаются «тест». Гость, который откроет ссылку, увидит экран с этой пометкой.', { ok: 'Включить' })) { renderTipsAdmin(); return; }
+    tipsSet('enabled', !!on);
+  }
+  function tipsRole(key) {
+    const set = new Set(tpa.cfg.roles);
+    if (set.has(key)) { if (set.size === 1) { showToast('Нужна хотя бы одна должность', true); return; } set.delete(key); } else set.add(key);
+    tpa.cfg.roles = tpa.st.roles.map(r => r.key).filter(k => set.has(k));
+    renderTipsAdmin();
+  }
+  function tipsAmtAdd() {
+    const inp = document.getElementById('tpaAmtNew');
+    const v = Math.round(Number(inp && inp.value));
+    if (!Number.isInteger(v) || v < 1) { showToast('Введите сумму в рублях', true); return; }
+    if (tpa.cfg.amounts.includes(v)) { showToast('Такая сумма уже есть', true); return; }
+    tpa.cfg.amounts = tpa.cfg.amounts.concat(v).sort((a, b) => a - b);
+    renderTipsAdmin();
+  }
+  function tipsAmtDel(i) {
+    if (tpa.cfg.amounts.length <= 1) { showToast('Нужна хотя бы одна готовая сумма', true); return; }
+    tpa.cfg.amounts.splice(i, 1);
+    renderTipsAdmin();
+  }
+  async function saveTips() {
+    const btn = document.getElementById('tpaSaveBtn');
+    if (!btn || btn.disabled) return;
+    btn.disabled = true; btn.textContent = 'Сохраняем...';
+    try {
+      const st = await tipsApi('/api/admin/tips/settings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(tpa.cfg) });
+      tpa.st = st; tpa.cfg = tipsClone(st.config); tpa.saved = tipsKey();
+      showToast(st.config.enabled ? 'Сохранено — чаевые принимаются' : 'Сохранено — чаевые выключены', false);
+    } catch (e) {
+      if (e.message !== 'auth') showToast(e.message === 'Failed to fetch' ? 'Нет связи — не сохранилось' : e.message, true);
+    }
+    renderTipsAdmin();
+  }
+  function tipsCopyLink() { if (tpa.st && tpa.st.link) copyText(tpa.st.link, 'Ссылка скопирована'); }
+  function tipsPrintQr() {
+    const link = tpa.st && tpa.st.link;
+    if (!link) return;
+    document.getElementById('qpH').textContent = 'Чаевые';
+    document.getElementById('qpT').textContent = 'Скажите спасибо тому, кто сегодня о вас заботился';
+    document.getElementById('qpQr').innerHTML = qrSvg(link, 1);
+    document.getElementById('qpHint').textContent = 'Наведите камеру телефона на код — откроется Telegram';
+    document.body.classList.add('printing-qr');
+    const done = () => { document.body.classList.remove('printing-qr'); window.removeEventListener('afterprint', done); };
+    window.addEventListener('afterprint', done);
+    try { window.print(); } catch { done(); notify('Печать не открылась — сделайте скриншот QR-кода'); }
+    setTimeout(done, 60000);
+  }
+  // Пока открыт отчёт — обновляем раз в 30 секунд: видно, как приходят чаевые
+  setInterval(() => {
+    if (document.hidden || activeScreenName() !== 'tips-admin' || tpa.tab !== 'report') return;
+    loadTipsReport(true);
+  }, 30000);
+
   // ─── ЧЕК-ЛИСТЫ СМЕНЫ: РЕДАКТОР («Сервис» → «Чек-листы») ───
   // У каждой роли два списка: «Открытие» (проходят при нажатии «Открыть смену») и «Закрытие». Пустой список — у роли чек-листа нет.
   var ckAdmin = null;
@@ -16993,8 +17365,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'tobacco'];
-  var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'segment-rules', 'season', 'review-rules', 'venue', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'tobacco'];
+  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'tobacco', 'tips-mine', 'tips-admin'];
+  var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'segment-rules', 'season', 'tips-mine', 'tips-admin', 'review-rules', 'venue', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'tobacco'];
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
 
