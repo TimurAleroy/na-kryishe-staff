@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#1E1004">
   <script>/* тема до отрисовки: чтобы страница не мигала старым цветом (подробности — в #theme-js) */
-  (function(){try{var p=localStorage.getItem('jv-theme'),t=p==='auto'?(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):p;
-  document.documentElement.setAttribute('data-theme',(t==='light'||t==='dark')?t:'classic');}catch(e){document.documentElement.setAttribute('data-theme','classic');}})();</script>
+  (function(){try{var p=localStorage.getItem('jv-theme');
+  document.documentElement.setAttribute('data-theme',p==='dark'?'dark':'classic');}catch(e){document.documentElement.setAttribute('data-theme','classic');}})();</script>
   <title>JARVIS</title>
   <!-- Иконка вкладки — первая буква логотипа Jarvis («J») в круге: целое слово на таком размере не читается.
        Круглые PNG 32 и 64 — для вкладки; квадрат 180 с полным логотипом — для «Добавить на экран» (apple-touch-icon). -->
@@ -34,7 +34,7 @@
       --text-sub: #C9A880;
       --border: rgba(240,223,192,0.08);
       --radius: 18px;
-      /* цвета для тем: у «Классики» значения те же, что были в коде; светлая и тёмная — в блоках html[data-theme] ниже */
+      /* цвета для тем: у «Классики» значения те же, что были в коде; тёмная — в блоке html[data-theme] ниже */
       --ac: 184,115,51;
       --accent-hi: #D28C48;
       --accent-hi-b: #D6904C;
@@ -95,7 +95,6 @@
       --c-sky-rgb: 124,196,255;
       --c-yellow: #FBBF24;
       --c-yellow-rgb: 251,191,36;
-      --cs: dark;
       --fg-rgb: 240,223,192;
       --muted-rgb: 138,106,82;
       --on-grad: #FBF0DA;
@@ -1179,7 +1178,7 @@
     .num-steps button { width: 26px; height: 17px; padding: 0; display: flex; align-items: center; justify-content: center; background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(var(--ac),0.35); border-radius: 6px; cursor: pointer; }
     .num-steps button:hover, .num-steps button:active { background: rgba(var(--ac),0.28); }
     /* Значки календаря и часов в полях даты/времени — тоже в цвет приложения */
-    input[type="date"].form-input, input[type="time"].form-input, input[type="datetime-local"].form-input { color-scheme: var(--cs, dark); }
+    input[type="date"].form-input, input[type="time"].form-input, input[type="datetime-local"].form-input { color-scheme: dark; }
     input[type="date"].form-input::-webkit-calendar-picker-indicator, input[type="time"].form-input::-webkit-calendar-picker-indicator, input[type="datetime-local"].form-input::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.85; filter: invert(52%) sepia(62%) saturate(560%) hue-rotate(345deg) brightness(92%); }
 
     .chip-row { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -1798,7 +1797,7 @@
     .vn-swl { grid-column: 2; grid-row: 1; display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 12px; color: var(--text-sub); }
     .vn-swl > span:first-child { min-width: 62px; text-align: right; }
     .vn-times { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; }
-    .vn-time { flex: 1 1 0; min-width: 0; height: 42px; padding: 0 12px; border-radius: 12px; background: rgba(var(--w-rgb),0.03); text-align: center; font-size: 15px; font-variant-numeric: tabular-nums; color-scheme: var(--cs, dark); }
+    .vn-time { flex: 1 1 0; min-width: 0; height: 42px; padding: 0 12px; border-radius: 12px; background: rgba(var(--w-rgb),0.03); text-align: center; font-size: 15px; font-variant-numeric: tabular-nums; color-scheme: dark; }
     .vn-dash { color: var(--text-muted); }
     .vn-track { grid-column: 1 / -1; position: relative; height: 6px; border-radius: 100px; overflow: hidden; background: rgba(var(--fg-rgb),0.07); }
     .vn-track::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 24.7%, rgba(var(--fg-rgb),0.2) 24.7%, rgba(var(--fg-rgb),0.2) 25.3%, transparent 25.3%, transparent 49.7%, rgba(var(--fg-rgb),0.2) 49.7%, rgba(var(--fg-rgb),0.2) 50.3%, transparent 50.3%, transparent 74.7%, rgba(var(--fg-rgb),0.2) 74.7%, rgba(var(--fg-rgb),0.2) 75.3%, transparent 75.3%); }
@@ -2834,94 +2833,8 @@
   </style>
 <style id="theme-css">
 /* ═══ ТЕМЫ ═══════════════════════════════════════════════════════════════════════════
-   «Классика» — это обычные переменные в :root (выше). Светлая и тёмная переопределяют их через атрибут data-theme
-   на <html> (его ставит #theme-js). Ниже — переменные обеих тем, затем правки, которым одних цветов мало (тени, подложки). */
-html[data-theme="light"] {
-  --ac: 9,94,208;
-  --accent: #095ED0;
-  --accent-dim: rgba(9,94,208,0.10);
-  --accent-hi: #2F80ED;
-  --accent-hi-b: #2F80ED;
-  --accent-hi-c: #2F80ED;
-  --accent-hi2: #2F80ED;
-  --accent-lo: #0A4FB0;
-  --accent-lo-b: #0842A0;
-  --accent-text: #0A58C9;
-  --ach: 47,128,237;
-  --ach2: 47,128,237;
-  --ach3: 47,128,237;
-  --ach4: 47,128,237;
-  --bg: #F2F3F7;
-  --bg-card: #FFFFFF;
-  --bg-card-hover: #EEF0F6;
-  --bg-deep: #E8EAF1;
-  --bg-deep2: #E8EAF1;
-  --bg-deep3: #E8EAF1;
-  --bg-pop: #FFFFFF;
-  --bg-raised: #ECEEF4;
-  --bg-raised2: #ECEEF4;
-  --bg-rgb: 242,243,247;
-  --border: rgba(20,24,36,0.10);
-  --c-amber: #A34A06;
-  --c-amber-rgb: 163,74,6;
-  --c-amber-soft: #92400E;
-  --c-amber-soft2: #78350F;
-  --c-blue: #1D4ED8;
-  --c-blue-b: #1D4ED8;
-  --c-blue-rgb: 29,78,216;
-  --c-blue2-rgb: 29,78,216;
-  --c-brick-rgb: 153,52,40;
-  --c-brick2-rgb: 185,64,48;
-  --c-champ: #A34A06;
-  --c-champ-rgb: 163,74,6;
-  --c-coral: #C2410C;
-  --c-gold: #A34A06;
-  --c-gold-rgb: 163,74,6;
-  --c-gold2: #8A5206;
-  --c-gray: #4B5563;
-  --c-gray-rgb: 75,85,99;
-  --c-green: #117034;
-  --c-green-rgb: 17,112,52;
-  --c-green-soft: #166534;
-  --c-green-soft2: #14532D;
-  --c-green2-rgb: 22,163,74;
-  --c-orange: #C2410C;
-  --c-orange-rgb: 194,65,12;
-  --c-pink: #BE185D;
-  --c-pink-rgb: 190,24,93;
-  --c-purple: #7E22CE;
-  --c-purple-rgb: 126,34,206;
-  --c-purple2: #6D28D9;
-  --c-purple2-rgb: 109,40,217;
-  --c-red: #C81E1E;
-  --c-red-rgb: 200,30,30;
-  --c-red-soft: #991B1B;
-  --c-red-soft2: #7F1D1D;
-  --c-red2: #B91C1C;
-  --c-red2-rgb: 185,28,28;
-  --c-sky: #0369A1;
-  --c-sky-rgb: 3,105,161;
-  --c-yellow: #8A5206;
-  --c-yellow-rgb: 138,82,6;
-  --cs: light;
-  --fg-rgb: 20,24,36;
-  --muted-rgb: 95,103,121;
-  --on-grad: #FFFFFF;
-  --on-solid: #FFFFFF;
-  --on-solid2: #FFFFFF;
-  --on-solid3: #FFFFFF;
-  --rail-bar: #095ED0;
-  --rail-ic: #5F6779;
-  --rail-rgb: 255,255,255;
-  --surf-1: #E4E7EF;
-  --surf-1-active: #D5DAE6;
-  --surf-2: #EDEFF5;
-  --surf-odd: #F7F8FB;
-  --text: #141824;
-  --text-muted: #5F6779;
-  --text-sub: #4A5163;
-}
-
+   «Классика» — это обычные переменные в :root (выше). Тёмная переопределяет их через атрибут data-theme
+   на <html> (его ставит #theme-js). Ниже — переменные тёмной темы, затем правки, которым одних цветов мало (тени, подложки). */
 html[data-theme="dark"] {
   --ac: 76,154,255;
   --accent: #4C9AFF;
@@ -2989,7 +2902,6 @@ html[data-theme="dark"] {
   --c-sky-rgb: 124,196,255;
   --c-yellow: #FBBF24;
   --c-yellow-rgb: 251,191,36;
-  --cs: dark;
   --fg-rgb: 242,244,248;
   --muted-rgb: 137,145,163;
   --on-grad: #FFFFFF;
@@ -3008,36 +2920,12 @@ html[data-theme="dark"] {
   --text-sub: #B6BCCB;
 }
 
-/* Светлая и тёмная тема: правки, которым одних переменных мало */
-html[data-theme="light"], html[data-theme="dark"] { color-scheme: var(--cs); }
+/* Тёмная тема: правки, которым одних переменных мало */
 
-/* Светлая: на светлом фоне карточкам нужна лёгкая тень, а не только рамка */
-html[data-theme="light"] .qcard { background-image: linear-gradient(var(--bg-card), var(--bg-card)), linear-gradient(135deg, rgba(var(--fg-rgb),0.16) 0%, rgba(var(--fg-rgb),0.07) 50%, rgba(var(--fg-rgb),0.06) 100%); box-shadow: 0 1px 2px rgba(20,24,36,0.05), 0 10px 22px -16px rgba(20,24,36,0.28); }
-html[data-theme="light"] .qcard::before { opacity: 0.6; }
-html[data-theme="light"] .qrow, html[data-theme="light"] .desk-panel .dp-section { box-shadow: 0 1px 2px rgba(20,24,36,0.05), 0 10px 22px -18px rgba(20,24,36,0.26); }
-html[data-theme="light"] .desk-rail { box-shadow: 1px 0 0 rgba(20,24,36,0.04); }
-
-/* Светлая: чёрные тени тёмной темы слишком тяжёлые на светлом фоне — делаем мягче */
-html[data-theme="light"] .seg { background: rgba(var(--fg-rgb),0.04); box-shadow: inset 0 1px 2px rgba(20,24,36,0.08); }
-html[data-theme="light"] .seg-btn.active { box-shadow: 0 1px 4px rgba(20,24,36,0.14), inset 0 1px 0 rgba(255,255,255,0.7); }
-html[data-theme="light"] .tb-sheet { box-shadow: 0 -12px 40px rgba(20,24,36,0.18); }
-html[data-theme="light"] .app-toast { box-shadow: 0 10px 30px rgba(20,24,36,0.2); }
-html[data-theme="light"] .card-sticky-btn, html[data-theme="light"] .hz-seatbar { box-shadow: 0 8px 24px rgba(20,24,36,0.18); }
-html[data-theme="light"] .app-dialog { box-shadow: 0 20px 50px rgba(20,24,36,0.22); }
-html[data-theme="light"] .tl-scroll { box-shadow: 0 6px 24px rgba(20,24,36,0.1); }
-html[data-theme="light"] .tl-bar { box-shadow: 0 2px 8px rgba(20,24,36,0.18); }
-html[data-theme="light"] .tl-bar:hover { box-shadow: 0 4px 14px rgba(20,24,36,0.24); }
-html[data-theme="light"] .tl-past { background: repeating-linear-gradient(135deg, rgba(20,24,36,0.06) 0 5px, rgba(20,24,36,0.03) 5px 10px); }
-html[data-theme="light"] .hz-shape { filter: drop-shadow(0 2px 3px rgba(20,24,36,0.25)); }
-html[data-theme="light"] .overlay, html[data-theme="light"] .app-dialog-ov, html[data-theme="light"] .th-ov { background: rgba(20,24,36,0.42); }
-html[data-theme="light"] .vh-act, html[data-theme="light"] .tag-chip-remove { background: rgba(20,24,36,0.07); }
-
-/* Схема зала: подпись над столом — тёмная плашка с светлым текстом в классике; в новых темах плашка своя */
-html[data-theme="light"] .hz-label rect { fill: rgba(255,255,255,0.96); stroke: rgba(20,24,36,0.2); }
+/* Схема зала: подпись над столом — тёмная плашка с светлым текстом в классике; в тёмной теме плашка своя */
 html[data-theme="dark"] .hz-label rect { fill: rgba(8,9,12,0.94); stroke: rgba(255,255,255,0.14); }
 
-/* Значки календаря и часов в полях даты: в классике красятся фильтром под медь, в новых темах — обычные, цвета системы */
-html[data-theme="light"] input[type="date"].form-input::-webkit-calendar-picker-indicator, html[data-theme="light"] input[type="time"].form-input::-webkit-calendar-picker-indicator, html[data-theme="light"] input[type="datetime-local"].form-input::-webkit-calendar-picker-indicator,
+/* Значки календаря и часов в полях даты: в классике красятся фильтром под медь, в тёмной теме — обычные, цвета системы */
 html[data-theme="dark"] input[type="date"].form-input::-webkit-calendar-picker-indicator, html[data-theme="dark"] input[type="time"].form-input::-webkit-calendar-picker-indicator, html[data-theme="dark"] input[type="datetime-local"].form-input::-webkit-calendar-picker-indicator { filter: none; opacity: 0.7; }
 
 /* Мини-календарь на боковой панели: выбранный сегодняшний день оставался с прозрачным фоном и тёмной цифрой — не читалось.
@@ -3045,7 +2933,7 @@ html[data-theme="dark"] input[type="date"].form-input::-webkit-calendar-picker-i
 .desk-panel .ec-day.has.today.sel, .desk-panel .ec-day.today.sel { background: var(--accent); }
 
 /* Схема зала: диваны в одном стиле с мебелью террасы — спокойные серые (цвет текста темы с прозрачностью), как столы и стулья.
-   Раньше они были коричневыми с медной спинкой и в светлой и тёмной темах выбивались из схемы */
+   Раньше они были коричневыми с медной спинкой и в тёмной теме выбивались из схемы */
 .hz-svg .hz-sofa { fill: rgba(var(--fg-rgb),0.09); stroke: rgba(var(--fg-rgb),0.24); stroke-width: 0.8; }
 .hz-svg .hz-sofa-back { fill: rgba(var(--fg-rgb),0.2); stroke: rgba(var(--fg-rgb),0.3); stroke-width: 0.6; }
 .hz-svg .hz-sofa-line { stroke: rgba(var(--fg-rgb),0.22); stroke-width: 1; }
@@ -3062,12 +2950,11 @@ html[data-theme="dark"] input[type="date"].form-input::-webkit-calendar-picker-i
    Подсказка и «Новый гость» выровнены по той же ширине; на телефоне всё как было */
 @media (min-width: 700px) { #homeSearchBox, #homeSearchUnder { max-width: 540px; } }
 
-/* ОПРОС КОМАНДЫ СО СВОИМ ФОНОМ (фото или видео). Под текстом лежит тёмное затемнение, а цвет текста зависит от темы:
-   в дневной он тёмный — тёмное на тёмном не читалось. Поэтому, пока у опроса есть свой фон, экран одинаков во всех темах:
+/* ОПРОС КОМАНДЫ СО СВОИМ ФОНОМ (фото или видео). Под текстом лежит тёмное затемнение, а цвет текста зависит от темы,
+   поэтому, пока у опроса есть свой фон, экран одинаков во всех темах:
    светлый текст, а каждый блок текста лежит на тёмной плашке (так читается и на светлом фото при слабом затемнении).
    Без своего фона ничего не меняется: экран в цветах выбранной темы. */
 #screen-enps.has-bg { --ep-rgb: 20,10,2; --ep-ink: 242,227,208; }
-html[data-theme="light"] #screen-enps.has-bg { --ep-rgb: 16,20,30; --ep-ink: 244,246,250; }
 html[data-theme="dark"] #screen-enps.has-bg { --ep-rgb: 8,10,14; --ep-ink: 244,246,250; }
 #screen-enps.has-bg {
   --text: rgb(var(--ep-ink)); --text-sub: rgba(var(--ep-ink),0.9); --text-muted: rgba(var(--ep-ink),0.8);
@@ -3088,7 +2975,7 @@ html[data-theme="dark"] #screen-enps.has-bg { --ep-rgb: 8,10,14; --ep-ink: 244,2
 #screen-enps.has-bg .form-input::placeholder { color: rgba(var(--ep-ink),0.7); }
 
 /* Предпросмотр опроса: это макет экрана на тёмной подложке со светлым текстом. Подложка не должна зависеть от темы —
-   в дневной она становилась светло-серой, и светлый текст на ней не читался. Исключение: опрос команды без своего фона
+   в одной из тем она могла стать светлой, и светлый текст на ней не читался. Исключение: опрос команды без своего фона
    выглядит в цветах темы (так он и открывается у сотрудников), и предпросмотр показывает его так же. */
 .sv-preview { background: #140a03; }
 .sv-preview.sv-prev-theme { background: var(--bg); }
@@ -3110,7 +2997,7 @@ html[data-theme="dark"] #screen-enps.has-bg { --ep-rgb: 8,10,14; --ep-ink: 244,2
 .th-title { font-size: 16px; font-weight: 500; letter-spacing: 0.3px; color: var(--text); }
 .th-x { width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: 50%; border: none; background: rgba(var(--fg-rgb),0.07); color: var(--text-sub); cursor: pointer; }
 .th-x:hover { color: var(--text); }
-.th-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.th-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .th-card { position: relative; display: flex; flex-direction: column; align-items: center; gap: 9px; padding: 0 0 2px; border: 0; background: transparent; color: var(--text-sub); font: inherit; font-size: 12.5px; cursor: pointer; }
 .th-card:focus-visible { outline: 2px solid rgba(var(--ac),0.7); outline-offset: 3px; border-radius: 16px; }
 .th-prev { position: relative; width: 100%; aspect-ratio: 0.82; border-radius: 14px; overflow: hidden; background: var(--pb); border: 1px solid rgba(128,128,128,0.28); box-shadow: 0 0 0 0 var(--accent); transition: box-shadow .18s, transform .18s; }
@@ -3122,7 +3009,6 @@ html[data-theme="dark"] #screen-enps.has-bg { --ep-rgb: 8,10,14; --ep-ink: 244,2
 .th-prev .ac { right: 15%; top: 49%; width: 15%; height: 6px; border-radius: 3px; background: var(--pa); }
 .th-prev .ad { right: 15%; top: 71%; width: 15%; height: 6px; border-radius: 3px; background: var(--pa); opacity: 0.45; }
 .th-p-classic { --pb: #1E1004; --pc: #2A160F; --pa: #B87333; --pt: #F0DFC0; }
-.th-p-light { --pb: #F2F3F7; --pc: #FFFFFF; --pa: #095ED0; --pt: #141824; }
 .th-p-dark { --pb: #0D0E12; --pc: #17191F; --pa: #4C9AFF; --pt: #F2F4F8; }
 .th-card:hover .th-prev { transform: translateY(-2px); }
 .th-card.on .th-prev { box-shadow: 0 0 0 2px var(--bg-pop), 0 0 0 4px var(--accent); }
@@ -3130,16 +3016,6 @@ html[data-theme="dark"] #screen-enps.has-bg { --ep-rgb: 8,10,14; --ep-ink: 244,2
 .th-name { display: inline-flex; align-items: center; gap: 6px; }
 .th-name::before { content: ''; width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid rgba(var(--fg-rgb),0.3); box-sizing: border-box; transition: background-color .15s, border-color .15s; }
 .th-card.on .th-name::before { background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / 10px no-repeat; border-color: var(--accent); }
-.th-auto { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 16px; padding: 12px 14px; border-radius: 14px; background: rgba(var(--fg-rgb),0.05); cursor: pointer; }
-.th-auto b { display: block; font-weight: 500; font-size: 13.5px; color: var(--text); }
-.th-auto small { display: block; margin-top: 3px; font-size: 11.5px; line-height: 1.35; color: var(--text-muted); }
-.th-sw { position: relative; flex: none; width: 46px; height: 28px; }
-.th-sw input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
-.th-sw i { position: absolute; inset: 0; border-radius: 14px; background: rgba(var(--fg-rgb),0.22); transition: background-color .2s; pointer-events: none; }
-.th-sw i::after { content: ''; position: absolute; left: 3px; top: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.35); transition: transform .2s; }
-.th-sw input:checked + i { background: var(--accent); }
-.th-sw input:checked + i::after { transform: translateX(18px); }
-.th-sw input:focus-visible + i { outline: 2px solid rgba(var(--ac),0.7); outline-offset: 2px; }
 @media (max-width: 699px) {
   .th-ov { align-items: flex-end; padding: 0; }
   .th-sheet { max-width: none; border-radius: 22px 22px 0 0; border-bottom: 0; padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px)); animation: thUp .22s cubic-bezier(.2,.8,.2,1); }
@@ -3254,19 +3130,11 @@ select[aria-expanded="true"] { border-color: rgba(var(--ac), 0.55) !important; b
         <span class="th-prev th-p-classic"><i class="t1"></i><i class="t2"></i><i class="c1"></i><i class="c2"></i><i class="ac"></i><i class="ad"></i></span>
         <span class="th-name">Классика</span>
       </button>
-      <button type="button" class="th-card" data-theme-pick="light" aria-pressed="false" onclick="setTheme('light')">
-        <span class="th-prev th-p-light"><i class="t1"></i><i class="t2"></i><i class="c1"></i><i class="c2"></i><i class="ac"></i><i class="ad"></i></span>
-        <span class="th-name">Светлая</span>
-      </button>
       <button type="button" class="th-card" data-theme-pick="dark" aria-pressed="false" onclick="setTheme('dark')">
         <span class="th-prev th-p-dark"><i class="t1"></i><i class="t2"></i><i class="c1"></i><i class="c2"></i><i class="ac"></i><i class="ad"></i></span>
         <span class="th-name">Тёмная</span>
       </button>
     </div>
-    <label class="th-auto">
-      <span><b>Как в системе</b><small>Светлая днём, тёмная вечером: следует настройке телефона или компьютера</small></span>
-      <span class="th-sw"><input type="checkbox" id="thAuto" onchange="setThemeAuto(this.checked)"><i></i></span>
-    </label>
   </div>
 </div>
 <aside class="desk-panel left" id="deskLeft">
@@ -3396,7 +3264,7 @@ select[aria-expanded="true"] { border-color: rgba(var(--ac), 0.55) !important; b
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       <span>Выйти</span>
     </button>
-    <button type="button" class="theme-btn" onclick="openThemeSheet()" title="Оформление: классика, светлая, тёмная" aria-label="Оформление">
+    <button type="button" class="theme-btn" onclick="openThemeSheet()" title="Оформление: классика, тёмная" aria-label="Оформление">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18a9 9 0 0 0 0-18z" fill="currentColor" stroke="none"/></svg>
     </button>
   </div>
@@ -20033,8 +19901,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 })();
 </script>
 <script id="theme-js">
-/* ═══ ОФОРМЛЕНИЕ: КЛАССИКА / СВЕТЛАЯ / ТЁМНАЯ ═══════════════════════════════════════════
-   Выбор хранится на этом устройстве (localStorage, ключ jv-theme): classic | light | dark | auto («как в системе»).
+/* ═══ ОФОРМЛЕНИЕ: КЛАССИКА / ТЁМНАЯ ═══════════════════════════════════════════
+   Выбор хранится на этом устройстве (localStorage, ключ jv-theme): classic | dark. Любое другое значение (в том числе прежние «светлая» и «как в системе») читается как классика.
    Цвета каждой темы — переменные в блоках html[data-theme=…] в <style id="theme-css">; этот скрипт только ставит
    атрибут data-theme на <html>, красит строку состояния браузера/Telegram и рисует окно выбора.
    Самый первый запуск (до отрисовки страницы) делает короткий скрипт в <head>, чтобы не мигал старый цвет.
@@ -20042,15 +19910,11 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 (function () {
   'use strict';
   var KEY = 'jv-theme';
-  var BAR = { classic: '#1E1004', light: '#F2F3F7', dark: '#0D0E12' };   // цвет фона каждой темы (для Telegram и строки браузера)
+  var BAR = { classic: '#1E1004', dark: '#0D0E12' };   // цвет фона каждой темы (для Telegram и строки браузера)
   var root = document.documentElement;
 
   function getPref() {
-    try { var p = localStorage.getItem(KEY); return (p === 'light' || p === 'dark' || p === 'auto') ? p : 'classic'; } catch (e) { return 'classic'; }
-  }
-  function resolve(pref) {
-    if (pref !== 'auto') return pref;
-    try { return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'; } catch (e) { return 'dark'; }
+    try { return localStorage.getItem(KEY) === 'dark' ? 'dark' : 'classic'; } catch (e) { return 'classic'; }
   }
 
   function paintBars(theme) {
@@ -20068,8 +19932,6 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       c.classList.toggle('on', on);
       c.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
-    var auto = document.getElementById('thAuto');
-    if (auto) auto.checked = pref === 'auto';
   }
 
   function paint(pref, theme) {
@@ -20082,7 +19944,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   // экран на полсекунды (тысячи элементов × цвет, рамка, тень). Теперь тема ставится мгновенно, а если браузер умеет
   // View Transitions — поверх идёт короткое наплывание картинки «было → стало», которое считает видеокарта, а не страница.
   function apply(animate) {
-    var pref = getPref(), theme = resolve(pref);
+    var pref = getPref(), theme = pref;
     var calm = false;
     try { calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { /* считаем, что движение можно */ }
     if (animate && !calm && typeof document.startViewTransition === 'function' && root.getAttribute('data-theme') !== theme) {
@@ -20093,18 +19955,14 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   window.getThemePref = getPref;
   window.setTheme = function (name) {
-    if (name !== 'classic' && name !== 'light' && name !== 'dark') return;
+    if (name !== 'classic' && name !== 'dark') return;
     try { localStorage.setItem(KEY, name); } catch (e) { /* без сохранения тема сменится только до перезагрузки */ }
-    apply(true);
-  };
-  window.setThemeAuto = function (on) {
-    try { localStorage.setItem(KEY, on ? 'auto' : resolve('auto')); } catch (e) { /* см. выше */ }
     apply(true);
   };
   window.openThemeSheet = function () {
     var sheet = document.getElementById('themeSheet');
     if (!sheet) return;
-    syncSheet(getPref(), resolve(getPref()));
+    syncSheet(getPref(), getPref());
     sheet.classList.add('on');
     var first = sheet.querySelector('.th-card.on') || sheet.querySelector('.th-card');
     if (first) try { first.focus({ preventScroll: true }); } catch (e) { /* фокус не обязателен */ }
@@ -20117,13 +19975,6 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     var sheet = document.getElementById('themeSheet');
     if (e.key === 'Escape' && sheet && sheet.classList.contains('on')) { e.stopPropagation(); window.closeThemeSheet(); }
   }, true);
-
-  // «Как в системе»: следим за настройкой устройства, пока выбран этот режим
-  try {
-    var mq = window.matchMedia('(prefers-color-scheme: light)');
-    var onSys = function () { if (getPref() === 'auto') apply(true); };
-    if (mq.addEventListener) mq.addEventListener('change', onSys); else if (mq.addListener) mq.addListener(onSys);
-  } catch (e) { /* без слежения за системой */ }
 
   apply(false);
 })();
