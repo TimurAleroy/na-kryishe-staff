@@ -1009,7 +1009,7 @@
     .bd-cnt { font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
     .bd-field textarea.form-input { display: block; width: 100%; min-height: 128px; resize: vertical; line-height: 1.5; }
     .bd-tokens { display: flex; align-items: center; gap: 10px; margin-top: 11px; }
-    .bd-tok { padding: 8px 14px; border-radius: 100px; border: 1px solid rgba(var(--ac),0.55); background: rgba(var(--ac),0.1); color: var(--accent); font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+    .bd-tok { flex: 0 0 auto; white-space: nowrap; padding: 8px 14px; border-radius: 100px; border: 1px solid rgba(var(--ac),0.55); background: rgba(var(--ac),0.1); color: var(--accent); font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 600; cursor: pointer; }
     .bd-tok:active { background: rgba(var(--ac),0.26); }
     .bd-tokh { font-size: 11.5px; color: var(--text-muted); }
     .bd-tg { border-radius: 16px; overflow: hidden; border: 1px solid var(--border); background: var(--bg-deep3); }
@@ -6734,12 +6734,13 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       <div class="sv-hero" id="bdHero"><div class="sv-hero-ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M5.5 20v-6.5a1.5 1.5 0 011.5-1.5h10a1.5 1.5 0 011.5 1.5V20M5.5 15.5c1.5 1.3 2.5 1.3 3.5 0s2-1.3 3 0 2 1.3 3 0 2-1.3 3.5 0M12 12V8.5M12 8.5c-1.2-1-1.3-2.2 0-3.5 1.3 1.3 1.2 2.5 0 3.5z"/></svg></div>
         <div class="sv-hero-body"><div class="sv-hero-k">В день рождения в ${hour}:00</div><div class="sv-hero-t" id="bdHeroT">Бот поздравляет</div><div class="sv-hero-s" id="bdHeroS"></div></div></div>
       <div class="sv-card" style="margin-top:10px"><div class="sv-line big"><div class="sv-lt"><span class="sv-t">Бот поздравляет сам</span><span class="sv-s">Выключено или текст пустой — бот никого не поздравляет</span></div><label class="vn-sw"><input type="checkbox" id="bdEnabled" ${t.enabled !== false ? 'checked' : ''} onchange="bdTextPreview()"><i></i></label></div></div>
+      ${'nameFirst' in t ? `<div class="sv-card" style="margin-top:10px"><div class="sv-line big"><div class="sv-lt"><span class="sv-t">Имя гостя первой строкой</span><span class="sv-s">Бот сам начнёт с «Анна!», дальше ваш текст как написан</span></div><label class="vn-sw"><input type="checkbox" id="bdNameFirst" ${t.nameFirst !== false ? 'checked' : ''} onchange="bdTextPreview()"><i></i></label></div></div>` : ''}
       <div class="bd-field">
         <div class="bd-fh"><span class="bd-fk">Текст поздравления</span><span class="bd-cnt" id="bdCnt"></span></div>
-        <textarea class="form-input" id="bdTextArea" rows="6" maxlength="1500" placeholder="{имя}, с днём рождения! …" oninput="bdTextPreview()">${escHtml(t.text || '')}</textarea>
-        <div class="bd-tokens"><button type="button" class="bd-tok" onclick="bdInsertName()">+ {имя}</button><span class="bd-tokh">подставится имя гостя</span></div>
+        <textarea class="form-input" id="bdTextArea" rows="6" maxlength="1500" placeholder="С днём рождения! …" oninput="bdTextPreview()">${escHtml(t.text || '')}</textarea>
+        <div class="bd-tokens"><button type="button" class="bd-tok" onclick="bdInsertName()">+ {имя}</button><span class="bd-tokh" id="bdTokHint">подставится имя гостя</span></div>
       </div>
-      <div class="sv-gl">Как увидит гость</div>
+      <div class="sv-gl">Как увидит гость · на примере Анны</div>
       <div class="bd-tg"><div class="bd-tgh"><div class="bd-ava">НК</div><div><div class="bd-tgn">На Крыше</div><div class="bd-tgs">бот</div></div></div>
         <div class="bd-tgb"><div class="bd-bub" id="bdPreview"></div></div></div>
       <div class="sv-tip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><div>Бот пишет гостям, у которых есть Telegram. Гостей с тегом «Нон-грата» не поздравляет. Тех, у кого Telegram нет, поздравляете сами — они видны в «Именинниках» с пометкой «поздравить вручную».</div></div>
@@ -6765,7 +6766,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const p = document.getElementById('bdPreview');
     const time = `${bdText && bdText.hour || 12}:00`;
     p.className = 'bd-bub' + (v ? '' : ' empty');
-    p.textContent = v ? v.replace(/\{имя\}/gi, 'Анна') : 'Текст не заполнен — бот не поздравляет.';
+    const nfEl = document.getElementById('bdNameFirst');      // нет переключателя — сервер ещё без этой возможности
+    const nameFirst = nfEl ? nfEl.checked : false;
+    const hasTok = /\{имя\}/i.test(v);
+    p.textContent = v ? (hasTok ? v.replace(/\{имя\}/gi, 'Анна') : nameFirst ? `Анна!\n\n${v}` : v) : 'Текст не заполнен — бот не поздравляет.';
+    const th = document.getElementById('bdTokHint');
+    if (th) th.textContent = !nfEl ? 'подставится имя гостя' : hasTok ? 'Имя стоит в тексте — первую строку бот не добавит' : nameFirst ? 'Имя бот поставит сам. Кнопка — если имя нужно в середине текста' : 'подставится имя гостя';
     const tm = document.createElement('i'); tm.className = 'bd-time'; tm.textContent = time; p.appendChild(tm);
     document.getElementById('bdCnt').textContent = `${ta.value.length} / ${ta.maxLength || 1500}`;
     const works = on && !!v;
@@ -6774,7 +6780,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     document.getElementById('bdHeroT').textContent = works ? 'Бот поздравляет' : (on ? 'Текст не заполнен' : 'Бот не поздравляет');
     document.getElementById('bdHeroS').textContent = works ? 'Каждому имениннику с Telegram, один раз в день рождения.' : (on ? 'Заполните текст — тогда бот начнёт поздравлять.' : 'Включите переключатель ниже, чтобы бот поздравлял сам.');
     const t = bdText || { text: '', enabled: true };
-    const dirty = ta.value !== (t.text || '') || on !== (t.enabled !== false);
+    const dirty = ta.value !== (t.text || '') || on !== (t.enabled !== false) || (!!nfEl && nameFirst !== (t.nameFirst !== false));
     const wrap = document.getElementById('bdSaveWrap');
     if (wrap) wrap.classList.toggle('dirty', dirty);
   }
@@ -6785,7 +6791,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     try {
       const res = await fetch(`${PROXY_BASE}/api/admin/birthday-text?pin=${getPin()}`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: getPin(), text: document.getElementById('bdTextArea').value, enabled: document.getElementById('bdEnabled').checked })
+        body: JSON.stringify({ pin: getPin(), text: document.getElementById('bdTextArea').value, enabled: document.getElementById('bdEnabled').checked, ...(document.getElementById('bdNameFirst') ? { nameFirst: document.getElementById('bdNameFirst').checked } : {}) })
       });
       if (res.status === 401) { showScreen('pin'); return; }
       const data = await res.json().catch(() => ({}));
