@@ -321,6 +321,8 @@
     .qrow-t { flex: 0 0 auto; }
     .qrow.svc-main .qrow-s { flex: 1; min-width: 0; margin-left: 2px; text-align: left; font-size: 11px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .qrow.desktop-only { display: none; }
+    .qrow-s.xr-hot { color: var(--accent); }
+    .qrow-s.xr-late { color: var(--c-red2); }
     /* На компьютере строка-раздел — компактная кнопка шириной в одну плитку (в той же сетке, что плитки): значок слева,
        название и пояснение друг под другом, стрелка справа. Во всю ширину группы (как на телефоне) она выглядит растянутой. */
     @media (min-width: 700px) {
@@ -1049,7 +1051,7 @@
     .tp-crop-box canvas { display: block; width: min(280px, 100%); aspect-ratio: 1; border-radius: 14px; background: #140a03; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
     .tp-crop-zoom { display: block; width: 100%; margin: 14px 0 6px; accent-color: var(--accent); }
 
-    /* Внешние отзывы: «Сервис» → «Внешние отзывы» */
+    /* Внешние отзывы: главный экран → «Аналитика» → «Внешние отзывы» */
     .xr-bad { color: var(--c-red2) !important; }
     .xr-plats { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
     .xr-pc { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 100px; border: 1px solid var(--border); background: var(--bg-card); font-size: 11.5px; color: var(--text-sub); white-space: nowrap; }
@@ -4288,10 +4290,10 @@ select[aria-expanded="true"] { border-color: rgba(var(--ac), 0.55) !important; b
   </div>
 </div>
 
-<!-- ВНЕШНИЕ ОТЗЫВЫ: «Сервис» → «Внешние отзывы» — отзывы с Яндекс Карт, 2ГИС, Google вносят вручную; статус, ответственный, срок, ответ, шаблоны (право ext_reviews.manage) -->
+<!-- ВНЕШНИЕ ОТЗЫВЫ: главный экран → «Аналитика» → «Внешние отзывы» — отзывы с Яндекс Карт, 2ГИС, Google вносят вручную; статус, ответственный, срок, ответ, шаблоны (право ext_reviews.manage) -->
 <div class="screen" id="screen-xr">
   <div class="header">
-    <div class="back-btn" onclick="showScreen('service')">
+    <div class="back-btn" onclick="showScreen('home')">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
     <div><h1 style="font-size:14px;letter-spacing:1px;">Внешние отзывы</h1><p>Яндекс, 2ГИС, Google: ответы и сроки</p></div>
@@ -5376,7 +5378,6 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('tips.manage')) list.push({ group: G.team, icon: 'tips', short: 'чаевые', title: 'Чаевые', sub: 'Отчёт, суммы, кто принимает, QR', fn: 'openTipsAdmin()' });
     if (can('standards.manage')) list.push({ group: G.team, icon: 'standards', short: 'стандарты', title: 'Стандарты', sub: 'Правила сервиса, тесты, кто прочитал', fn: "openStandardsEdit('service')" });
     if (can('tags.manage')) list.push({ group: G.guests, icon: 'tags', short: 'теги', title: 'Теги', sub: 'Список, цвета, подсказки', fn: 'openTagsEdit()' });
-    if (can('ext_reviews.manage')) list.push({ group: G.guests, icon: 'extreviews', short: 'внешние отзывы', title: 'Внешние отзывы', sub: 'Яндекс, 2ГИС, Google: ответы и сроки', fn: 'openExtReviews()' });
     if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'Логины, роли и права', fn: 'openEmployees()' });
     if (can('candidates.view')) list.push({ group: G.team, icon: 'candidates', short: 'кандидаты', title: 'Кандидаты', sub: 'Отклики на вакансии', fn: 'openCandidates()' });
     if (can('settings.manage')) list.push({ group: G.guests, icon: 'segments', short: 'правила сегментов', title: 'Правила сегментов', sub: 'Границы: дни и визиты', fn: 'openSegmentRules()' });
@@ -5389,12 +5390,32 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     return list;
   }
 
+  // «Внешние отзывы» — строка в группе «Аналитика» на главном: сколько отзывов ждут ответа и сколько просрочено.
+  // Числа приходят вместе с плашками (service-badges) и обновляются при открытии списка отзывов.
+  var xrHome = { open: 0, overdue: 0 };
+  function xrHomeSub() {
+    if (xrHome.overdue > 0) return { text: `Просрочено: ${xrHome.overdue}`, cls: 'xr-late' };
+    if (xrHome.open > 0) return { text: `Ждут ответа: ${xrHome.open}`, cls: 'xr-hot' };
+    return { text: 'Яндекс, 2ГИС, Google', cls: '' };
+  }
+  function xrHomePaint() {
+    const el = document.getElementById('qsubXr');
+    if (!el) return;
+    const s = xrHomeSub();
+    if (el.textContent !== s.text) el.textContent = s.text;
+    el.classList.toggle('xr-hot', s.cls === 'xr-hot');
+    el.classList.toggle('xr-late', s.cls === 'xr-late');
+  }
+  function xrHomeSet(open, overdue) {
+    xrHome = { open: Number(open) || 0, overdue: Number(overdue) || 0 };
+    xrHomePaint();
+  }
+
   // Плашки на плитках «Сервиса»: новые отклики, позиции меню без фото / без цены (дубли — и здесь, и точкой на главном экране)
   var svcBadges = {};
   function svcBadgeInfo(i) {
     const b = svcBadges || {};
     if (i.icon === 'candidates' && b.candidates > 0) return { n: b.candidates, sub: `Новых: ${b.candidates}` };
-    if (i.icon === 'extreviews' && b.extReviews > 0) return { n: b.extReviews, sub: b.extReviewsOverdue > 0 ? `Просрочено: ${b.extReviewsOverdue} · ждут: ${b.extReviews}` : `Ждут ответа: ${b.extReviews}` };
     if (i.icon === 'menu' && b.menuAny > 0) {
       const parts = [];
       if (b.menuNoPhoto > 0) parts.push(`без фото ${b.menuNoPhoto}`);
@@ -5567,7 +5588,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       <div class="qrow${opts.extraClass ? ' ' + opts.extraClass : ''}" onclick="${onclick}">
         <div class="qrow-icon">${icon}</div>
         <div class="qrow-t">${title}</div>
-        <div class="qrow-s">${sub}</div>
+        <div class="qrow-s"${opts.subId ? ` id="${opts.subId}"` : ''}>${sub}</div>
         <div class="qrow-chev">›</div>
       </div>`;
     let marketingRows = '';
@@ -5607,6 +5628,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('analytics.view')) analyticsRows += qrow(icons.forecast, 'Прогноз', 'Загрузка на неделю', "openForecast()");
     if (can('segments.view')) analyticsRows += qrow(icons.segments, 'Сегменты', 'Чемпионы → потерянные', "openSegments()");
     if (can('feedback.view')) analyticsRows += qrow(icons.feedback, 'Обратная связь', 'Отзывы · eNPS', "openFeedback()");
+    if (can('ext_reviews.manage')) analyticsRows += qrow(icons.extreviews, 'Внешние отзывы', xrHomeSub().text, "openExtReviews()", { subId: 'qsubXr' });
     if (can('guests.table')) analyticsRows += qrow(icons.guestsTable, 'Таблица гостей', 'На компьютере', "openGuestsTable()", { extraClass: 'desktop-only' });
 
     // «Сервис» — отдельный экран: меню, теги, сотрудники, кандидаты. На главной — одна строка.
@@ -5740,9 +5762,13 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         if (res.ok) setQuickActionDot('qdotMessages', ((await res.json()).newCount || 0) > 0);
       } catch {}
 
-      if (can('guests.merge')) try {
+      if (can('guests.merge') || can('ext_reviews.manage')) try {
         const res = await fetch(`${PROXY_BASE}/api/staff/service-badges?pin=${getPin()}`);
-        if (res.ok) setQuickActionDot('qdotDuplicates', ((await res.json()).duplicates || 0) > 0);
+        if (res.ok) {
+          const b = await res.json();
+          if (can('guests.merge')) setQuickActionDot('qdotDuplicates', (b.duplicates || 0) > 0);
+          if (can('ext_reviews.manage')) xrHomeSet(b.extReviews, b.extReviewsOverdue);
+        }
       } catch {}
     }
   }
@@ -15058,7 +15084,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   }, 30000);
 
   // ─── ВНЕШНИЕ ОТЗЫВЫ ───────────────────────────────
-  // «Сервис» → «Внешние отзывы» (право ext_reviews.manage). Отзывы с Яндекс Карт, 2ГИС, Google и других площадок вносят вручную:
+  // Главный экран → «Аналитика» → «Внешние отзывы» (право ext_reviews.manage). Отзывы с Яндекс Карт, 2ГИС, Google и других площадок вносят вручную:
   // площадка, оценка, автор, текст, ссылка, дата. Дальше по каждому ведётся работа: статус, ответственный, срок, текст ответа
   // (его можно собрать из готового шаблона). Три экрана: список (xr), карточка и форма отзыва (xr-edit), форма шаблона (xr-tpl).
   // Сервер: /api/admin/ext-reviews (db/extreviews.js, миграция 044). Позже сюда подключится автосбор — поля те же.
@@ -15238,6 +15264,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       xr.loading = false; xr.moreBusy = false; xr.err = '';
       xr.items = more ? xr.items.concat(r.items) : r.items;
       xr.hasMore = !!r.hasMore; xr.summary = r.summary; xr.today = r.today;
+      if (r.summary) xrHomeSet(r.summary.open, r.summary.overdue);
       if (r.templates) xr.meta = { templates: r.templates, assignees: r.assignees, me: r.me, dueDays: r.dueDays || { low: 1, other: 3 } };
       if (activeScreenName() === 'xr') {
         if (xr.tab === 'reviews') { xrRenderSum(); xrRenderFilters(); xrRenderList(); } else xrRender();
@@ -20647,7 +20674,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       { key: 'schedule', label: 'График', icon: SVG + '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
         ok: function () { return can('schedule.view'); }, go: function () { openSchedule(); }, screens: ['schedule', 'add-shift'] },
       { key: 'analytics', label: 'Аналитика', icon: SVG + '<path d="M5 20V11M11 20V4M17 20v-6M3 20h18"/></svg>',
-        ok: function () { return can('analytics.view'); }, go: function () { openAnalytics(); }, screens: ['analytics', 'forecast', 'segments', 'feedback'] },
+        ok: function () { return can('analytics.view') || can('ext_reviews.manage'); }, go: function () { if (can('analytics.view')) openAnalytics(); else openExtReviews(); }, screens: ['analytics', 'forecast', 'segments', 'feedback', 'xr', 'xr-edit', 'xr-tpl'] },
       { key: 'service', label: 'Сервис', icon: SVG + '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>',
         ok: function () { return serviceItemsFor().length > 0; }, go: function () { openService(); }, screens: ['service'] }
     ];
