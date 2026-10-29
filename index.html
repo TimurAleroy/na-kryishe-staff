@@ -1049,6 +1049,79 @@
     .tp-crop-box canvas { display: block; width: min(280px, 100%); aspect-ratio: 1; border-radius: 14px; background: #140a03; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
     .tp-crop-zoom { display: block; width: 100%; margin: 14px 0 6px; accent-color: var(--accent); }
 
+    /* Внешние отзывы: «Сервис» → «Внешние отзывы» */
+    .xr-bad { color: var(--c-red2) !important; }
+    .xr-plats { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .xr-pc { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 100px; border: 1px solid var(--border); background: var(--bg-card); font-size: 11.5px; color: var(--text-sub); white-space: nowrap; }
+    .xr-pc b { font-weight: 500; color: var(--text); }
+    .xr-dot { flex: 0 0 auto; width: 9px; height: 9px; border-radius: 50%; background: var(--text-muted); }
+    .xr-filters { display: flex; gap: 6px; overflow-x: auto; margin: 12px -16px 0; padding: 2px 16px 6px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .xr-filters::-webkit-scrollbar { display: none; }
+    .xr-f { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 13px; border-radius: 100px; border: 1px solid var(--border); background: transparent; color: var(--text-sub); font: 500 12.5px/1 'Inter', sans-serif; cursor: pointer; white-space: nowrap; }
+    .xr-f i { font-style: normal; font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .xr-f.on { background: var(--accent-dim); color: var(--accent); border-color: rgba(var(--ac),0.5); }
+    .xr-f.on i { color: var(--accent); }
+    .xr-f.late i { color: var(--c-red2); }
+    .xr-tools { display: flex; gap: 8px; margin-top: 8px; }
+    .xr-tools .form-input { padding: 10px 12px; font-size: 14px; min-width: 0; }
+    .xr-tools select.form-input { flex: 0 0 46%; }
+    .xr-tools input.form-input { flex: 1 1 auto; }
+    .xr-card { display: block; margin-top: 10px; padding: 13px 14px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); cursor: pointer; transition: background .15s; }
+    .xr-card:active { background: var(--bg-card-hover); }
+    .xr-card.late { border-color: rgba(var(--c-red-rgb),0.5); }
+    .xr-top { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .xr-plat { font-size: 12px; color: var(--text-sub); white-space: nowrap; }
+    .xr-stars { color: var(--c-gold); font-size: 13px; letter-spacing: 1px; white-space: nowrap; }
+    .xr-stars i { font-style: normal; color: rgba(var(--fg-rgb),0.2); }
+    .xr-stars.none { color: var(--text-muted); font-size: 11.5px; letter-spacing: 0; }
+    .xr-date { margin-left: auto; flex: 0 0 auto; font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+    .xr-auth { margin-top: 9px; font-size: 14px; font-weight: 500; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .xr-text { margin-top: 4px; font-size: 13px; line-height: 1.55; color: var(--text-sub); white-space: pre-wrap; overflow-wrap: anywhere; }
+    .xr-card .xr-text { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .xr-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 10px; font-size: 11.5px; color: var(--text-muted); }
+    .xr-st { padding: 3px 10px; border-radius: 100px; font-size: 11px; letter-spacing: 0.3px; border: 1px solid rgba(var(--fg-rgb),0.18); color: var(--text-muted); white-space: nowrap; }
+    .xr-st.new { color: var(--accent); border-color: rgba(var(--ac),0.45); background: var(--accent-dim); }
+    .xr-st.in_progress { color: var(--c-gold); border-color: rgba(var(--c-gold-rgb),0.45); background: rgba(var(--c-gold-rgb),0.08); }
+    .xr-st.answered { color: var(--c-green); border-color: rgba(var(--c-green-rgb),0.4); background: rgba(var(--c-green-rgb),0.08); }
+    .xr-late-t { color: var(--c-red2); }
+    .xr-more { display: block; width: 100%; margin-top: 12px; }
+    .xr-h { margin: 0 0 10px; font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--text-muted); font-weight: 400; }
+    .xr-seg { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+    .xr-seg button { height: 40px; padding: 0 8px; border-radius: 12px; border: 1px solid var(--border); background: transparent; color: var(--text-sub); font: 500 13px/1 'Inter', sans-serif; cursor: pointer; }
+    .xr-seg button.on { background: var(--accent-dim); color: var(--accent); border-color: rgba(var(--ac),0.5); }
+    .xr-seg button:disabled { opacity: 0.55; cursor: default; }
+    .xr-grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .xr-grid2 .form-group { min-width: 0; }
+    .xr-rate { display: flex; gap: 6px; }
+    .xr-rate button { flex: 1 1 0; max-width: 56px; height: 42px; border-radius: 12px; border: 1px solid var(--border); background: transparent; color: rgba(var(--fg-rgb),0.3); font-size: 19px; line-height: 1; cursor: pointer; }
+    .xr-rate button.on { color: var(--c-gold); border-color: rgba(var(--c-gold-rgb),0.5); background: rgba(var(--c-gold-rgb),0.08); }
+    .xr-tpls { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+    .xr-tpl { height: 32px; max-width: 100%; padding: 0 12px; border-radius: 100px; border: 1px solid var(--border); background: transparent; color: var(--text-sub); font: 500 12.5px/1 'Inter', sans-serif; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .xr-tpl.sug { border-color: rgba(var(--ac),0.5); color: var(--accent); }
+    .xr-tpl:active { background: var(--accent-dim); }
+    .xr-card-static { cursor: default; margin-top: 0; margin-bottom: 10px; }
+    .xr-card-static:active { background: var(--bg-card); }
+    .xr-row { display: flex; gap: 8px; margin-top: 8px; }
+    .xr-row > * { flex: 1 1 0; min-width: 0; margin-top: 0 !important; }
+    .xr-link { display: block; text-decoration: none; }
+    .xr-hist { list-style: none; margin: 0; padding: 0; font-size: 12px; line-height: 1.5; color: var(--text-sub); }
+    .xr-hist li { padding: 7px 0; border-top: 1px solid var(--border); }
+    .xr-hist li:first-child { border-top: none; padding-top: 0; }
+    .xr-hist time { display: block; font-size: 11px; color: var(--text-muted); }
+    .xr-danger { color: var(--c-red2) !important; border-color: rgba(var(--c-red-rgb),0.35) !important; }
+    .xr-tone { padding: 2px 9px; border-radius: 100px; font-size: 10.5px; border: 1px solid rgba(var(--fg-rgb),0.18); color: var(--text-muted); white-space: nowrap; }
+    .xr-tone.positive { color: var(--c-green); border-color: rgba(var(--c-green-rgb),0.4); }
+    .xr-tone.negative { color: var(--c-red2); border-color: rgba(var(--c-red-rgb),0.4); }
+    .xr-tone.neutral { color: var(--c-gold); border-color: rgba(var(--c-gold-rgb),0.45); }
+    .xr-prev { margin-top: 10px; padding: 12px 14px; border-radius: 12px; border: 1px dashed rgba(var(--fg-rgb),0.2); font-size: 13px; line-height: 1.55; color: var(--text-sub); white-space: pre-wrap; overflow-wrap: anywhere; }
+    .xr-tf-in { height: 150px !important; }
+    .xr-card.xr-card-static .xr-text { display: block; overflow: visible; }
+    .xr-card-static .xr-top .xr-plat { white-space: normal; }
+    .xr-link { text-decoration: none; }
+    .xr-cnt { margin-top: 6px; text-align: right; font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .xr-busy { opacity: 0.6; pointer-events: none; transition: opacity .15s; }
+    .xr-card-static .form-group:last-child { margin-bottom: 0; }
+
     /* Поздравления */
     .bd-field { margin-top: 10px; padding: 13px 14px 14px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); }
     .bd-fh { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 9px; }
@@ -4215,6 +4288,47 @@ select[aria-expanded="true"] { border-color: rgba(var(--ac), 0.55) !important; b
   </div>
 </div>
 
+<!-- ВНЕШНИЕ ОТЗЫВЫ: «Сервис» → «Внешние отзывы» — отзывы с Яндекс Карт, 2ГИС, Google вносят вручную; статус, ответственный, срок, ответ, шаблоны (право ext_reviews.manage) -->
+<div class="screen" id="screen-xr">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('service')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Внешние отзывы</h1><p>Яндекс, 2ГИС, Google: ответы и сроки</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div id="xrTabs"></div>
+    <div id="xrBody"><div class="loading">Загружаю...</div></div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<div class="screen" id="screen-xr-edit">
+  <div class="header">
+    <div class="back-btn" onclick="xreBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;" id="xreTitle">Внешний отзыв</h1><p id="xreSub"></p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div id="xreBody" style="margin-top:12px"><div class="loading">Загружаю...</div></div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<div class="screen" id="screen-xr-tpl">
+  <div class="header">
+    <div class="back-btn" onclick="xrTplBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;" id="xrtTitle">Шаблон ответа</h1><p>Готовый текст для ответа на отзыв</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div id="xrtBody" style="margin-top:12px"></div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
 <div class="screen" id="screen-review-rules">
   <div class="header">
     <div class="back-btn" onclick="showScreen('service')">
@@ -4785,7 +4899,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function fallbackPerms(jobRole) {
     const base = ['guests.view', 'guests.create', 'guests.edit', 'tags.use', 'visits.record', 'guests.birthdays', 'guests.vip_list', 'shift.mark', 'schedule.view', 'menu.view', 'problems.view', 'problems.report', 'problems.work_own_role'];
     const own = { 'Бармен': ['menu.stoplist_drinks', 'tips.view'], 'Повар': ['menu.stoplist_food'], 'КМ': ['menu.stoplist_hookah', 'tobacco.manage', 'tips.view'], 'Официант': ['tips.view'] }[jobRole] || [];
-    const admin = ['shifts.review', 'briefing.view', 'tobacco.manage', 'tips.view', 'tips.manage', 'stories.manage', 'tv.manage', 'standards.manage', 'checklists.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage', 'messages.view'];
+    const admin = ['shifts.review', 'briefing.view', 'tobacco.manage', 'tips.view', 'tips.manage', 'ext_reviews.manage', 'stories.manage', 'tv.manage', 'standards.manage', 'checklists.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage', 'messages.view'];
     const owner = ['surveys.manage', 'tags.manage', 'audit.view', 'settings.manage', 'founder_tasks.create', 'marketing.send', 'marketing.log', 'analytics.view', 'segments.view', 'feedback.view', 'guests.table', 'candidates.view'];
     if (jobRole === 'Основатель') return base.concat(admin, owner);
     if (jobRole === 'Администратор') return base.concat(admin);
@@ -5262,6 +5376,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('tips.manage')) list.push({ group: G.team, icon: 'tips', short: 'чаевые', title: 'Чаевые', sub: 'Отчёт, суммы, кто принимает, QR', fn: 'openTipsAdmin()' });
     if (can('standards.manage')) list.push({ group: G.team, icon: 'standards', short: 'стандарты', title: 'Стандарты', sub: 'Правила сервиса, тесты, кто прочитал', fn: "openStandardsEdit('service')" });
     if (can('tags.manage')) list.push({ group: G.guests, icon: 'tags', short: 'теги', title: 'Теги', sub: 'Список, цвета, подсказки', fn: 'openTagsEdit()' });
+    if (can('ext_reviews.manage')) list.push({ group: G.guests, icon: 'extreviews', short: 'внешние отзывы', title: 'Внешние отзывы', sub: 'Яндекс, 2ГИС, Google: ответы и сроки', fn: 'openExtReviews()' });
     if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'Логины, роли и права', fn: 'openEmployees()' });
     if (can('candidates.view')) list.push({ group: G.team, icon: 'candidates', short: 'кандидаты', title: 'Кандидаты', sub: 'Отклики на вакансии', fn: 'openCandidates()' });
     if (can('settings.manage')) list.push({ group: G.guests, icon: 'segments', short: 'правила сегментов', title: 'Правила сегментов', sub: 'Границы: дни и визиты', fn: 'openSegmentRules()' });
@@ -5279,6 +5394,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function svcBadgeInfo(i) {
     const b = svcBadges || {};
     if (i.icon === 'candidates' && b.candidates > 0) return { n: b.candidates, sub: `Новых: ${b.candidates}` };
+    if (i.icon === 'extreviews' && b.extReviews > 0) return { n: b.extReviews, sub: b.extReviewsOverdue > 0 ? `Просрочено: ${b.extReviewsOverdue} · ждут: ${b.extReviews}` : `Ждут ответа: ${b.extReviews}` };
     if (i.icon === 'menu' && b.menuAny > 0) {
       const parts = [];
       if (b.menuNoPhoto > 0) parts.push(`без фото ${b.menuNoPhoto}`);
@@ -5427,6 +5543,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     icons.briefing = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h9M4 12h9M4 18h5"/><path d="M16 13l2.2 2.2L22 10.5"/></svg>';
     icons.venue = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>';
     icons.tips = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 17V7h3.2a2.7 2.7 0 010 5.4H10M8.5 14.6h5.2"/></svg>';
+    icons.extreviews = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.5s-6.5-5.4-6.5-11a6.5 6.5 0 0113 0c0 5.6-6.5 11-6.5 11z"/><polygon points="12 6.8 13.1 9.1 15.6 9.4 13.8 11.1 14.3 13.6 12 12.4 9.7 13.6 10.2 11.1 8.4 9.4 10.9 9.1"/></svg>';
     homeIcons = icons;
     // Что показывать — решают права сотрудника (основатель выдаёт их галочками на экране «Сотрудники»)
     let shiftCards = '';
@@ -14940,6 +15057,555 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     loadTipsReport(true);
   }, 30000);
 
+  // ─── ВНЕШНИЕ ОТЗЫВЫ ───────────────────────────────
+  // «Сервис» → «Внешние отзывы» (право ext_reviews.manage). Отзывы с Яндекс Карт, 2ГИС, Google и других площадок вносят вручную:
+  // площадка, оценка, автор, текст, ссылка, дата. Дальше по каждому ведётся работа: статус, ответственный, срок, текст ответа
+  // (его можно собрать из готового шаблона). Три экрана: список (xr), карточка и форма отзыва (xr-edit), форма шаблона (xr-tpl).
+  // Сервер: /api/admin/ext-reviews (db/extreviews.js, миграция 044). Позже сюда подключится автосбор — поля те же.
+  const XR_PLATS = [
+    { key: 'yandex', title: 'Яндекс Карты', short: 'Яндекс', color: '#FC3F1D' },
+    { key: '2gis', title: '2ГИС', short: '2ГИС', color: '#1BA136' },
+    { key: 'google', title: 'Google Карты', short: 'Google', color: '#4285F4' },
+    { key: 'flamp', title: 'Фламп', short: 'Фламп', color: '#F5821F' },
+    { key: 'tripadvisor', title: 'TripAdvisor', short: 'TripAdvisor', color: '#00AA6C' },
+    { key: 'other', title: 'Другая площадка', short: 'Другая', color: '#8A8A93' }
+  ];
+  const xrPlat = k => XR_PLATS.find(p => p.key === k) || XR_PLATS[XR_PLATS.length - 1];
+  const XR_STATUS = [['new', 'Новый'], ['in_progress', 'В работе'], ['answered', 'Ответили'], ['skipped', 'Ответ не нужен']];
+  const XR_STATUS_OK = { new: 'Вернули в новые', in_progress: 'Взято в работу', answered: 'Отмечено: ответили', skipped: 'Отмечено: ответ не нужен' };
+  const XR_FILTERS = [['open', 'Ждут ответа'], ['overdue', 'Просрочено'], ['new', 'Новые'], ['in_progress', 'В работе'], ['answered', 'Ответили'], ['skipped', 'Не нужен'], ['all', 'Все']];
+  const XR_TONES = [['positive', 'Положительный (4–5)'], ['neutral', 'Нейтральный (3)'], ['negative', 'Негативный (1–2)'], ['any', 'Любой']];
+  const XR_TONE_SHORT = { positive: 'положительный', neutral: 'нейтральный', negative: 'негативный', any: 'любой' };
+  const XR_REPLY_MAX = 3000;
+
+  // xr — список; xre — открытый отзыв (новый или существующий); xrt — форма шаблона
+  var xr = { tab: 'reviews', filter: 'open', platform: '', q: '', items: [], hasMore: false, summary: null, today: '', meta: null, loading: false, moreBusy: false, err: '', seq: 0, qTimer: 0 };
+  var xre = null;
+  var xrt = null;
+
+  const xrNetMsg = e => (e && e.message === 'Failed to fetch') ? 'Нет связи с сервером' : ((e && e.message) || 'Не получилось — попробуйте ещё раз');
+  async function xrApi(path, opts) {
+    const res = await fetch(`${PROXY_BASE}${path}${path.includes('?') ? '&' : '?'}pin=${getPin()}`, Object.assign({ cache: 'no-store' }, opts || {}));
+    if (res.status === 401) { showScreen('pin'); throw new Error('auth'); }
+    if (res.status === 403) { accessDenied(); throw new Error('auth'); }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'Не получилось — попробуйте ещё раз');
+    return data;
+  }
+  const xrJson = (method, path, body) => xrApi(path, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) });
+  const xrEl = id => document.getElementById(id);
+  const xrToday = () => xr.today || new Date().toISOString().slice(0, 10);
+  function xrAddDays(day, n) { const d = new Date(day + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+  // «Сегодня», «Вчера», «28 окт»; для прошлых лет — с годом
+  function xrDay(day) {
+    if (!day) return '';
+    const t = tipDay(day, xrToday());
+    return (/^\d/.test(t) && String(day).slice(0, 4) !== xrToday().slice(0, 4)) ? `${t} ${String(day).slice(0, 4)}` : t;
+  }
+  function xrDueWord(day) {
+    const today = xrToday();
+    if (day === today) return 'сегодня';
+    if (day === xrAddDays(today, 1)) return 'завтра';
+    return xrDay(day);
+  }
+  const xrWho = label => String(label || '').replace(/\s*\([^)]*\)\s*$/, '');
+  function xrWhen(iso) {
+    try { return new Date(iso).toLocaleString('ru-RU', { timeZone: 'Europe/Moscow', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }); } catch { return ''; }
+  }
+  function xrStars(r) {
+    if (r === null || r === undefined) return '<span class="xr-stars none">без оценки</span>';
+    return `<span class="xr-stars" aria-label="Оценка ${r} из 5">${'★'.repeat(r)}<i>${'★'.repeat(5 - r)}</i></span>`;
+  }
+  function xrDueHtml(it) {
+    if (it.status === 'answered' || it.status === 'skipped' || !it.dueOn) return '';
+    if (it.overdue) { const n = it.daysLate || 1; return `<span class="xr-late-t">Просрочено на ${n} ${ruPlural(n, 'день', 'дня', 'дней')}</span>`; }
+    return `<span>срок: ${escHtml(xrDueWord(it.dueOn))}</span>`;
+  }
+  // Имя для приветствия из подписи автора: первое слово, если оно похоже на имя (не «Пользователь», не ник с цифрами)
+  function xrFirstName(author) {
+    const w = String(author || '').trim().split(/\s+/)[0].replace(/[.,;:!?()«»"']+$/g, '');
+    if (!/^[A-Za-zА-Яа-яЁё][A-Za-zА-Яа-яЁё-]{1,29}$/.test(w)) return '';
+    if (/^(пользователь|гость|аноним\S*|анонимный|посетитель|клиент|anonymous|user|guest|google|яндекс)$/i.test(w)) return '';
+    return w;
+  }
+  // Шаблон → текст ответа: метка {имя} заменяется именем; нет имени — приветствие остаётся без него («Здравствуйте! …»)
+  function xrFill(body, author) {
+    const name = xrFirstName(author);
+    if (name) return String(body).replace(/\{имя\}/gi, name);
+    return String(body)
+      .replace(/(^|\n)[ \t]*\{имя\}[ \t]*[,!]?[ \t]*([^\n])?/gi, (m, nl, ch) => nl + (ch ? ch.toUpperCase() : ''))
+      .replace(/[ \t]*,?[ \t]*\{имя\}/gi, '');
+  }
+
+  // ── Список ──
+  function openExtReviews() {
+    if (!can('ext_reviews.manage')) { accessDenied(); return; }
+    xr.tab = 'reviews';
+    showScreen('xr');
+    xrRender();
+    xrLoad({ quiet: xr.items.length > 0, keep: true });
+  }
+  function xrRender() {
+    const tabs = [['reviews', 'Отзывы'], ['templates', 'Шаблоны']];
+    xrEl('xrTabs').innerHTML = `<div class="sg2">${tabs.map(([k, l]) => `<button type="button" class="${xr.tab === k ? 'on' : ''}" onclick="xrTab('${k}')">${l}</button>`).join('')}</div>`;
+    if (xr.tab === 'reviews') {
+      if (!xrEl('xrList')) xrBuild();
+      xrRenderSum(); xrRenderFilters(); xrRenderList();
+    } else {
+      xrEl('xrBody').innerHTML = xrTplTabHtml();
+    }
+  }
+  function xrTab(t) {
+    if (xr.tab === t) return;
+    xr.tab = t;
+    xrRender();
+    if (t === 'templates') xrLoadTemplates(); else xrLoad({ quiet: xr.items.length > 0, keep: true });
+  }
+  // Каркас вкладки «Отзывы» строится один раз: поле поиска не перерисовываем, иначе слетает клавиатура
+  function xrBuild() {
+    const opts = '<option value="">Все площадки</option>' + XR_PLATS.map(p => `<option value="${p.key}"${xr.platform === p.key ? ' selected' : ''}>${escHtml(p.short)}</option>`).join('');
+    xrEl('xrBody').innerHTML = `<div id="xrSum"></div>
+      <button type="button" class="btn-cta" onclick="xrNew()">+ Внести отзыв</button>
+      <div class="xr-filters" id="xrFilters"></div>
+      <div class="xr-tools"><select class="form-input" id="xrPlat" onchange="xrSetPlat(this.value)" aria-label="Площадка">${opts}</select><input class="form-input" id="xrQ" type="search" placeholder="Поиск по отзывам" value="${escHtml(xr.q)}" oninput="xrSearchInput()" enterkeyhint="search" autocomplete="off" maxlength="80"></div>
+      <div id="xrList"></div>`;
+  }
+  function xrRenderSum() {
+    const el = xrEl('xrSum'); if (!el) return;
+    const s = xr.summary;
+    if (!s) { el.innerHTML = ''; return; }
+    const avg = s.avg30 === null ? '—' : String(s.avg30).replace('.', ',');
+    const chips = s.byPlatform.length
+      ? `<div class="xr-plats">${s.byPlatform.map(p => `<span class="xr-pc"><i class="xr-dot" style="background:${xrPlat(p.platform).color}"></i>${escHtml(xrPlat(p.platform).short)} <b>${p.avg === null ? '—' : String(p.avg).replace('.', ',')}</b> · ${p.count}</span>`).join('')}</div>` : '';
+    el.innerHTML = `<div class="vn-hero eq">
+        <div class="vn-stat main"><div class="vn-stat-k">Ждут ответа</div><div class="vn-stat-v${s.open ? '' : ' off'}">${s.open}</div><div class="vn-stat-s">${s.open ? (s.new ? `новых: ${s.new}` : 'все в работе') : 'всё обработано'}</div></div>
+        <div class="vn-stat"><div class="vn-stat-k">Просрочено</div><div class="vn-stat-v${s.overdue ? ' xr-bad' : ' off'}">${s.overdue}</div><div class="vn-stat-s">${s.overdue ? 'срок прошёл' : 'в срок'}</div></div>
+        <div class="vn-stat"><div class="vn-stat-k">Оценка, 30 дн.</div><div class="vn-stat-v sm${s.avg30 === null ? ' off' : ''}">${avg}${s.avg30 === null ? '' : ' ★'}</div><div class="vn-stat-s">${s.reviews30} ${ruPlural(s.reviews30, 'отзыв', 'отзыва', 'отзывов')}</div></div>
+      </div>${chips}`;
+  }
+  function xrRenderFilters() {
+    const el = xrEl('xrFilters'); if (!el) return;
+    const s = xr.summary || {};
+    const cnt = { open: s.open, overdue: s.overdue, new: s.new, in_progress: s.inProgress };
+    el.innerHTML = XR_FILTERS.map(([k, l]) => {
+      const n = cnt[k];
+      return `<button type="button" class="xr-f${xr.filter === k ? ' on' : ''}${k === 'overdue' && n ? ' late' : ''}" onclick="xrSetFilter('${k}')">${l}${n ? `<i>${n}</i>` : ''}</button>`;
+    }).join('');
+  }
+  function xrCardHtml(it) {
+    const p = xrPlat(it.platform);
+    const closed = it.status === 'answered' || it.status === 'skipped';
+    const who = closed ? (it.closedBy ? `<span>${escHtml(xrWho(it.closedBy))}</span>` : '')
+      : (it.assignee ? `<span>Ведёт: ${escHtml(xrWho(it.assignee))}</span>` : '<span>Без ответственного</span>');
+    return `<div class="xr-card${it.overdue ? ' late' : ''}" role="button" tabindex="0" onclick="xrOpen('${escJs(it.id)}')">
+        <div class="xr-top"><i class="xr-dot" style="background:${p.color}"></i><span class="xr-plat">${escHtml(p.short)}</span>${xrStars(it.rating)}<span class="xr-date">${escHtml(xrDay(it.reviewedOn))}</span></div>
+        ${it.authorName ? `<div class="xr-auth">${escHtml(it.authorName)}</div>` : ''}
+        ${it.text ? `<div class="xr-text">${escHtml(it.text)}</div>` : ''}
+        <div class="xr-meta"><span class="xr-st ${it.status}">${escHtml(it.statusTitle || '')}</span>${who}${xrDueHtml(it)}</div>
+      </div>`;
+  }
+  function xrEmptyText() {
+    if (xr.q) return 'Ничего не нашли. Попробуйте другое слово или уберите фильтр.';
+    if (xr.summary && !xr.summary.total) return 'Пока ни одного отзыва. Вносите отзывы с Яндекс Карт, 2ГИС и Google кнопкой выше: по каждому появятся срок, ответственный и готовый ответ.';
+    if (xr.filter === 'open') return 'Все отзывы обработаны. Новые вносите кнопкой выше.';
+    if (xr.filter === 'overdue') return 'Просроченных отзывов нет.';
+    return 'В этом разделе отзывов нет.';
+  }
+  function xrRenderList() {
+    const el = xrEl('xrList'); if (!el) return;
+    if (xr.loading && !xr.items.length) { el.innerHTML = '<div class="loading">Загружаю...</div>'; return; }
+    if (xr.err && !xr.items.length) { el.innerHTML = errorStateHtml(xr.err, 'xrLoad()'); return; }
+    if (!xr.items.length) { el.innerHTML = `<div class="empty-state">${escHtml(xrEmptyText())}</div>`; return; }
+    el.innerHTML = xr.items.map(xrCardHtml).join('') +
+      (xr.hasMore ? `<button type="button" class="btn-ghost xr-more" onclick="xrMore()"${xr.moreBusy ? ' disabled' : ''}>${xr.moreBusy ? 'Загружаю...' : 'Показать ещё'}</button>` : '');
+  }
+  // o.quiet — без «Загружаю…» (возврат на экран); o.keep — подгрузить столько же, сколько было на экране; o.more — следующая страница
+  async function xrLoad(o) {
+    o = o || {};
+    const seq = ++xr.seq;
+    const more = !!o.more;
+    const offset = more ? xr.items.length : 0;
+    const limit = o.keep ? Math.min(100, Math.max(30, xr.items.length)) : 30;
+    const qs = new URLSearchParams({ status: xr.filter, offset: String(offset), limit: String(limit) });
+    if (xr.platform) qs.set('platform', xr.platform);
+    if (xr.q) qs.set('q', xr.q);
+    if (!xr.meta) qs.set('first', '1');
+    if (more) { xr.moreBusy = true; xrRenderList(); }
+    else if (!o.quiet) { xr.loading = true; xr.err = ''; xrRenderList(); }
+    try {
+      const r = await xrApi('/api/admin/ext-reviews?' + qs.toString());
+      if (seq !== xr.seq) return;
+      xr.loading = false; xr.moreBusy = false; xr.err = '';
+      xr.items = more ? xr.items.concat(r.items) : r.items;
+      xr.hasMore = !!r.hasMore; xr.summary = r.summary; xr.today = r.today;
+      if (r.templates) xr.meta = { templates: r.templates, assignees: r.assignees, me: r.me, dueDays: r.dueDays || { low: 1, other: 3 } };
+      if (activeScreenName() === 'xr') {
+        if (xr.tab === 'reviews') { xrRenderSum(); xrRenderFilters(); xrRenderList(); } else xrRender();
+      }
+    } catch (e) {
+      if (e.message === 'auth' || seq !== xr.seq) return;
+      xr.loading = false; xr.moreBusy = false;
+      if (o.quiet) return;
+      xr.err = xrNetMsg(e);
+      xrRenderList();
+      if (more) showToast(xr.err, true);
+    }
+  }
+  function xrMore() { if (!xr.moreBusy) xrLoad({ more: true }); }
+  function xrSetFilter(k) {
+    if (xr.filter === k) return;
+    xr.filter = k; xr.items = []; xr.hasMore = false;
+    xrRenderFilters(); xrLoad();
+  }
+  function xrSetPlat(v) { xr.platform = v; xr.items = []; xr.hasMore = false; xrLoad(); }
+  function xrSearchInput() {
+    clearTimeout(xr.qTimer);
+    xr.qTimer = setTimeout(() => {
+      const v = (xrEl('xrQ')?.value || '').trim();
+      if (v === xr.q) return;
+      xr.q = v; xr.items = []; xr.hasMore = false; xrLoad();
+    }, 350);
+  }
+
+  // ── Карточка отзыва и форма ──
+  function xrNew() {
+    if (!xr.meta) { showToast('Данные ещё загружаются — секунду', true); xrLoad({ quiet: true }); return; }
+    let plat = 'yandex';
+    try { plat = localStorage.getItem('xr-plat') || 'yandex'; } catch {}
+    if (!XR_PLATS.some(p => p.key === plat)) plat = 'yandex';
+    xre = { mode: 'new', id: null, item: null, history: null, editing: true, dueTouched: false, busy: false, reply: '', snap: '',
+      f: { platform: plat, rating: null, author: '', date: xrToday(), text: '', url: '', due: xrDefaultDue(null), assignee: '' } };
+    xre.snap = JSON.stringify(xre.f);
+    showScreen('xr-edit');
+    xreRender();
+  }
+  function xrDefaultDue(rating) {
+    const d = (xr.meta && xr.meta.dueDays) || { low: 1, other: 3 };
+    return xrAddDays(xrToday(), rating !== null && rating <= 3 ? d.low : d.other);
+  }
+  function xrOpen(id) {
+    const it = xr.items.find(x => x.id === id);
+    if (!it) return;
+    xre = { mode: 'view', id, item: it, history: null, editing: false, dueTouched: true, busy: false, reply: it.replyText || '', snap: '', f: null, histErr: false };
+    showScreen('xr-edit');
+    xreRender();
+    xreFetch();
+  }
+  async function xreFetch() {
+    const id = xre && xre.id;
+    if (!id) return;
+    try {
+      const r = await xrApi('/api/admin/ext-reviews/' + encodeURIComponent(id));
+      if (!xre || xre.id !== id) return;
+      const replyClean = xre.reply === (xre.item.replyText || '');
+      xre.item = r.item; xre.history = r.history; xre.histErr = false;
+      if (replyClean) xre.reply = r.item.replyText || '';
+      if (document.activeElement && document.activeElement.closest && document.activeElement.closest('#xreBody')) xreRenderHist(); else xreRender();
+    } catch (e) {
+      if (e.message === 'auth' || !xre || xre.id !== id) return;
+      if (/не найден/i.test(e.message)) { showToast('Отзыв уже удалён', true); xreClose(); return; }
+      xre.histErr = true; xreRenderHist();
+    }
+  }
+  const xreDirty = () => !!xre && (xre.mode === 'new'
+    ? JSON.stringify(xre.f) !== xre.snap
+    : ((xre.item && xre.reply !== (xre.item.replyText || '')) || (xre.editing && JSON.stringify(xre.f) !== xre.snap)));
+  async function xreBack() {
+    if (xreDirty() && !(await askConfirm(xre.mode === 'new' ? 'Отзыв не сохранён. Выйти без сохранения?' : 'Есть несохранённые правки. Выйти без сохранения?', { ok: 'Выйти', danger: true }))) return;
+    xreClose();
+  }
+  function xreClose() {
+    xre = null;
+    showScreen('xr', { restoreScroll: true });
+    xrRender();
+    xrLoad({ quiet: true, keep: true });
+  }
+
+  function xreFields(isNew) {
+    const f = xre.f;
+    const plats = XR_PLATS.map(p => `<option value="${p.key}"${f.platform === p.key ? ' selected' : ''}>${escHtml(p.short)}</option>`).join('');
+    const rate = [1, 2, 3, 4, 5].map(n => `<button type="button" class="${f.rating !== null && n <= f.rating ? 'on' : ''}" onclick="xreRate(${n})" aria-label="Оценка ${n}">★</button>`).join('');
+    const maxDay = xrAddDays(xrToday(), 1);
+    const extra = isNew ? `
+      <div class="form-group"><label class="form-label">Срок ответа</label>
+        <input class="form-input" id="xrfDue" type="date" value="${escHtml(f.due)}" onchange="xre.f.due=this.value;xre.dueTouched=true">
+        <div class="poster-note">Если не менять, срок зависит от оценки: до 3 звёзд — ${xr.meta.dueDays.low} ${ruPlural(xr.meta.dueDays.low, 'день', 'дня', 'дней')}, выше — ${xr.meta.dueDays.other} ${ruPlural(xr.meta.dueDays.other, 'день', 'дня', 'дней')}.</div></div>
+      <div class="form-group"><label class="form-label">Ответственный</label>
+        <select class="form-input" onchange="xre.f.assignee=this.value">${xrAssigneeOpts(f.assignee, '')}</select>
+        <div class="poster-note">Если выбрать, отзыв сразу получит статус «В работе».</div></div>` : '';
+    return `<div class="xr-grid2">
+        <div class="form-group"><label class="form-label">Площадка</label><select class="form-input" onchange="xre.f.platform=this.value">${plats}</select></div>
+        <div class="form-group"><label class="form-label">Дата отзыва</label><input class="form-input" type="date" value="${escHtml(f.date)}" max="${maxDay}" onchange="xre.f.date=this.value"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Оценка</label><div class="xr-rate" id="xreRate">${rate}</div><div class="poster-note" id="xreRateNote">${xreRateNote()}</div></div>
+      <div class="form-group"><label class="form-label">Автор</label><input class="form-input" type="text" maxlength="120" placeholder="Как подписан на площадке" value="${escHtml(f.author)}" oninput="xre.f.author=this.value" autocomplete="off"></div>
+      <div class="form-group"><label class="form-label">Текст отзыва</label><textarea class="form-input xr-tf-in" maxlength="5000" placeholder="Скопируйте текст отзыва с площадки" oninput="xre.f.text=this.value">${escHtml(f.text)}</textarea></div>
+      <div class="form-group"><label class="form-label">Ссылка на отзыв</label><input class="form-input" type="url" maxlength="500" placeholder="https://…" value="${escHtml(f.url)}" oninput="xre.f.url=this.value" autocomplete="off" autocapitalize="off" spellcheck="false"></div>${extra}`;
+  }
+  const xreRateNote = () => xre.f.rating === null ? 'Оценка не указана. Нужна хотя бы оценка или текст отзыва.' : `${xre.f.rating} из 5 · нажмите ещё раз, чтобы убрать`;
+  function xrAssigneeOpts(curId, curLabel) {
+    const list = (xr.meta && xr.meta.assignees) || [];
+    let found = !curId;
+    let h = '<option value="">Не назначен</option>' + list.map(a => {
+      if (a.id === curId) found = true;
+      return `<option value="${escHtml(a.id)}"${a.id === curId ? ' selected' : ''}>${escHtml(a.name)} · ${escHtml(a.role)}</option>`;
+    }).join('');
+    if (!found) h += `<option value="${escHtml(curId)}" selected>${escHtml(xrWho(curLabel) || 'Сотрудник')} (нет доступа)</option>`;
+    return h;
+  }
+  function xreRate(n) {
+    xre.f.rating = xre.f.rating === n ? null : n;
+    [...document.querySelectorAll('#xreRate button')].forEach((b, i) => b.classList.toggle('on', xre.f.rating !== null && i < xre.f.rating));
+    const note = xrEl('xreRateNote'); if (note) note.textContent = xreRateNote();
+    if (xre.mode === 'new' && !xre.dueTouched) {
+      xre.f.due = xrDefaultDue(xre.f.rating);
+      const d = xrEl('xrfDue'); if (d) d.value = xre.f.due;
+    }
+  }
+  function xreRender() {
+    if (!xre) return;
+    const isNew = xre.mode === 'new';
+    xrEl('xreTitle').textContent = isNew ? 'Новый отзыв' : 'Внешний отзыв';
+    xrEl('xreSub').textContent = isNew ? 'Внесите отзыв с площадки вручную' : `${xrPlat(xre.item.platform).title}`;
+    xrEl('xreBody').className = xre.busy ? 'xr-busy' : '';
+    xrEl('xreBody').innerHTML = isNew
+      ? `<div class="xr-card xr-card-static">${xreFields(true)}</div>
+         <button type="button" class="btn-cta" onclick="xreSaveNew()">Внести отзыв</button>`
+      : xreViewHtml();
+  }
+  function xreViewHtml() {
+    const it = xre.item, p = xrPlat(it.platform);
+    const link = /^https?:\/\//i.test(it.url || '') ? `<a class="btn-ghost xr-link" href="${escHtml(it.url)}" target="_blank" rel="noopener noreferrer">Открыть на площадке</a>` : '';
+    const head = xre.editing
+      ? `<div class="xr-card xr-card-static"><div class="xr-h">Данные отзыва</div>${xreFields(false)}
+          <div class="xr-row"><button type="button" class="btn-ghost" onclick="xreEditCancel()">Отмена</button><button type="button" class="btn-cta" onclick="xreSaveData()">Сохранить</button></div></div>`
+      : `<div class="xr-card xr-card-static">
+          <div class="xr-top"><i class="xr-dot" style="background:${p.color}"></i><span class="xr-plat">${escHtml(p.title)}</span>${xrStars(it.rating)}<span class="xr-date">${escHtml(xrDay(it.reviewedOn))}</span></div>
+          ${it.authorName ? `<div class="xr-auth" style="white-space:normal">${escHtml(it.authorName)}</div>` : ''}
+          <div class="xr-text">${it.text ? escHtml(it.text) : 'Без текста: только оценка.'}</div>
+          <div class="xr-row">${link}<button type="button" class="btn-ghost" onclick="xreEdit()">Править данные</button></div>
+        </div>`;
+    const me = xr.meta && xr.meta.me;
+    const open = it.status === 'new' || it.status === 'in_progress';
+    const canTake = open && me && it.assigneeId !== me && ((xr.meta.assignees || []).some(a => a.id === me));
+    const late = (open && it.overdue) ? `<div class="poster-note xr-late-t">Срок прошёл ${it.daysLate || 1} ${ruPlural(it.daysLate || 1, 'день', 'дня', 'дней')} назад</div>` : '';
+    const work = `<div class="xr-card xr-card-static"><div class="xr-h">Работа</div>
+        <div class="xr-seg">${XR_STATUS.map(([k, l]) => `<button type="button" class="${it.status === k ? 'on' : ''}" onclick="xreStatus('${k}')">${l}</button>`).join('')}</div>
+        <div class="form-group" style="margin-top:14px"><label class="form-label">Ответственный</label>
+          <select class="form-input" onchange="xreAssign(this.value)">${xrAssigneeOpts(it.assigneeId || '', it.assignee)}</select>
+          ${canTake ? '<button type="button" class="btn-ghost" onclick="xreTake()">Взять себе</button>' : ''}</div>
+        <div class="form-group" style="margin-bottom:0"><label class="form-label">Срок ответа</label>
+          <div class="xr-row" style="margin-top:0"><input class="form-input" type="date" value="${escHtml(it.dueOn || '')}" onchange="xreDue(this.value)">${it.dueOn ? '<button type="button" class="btn-ghost" style="flex:0 0 auto;width:auto;padding:0 16px" onclick="xreDue(\'\')">Убрать</button>' : ''}</div>
+          ${late}</div>
+      </div>`;
+    const sug = it.rating === null ? 'any' : it.rating >= 4 ? 'positive' : it.rating === 3 ? 'neutral' : 'negative';
+    const rank = t => t.tone === sug ? 0 : t.tone === 'any' ? 1 : 2;
+    const tpls = ((xr.meta && xr.meta.templates) || []).map((t, i) => ({ t, i })).sort((a, b) => rank(a.t) - rank(b.t) || a.i - b.i).map(x => x.t);
+    const chips = tpls.length
+      ? `<div class="xr-tpls">${tpls.map(t => `<button type="button" class="xr-tpl${t.tone === sug ? ' sug' : ''}" onclick="xreTpl('${escJs(t.id)}')">${escHtml(t.title)}</button>`).join('')}</div>`
+      : '<div class="poster-note" style="margin:0 0 10px">Готовых шаблонов нет. Добавьте их на вкладке «Шаблоны».</div>';
+    const reply = `<div class="xr-card xr-card-static"><div class="xr-h">Ответ</div>${chips}
+        <textarea class="form-input xr-tf-in" id="xreReply" maxlength="${XR_REPLY_MAX}" placeholder="Выберите шаблон или напишите ответ. Опубликуйте его на площадке и отметьте «Ответили»." oninput="xreReplyInput(this)">${escHtml(xre.reply)}</textarea>
+        <div class="xr-cnt" id="xreCnt">${xre.reply.length} / ${XR_REPLY_MAX}</div>
+        <div class="xr-row"><button type="button" class="btn-ghost" onclick="xreCopy()">Скопировать</button><button type="button" class="btn-cta" onclick="xreSaveReply()">Сохранить</button></div>
+      </div>`;
+    return `${head}${work}${reply}<div id="xreHist">${xreHistHtml()}</div>
+      <button type="button" class="btn-ghost xr-danger" style="margin-top:6px" onclick="xreDelete()">Удалить отзыв</button>`;
+  }
+  function xreHistHtml() {
+    if (!xre || xre.mode === 'new') return '';
+    if (xre.histErr && !xre.history) return '<div class="poster-note" style="margin:10px 0">Историю загрузить не удалось.</div>';
+    if (!xre.history || !xre.history.length) return '';
+    return `<div class="xr-card xr-card-static"><div class="xr-h">История</div><ul class="xr-hist">${xre.history.map(h => `<li><time>${escHtml(xrWhen(h.at))} · ${escHtml(xrWho(h.actor))}</time>${escHtml(h.summary)}</li>`).join('')}</ul></div>`;
+  }
+  function xreRenderHist() { const el = xrEl('xreHist'); if (el) el.innerHTML = xreHistHtml(); }
+
+  function xreEdit() {
+    const it = xre.item;
+    xre.f = { platform: it.platform, rating: it.rating, author: it.authorName || '', date: it.reviewedOn || xrToday(), text: it.text || '', url: it.url || '', due: '', assignee: '' };
+    xre.snap = JSON.stringify(xre.f); xre.editing = true;
+    xreRender();
+  }
+  function xreEditCancel() { xre.editing = false; xre.f = null; xreRender(); }
+  async function xreSaveData() {
+    const f = xre.f;
+    if (f.rating === null && !f.text.trim()) { showToast('Укажите оценку или впишите текст отзыва', true); return; }
+    if (!f.date) { showToast('Укажите дату отзыва', true); return; }
+    const ok = await xrePatch({ platform: f.platform, rating: f.rating, authorName: f.author.trim(), text: f.text.trim(), url: f.url.trim(), reviewedOn: f.date }, 'Данные отзыва сохранены');
+    if (ok && xre) { xre.editing = false; xre.f = null; xreRender(); }
+  }
+  async function xreSaveNew() {
+    if (!xre || xre.busy) return;
+    const f = xre.f;
+    if (f.rating === null && !f.text.trim()) { showToast('Укажите оценку или впишите текст отзыва', true); return; }
+    if (!f.date) { showToast('Укажите дату отзыва', true); return; }
+    xre.busy = true; xrEl('xreBody').className = 'xr-busy';
+    try {
+      const r = await xrJson('POST', '/api/admin/ext-reviews', { platform: f.platform, rating: f.rating, authorName: f.author.trim(), text: f.text.trim(), url: f.url.trim(), reviewedOn: f.date, dueOn: f.due || null, assigneeId: f.assignee || null });
+      try { localStorage.setItem('xr-plat', f.platform); } catch {}
+      const it = r.item;
+      xre = { mode: 'view', id: it.id, item: it, history: null, editing: false, dueTouched: true, busy: false, reply: it.replyText || '', snap: '', f: null, histErr: false };
+      showToast('Отзыв внесён', false);
+      xreRender();
+      window.scrollTo(0, 0);
+      xreFetch();
+    } catch (e) {
+      if (xre) { xre.busy = false; xrEl('xreBody').className = ''; }
+      if (e.message !== 'auth') showToast(xrNetMsg(e), true);
+    }
+  }
+  // Любое изменение существующего отзыва: сервер вернёт отзыв и историю
+  async function xrePatch(patch, okMsg) {
+    if (!xre || xre.busy || xre.mode !== 'view') return false;
+    const id = xre.id;
+    xre.busy = true; xrEl('xreBody').className = 'xr-busy';
+    try {
+      const r = await xrJson('PATCH', '/api/admin/ext-reviews/' + encodeURIComponent(id), patch);
+      if (!xre || xre.id !== id) return true;
+      xre.item = r.item; xre.history = r.history; xre.histErr = false;
+      if (Object.prototype.hasOwnProperty.call(patch, 'replyText')) xre.reply = r.item.replyText || '';
+      xre.busy = false;
+      xreRender();
+      if (okMsg) showToast(okMsg, false);
+      return true;
+    } catch (e) {
+      if (xre && xre.id === id) { xre.busy = false; xreRender(); }
+      if (e.message !== 'auth') showToast(xrNetMsg(e), true);
+      return false;
+    }
+  }
+  async function xreStatus(k) {
+    if (!xre || xre.busy || xre.item.status === k) return;
+    const patch = { status: k };
+    if (k === 'answered') {
+      if (!xre.reply.trim()) {
+        showToast('Сначала впишите текст ответа, который опубликовали на площадке', true);
+        const ta = xrEl('xreReply'); if (ta) { ta.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+        return;
+      }
+      patch.replyText = xre.reply;
+    }
+    await xrePatch(patch, XR_STATUS_OK[k]);
+  }
+  function xreAssign(v) { xrePatch({ assigneeId: v || null }, v ? 'Ответственный назначен' : 'Ответственный снят'); }
+  function xreTake() { const me = xr.meta && xr.meta.me; if (me) xrePatch({ assigneeId: me }, 'Отзыв за вами'); }
+  function xreDue(v) { xrePatch({ dueOn: v || null }, v ? 'Срок сохранён' : 'Срок убран'); }
+  function xreReplyInput(el) {
+    xre.reply = el.value;
+    const c = xrEl('xreCnt'); if (c) c.textContent = `${el.value.length} / ${XR_REPLY_MAX}`;
+  }
+  async function xreTpl(id) {
+    const t = ((xr.meta && xr.meta.templates) || []).find(x => x.id === id);
+    if (!t || !xre) return;
+    if (xre.reply.trim() && !(await askConfirm(`Заменить текст ответа шаблоном «${t.title}»?`, { ok: 'Заменить' }))) return;
+    xre.reply = xrFill(t.body, xre.item.authorName).slice(0, XR_REPLY_MAX);
+    const ta = xrEl('xreReply');
+    if (ta) { ta.value = xre.reply; xreReplyInput(ta); }
+  }
+  function xreCopy() {
+    if (!xre.reply.trim()) { showToast('Нечего копировать: выберите шаблон или впишите ответ', true); return; }
+    copyText(xre.reply, 'Ответ скопирован');
+  }
+  function xreSaveReply() {
+    if (xre.reply === (xre.item.replyText || '')) { showToast('Ответ уже сохранён', false); return; }
+    if (!xre.reply.trim() && xre.item.status === 'answered') { showToast('У отзыва со статусом «Ответили» текст ответа должен остаться', true); return; }
+    xrePatch({ replyText: xre.reply }, 'Ответ сохранён');
+  }
+  async function xreDelete() {
+    if (!xre || xre.busy) return;
+    if (!(await askConfirm('Удалить этот отзыв из списка?\n\nНа самой площадке он останется. Вернуть удалённое нельзя.', { ok: 'Удалить', danger: true }))) return;
+    const id = xre.id;
+    try {
+      await xrApi('/api/admin/ext-reviews/' + encodeURIComponent(id), { method: 'DELETE' });
+      showToast('Отзыв удалён', false);
+      xr.items = xr.items.filter(x => x.id !== id);
+      xreClose();
+    } catch (e) { if (e.message !== 'auth') showToast(xrNetMsg(e), true); }
+  }
+
+  // ── Шаблоны ответов ──
+  async function xrLoadTemplates() {
+    try {
+      const r = await xrApi('/api/admin/ext-reviews/templates');
+      if (xr.meta) xr.meta.templates = r.templates; else await xrLoad({ quiet: true });
+      if (xr.tab === 'templates' && activeScreenName() === 'xr') xrRender();
+    } catch (e) {
+      if (e.message === 'auth') return;
+      if (!xr.meta) { xr.err = xrNetMsg(e); if (xr.tab === 'templates') xrRender(); }
+    }
+  }
+  function xrTplTabHtml() {
+    if (!xr.meta) return xr.err ? errorStateHtml(xr.err, 'xrLoadTemplates()') : '<div class="loading">Загружаю...</div>';
+    const tp = xr.meta.templates || [];
+    const note = `<div class="sv-tip" style="margin:0 0 4px">${TIP_INFO}<div>Готовые ответы на отзывы. В карточке отзыва выбираете шаблон, и текст подставляется сам: метка <b>{имя}</b> заменяется именем автора.</div></div>`;
+    const list = tp.length
+      ? tp.map(t => `<div class="xr-card" role="button" tabindex="0" onclick="xrTplOpen('${escJs(t.id)}')">
+          <div class="xr-top" style="align-items:flex-start"><span class="xr-auth" style="margin:0;flex:1 1 auto;white-space:normal;overflow:visible">${escHtml(t.title)}</span><span class="xr-tone ${t.tone}">${escHtml(XR_TONE_SHORT[t.tone] || '')}</span></div>
+          <div class="xr-text">${escHtml(t.body)}</div></div>`).join('')
+      : '<div class="empty-state">Шаблонов пока нет. Добавьте первый, и он появится в карточке отзыва.</div>';
+    return `${note}<button type="button" class="btn-cta" onclick="xrTplOpen(null)">+ Новый шаблон</button>${list}`;
+  }
+  function xrTplOpen(id) {
+    const t = id ? ((xr.meta && xr.meta.templates) || []).find(x => x.id === id) : null;
+    if (id && !t) return;
+    xrt = { id: id || null, title: t ? t.title : '', tone: t ? t.tone : 'any', body: t ? t.body : '', busy: false };
+    xrt.snap = JSON.stringify([xrt.title, xrt.tone, xrt.body]);
+    showScreen('xr-tpl');
+    xrEl('xrtTitle').textContent = id ? 'Шаблон ответа' : 'Новый шаблон';
+    xrEl('xrtBody').innerHTML = `<div class="xr-card xr-card-static">
+        <div class="form-group"><label class="form-label">Название</label><input class="form-input" type="text" maxlength="80" placeholder="Например: Спасибо за тёплые слова" value="${escHtml(xrt.title)}" oninput="xrt.title=this.value" autocomplete="off"></div>
+        <div class="form-group"><label class="form-label">Для какого отзыва</label><select class="form-input" onchange="xrt.tone=this.value">${XR_TONES.map(([k, l]) => `<option value="${k}"${xrt.tone === k ? ' selected' : ''}>${l}</option>`).join('')}</select>
+          <div class="poster-note">Подходящие по оценке шаблоны показываются в карточке отзыва первыми.</div></div>
+        <div class="form-group" style="margin-bottom:0"><label class="form-label">Текст ответа</label><textarea class="form-input xr-tf-in" id="xrtText" maxlength="${XR_REPLY_MAX}" placeholder="Здравствуйте, {имя}! …" oninput="xrt.body=this.value;xrTplPrev()">${escHtml(xrt.body)}</textarea>
+          <div class="poster-note">{имя} заменится именем автора. Если имени нет, останется просто «Здравствуйте!».</div></div>
+      </div>
+      <div class="xr-h" style="margin-top:14px">Так выглядит с именем «Анна»</div>
+      <div class="xr-prev" id="xrtPrev"></div>
+      <button type="button" class="btn-cta" id="xrtSave" onclick="xrTplSave()">Сохранить</button>
+      ${id ? '<button type="button" class="btn-ghost xr-danger" onclick="xrTplArchive()">Убрать в архив</button>' : ''}`;
+    xrTplPrev();
+  }
+  function xrTplPrev() {
+    const el = xrEl('xrtPrev'); if (!el || !xrt) return;
+    el.textContent = xrt.body.trim() ? xrFill(xrt.body, 'Анна') : 'Здесь появится текст ответа';
+  }
+  async function xrTplBack() {
+    if (xrt && JSON.stringify([xrt.title, xrt.tone, xrt.body]) !== xrt.snap && !(await askConfirm('Шаблон не сохранён. Выйти без сохранения?', { ok: 'Выйти', danger: true }))) return;
+    xrt = null;
+    showScreen('xr', { restoreScroll: true });
+    xrRender();
+  }
+  async function xrTplSave() {
+    if (!xrt || xrt.busy) return;
+    if (!xrt.title.trim()) { showToast('Напишите название шаблона', true); return; }
+    if (!xrt.body.trim()) { showToast('Напишите текст шаблона', true); return; }
+    xrt.busy = true; xrEl('xrtSave').disabled = true;
+    try {
+      const payload = { title: xrt.title.trim(), tone: xrt.tone, body: xrt.body.trim() };
+      const r = xrt.id ? await xrJson('PATCH', '/api/admin/ext-reviews/templates/' + encodeURIComponent(xrt.id), payload) : await xrJson('POST', '/api/admin/ext-reviews/templates', payload);
+      if (xr.meta) xr.meta.templates = r.templates;
+      showToast('Шаблон сохранён', false);
+      xrt = null;
+      showScreen('xr', { restoreScroll: true });
+      xrRender();
+    } catch (e) {
+      if (xrt) { xrt.busy = false; const b = xrEl('xrtSave'); if (b) b.disabled = false; }
+      if (e.message !== 'auth') showToast(xrNetMsg(e), true);
+    }
+  }
+  async function xrTplArchive() {
+    if (!xrt || !xrt.id || xrt.busy) return;
+    if (!(await askConfirm(`Убрать шаблон «${xrt.title}» в архив?\n\nУже написанные ответы не изменятся. Шаблон пропадёт из выбора в карточке отзыва.`, { ok: 'Убрать', danger: true }))) return;
+    try {
+      const r = await xrApi('/api/admin/ext-reviews/templates/' + encodeURIComponent(xrt.id), { method: 'DELETE' });
+      if (xr.meta) xr.meta.templates = r.templates;
+      showToast('Шаблон убран в архив', false);
+      xrt = null;
+      showScreen('xr', { restoreScroll: true });
+      xrRender();
+    } catch (e) { if (e.message !== 'auth') showToast(xrNetMsg(e), true); }
+  }
+
   // ─── ЧЕК-ЛИСТЫ СМЕНЫ: РЕДАКТОР («Сервис» → «Чек-листы») ───
   // У каждой роли два списка: «Открытие» (проходят при нажатии «Открыть смену») и «Закрытие». Пустой список — у роли чек-листа нет.
   var ckAdmin = null;
@@ -17391,8 +18057,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'tobacco', 'tips-mine', 'tips-admin'];
-  var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'segment-rules', 'season', 'tips-mine', 'tips-admin', 'review-rules', 'venue', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'tobacco'];
+  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'tobacco', 'tips-mine', 'tips-admin', 'xr', 'xr-edit', 'xr-tpl'];
+  var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'segment-rules', 'season', 'tips-mine', 'tips-admin', 'xr-edit', 'xr-tpl', 'review-rules', 'venue', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'tobacco'];
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
 
