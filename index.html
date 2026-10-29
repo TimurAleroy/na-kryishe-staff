@@ -1031,6 +1031,23 @@
     .tp-card .poster-actions .btn-primary { min-width: 0; flex: 1 1 130px; padding: 12px 8px; white-space: normal; line-height: 1.25; }
     .tp-shiftnow { display: flex; flex-wrap: wrap; gap: 6px; }
     .tp-shiftnow span { padding: 4px 10px; border-radius: 100px; border: 1px solid var(--border); font-size: 12px; color: var(--text-sub); }
+    /* Фото сотрудников для экрана чаевых */
+    .tp-ph-list { display: flex; flex-direction: column; margin-top: 8px; }
+    .tp-ph-row { display: flex; align-items: center; gap: 14px; padding: 11px 0; border-top: 1px solid var(--border); }
+    .tp-ph-row:first-child { border-top: 0; }
+    .tp-ph-ava { position: relative; flex: 0 0 auto; width: 56px; height: 56px; padding: 0; border: 0; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: rgba(var(--ac),0.18); color: var(--accent-text); font: 400 17px/1 'Jost', sans-serif; letter-spacing: 1px; cursor: pointer; }
+    .tp-ph-ava img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .tp-ph-who { flex: 1 1 auto; min-width: 0; }
+    .tp-ph-who b { display: block; font-weight: 500; font-size: 14px; line-height: 1.25; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tp-ph-who span { display: block; margin-top: 2px; font-size: 12px; color: var(--text-muted); }
+    .tp-ph-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .tp-ph-btn { height: 34px; padding: 0 12px; border-radius: 100px; border: 1px solid var(--border); background: transparent; color: var(--text-sub); font: 500 12.5px/1 'Inter', sans-serif; cursor: pointer; white-space: nowrap; }
+    .tp-ph-btn.del { color: var(--c-red, #e07a6a); }
+    .tp-ph-btn:disabled { opacity: .5; cursor: default; }
+    .tp-crop { max-width: 340px; }
+    .tp-crop-box { display: flex; justify-content: center; margin-top: 12px; }
+    .tp-crop-box canvas { display: block; width: min(280px, 100%); aspect-ratio: 1; border-radius: 14px; background: #140a03; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
+    .tp-crop-zoom { display: block; width: 100%; margin: 14px 0 6px; accent-color: var(--accent); }
 
     /* Поздравления */
     .bd-field { margin-top: 10px; padding: 13px 14px 14px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); }
@@ -4191,6 +4208,7 @@ select[aria-expanded="true"] { border-color: rgba(var(--ac), 0.55) !important; b
   <div style="padding:0 16px">
     <div id="tpaTabs"></div>
     <div id="tpaBody"><div class="loading">Загружаю...</div></div>
+    <input type="file" id="tpPhotoInput" accept="image/*" hidden onchange="tipsPhotoPicked(this)">
     <div style="height:16px"></div>
   </div>
 </div>
@@ -14719,11 +14737,149 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     return `<div style="margin-top:14px">${master}</div>`
       + gl('Кому можно оставить') + `<div class="tp-card">${modes}</div>`
       + gl('Кто принимает чаевые') + `<div class="tp-card">${roles}<div class="tp-lbl" style="margin-top:14px">Сейчас на смене</div>${shifted}</div>`
+      + tipsPhotosHtml(gl)
       + gl('Суммы') + `<div class="tp-card"><div class="tp-lbl">Готовые суммы · нажмите, чтобы убрать</div>${amounts}</div>${custom}`
       + gl('Границы') + `<div class="tp-card">${limits}</div>`
       + gl('Ссылка и QR для гостей') + `<div class="tp-card">${link}</div>`
       + `<div class="vn-save${dirty ? ' dirty' : ''}"><button class="btn-cta" id="tpaSaveBtn"${dirty && !badRange ? '' : ' disabled'} onclick="saveTips()">Сохранить</button></div>`
       + demoTip;
+  }
+  // ── Фото сотрудников для экрана чаевых ──
+  // Гость видит круглое фото вместо инициалов. Фото подгоняется тут же, на телефоне: перетащить и подобрать масштаб, получается
+  // квадрат 400×400 (около 30 КБ) и уходит на сервер (право «Отчёт и настройки»). Нет фото — у гостя инициалы, как раньше.
+  const TIP_PH_OUT = 400, TIP_PH_VIEW = 280, TIP_PH_PAD = 6, TIP_PH_SRC = 1200;
+  function tipsPhotosHtml(gl) {
+    const st = tpa.st, c = tpa.cfg;
+    if (!st || !Array.isArray(st.staff)) return '';          // сервер ещё без фото сотрудников
+    const list = st.staff.filter(e => c.roles.includes(e.roleKey));
+    const rows = list.map(e => {
+      const ava = e.photo ? `<img src="${escHtml(e.photo)}" alt="" loading="lazy" onerror="this.remove()">` : '';
+      return `<div class="tp-ph-row"><button type="button" class="tp-ph-ava" onclick="tipsPhotoPick('${e.id}')" aria-label="${e.photo ? 'Заменить' : 'Загрузить'} фото: ${escHtml(e.name)}">${escHtml(dupInitials(e.name))}${ava}</button>
+        <div class="tp-ph-who"><b>${escHtml(e.name)}</b><span>${escHtml(String(e.role).toLowerCase())}</span>
+          <div class="tp-ph-btns"><button type="button" class="tp-ph-btn" onclick="tipsPhotoPick('${e.id}')">${e.photo ? 'Заменить фото' : 'Загрузить фото'}</button>${e.photo ? `<button type="button" class="tp-ph-btn del" onclick="tipsPhotoDel('${e.id}')">Убрать</button>` : ''}</div></div></div>`;
+    }).join('');
+    return gl('Фото сотрудников') + `<div class="tp-card"><div class="tp-note" style="margin-top:0">Гость видит фото в круге вместо инициалов. Загружайте фото только с согласия сотрудника. Нет фото — остаются инициалы.</div>`
+      + (list.length ? `<div class="tp-ph-list">${rows}</div>` : '<div class="tp-note warn">Нет работающих сотрудников выбранных должностей.</div>') + '</div>';
+  }
+  function tipsPhotoFind(id) { return ((tpa.st && tpa.st.staff) || []).find(x => x.id === id); }
+  function tipsPhotoPick(id) {
+    if (document.querySelector('.app-dialog-ov') || !tipsPhotoFind(id)) return;
+    tpa.photoFor = id;
+    const inp = document.getElementById('tpPhotoInput');
+    inp.value = ''; inp.click();
+  }
+  async function tipsPhotoPicked(inp) {
+    const file = inp.files && inp.files[0]; inp.value = '';
+    const id = tpa.photoFor;
+    if (!file || !tipsPhotoFind(id)) return;
+    if (file.type && !/^image\//.test(file.type)) { showToast('Нужно фото (JPG или PNG)', true); return; }
+    let src;
+    try {
+      // сначала уменьшаем: перетаскивание в окне быстрое, а память телефона не уходит на снимок в 12 мегапикселей
+      const img = await loadImageForCanvas(file);
+      const k = Math.min(1, TIP_PH_SRC / Math.max(img.width, img.height));
+      src = document.createElement('canvas');
+      src.width = Math.max(1, Math.round(img.width * k)); src.height = Math.max(1, Math.round(img.height * k));
+      const x = src.getContext('2d'); x.fillStyle = '#140a03'; x.fillRect(0, 0, src.width, src.height);
+      x.imageSmoothingQuality = 'high'; x.drawImage(img, 0, 0, src.width, src.height);
+      if (img.close) img.close();
+    } catch (e) { showToast('Не получилось открыть это фото. Выберите JPG или PNG.', true); return; }
+    tipsPhotoCrop(id, src);
+  }
+  function tipsPhotoCrop(id, src) {
+    const e = tipsPhotoFind(id); if (!e || document.querySelector('.app-dialog-ov')) return;
+    const V = TIP_PH_VIEW, M = TIP_PH_PAD, L = V - 2 * M, iw = src.width, ih = src.height;
+    const s0 = L / Math.min(iw, ih);                              // фото целиком «покрывает» квадрат под кругом
+    const z = { k: 1, ox: 0, oy: 0 };
+    const sc = () => s0 * z.k;
+    const fit = () => { z.ox = Math.min(M, Math.max(V - M - iw * sc(), z.ox)); z.oy = Math.min(M, Math.max(V - M - ih * sc(), z.oy)); };
+    z.ox = M + (L - iw * sc()) / 2; z.oy = M + (L - ih * sc()) * 0.3;   // лицо обычно в верхней части кадра — по высоте чуть выше середины
+    fit();
+    const ov = document.createElement('div');
+    ov.className = 'app-dialog-ov tp-crop-ov';
+    ov.innerHTML = `<div class="app-dialog tp-crop" role="dialog" aria-modal="true">
+      <div class="app-dialog-title">Фото: ${escHtml(String(e.name).split(/\s+/)[0])}</div>
+      <div class="app-dialog-text">Перетащите фото и подберите масштаб, чтобы лицо было в круге. Так его увидит гость.</div>
+      <div class="tp-crop-box"><canvas width="${V * 2}" height="${V * 2}"></canvas></div>
+      <input class="tp-crop-zoom" type="range" min="1" max="4" step="0.01" value="1" aria-label="Масштаб">
+      <div class="app-dialog-btns"><button type="button" class="app-dialog-btn" data-v="0">Отмена</button><button type="button" class="app-dialog-btn ok" data-v="1">Сохранить</button></div></div>`;
+    const cv = ov.querySelector('canvas'), range = ov.querySelector('input'), cx = cv.getContext('2d');
+    const draw = () => {
+      cx.setTransform(cv.width / V, 0, 0, cv.height / V, 0, 0);
+      cx.fillStyle = '#140a03'; cx.fillRect(0, 0, V, V);
+      cx.imageSmoothingQuality = 'high';
+      cx.drawImage(src, z.ox, z.oy, iw * sc(), ih * sc());
+      cx.fillStyle = 'rgba(10,5,0,0.62)'; cx.beginPath(); cx.rect(0, 0, V, V); cx.moveTo(V / 2 + L / 2, V / 2); cx.arc(V / 2, V / 2, L / 2, 0, Math.PI * 2, true); cx.fill('evenodd');
+      cx.strokeStyle = 'rgba(255,255,255,0.55)'; cx.lineWidth = 1.5; cx.beginPath(); cx.arc(V / 2, V / 2, L / 2, 0, Math.PI * 2); cx.stroke();
+    };
+    const zoomAt = (k, px, py) => {
+      k = Math.min(4, Math.max(1, k));
+      const u = (px - z.ox) / sc(), v = (py - z.oy) / sc();
+      z.k = k; z.ox = px - u * sc(); z.oy = py - v * sc(); fit(); range.value = String(k); draw();
+    };
+    const pt = ev => { const r = cv.getBoundingClientRect(); return { x: (ev.clientX - r.left) * V / r.width, y: (ev.clientY - r.top) * V / r.height }; };
+    const ptrs = new Map();
+    cv.addEventListener('pointerdown', ev => { try { cv.setPointerCapture(ev.pointerId); } catch (_) {} ptrs.set(ev.pointerId, pt(ev)); cv.style.cursor = 'grabbing'; });
+    cv.addEventListener('pointermove', ev => {
+      const prev = ptrs.get(ev.pointerId); if (!prev) return;
+      const cur = pt(ev); ptrs.set(ev.pointerId, cur);
+      if (ptrs.size === 1) { z.ox += cur.x - prev.x; z.oy += cur.y - prev.y; fit(); draw(); }
+      else if (ptrs.size === 2) {                                 // двумя пальцами — масштаб
+        const other = [...ptrs.entries()].find(([k]) => k !== ev.pointerId)[1];
+        const d0 = Math.hypot(prev.x - other.x, prev.y - other.y), d1 = Math.hypot(cur.x - other.x, cur.y - other.y);
+        if (d0 > 1) zoomAt(z.k * d1 / d0, (cur.x + other.x) / 2, (cur.y + other.y) / 2);
+      }
+    });
+    const up = ev => { ptrs.delete(ev.pointerId); if (!ptrs.size) cv.style.cursor = 'grab'; };
+    cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+    cv.addEventListener('wheel', ev => { ev.preventDefault(); const p = pt(ev); zoomAt(z.k * (ev.deltaY < 0 ? 1.08 : 1 / 1.08), p.x, p.y); }, { passive: false });
+    range.addEventListener('input', () => zoomAt(Number(range.value), V / 2, V / 2));
+    let busy = false;
+    const close = () => { ov.remove(); document.removeEventListener('keydown', onKey, true); };
+    const onKey = ev => { if (ev.key === 'Escape' && !busy) { ev.preventDefault(); close(); } };
+    const save = async () => {
+      if (busy) return; busy = true;
+      const okBtn = ov.querySelector('.ok'); okBtn.disabled = true; okBtn.textContent = 'Загружаем...';
+      try {
+        const out = document.createElement('canvas'); out.width = out.height = TIP_PH_OUT;
+        const o = out.getContext('2d'), f = TIP_PH_OUT / L;
+        o.fillStyle = '#140a03'; o.fillRect(0, 0, TIP_PH_OUT, TIP_PH_OUT);
+        o.imageSmoothingQuality = 'high';
+        o.drawImage(src, (z.ox - M) * f, (z.oy - M) * f, iw * sc() * f, ih * sc() * f);
+        let blob = null;
+        for (const q of [0.88, 0.8, 0.7]) { blob = await new Promise(r => out.toBlob(r, 'image/jpeg', q)); if (blob && blob.size <= 400 * 1024) break; }
+        if (!blob) throw new Error('Не получилось подготовить фото');
+        const r = await tipsApi('/api/admin/tips/staff/' + encodeURIComponent(id) + '/photo', { method: 'POST', headers: { 'Content-Type': 'image/jpeg' }, body: blob });
+        const cur = tipsPhotoFind(id); if (cur) cur.photo = r.photo || '';
+        close();
+        showToast('Фото сохранено — гость увидит его в круге', false);
+        if (activeScreenName() === 'tips-admin') renderTipsAdmin();
+      } catch (err) {
+        busy = false; okBtn.disabled = false; okBtn.textContent = 'Сохранить';
+        if (err.message !== 'auth') showToast(err.message === 'Failed to fetch' ? 'Нет связи — фото не загрузилось' : err.message, true);
+        else close();
+      }
+    };
+    ov.addEventListener('click', ev => {
+      if (ev.target === ov) { if (!busy) close(); return; }
+      const b = ev.target.closest('[data-v]'); if (!b) return;
+      if (b.dataset.v === '1') save(); else if (!busy) close();
+    });
+    document.addEventListener('keydown', onKey, true);
+    document.body.appendChild(ov);
+    draw();
+  }
+  async function tipsPhotoDel(id) {
+    const e = tipsPhotoFind(id); if (!e) return;
+    if (!await askConfirm(`Убрать фото: ${String(e.name).split(/\s+/)[0]}?\n\nУ гостя снова будут инициалы.`, { ok: 'Убрать', danger: true })) return;
+    try {
+      await tipsApi('/api/admin/tips/staff/' + encodeURIComponent(id) + '/photo', { method: 'DELETE' });
+      const cur = tipsPhotoFind(id); if (cur) cur.photo = '';
+      showToast('Фото убрано', false);
+    } catch (err) {
+      if (err.message !== 'auth') showToast(err.message === 'Failed to fetch' ? 'Нет связи — фото не убралось' : err.message, true);
+    }
+    if (activeScreenName() === 'tips-admin') renderTipsAdmin();
   }
   function tipsSet(k, v) { tpa.cfg[k] = v; renderTipsAdmin(); }
   async function tipsEnable(on) {
