@@ -1036,6 +1036,10 @@
     .tp-card .poster-actions .btn-primary { min-width: 0; flex: 1 1 130px; padding: 12px 8px; white-space: normal; line-height: 1.25; }
     .tp-shiftnow { display: flex; flex-wrap: wrap; gap: 6px; }
     .tp-shiftnow span { padding: 4px 10px; border-radius: 100px; border: 1px solid var(--border); font-size: 12px; color: var(--text-sub); }
+    .tp-hidden { display: flex; flex-direction: column; gap: 6px; margin-top: 2px; }
+    .tp-hidden > div { display: flex; flex-direction: column; gap: 1px; padding: 8px 12px; border-radius: 12px; border: 1px solid var(--border); font-size: 12px; }
+    .tp-hidden b { font-weight: 500; color: var(--text); }
+    .tp-hidden span { color: var(--text-muted); }
     /* Фото сотрудников для экрана чаевых */
     .tp-ph-list { display: flex; flex-direction: column; margin-top: 8px; }
     .tp-ph-row { display: flex; align-items: center; gap: 14px; padding: 11px 0; border-top: 1px solid var(--border); }
@@ -1262,6 +1266,11 @@
     textarea.form-input { resize: none; height: 80px; }
     select.form-input { cursor: pointer; }
     input[type="date"].form-input, input[type="datetime-local"].form-input { text-align: left; }
+    /* Поле даты в форме «Внешний отзыв»: на iPhone у поля даты своя минимальная ширина, оно вылезало за рамку,
+       было выше соседних полей, а дата стояла по центру. Тянем по ширине колонки, высота как у выпадающего списка, дата слева. */
+    .form-input.fld-date { display: block; width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; height: 48px; padding: 0 14px; -webkit-appearance: none; appearance: none; text-align: left; }
+    .form-input.fld-date::-webkit-date-and-time-value { text-align: left; min-height: 1.2em; }
+    .xr-grid2 select.form-input { height: 48px; }
     /* Поле с числом: свои кнопки «больше / меньше» в цвет приложения вместо белых системных */
     .num-field { position: relative; }
     .num-field .form-input { padding-right: 46px; -moz-appearance: textfield; appearance: textfield; }
@@ -15003,7 +15012,11 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const shifted = st.onShift.length
       ? `<div class="tp-shiftnow">${st.onShift.map(e => `<span>${escHtml(String(e.name).split(/\s+/)[0])} · ${escHtml(String(e.role).toLowerCase())}</span>`).join('')}</div><div class="tp-note">Так список выглядит у гостя прямо сейчас: в графике «Работает» или смена открыта.</div>`
       : '<div class="tp-note warn">Сейчас на смене никого из выбранных должностей — гостю показывать некого (останется «Вся команда», если она разрешена).</div>';
-    const amounts = `<div class="tp-chips">${c.amounts.map((a, i) => `<button type="button" class="tp-chip on" onclick="tipsAmtDel(${i})" title="Убрать">${tipRub(a)}<span class="x">×</span></button>`).join('')}</div>
+    // Кто в графике на сегодня, но гость его не увидит, и почему (должность не отмечена, выходной, смена закрыта и т. д.)
+    const hidden = (st.notShown && st.notShown.length)
+      ? `<div class="tp-lbl" style="margin-top:14px">В графике сегодня, но гость их не увидит</div><div class="tp-hidden">${st.notShown.map(e => `<div><b>${escHtml(String(e.name).split(/\s+/)[0])} · ${escHtml(String(e.role).toLowerCase())}</b><span>${escHtml(e.reason)}</span></div>`).join('')}</div>`
+      : '';
+    const amounts =`<div class="tp-chips">${c.amounts.map((a, i) => `<button type="button" class="tp-chip on" onclick="tipsAmtDel(${i})" title="Убрать">${tipRub(a)}<span class="x">×</span></button>`).join('')}</div>
       ${c.amounts.length < 6 ? `<div class="tp-add"><input class="form-input" id="tpaAmtNew" type="number" inputmode="numeric" min="1" placeholder="Сумма, ₽" onkeydown="if(event.key==='Enter'){event.preventDefault();tipsAmtAdd();}"><button type="button" class="btn-primary" onclick="tipsAmtAdd()">Добавить</button></div>` : '<div class="tp-note">Готовых сумм — не больше шести.</div>'}`;
     const custom = `<label class="ss-w${c.allowCustom ? '' : ' off'}" style="margin-top:10px"><span class="ss-w-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/></svg></span>
       <div class="ss-w-b"><div class="ss-w-t">Своя сумма</div><div class="ss-w-s">Гость может набрать любую сумму на клавиатуре</div></div>
@@ -15022,7 +15035,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const demoTip = st.demo ? `<div class="sv-tip">${TIP_INFO}<div>Оплата ещё не подключена. Включайте чаевые, чтобы проверить экран командой: записи идут в тестовом режиме и в отчёте помечены «тест». Гостям включайте, когда оплата заработает.</div></div>` : '';
     return `<div style="margin-top:14px">${master}</div>`
       + gl('Кому можно оставить') + `<div class="tp-card">${modes}</div>`
-      + gl('Кто принимает чаевые') + `<div class="tp-card">${roles}<div class="tp-lbl" style="margin-top:14px">Сейчас на смене</div>${shifted}</div>`
+      + gl('Кто принимает чаевые') + `<div class="tp-card">${roles}<div class="tp-lbl" style="margin-top:14px">Сейчас на смене</div>${shifted}${hidden}</div>`
       + tipsPhotosHtml(gl)
       + gl('Суммы') + `<div class="tp-card"><div class="tp-lbl">Готовые суммы · нажмите, чтобы убрать</div>${amounts}</div>${custom}`
       + gl('Границы') + `<div class="tp-card">${limits}</div>`
@@ -15496,14 +15509,14 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const maxDay = xrAddDays(xrToday(), 1);
     const extra = isNew ? `
       <div class="form-group"><label class="form-label">Срок ответа</label>
-        <input class="form-input" id="xrfDue" type="date" value="${escHtml(f.due)}" onchange="xre.f.due=this.value;xre.dueTouched=true">
+        <input class="form-input fld-date" id="xrfDue" type="date" value="${escHtml(f.due)}" onchange="xre.f.due=this.value;xre.dueTouched=true">
         <div class="poster-note">Если не менять, срок зависит от оценки: до 3 звёзд — ${xr.meta.dueDays.low} ${ruPlural(xr.meta.dueDays.low, 'день', 'дня', 'дней')}, выше — ${xr.meta.dueDays.other} ${ruPlural(xr.meta.dueDays.other, 'день', 'дня', 'дней')}.</div></div>
       <div class="form-group"><label class="form-label">Ответственный</label>
         <select class="form-input" onchange="xre.f.assignee=this.value">${xrAssigneeOpts(f.assignee, '')}</select>
         <div class="poster-note">Если выбрать, отзыв сразу получит статус «В работе».</div></div>` : '';
     return `<div class="xr-grid2">
         <div class="form-group"><label class="form-label">Площадка</label><select class="form-input" onchange="xre.f.platform=this.value">${plats}</select></div>
-        <div class="form-group"><label class="form-label">Дата отзыва</label><input class="form-input" type="date" value="${escHtml(f.date)}" max="${maxDay}" onchange="xre.f.date=this.value"></div>
+        <div class="form-group"><label class="form-label">Дата отзыва</label><input class="form-input fld-date" type="date" value="${escHtml(f.date)}" max="${maxDay}" onchange="xre.f.date=this.value"></div>
       </div>
       <div class="form-group"><label class="form-label">Оценка</label><div class="xr-rate" id="xreRate">${rate}</div><div class="poster-note" id="xreRateNote">${xreRateNote()}</div></div>
       <div class="form-group"><label class="form-label">Автор</label><input class="form-input" type="text" maxlength="120" placeholder="Как подписан на площадке" value="${escHtml(f.author)}" oninput="xre.f.author=this.value" autocomplete="off"></div>
@@ -15563,7 +15576,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
           <select class="form-input" onchange="xreAssign(this.value)">${xrAssigneeOpts(it.assigneeId || '', it.assignee)}</select>
           ${canTake ? '<button type="button" class="btn-ghost" onclick="xreTake()">Взять себе</button>' : ''}</div>
         <div class="form-group" style="margin-bottom:0"><label class="form-label">Срок ответа</label>
-          <div class="xr-row" style="margin-top:0"><input class="form-input" type="date" value="${escHtml(it.dueOn || '')}" onchange="xreDue(this.value)">${it.dueOn ? '<button type="button" class="btn-ghost" style="flex:0 0 auto;width:auto;padding:0 16px" onclick="xreDue(\'\')">Убрать</button>' : ''}</div>
+          <div class="xr-row" style="margin-top:0"><input class="form-input fld-date" type="date" value="${escHtml(it.dueOn || '')}" onchange="xreDue(this.value)">${it.dueOn ? '<button type="button" class="btn-ghost" style="flex:0 0 auto;width:auto;padding:0 16px" onclick="xreDue(\'\')">Убрать</button>' : ''}</div>
           ${late}</div>
       </div>`;
     const sug = it.rating === null ? 'any' : it.rating >= 4 ? 'positive' : it.rating === 3 ? 'neutral' : 'negative';
