@@ -234,6 +234,9 @@
     .search-clear:active { background: rgba(var(--fg-rgb),0.2); }
     @media (hover: hover) { .search-clear:hover { background: rgba(var(--ac),0.25); color: var(--text); } }
     .search-input::placeholder { color: var(--text-muted); }
+    /* строки из двух полей (дата и время и т.п.): колонки не шире экрана — на узком телефоне (320px) поле даты раньше выпирало за край */
+    .form-row > * { min-width: 0; }
+    .form-row .form-input { min-width: 0; max-width: 100%; box-sizing: border-box; }
     .btn-primary {
       background: var(--accent-dim);
       color: var(--accent);
@@ -3145,6 +3148,144 @@ html[data-theme="dark"] #screen-enps.has-bg { --ep-rgb: 8,10,14; --ep-ink: 244,2
 .fx .fc-card { transition: transform .22s cubic-bezier(.2,.7,.2,1); }
 .fx .fc-card:hover { transform: translateY(-2px); }
 </style>
+<style id="btn-css">
+/* ═══ ЕДИНЫЙ ФОРМАТ КНОПОК ═══════════════════════════════════════════════════════════════════════════
+   Образец — «Новый гость» и «Записать бронь» на главном экране: «пилюля» с тонкой обводкой, внутри мягкая подсветка.
+   Все кнопки-действия приведены к нему. Вес кнопки — по важности:
+     · основная   — .btn-cta («Создать», «Сохранить»), «Открыть смену», «Скачать презентацию»: обводка и подсветка насыщеннее, лёгкое свечение;
+     · обычная    — контур цвета акцента: .btn-primary, .btn-new-guest, «Добавить…», кнопки в карточках;
+     · нейтральная — серая обводка: .btn-ghost, «Отмена», «Назад», выбор в формах;
+     · опасная (красная, .btn-danger) и «готово» (зелёная) — тот же контур другого цвета.
+   Размеры и отступы у каждой кнопки остаются прежними (в ряд, на всю ширину, компактная): меняются форма и подача —
+   радиус 100px, градиентная подсветка, наведение мышью, нажатие и фокус с клавиатуры. Блок стоит после всех остальных
+   стилей, поэтому перекрывает прежние правила кнопок; чтобы поменять вид всех кнопок разом — правьте здесь. */
+:is(.btn-cta, .btn-ghost, .btn-primary, .btn-new-guest, .tb-btn, .app-dialog-btn, .overlay-btn, .shift-btn, .vn-addbtn, .tb-addbtn, .sd-addq, .an-deck-btn, .ckf-tool, .bd-btn, .vh-act, .arr-btn, .acc-mini, .tk-btn, .hz-mini-btn, .copy-btn) {
+  border-radius: 100px;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.15px;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .18s, border-color .18s, box-shadow .2s, color .18s, transform .12s;
+}
+:is(.btn-cta, .btn-ghost, .btn-primary, .btn-new-guest, .tb-btn, .app-dialog-btn, .overlay-btn, .shift-btn, .vn-addbtn, .tb-addbtn, .sd-addq, .an-deck-btn, .ckf-tool, .bd-btn, .vh-act, .arr-btn, .acc-mini, .tk-btn, .hz-mini-btn, .copy-btn):focus-visible {
+  outline: none; box-shadow: 0 0 0 3px rgba(var(--ac),0.3);   /* мягкое кольцо по форме пилюли, без двойной обводки */
+}
+:is(.btn-cta, .btn-ghost, .btn-primary, .btn-new-guest, .tb-btn, .app-dialog-btn, .overlay-btn, .shift-btn, .vn-addbtn, .tb-addbtn, .sd-addq, .an-deck-btn, .ckf-tool, .bd-btn, .vh-act, .arr-btn, .acc-mini, .tk-btn, .hz-mini-btn, .copy-btn):disabled {
+  opacity: 0.45; cursor: default; transform: none; box-shadow: none; filter: none;
+}
+
+/* нейтральная: серая обводка */
+:is(.btn-ghost, .tb-btn, .app-dialog-btn, .overlay-btn, .vh-act, .arr-btn, .acc-mini, .copy-btn) {
+  color: var(--text-sub);
+  border: 1px solid rgba(var(--fg-rgb),0.18);
+  background: rgba(var(--fg-rgb),0.03);
+  box-shadow: none;
+  font-weight: 500;
+}
+:is(.btn-ghost, .tb-btn, .app-dialog-btn, .overlay-btn, .vh-act, .arr-btn, .acc-mini, .copy-btn):active:not(:disabled) { background: rgba(var(--fg-rgb),0.1); transform: scale(0.975); }
+@media (hover: hover) {
+  :is(.btn-ghost, .tb-btn, .app-dialog-btn, .overlay-btn, .vh-act, .acc-mini, .copy-btn):hover:not(:disabled) { color: var(--text); border-color: rgba(var(--fg-rgb),0.34); background: rgba(var(--fg-rgb),0.065); }
+}
+
+/* обычная: контур цвета акцента */
+:is(.btn-new-guest, .btn-primary, .tb-btn.ok, .app-dialog-btn.ok, .overlay-btn.primary, .shift-btn, .vn-addbtn, .an-deck-btn, .ckf-tool, .bd-btn, .tb-addbtn, .sd-addq) {
+  color: var(--accent);
+  border: 1px solid rgba(var(--ac),0.42);
+  background: linear-gradient(180deg, rgba(var(--ac),0.13), rgba(var(--ac),0.04));
+  box-shadow: inset 0 1px 0 rgba(var(--ac),0.14);
+  font-weight: 500;
+}
+:is(.btn-new-guest, .btn-primary, .tb-btn.ok, .app-dialog-btn.ok, .overlay-btn.primary, .shift-btn, .vn-addbtn, .an-deck-btn, .ckf-tool, .bd-btn, .tb-addbtn, .sd-addq):active:not(:disabled) { background: linear-gradient(180deg, rgba(var(--ac),0.28), rgba(var(--ac),0.12)); transform: scale(0.975); }
+@media (hover: hover) {
+  :is(.btn-new-guest, .btn-primary, .tb-btn.ok, .app-dialog-btn.ok, .overlay-btn.primary, .shift-btn, .vn-addbtn, .an-deck-btn, .ckf-tool, .bd-btn, .tb-addbtn, .sd-addq):hover:not(:disabled) {
+    border-color: rgba(var(--ac),0.7); background: linear-gradient(180deg, rgba(var(--ac),0.21), rgba(var(--ac),0.08));
+    box-shadow: 0 4px 16px rgba(var(--ac),0.16), inset 0 1px 0 rgba(var(--ac),0.2);
+  }
+}
+.btn-new-guest { padding: 8px 15px; }
+.tb-addbtn, .sd-addq { border-style: solid; }
+
+/* основная: насыщеннее, со свечением */
+:is(.btn-cta, .shift-btn.primary, .an-deck-btn.primary) {
+  color: var(--accent-hi, var(--accent));
+  border: 1px solid rgba(var(--ac),0.78);
+  background: linear-gradient(180deg, rgba(var(--ac),0.32), rgba(var(--ac),0.14));
+  box-shadow: 0 8px 24px rgba(var(--ac),0.18), inset 0 1px 0 rgba(255,255,255,0.08);
+  font-weight: 600; letter-spacing: 0.25px;
+}
+.btn-cta { min-height: 46px; }
+:is(.btn-cta, .shift-btn.primary, .an-deck-btn.primary):active:not(:disabled) { background: linear-gradient(180deg, rgba(var(--ac),0.44), rgba(var(--ac),0.24)); filter: none; transform: scale(0.98); }
+@media (hover: hover) {
+  :is(.btn-cta, .shift-btn.primary, .an-deck-btn.primary):hover:not(:disabled) {
+    border-color: rgba(var(--ac),0.95); background: linear-gradient(180deg, rgba(var(--ac),0.4), rgba(var(--ac),0.2));
+    box-shadow: 0 10px 28px rgba(var(--ac),0.26), inset 0 1px 0 rgba(255,255,255,0.12);
+  }
+}
+
+/* опасная: красный контур */
+:is(.btn-ghost.danger, .btn-ghost.xr-danger, .app-dialog-btn.danger, .btn-primary.tv-rm, .btn-danger) {
+  color: var(--c-red2);
+  border: 1px solid rgba(var(--c-red-rgb),0.5);
+  background: linear-gradient(180deg, rgba(var(--c-red-rgb),0.14), rgba(var(--c-red-rgb),0.05));
+  box-shadow: inset 0 1px 0 rgba(var(--c-red-rgb),0.14);
+}
+:is(.btn-ghost.danger, .btn-ghost.xr-danger, .app-dialog-btn.danger, .btn-primary.tv-rm, .btn-danger):active:not(:disabled) { background: linear-gradient(180deg, rgba(var(--c-red-rgb),0.3), rgba(var(--c-red-rgb),0.14)); transform: scale(0.975); }
+@media (hover: hover) {
+  :is(.btn-ghost.danger, .btn-ghost.xr-danger, .app-dialog-btn.danger, .btn-primary.tv-rm, .btn-danger):hover:not(:disabled) {
+    border-color: rgba(var(--c-red-rgb),0.8); background: linear-gradient(180deg, rgba(var(--c-red-rgb),0.22), rgba(var(--c-red-rgb),0.09));
+    box-shadow: 0 4px 16px rgba(var(--c-red-rgb),0.16), inset 0 1px 0 rgba(var(--c-red-rgb),0.2);
+  }
+}
+
+/* «готово» (зелёная) */
+:is(.tk-btn, .hz-mini-btn) {
+  color: var(--c-green);
+  border: 1px solid rgba(var(--c-green-rgb),0.5);
+  background: linear-gradient(180deg, rgba(var(--c-green-rgb),0.16), rgba(var(--c-green-rgb),0.05));
+  box-shadow: inset 0 1px 0 rgba(var(--c-green-rgb),0.14);
+}
+:is(.tk-btn, .hz-mini-btn):active:not(:disabled) { background: linear-gradient(180deg, rgba(var(--c-green-rgb),0.3), rgba(var(--c-green-rgb),0.14)); transform: scale(0.975); }
+@media (hover: hover) {
+  :is(.tk-btn, .hz-mini-btn):hover:not(:disabled) { border-color: rgba(var(--c-green-rgb),0.8); background: linear-gradient(180deg, rgba(var(--c-green-rgb),0.24), rgba(var(--c-green-rgb),0.09)); box-shadow: 0 4px 16px rgba(var(--c-green-rgb),0.14), inset 0 1px 0 rgba(var(--c-green-rgb),0.2); }
+}
+.hz-mini-btn { padding: 5px 12px; }
+
+/* особые случаи */
+.tk-btn.undo, .bd-btn.undo { color: var(--text-sub); border-color: rgba(var(--fg-rgb),0.18); background: rgba(var(--fg-rgb),0.03); box-shadow: none; }
+@media (hover: hover) { .tk-btn.undo:hover:not(:disabled), .bd-btn.undo:hover:not(:disabled) { color: var(--text); border-color: rgba(var(--fg-rgb),0.34); background: rgba(var(--fg-rgb),0.065); box-shadow: none; } }
+.arr-btn.big { border-radius: 100px; }
+.copy-btn { padding: 5px 11px; }
+.pb-act { padding-left: 10px; padding-right: 10px; }   /* «Проблемы»: в одной строке с «Переназначить» на узком экране */
+/* закреплённая кнопка на карточке гостя: фон непрозрачный (под ней прокручивается страница) */
+.btn-primary.card-sticky-btn { background: linear-gradient(180deg, rgba(var(--ac),0.16), rgba(var(--ac),0.06)), var(--surf-1); border-color: rgba(var(--ac),0.6); box-shadow: 0 8px 24px rgba(0,0,0,0.45), inset 0 1px 0 rgba(var(--ac),0.16); }
+.btn-primary.card-sticky-btn:active:not(:disabled) { background: linear-gradient(180deg, rgba(var(--ac),0.16), rgba(var(--ac),0.06)), var(--surf-1-active); }
+@media (hover: hover) { .btn-primary.card-sticky-btn:hover:not(:disabled) { background: linear-gradient(180deg, rgba(var(--ac),0.22), rgba(var(--ac),0.1)), var(--surf-1); box-shadow: 0 10px 28px rgba(0,0,0,0.5), inset 0 1px 0 rgba(var(--ac),0.2); } }
+/* кнопка «отправить» в боковой панели заметок (значок): круглая, основного веса */
+.desk-panel .dp-note-submit { border-radius: 50%; color: var(--accent-hi, var(--accent)); border: 1px solid rgba(var(--ac),0.78); background: linear-gradient(180deg, rgba(var(--ac),0.32), rgba(var(--ac),0.14)); box-shadow: 0 6px 18px rgba(var(--ac),0.18), inset 0 1px 0 rgba(255,255,255,0.08); transition: background .18s, box-shadow .2s, transform .12s; }
+.desk-panel .dp-note-submit:active:not(:disabled) { transform: scale(0.94); background: linear-gradient(180deg, rgba(var(--ac),0.44), rgba(var(--ac),0.24)); }
+@media (hover: hover) { .desk-panel .dp-note-submit:hover:not(:disabled) { box-shadow: 0 8px 22px rgba(var(--ac),0.26), inset 0 1px 0 rgba(255,255,255,0.12); } }
+
+/* кнопки, оформленные через контейнер (без своего класса): «Обращения», посадка за стол, перемещение, «+ вопрос», статусы отзывов */
+:is(.gm-actions button, .hz-seatbar button, .tf-move button) {
+  border-radius: 100px; font-family: 'Inter', sans-serif; letter-spacing: 0.15px; font-weight: 500;
+  color: var(--text-sub); border: 1px solid rgba(var(--fg-rgb),0.18); background: rgba(var(--fg-rgb),0.03); box-shadow: none;
+  -webkit-tap-highlight-color: transparent; transition: background .18s, border-color .18s, box-shadow .2s, color .18s, transform .12s;
+}
+:is(.gm-actions button, .hz-seatbar button, .tf-move button):active:not(:disabled) { background: rgba(var(--fg-rgb),0.1); transform: scale(0.975); }
+@media (hover: hover) { :is(.gm-actions button, .hz-seatbar button, .tf-move button):hover:not(:disabled) { color: var(--text); border-color: rgba(var(--fg-rgb),0.34); background: rgba(var(--fg-rgb),0.065); } }
+.gm-actions button.primary { color: var(--accent-hi, var(--accent)); font-weight: 600; border: 1px solid rgba(var(--ac),0.78); background: linear-gradient(180deg, rgba(var(--ac),0.32), rgba(var(--ac),0.14)); box-shadow: 0 6px 18px rgba(var(--ac),0.16), inset 0 1px 0 rgba(255,255,255,0.08); }
+.gm-actions button.primary:active:not(:disabled) { background: linear-gradient(180deg, rgba(var(--ac),0.44), rgba(var(--ac),0.24)); }
+@media (hover: hover) { .gm-actions button.primary:hover:not(:disabled) { border-color: rgba(var(--ac),0.95); background: linear-gradient(180deg, rgba(var(--ac),0.4), rgba(var(--ac),0.2)); box-shadow: 0 8px 22px rgba(var(--ac),0.24), inset 0 1px 0 rgba(255,255,255,0.12); } }
+.gm-actions button:disabled, .hz-seatbar button:disabled, .tf-move button:disabled { opacity: 0.45; cursor: default; transform: none; box-shadow: none; }
+.sd-add button { border-radius: 100px; border-style: solid; border-color: rgba(var(--ac),0.42); background: linear-gradient(180deg, rgba(var(--ac),0.13), rgba(var(--ac),0.04)); box-shadow: inset 0 1px 0 rgba(var(--ac),0.14); transition: background .18s, border-color .18s, transform .12s; -webkit-tap-highlight-color: transparent; }
+.sd-add button:active:not(:disabled) { background: linear-gradient(180deg, rgba(var(--ac),0.28), rgba(var(--ac),0.12)); transform: scale(0.975); }
+.xr-seg button { border-radius: 100px; }
+/* «Пришёл» / «Не пришёл» и им подобные: зелёный и красный контуры в том же стиле */
+.arr-btn.yes { border-color: rgba(var(--c-green-rgb),0.5); background: linear-gradient(180deg, rgba(var(--c-green-rgb),0.16), rgba(var(--c-green-rgb),0.05)); box-shadow: inset 0 1px 0 rgba(var(--c-green-rgb),0.14); }
+.arr-btn.no { color: var(--c-red2); border-color: rgba(var(--c-red-rgb),0.5); background: linear-gradient(180deg, rgba(var(--c-red-rgb),0.14), rgba(var(--c-red-rgb),0.05)); box-shadow: inset 0 1px 0 rgba(var(--c-red-rgb),0.14); }
+.arr-btn.yes:active:not(:disabled) { background: linear-gradient(180deg, rgba(var(--c-green-rgb),0.3), rgba(var(--c-green-rgb),0.14)); }
+.arr-btn.no:active:not(:disabled) { background: linear-gradient(180deg, rgba(var(--c-red-rgb),0.3), rgba(var(--c-red-rgb),0.14)); }
+@media (hover: hover) { .arr-btn.yes:hover:not(:disabled) { border-color: rgba(var(--c-green-rgb),0.8); } .arr-btn.no:hover:not(:disabled) { border-color: rgba(var(--c-red-rgb),0.8); } }
+</style>
 <style id="rail-css">
 /* ═══ БОКОВАЯ ПОЛОСА РАЗДЕЛОВ (компьютер) ═════════════════════════════════════════════
    Узкая колонка иконок у левого края окна: Главная, Брони, Гости, Афиша, График, Аналитика, Сервис и «Выйти».
@@ -3557,7 +3698,7 @@ select[aria-expanded="true"] { border-color: rgba(var(--ac), 0.55) !important; b
       </div>
       <div class="poster-actions" id="evPosterActions" style="display:none">
         <button type="button" class="btn-primary" style="flex:1;" onclick="pickEventPoster()">Заменить</button>
-        <button type="button" class="btn-primary" style="flex:1;background:transparent;border-color:rgba(var(--c-red-rgb),0.45);color:var(--c-red);" onclick="removeEventPoster()">Убрать</button>
+        <button type="button" class="btn-primary btn-danger" style="flex:1;" onclick="removeEventPoster()">Убрать</button>
       </div>
       <div class="poster-note" id="evPosterNote"></div>
       <input type="file" id="evPosterInput" accept="image/*,video/*" style="display:none" onchange="onEventPosterFile(this.files[0]); this.value='';">
@@ -4395,7 +4536,7 @@ select[aria-expanded="true"] { border-color: rgba(var(--ac), 0.55) !important; b
       </div>
       <div class="poster-actions" id="miPhotoActions" style="display:none">
         <button type="button" class="btn-primary" style="flex:1;" onclick="pickMenuPhoto()">Заменить</button>
-        <button type="button" class="btn-primary" style="flex:1;background:transparent;border-color:rgba(var(--c-red-rgb),0.45);color:var(--c-red);" onclick="removeMenuPhoto()">Убрать</button>
+        <button type="button" class="btn-primary btn-danger" style="flex:1;" onclick="removeMenuPhoto()">Убрать</button>
       </div>
       <div class="poster-note" id="miPhotoNote"></div>
       <input type="file" id="miPhotoInput" accept="image/*" style="display:none" onchange="onMenuPhotoFile(this.files[0]); this.value='';">
@@ -16948,7 +17089,15 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     if (d.kind === 'score') { minV = Math.min(0, ...vals); maxV = Math.max(0, ...vals); if (minV === maxV) maxV = minV + 1; }
     // До ~40 точек график помещается в ширину экрана целиком (удобнее сравнивать),
     // больше — прокручивается вбок.
-    const left = 8, top = 18, bottom = 24, H = 190, FIT_W = 340;
+    // Подписи под столбиками: «янв 2026» → сверху месяц, под ним год (год — только у первой подписи и там, где он меняется).
+    // Сколько подписей пропускать, считаем по ширине самой длинной: раньше при 10–12 месяцах они налезали друг на друга.
+    const lbl = b.map(x => {
+      const raw = (d.group === 'week' || d.group === 'day') ? fmtDM(x.start) : String(x.label == null ? '' : x.label);
+      const m = /^(\S+)\s+(\d{4})$/.exec(raw);
+      return m ? { a: m[1], y: m[2] } : { a: raw, y: '' };
+    });
+    const twoLine = lbl.some(l => l.y);
+    const left = 8, top = 18, bottom = twoLine ? 36 : 24, H = 190, FIT_W = 340;
     const per = (FIT_W - left * 2) / b.length;
     let barW, slot, gap, W;
     if (per >= 8) {
@@ -16967,7 +17116,10 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const plotH = H - top - bottom;
     const y = v => top + ((maxV - v) / (maxV - minV)) * plotH;
     const zeroY = y(0);
-    const labelEvery = Math.max(1, Math.ceil(b.length / 10));
+    const LBL_CH = 5.6;   // ширина одного знака при шрифте 9 — с запасом
+    const lblW = Math.max(...lbl.map(l => Math.max(l.a.length, l.y ? 4 : 0))) * LBL_CH + 8;
+    const labelEvery = Math.max(1, Math.ceil(lblW / (slot + gap)));
+    let lblYear = '';
     const showValues = b.length <= 16;
     const fits = W === FIT_W;
     let svg = `<svg ${fits ? 'width="100%"' : `width="${W}"`} height="${H}" viewBox="0 0 ${W} ${H}" ${fits ? 'preserveAspectRatio="xMidYMid meet"' : ''} style="display:block" xmlns="http://www.w3.org/2000/svg">`;
@@ -16993,9 +17145,11 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
         const ty = x.value >= 0 ? y(x.value) - 4 : y(x.value) + 11;
         svg += `<text x="${x0 + barW / 2}" y="${ty}" text-anchor="middle" font-size="9" fill="var(--text-sub)">${anChartVal(x.value, d.kind)}</text>`;
       }
-      if (i % labelEvery === 0) {
-        const lbl = d.group === 'week' ? fmtDM(x.start) : d.group === 'day' ? fmtDM(x.start) : x.label;
-        svg += `<text x="${x0 + slot / 2}" y="${H - 8}" text-anchor="middle" font-size="9" fill="var(--text-muted)">${escHtml(lbl)}</text>`;
+      if ((b.length - 1 - i) % labelEvery === 0) {   // считаем с конца: последний (самый свежий) период всегда подписан
+        const l = lbl[i], cx = x0 + slot / 2;
+        svg += `<text x="${cx}" y="${twoLine ? H - 23 : H - 8}" text-anchor="middle" font-size="9" fill="var(--text-muted)">${escHtml(l.a)}</text>`;
+        if (l.y && l.y !== lblYear) svg += `<text x="${cx}" y="${H - 11}" text-anchor="middle" font-size="8.5" fill="var(--text-muted)" fill-opacity="0.75">${escHtml(l.y)}</text>`;
+        if (l.y) lblYear = l.y;
       }
       svg += `<rect class="an-hit" x="${x0 - gap / 2}" y="0" width="${slot + gap}" height="${H}" onclick="anPick(${i})"/>`;
     });
