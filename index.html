@@ -3033,16 +3033,9 @@
       body:has(#deskLeft.role-ok) .ec-scr .ec-day { aspect-ratio: 2.6 / 1; }
       /* Списки на всю ширину не вытягиваем в длинные полосы (имя на одном краю, кнопка на другом за 1100px):
          карточки проблем и задач — в две колонки, строки в карточках-списках (VIP, именинники, стоп-лист) — тоже в две */
-      body:has(#deskLeft.role-ok):not(.col-narrow) :is(div:has(> .pr-card), div:has(> .tk-card), div:has(> .gm-card)) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; }
-      body:has(#deskLeft.role-ok):not(.col-narrow) :is(div:has(> .pr-card), div:has(> .tk-card), div:has(> .gm-card)) > :not(.pr-card):not(.tk-card):not(.gm-card) { grid-column: 1 / -1; }
-      body:has(#deskLeft.role-ok):not(.col-narrow) .ls-card:not(:has(> :not(.ls-row))):has(> .ls-row:nth-child(3)) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      body:has(#deskLeft.role-ok):not(.col-narrow) .ls-card:not(:has(> :not(.ls-row))):has(> .ls-row:nth-child(3)) > .ls-row:nth-child(-n+2) { border-top: none; }
-      body:has(#deskLeft.role-ok):not(.col-narrow) .ls-card:not(:has(> :not(.ls-row))):has(> .ls-row:nth-child(3)) > .ls-row:nth-child(even) { border-left: 1px solid var(--border); }
-      body:has(#deskLeft.role-ok):not(.col-narrow) .ls-card:not(:has(> :not(.ls-row))):has(> .ls-row:nth-child(3)) > .ls-row:last-child:nth-child(odd) { grid-column: 1 / -1; }
-      body:has(#deskLeft.role-ok):not(.col-narrow) .mn-card:not(:has(> :not(.menu-item-row))):has(> .menu-item-row:nth-child(3)) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      body:has(#deskLeft.role-ok):not(.col-narrow) .mn-card:not(:has(> :not(.menu-item-row))):has(> .menu-item-row:nth-child(3)) > .menu-item-row:nth-child(-n+2) { border-top: none; }
-      body:has(#deskLeft.role-ok):not(.col-narrow) .mn-card:not(:has(> :not(.menu-item-row))):has(> .menu-item-row:nth-child(3)) > .menu-item-row:nth-child(even) { border-left: 1px solid var(--border); }
-      body:has(#deskLeft.role-ok):not(.col-narrow) .mn-card:not(:has(> :not(.menu-item-row))):has(> .menu-item-row:nth-child(3)) > .menu-item-row:last-child:nth-child(odd) { grid-column: 1 / -1; }
+      body:has(#deskLeft.role-ok):not(.col-narrow) :is(div:has(> .pr-card), div:has(> .tk-card), div:has(> .gm-card), div:has(> .svl)) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; }
+      body:has(#deskLeft.role-ok):not(.col-narrow) :is(div:has(> .pr-card), div:has(> .tk-card), div:has(> .gm-card), div:has(> .svl)) > :not(.pr-card):not(.tk-card):not(.gm-card):not(.svl) { grid-column: 1 / -1; }
+      body:has(#deskLeft.role-ok):not(.col-narrow) div:has(> .svl) > .svl { margin-bottom: 0; }
       /* Кнопки и переключатели не растягиваем на всю колонку: «Отправить» на 1100px выглядит как полоса, а не как кнопка.
          Главные кнопки форм и экранов — до --btnw, кнопки внутри карточек (Взять в работу, Ответить) — по тексту, слева. */
       body:has(#deskLeft.role-ok) :is(.btn-cta, .btn-ghost) { width: min(100%, var(--btnw)); }
@@ -3889,6 +3882,83 @@ h1, h2, .heading { font-weight: 500; }
 .rail-btn { font-weight: 500; }
 html.rail-wide .rail-btn { font-size: 13px; }
 html.rail-wide .rail-row .rail-btn { font-size: 13px; }
+</style>
+
+<style id="wide-css">
+/* ─── Компьютер, широкий экран ────────────────────────────────────────────────────────────────
+   Кнопки и вкладки — по размеру текста, а не на всю колонку; списки из строк на всю ширину
+   превращаются в сетку карточек (имя слева, стрелка не за полторы тысячи пикселей справа);
+   карточка гостя на две колонки. Телефон и узкое окно этот блок не затрагивает. */
+@media (min-width: 1392px) {
+  /* вкладки «Сегодня / Вчера», «Отзывы / Шаблоны», период в журнале */
+  body:has(#deskLeft.role-ok) :is(.sg2, .au-seg) { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: minmax(128px, max-content); width: fit-content; max-width: 100%; }
+  body:has(#deskLeft.role-ok) :is(.sg2, .au-seg) button { padding-left: 24px; padding-right: 24px; }
+  body:has(#deskLeft.role-ok) .tb-tabs { width: fit-content; max-width: 100%; }
+  body:has(#deskLeft.role-ok) .tb-tab { flex: 0 0 auto; min-width: 150px; padding-left: 24px; padding-right: 24px; }
+  /* «Добавить тег / сезон», «Закрыть дату» */
+  body:has(#deskLeft.role-ok) :is(.ss-add, .vn-addbtn) { width: min(100%, var(--btnw)); }
+  body:has(#deskLeft.role-ok) .tg2-add { grid-column: 1 / -1; justify-self: start; width: auto; margin: 10px 14px 12px; padding: 9px 24px; border: 1px dashed rgba(var(--ac),0.5); border-radius: 100px; }
+  /* «Добавить визит» в карточке гостя: компактная кнопка в правом верхнем углу экрана (на странице сверху — там, где глаз) */
+  body:has(#deskLeft.role-ok) #screen-card { position: relative; }
+  body:has(#deskLeft.role-ok) .card-sticky { position: absolute; top: 11px; right: 0; bottom: auto; margin: 0; padding: 0; background: none; pointer-events: none; }
+  body:has(#deskLeft.role-ok) .card-sticky-btn { width: auto; min-width: 220px; padding: 11px 28px; pointer-events: auto; box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
+
+  /* остальные кнопки — по размеру текста (не меньше 220 px, чтобы стопка кнопок выглядела ровно) */
+  body:has(#deskLeft.role-ok) :is(.btn-cta, .btn-ghost) { width: fit-content; min-width: 220px; max-width: min(100%, 420px); padding-left: 32px; padding-right: 32px; }
+  body:has(#deskLeft.role-ok) .tb-btnrow .tb-btn { flex: 0 0 auto; min-width: 190px; padding-left: 24px; padding-right: 24px; }
+  body:has(#deskLeft.role-ok) :is(.sl-search, .tb-search, .au-search) { max-width: 720px; }
+
+  /* плитки с цифрами на широких экранах: крупнее, чтобы не терялись в полосе */
+  body:has(#deskLeft.role-ok):not(.col-narrow) .vn-stat { padding: 16px 20px 17px; }
+  body:has(#deskLeft.role-ok):not(.col-narrow) .vn-stat-k { font-size: 12.5px; }
+  body:has(#deskLeft.role-ok):not(.col-narrow) .vn-stat-v, body:has(#deskLeft.role-ok):not(.col-narrow) .vn-stat.main .vn-stat-v { margin-top: 9px; padding-top: 0; font-size: 30px; }
+  body:has(#deskLeft.role-ok):not(.col-narrow) .vn-stat-v.sm { padding-top: 5px; font-size: 21px; }
+  body:has(#deskLeft.role-ok):not(.col-narrow) .vn-stat-s { font-size: 12.5px; }
+
+  /* прогноз, брифинг, чек-листы, автотеги: карточки сеткой вместо узкой колонки по центру */
+  body:has(#deskLeft.role-ok):not(.col-narrow) :is(#forecastContent, #briefingContent, #checklistsEditContent, #atContent) { display: grid; grid-template-columns: repeat(auto-fill, minmax(460px, 1fr)); gap: 10px 12px; align-items: start; }
+  body:has(#deskLeft.role-ok):not(.col-narrow) :is(#forecastContent, #briefingContent, #checklistsEditContent, #atContent) > * { grid-column: 1 / -1; min-width: 0; }
+  body:has(#deskLeft.role-ok):not(.col-narrow) :is(#forecastContent > .fc-card, #briefingContent > .bf-task, #checklistsEditContent > .ck-erow, #atContent > .at-card) { grid-column: auto; margin: 0; }
+  /* табак: бренды и позиции в несколько колонок, заголовок бренда не отрывается от своих строк */
+  body:has(#deskLeft.role-ok):not(.col-narrow) #tbsList { column-width: 440px; column-gap: 28px; }
+  body:has(#deskLeft.role-ok):not(.col-narrow) #tbsList > .tb-item { break-inside: avoid; }
+  body:has(#deskLeft.role-ok):not(.col-narrow) #tbsList > .sd-cat { break-after: avoid; margin-top: 14px; }
+  /* меню и стоп-лист: позиции карточками в несколько колонок, а не полосой с переключателем за полторы тысячи пикселей */
+  body:has(#deskLeft.role-ok):not(.col-narrow) .mn-card { display: grid; grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); gap: 10px; border: none; background: none; border-radius: 0; overflow: visible; align-items: start; }
+  body:has(#deskLeft.role-ok):not(.col-narrow) .mn-card > :is(.emp-row, .menu-item-row) { min-width: 0; margin: 0; padding: 11px 14px; border: 1px solid var(--border); border-radius: 14px; background: var(--bg-card); }
+  body:has(#deskLeft.role-ok):not(.col-narrow) .mn-card > .menu-subsec-edit { grid-column: 1 / -1; border: 1px solid var(--border); border-radius: 10px; }
+  /* состояние системы: проверки в две колонки */
+  body:has(#deskLeft.role-ok):not(.col-narrow) .sv-card:not(:has(> :not(.sv-row))) { display: grid; grid-template-columns: repeat(auto-fill, minmax(560px, 1fr)); gap: 10px; border: none; background: none; border-radius: 0; overflow: visible; align-items: start; }
+  body:has(#deskLeft.role-ok):not(.col-narrow) .sv-card:not(:has(> :not(.sv-row))) > .sv-row { border: 1px solid var(--border); border-radius: 14px; background: var(--bg-card); }
+  /* страницы настроек (режим работы, правила сегментов, просьбы об отзыве, сезоны): блоки в несколько колонок, шапка — на всю ширину */
+  body:has(#deskLeft.role-ok):not(.col-narrow) :is(#venueContent, #srContent, #rrContent, #ssContent) { column-width: 500px; column-gap: 28px; }
+  body:has(#deskLeft.role-ok):not(.col-narrow) :is(#venueContent, #srContent, #rrContent, #ssContent) > * { break-inside: avoid; }
+  body:has(#deskLeft.role-ok):not(.col-narrow) :is(#venueContent, #srContent, #rrContent, #ssContent) > :is(.sec, .sv-gl, .vn-sec) { break-after: avoid; }
+  body:has(#deskLeft.role-ok):not(.col-narrow) :is(#venueContent, #srContent, #rrContent, #ssContent) > :is(.vn-hero, .sr-hero, .sv-hero) { column-span: all; margin-bottom: 4px; }
+  body:has(#deskLeft.role-ok):not(.col-narrow) :is(#venueContent, #srContent, #rrContent, #ssContent) > .vn-save { column-span: all; margin-left: 0; margin-right: 0; }
+  body:has(#deskLeft.role-ok):not(.col-narrow) .tg2-manual { grid-column: 1 / -1; border: 1px solid var(--border); border-radius: 10px; }
+
+  /* списки из строк → сетка карточек (сотрудники, теги, журнал, именинники и гостевые списки) */
+  body:has(#deskLeft.role-ok):not(.col-narrow) :is(.ep-card, .tg2-card, .au-card, .ls-card:not(:has(> :not(.ls-row)))) { display: grid; grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); gap: 10px; border: none; background: none; border-radius: 0; overflow: visible; align-items: start; }
+  body:has(#deskLeft.role-ok):not(.col-narrow) :is(.ep-card > .emp-row.ep, .tg2-card > .tg2-row, .au-card > .au-row, .ls-card > .ls-row) { min-width: 0; margin: 0; border: 1px solid var(--border); border-radius: 14px; background: var(--bg-card); }
+  body:has(#deskLeft.role-ok):not(.col-narrow) :is(.ep-card > .emp-row.ep, .tg2-card > .tg2-row, .ls-card > .ls-row):hover { background: var(--bg-card-hover); }
+}
+
+/* карточка гостя: слева «Что делать», «О госте», автотеги; справа показатели; визиты — сеткой на всю ширину */
+body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-left: 0; margin-right: 0; }
+@container gdcard (min-width: 1000px) {
+  .gd-top { display: grid; grid-template-columns: minmax(380px, 5fr) minmax(0, 7fr); grid-template-rows: auto 1fr; column-gap: 18px; align-items: start; }
+  .gd-ta { grid-column: 1; grid-row: 1; min-width: 0; }
+  .gd-board { grid-column: 2; grid-row: 1 / span 2; margin: 0; }
+  .gd-tc { grid-column: 1; grid-row: 2; min-width: 0; }
+  .gd-tc > .sec:first-child { margin-top: 10px; }
+  .gd-visits { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 10px; align-items: start; }
+  .gd-visits > .visit-item { margin: 0; }
+  .gd-visits > .empty-state { grid-column: 1 / -1; }
+}
+/* до 1400 px левая колонка узкая: «О госте» строками друг под другом; показатели в две колонки — только когда справа больше 900 px */
+@container gdcard (min-width: 1000px) and (max-width: 1399px) { .gd-info { grid-template-columns: minmax(0, 1fr); } }
+@container gdcard (min-width: 1500px) { .gd-p-ind .gd-ind-list { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; } }
 </style>
 </head>
 <body>
@@ -18844,7 +18914,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   // ─── NAVIGATION ────────────────────────────────
 
   const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'tobacco', 'tips-mine', 'tips-admin', 'xr', 'xr-edit', 'xr-tpl', 'dashboard', 'autotags', 'autotag-edit'];
-  var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'segment-rules', 'season', 'tips-mine', 'tips-admin', 'xr-edit', 'xr-tpl', 'review-rules', 'venue', 'autotags', 'autotag-edit', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'tobacco'];
+  var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'tips-mine', 'tips-admin', 'xr-edit', 'xr-tpl', 'autotag-edit', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklist-form'];
+  // «card» остаётся в списке: на узком окне это колонка; на широком её растягивает правило «#screen-card» в wide-css, а две колонки включает container-запрос
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
 
@@ -20020,6 +20091,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     ].filter(Boolean).join('');
 
     el.innerHTML = `
+      <div class="gd-top">
+      <div class="gd-ta">
       <div class="gd-hero">
         <div class="card-avatar" id="cardAvatar">${currentGuestPhotoUrl ? `<img src="${escHtml(currentGuestPhotoUrl)}" alt="">` : escHtml((guest.name || '?').charAt(0).toUpperCase())}</div>
         <div class="gd-hero-text">
@@ -20038,6 +20111,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
       ${renderAlertStrip(guest)}
       ${renderHints(guest)}
+      </div>
 
       <div class="gd-board">
         <div class="gd-left">
@@ -20051,6 +20125,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
         </div>
       </div>
 
+      <div class="gd-tc">
       <div class="sec">О госте</div>
       <div class="gd-info">
         <div class="info-row" onclick="openSegmentInfo()">
@@ -20077,7 +20152,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
           <div class="info-row-edit">${canEdit ? editIcon : ''}</div>
         </div>
 
-        <div class="info-row"${canEdit ? ` onclick="openEditField('phone','Телефон')"` : ''}>
+        <div class="info-row gd-wide"${canEdit ? ` onclick="openEditField('phone','Телефон')"` : ''}>
           <div class="info-row-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="18" x2="14" y2="18"/></svg></div>
           <div style="flex:1;min-width:0;"><div class="info-row-label">Телефон</div><div class="info-row-value">${guest.phone ? escHtml(fmtPhoneRu(guest.phone)) : 'Не указан'}</div></div>
           ${guest.phone ? `<button type="button" class="copy-btn" onclick="event.stopPropagation();copyPhone('${escJs(guest.phone)}')" title="Скопировать номер">${COPY_ICON}Копировать</button>` : ''}
@@ -20093,10 +20168,11 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
       <div class="sec">Автотеги</div>
       ${renderAutoTags(guest)}
-
+      </div>
+      </div>
 
       <div class="sec">Последние визиты</div>
-      ${visitsHtml}
+      <div class="gd-visits">${visitsHtml}</div>
 
       <div class="sec">История изменений</div>
       ${renderHistory(guest)}
@@ -22301,7 +22377,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
 <script id="at-js">
 /* ═══ АВТОТЕГИ: НАСТРОЙКА (Сервис → Автотеги, только основатель) ═══════════════════════════════════════════
-   Список автотегов и форма настройки одного: показ в карточке и официантам, пороги (шаги «−/+»), часы окон «Времени визита»,
+   Список автотегов и форма настройки одного: показ в карточке, пороги (шаги «−/+»), часы окон «Времени визита»,
    название / цвет / подсказка каждого варианта, «что получится» — сколько гостей получит тег до сохранения.
    Сервер: GET /api/admin/autotags, POST /api/admin/autotags/preview, PUT /api/admin/autotags (settings → autotags.config, без миграции).
    Названия, цвета и подсказки приходят в карточку гостя вместе с автотегами (autoTags.cfg), см. renderAutoTags. */
@@ -22414,7 +22490,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       }).join('');
       h += '<button type="button" class="at-card' + (c.enabled ? '' : ' off') + '" onclick="atEdit(\'' + k + '\')">'
         + '<span class="at-ch"><span class="at-ct">' + esc(m.title) + '</span><span class="at-st' + (c.enabled ? ' on' : '') + '">' + (c.enabled ? 'Включён' : 'Выключен') + '</span>'
-        + (c.enabled && !c.waiter ? '<span class="at-st warn">Без официантов</span>' : '') + '</span>'
+        + '</span>'
         + '<span class="at-cs">' + esc(m.sub) + '</span>'
         + '<span class="at-cr">' + esc(summary(k, c)) + '</span>'
         + '<span class="at-chips">' + chips + '</span></button>';
@@ -22488,7 +22564,6 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     if (sub) sub.textContent = m.sub;
     var h = '<div class="sec">Показ</div><div class="sv-card at-rows" style="margin-bottom:10px">'
       + toggleRow('enabled', 'Показывать в карточке гостя', esc(m.show))
-      + toggleRow('waiter', 'Показывать официантам', 'Выключите — тег увидят все, кроме официантов')
       + '</div>';
     var fs = fields(k);
     if (fs.length) {
@@ -22515,7 +22590,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       + '<button class="btn-ghost" onclick="atDefaults()">Вернуть стандартные значения</button></div>';
     el.innerHTML = h;
     // значения в полях
-    $('at_enabled').checked = !!c.enabled; $('at_waiter').checked = !!c.waiter;
+    $('at_enabled').checked = !!c.enabled;
     fs.forEach(function (f) { $('at_' + f.p.replace('.', '_')).value = getp(c, f.p); });
     m.variants.forEach(function (v) { $('at_name_' + v[0]).value = c.variants[v[0]].name; $('at_hint_' + v[0]).value = c.variants[v[0]].hint; });
     refresh();
