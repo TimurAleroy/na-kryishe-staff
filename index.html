@@ -1792,6 +1792,149 @@
     .log-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 11px; color: var(--text-muted); margin-bottom: 7px; }
     .log-text { font-size: 12.5px; color: var(--text-sub); line-height: 1.45; white-space: pre-line; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
     .log-stats { font-size: 12px; color: var(--text); margin-top: 7px; }
+    /* ОПРОСЫ — КОНСТРУКТОР (шаги, вопросы, дизайн, предпросмотр, ответы) */
+    .sy-tabs { margin: 2px 0 12px; }
+    .sy-bar .mk2-line { min-width: 8px; margin: 0 5px; }
+    .sy-wrap { display: block; }
+    .sy-pages { margin: 0 0 10px; }
+    .sy-pt { display: flex; gap: 6px; align-items: center; margin-bottom: 2px; }
+    .sy-pt .form-input { flex: 1 1 auto; min-width: 0; }
+    .sy-x { flex: none; width: 36px; height: 36px; border-radius: 50%; border: 1px solid transparent; background: transparent; color: var(--text-muted); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-family: inherit; padding: 0; }
+    .sy-x:active { background: rgba(var(--fg-rgb),0.08); }
+    .sy-empty { padding: 18px 12px; text-align: center; font-size: 12.5px; color: var(--text-muted); border: 1px dashed rgba(var(--fg-rgb),0.2); border-radius: 14px; margin-top: 8px; }
+    .sy-q { margin-top: 8px; border: 1px solid var(--border); border-radius: 14px; background: var(--bg-card); }
+    .sy-q.open { border-color: rgba(var(--ac),0.5); }
+    .sy-q-h { display: flex; align-items: center; gap: 10px; padding: 10px 12px; cursor: pointer; }
+    .sy-q-n { width: 24px; height: 24px; border-radius: 50%; background: var(--accent-dim); color: var(--accent); font-size: 11px; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+    .sy-q-m { flex: 1; min-width: 0; }
+    .sy-q-t { display: block; font-size: 13px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sy-q-t.empty { color: var(--text-muted); }
+    .sy-q-k { display: block; font-size: 11px; color: var(--text-muted); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sy-chev { width: 8px; height: 8px; border: solid var(--text-muted); border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); margin: -3px 3px 0 0; flex: none; transition: transform .15s; }
+    .sy-q.open .sy-chev { transform: rotate(-135deg); margin-top: 3px; }
+    .sy-q-b { padding: 12px; border-top: 1px solid var(--border); }
+    .sy-q-b .mk2-fld { margin-top: 10px; }
+    .sy-q-b .mk2-sw:first-of-type { margin-top: 10px; }
+    .sy-opts { margin-top: 10px; }
+    .sy-opt { display: flex; gap: 4px; align-items: center; margin-top: 6px; }
+    .sy-opt:first-child { margin-top: 0; }
+    .sy-opt .form-input { flex: 1 1 auto; min-width: 0; }
+    .sy-tools { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .sy-add { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 12px; font-size: 12px; color: var(--text-muted); }
+    .sy-add span { margin-right: 2px; }
+    .sy-cond .mk2-adv { margin-top: 12px; background: transparent; }
+    .sy-cond .mk2-row { margin-top: 8px; }
+    .sy-colors { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 6px; }
+    .sy-color { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 13px; background: var(--bg-card); cursor: pointer; min-width: 0; }
+    .sy-color input[type=color] { -webkit-appearance: none; appearance: none; width: 30px; height: 30px; padding: 0; border: 1px solid rgba(var(--fg-rgb),0.25); border-radius: 50%; background: none; cursor: pointer; flex: none; overflow: hidden; }
+    .sy-color input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
+    .sy-color input[type=color]::-webkit-color-swatch { border: none; border-radius: 50%; }
+    .sy-color input[type=color]::-moz-color-swatch { border: none; border-radius: 50%; }
+    .sy-color span { font-size: 12.5px; color: var(--text); line-height: 1.25; min-width: 0; }
+    .sy-color small { display: block; font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; }
+    .sy-img { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+    .sy-img-th { width: 52px; height: 52px; border-radius: 12px; border: 1px dashed rgba(var(--fg-rgb),0.28); background-size: cover; background-position: center; background-repeat: no-repeat; flex: none; }
+    .sy-img-th.logo { background-size: contain; background-color: rgba(var(--fg-rgb),0.1); }
+    .sy-img-t { flex: 1; min-width: 0; font-size: 13px; color: var(--text); line-height: 1.3; }
+    .sy-img-t small { display: block; font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .sy-img-b { display: flex; gap: 6px; flex: none; }
+    .sy-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    /* предпросмотр: телефон с цветами опроса */
+    .sy-pv-modes { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 10px; }
+    .sy-pv-modes .chip { padding: 7px 12px; font-size: 12px; }
+    .sy-ph { position: relative; width: 100%; max-width: 290px; height: 500px; margin: 0 auto; border-radius: 28px; overflow: hidden; border: 1px solid rgba(var(--fg-rgb),0.22); background: var(--p-bg); color: var(--p-text); font-family: 'Montserrat', sans-serif; }
+    .sy-ph-bg, .sy-ph-tint { position: absolute; inset: 0; }
+    .sy-ph-bg { background-size: cover; background-position: center; }
+    .sy-ph-tint { background: var(--p-bg); opacity: .74; }
+    .sy-ph-in { position: relative; height: 100%; padding: 24px 16px 16px; overflow: hidden; }
+    .sy-ph-logo { display: block; max-height: 40px; max-width: 60%; margin: 0 auto 12px; object-fit: contain; }
+    .sy-ph-h { font-size: 15px; line-height: 1.35; text-align: center; font-weight: 400; margin: 36px 0 10px; color: var(--p-text); overflow-wrap: anywhere; }
+    .sy-ph-p { font-size: 10.5px; color: var(--p-text2); text-align: center; margin: 0 0 12px; line-height: 1.4; }
+    .sy-ph-consent { display: flex; gap: 8px; align-items: flex-start; padding: 9px 10px; border-radius: 12px; background: var(--p-field); font-size: 10.5px; line-height: 1.35; margin-bottom: 10px; }
+    .sy-ph-consent i { width: 14px; height: 14px; border: 1.5px solid var(--p-text2); border-radius: 4px; flex: none; margin-top: 1px; }
+    .sy-ph-btn { display: block; width: 100%; padding: 11px 8px; border-radius: 14px; background: var(--p-accent); color: var(--p-btn); font-size: 12px; text-align: center; box-sizing: border-box; }
+    .sy-ph-prog { height: 3px; border-radius: 3px; background: rgba(128,128,128,0.3); margin-bottom: 12px; }
+    .sy-ph-prog i { display: block; height: 100%; border-radius: 3px; background: var(--p-accent); }
+    .sy-ph-pt { font-size: 9.5px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--p-accent); margin-bottom: 8px; }
+    .sy-ph-q { margin-top: 12px; }
+    .sy-ph-q:first-of-type { margin-top: 0; }
+    .sy-ph-qt { font-size: 12px; line-height: 1.35; overflow-wrap: anywhere; }
+    .sy-ph-qt em { color: var(--p-accent); font-style: normal; }
+    .sy-ph-qh { font-size: 9.5px; color: var(--p-text2); margin-top: 2px; line-height: 1.35; }
+    .sy-ph-o { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 11px; background: var(--p-field); font-size: 11px; margin-top: 5px; line-height: 1.3; }
+    .sy-ph-o i { width: 12px; height: 12px; border: 1.5px solid var(--p-text2); border-radius: 50%; flex: none; }
+    .sy-ph-o.sq i { border-radius: 3px; }
+    .sy-ph-o.ph { color: var(--p-text2); }
+    .sy-ph-nps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-top: 6px; }
+    .sy-ph-nps span { padding: 7px 0; text-align: center; border-radius: 8px; background: var(--p-field); font-size: 10.5px; }
+    .sy-ph-stars { display: flex; gap: 6px; justify-content: center; color: var(--p-accent); font-size: 20px; margin-top: 6px; line-height: 1; }
+    .sy-ph-ta { height: 54px; border-radius: 11px; background: var(--p-field); margin-top: 6px; }
+    .sy-ph-fade { position: absolute; left: 0; right: 0; bottom: 0; height: 74px; background: linear-gradient(to bottom, transparent, var(--p-bg) 70%); }
+    .sy-ph-nav { position: absolute; left: 16px; right: 16px; bottom: 14px; display: flex; gap: 6px; }
+    .sy-ph-nav span { flex: 1 1 0; padding: 10px 6px; border-radius: 14px; font-size: 11.5px; text-align: center; background: var(--p-accent); color: var(--p-btn); }
+    .sy-ph-nav span.g { flex: 0 0 auto; padding: 10px 14px; background: transparent; color: var(--p-text); border: 1px solid var(--p-text2); }
+    .sy-ph-ok { width: 54px; height: 54px; border-radius: 50%; border: 2px solid var(--p-accent); color: var(--p-accent); display: flex; align-items: center; justify-content: center; margin: 70px auto 16px; font-size: 26px; }
+    /* ссылка и QR */
+    .sy-state { display: flex; flex-direction: column; gap: 10px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 14px; }
+    .sy-state p { margin: 0; font-size: 13px; line-height: 1.45; color: var(--text-sub); }
+    .sy-state-b { display: flex; flex-wrap: wrap; gap: 8px; }
+    .sy-share { margin-top: 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 14px; }
+    .sy-share .poster-actions { flex-wrap: wrap; }
+    .sy-share .poster-actions .btn-primary { flex: 1 1 150px; }
+    /* ответы */
+    .sy-sum { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin: 2px 0 12px; }
+    .sy-sum b { font-size: 26px; font-weight: 400; color: var(--text); margin-right: 5px; }
+    .sy-sum span { font-size: 13px; color: var(--text-sub); }
+    .sy-sum small { font-size: 12px; color: var(--text-muted); }
+    .sy-sum-r { margin-left: auto; }
+    .sy-res { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 14px; margin-top: 10px; }
+    .sy-res-t { font-size: 13.5px; color: var(--text); line-height: 1.35; overflow-wrap: anywhere; }
+    .sy-res-s { font-size: 11.5px; color: var(--text-muted); margin: 3px 0 10px; }
+    .sy-bar { margin-top: 8px; }
+    .sy-bar-t { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; color: var(--text-sub); margin-bottom: 4px; }
+    .sy-bar-t span { min-width: 0; overflow-wrap: anywhere; }
+    .sy-bar-t b { font-weight: 400; color: var(--text); flex: none; }
+    .sy-bar-f { height: 6px; border-radius: 6px; background: rgba(var(--fg-rgb),0.08); overflow: hidden; }
+    .sy-bar-f i { display: block; height: 100%; border-radius: 6px; background: var(--accent); }
+    .sy-nps { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .sy-nps-n { font-size: 28px; color: var(--text); line-height: 1; }
+    .sy-nps-n.pos { color: var(--c-green); } .sy-nps-n.neg { color: var(--c-red2); }
+    .sy-nps small { font-size: 12px; color: var(--text-muted); }
+    .sy-stack { display: flex; gap: 2px; height: 8px; border-radius: 8px; overflow: hidden; margin-top: 10px; }
+    .sy-stack i { display: block; min-width: 0; }
+    .sy-stack .det { background: var(--c-red2); } .sy-stack .pas { background: rgba(var(--fg-rgb),0.3); } .sy-stack .pro { background: var(--c-green); }
+    .sy-legend { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+    .sy-cols { display: flex; align-items: flex-end; gap: 4px; height: 54px; margin-top: 12px; }
+    .sy-cols div { flex: 1 1 0; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 3px; height: 100%; font-size: 10px; color: var(--text-muted); }
+    .sy-cols i { display: block; width: 100%; border-radius: 3px 3px 0 0; background: var(--accent); min-height: 2px; }
+    .sy-txt { padding: 8px 0; border-top: 1px solid var(--border); }
+    .sy-txt:first-of-type { border-top: none; }
+    .sy-txt p { margin: 0; font-size: 13px; color: var(--text); line-height: 1.4; white-space: pre-line; overflow-wrap: anywhere; }
+    .sy-txt small { display: block; font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+    .sy-oth { margin-top: 10px; font-size: 11.5px; color: var(--text-muted); line-height: 1.5; }
+    .sy-oth b { font-weight: 400; color: var(--text-sub); }
+    .sy-resp { border: 1px solid var(--border); border-radius: 14px; background: var(--bg-card); margin-top: 8px; }
+    .sy-resp-h { display: flex; align-items: center; gap: 10px; padding: 10px 12px; cursor: pointer; }
+    .sy-resp-n { flex: 1; min-width: 0; font-size: 13px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sy-resp-d { font-size: 11.5px; color: var(--text-muted); flex: none; }
+    .sy-resp.open .sy-chev { transform: rotate(-135deg); margin-top: 3px; }
+    .sy-resp-b { padding: 4px 12px 12px; border-top: 1px solid var(--border); }
+    .sy-ans { padding: 8px 0; border-top: 1px solid var(--border); font-size: 12.5px; line-height: 1.4; }
+    .sy-ans:first-child { border-top: none; }
+    .sy-ans span { display: block; color: var(--text-muted); font-size: 11.5px; }
+    .sy-ans b { font-weight: 400; color: var(--text); overflow-wrap: anywhere; white-space: pre-line; }
+    .sy-resp-a { display: flex; gap: 8px; margin-top: 6px; }
+    .sy-cnt { font-size: 11px; color: var(--text-muted); margin-left: 6px; }
+    @media (max-width: 959px) {
+      .sy-wrap:not([data-step="4"]) .mk2-aside { display: none; }
+      .sy-wrap[data-step="4"] .mk2-aside { margin-top: 18px; }
+      .sy-ph { height: 440px; }
+    }
+    @media (max-width: 420px) { .sy-colors { grid-template-columns: 1fr 1fr; } .sy-color { padding: 8px; gap: 8px; } .sy-two { grid-template-columns: 1fr; } .sy-img { flex-wrap: wrap; } }
+    @media (min-width: 960px) {
+      .sy-wrap { display: grid; grid-template-columns: minmax(0, 720px) 340px; grid-template-rows: auto 1fr; column-gap: 34px; align-items: start; }
+    }
+    .sy-narrow { max-width: 760px; }
     /* АНАЛИТИКА — КОНСТРУКТОР (как в Cosmos: несколько показателей на одном графике, у каждого свои настройки и фильтры) */
     .an-step { display: flex; align-items: center; gap: 9px; font-size: 11px; letter-spacing: 0.1px; text-transform: none; color: var(--text-muted); margin: 24px 0 10px; }
     .an-step b { width: 18px; height: 18px; border-radius: 50%; background: var(--accent-dim); color: var(--accent); font-size: 10px; font-weight: 500; display: inline-flex; align-items: center; justify-content: center; letter-spacing: 0; flex-shrink: 0; }
@@ -2693,15 +2836,44 @@
     .undo-toast:not(.show) { pointer-events: none; }
     .undo-toast button { background: none; border: none; color: var(--accent); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; padding: 4px 2px; }
     /* Смена: плашка с кнопкой на главном экране и экран «Кто на смене» (основатель, администратор) */
-    .shift-bar { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; }
-    .shift-bar.on { border-color: rgba(var(--c-green-rgb),0.35); }
-    .shift-bar-t { min-width: 0; }
-    .shift-bar-h { font-size: 13.5px; color: var(--text); line-height: 1.35; }
+    .shift-bar { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; }
+    .shift-bar.on { border-color: rgba(var(--c-green-rgb),0.35); background: linear-gradient(180deg, rgba(var(--c-green-rgb),0.07), var(--bg-card) 70%); }
+    .shift-bar-t { flex: 1 1 240px; min-width: 0; }
+    .shift-bar-h { font-size: 14px; color: var(--text); line-height: 1.35; font-weight: 500; }
     .shift-bar-h i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--c-green); margin-right: 7px; box-shadow: 0 0 8px rgba(var(--c-green-rgb),0.6); vertical-align: 1px; }
-    .shift-bar-s { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
-    .shift-btn { flex: 0 0 auto; border: 1px solid rgba(var(--ac),0.5); background: var(--accent-dim); color: var(--accent); border-radius: 100px; padding: 10px 16px; font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap; }
+    .shift-bar-h em { font-style: normal; font-weight: 400; color: var(--text-sub); }
+    .shift-bar-s { font-size: 12px; line-height: 1.45; color: var(--text-muted); margin-top: 3px; }
+    .shift-prog { display: flex; align-items: center; gap: 10px; margin-top: 10px; font-size: 12px; color: var(--text-sub); }
+    .shift-prog .ck-meter { flex: 1; margin-top: 0; }
+    .shift-prog b { font-weight: 500; color: var(--text); white-space: nowrap; }
+    .shift-act { flex: 1 1 260px; max-width: 360px; margin-left: auto; display: flex; flex-direction: column; gap: 6px; }
+    .shift-btn { flex: 0 0 auto; border: 1px solid rgba(var(--ac),0.5); background: var(--accent-dim); color: var(--accent); border-radius: 100px; padding: 12px 16px; font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap; }
     .shift-btn.primary { background: var(--accent); color: var(--on-solid2); border-color: var(--accent); font-weight: 500; }
     .shift-btn:disabled { opacity: 0.5; cursor: default; }
+    .shift-btn .shift-arr { margin-left: 6px; opacity: 0.7; }
+    /* Кнопка, которую надо удерживать (открыть и закрыть смену): полоса заполняется слева направо, действие — когда заполнилась.
+       Случайный тап ничего не делает. С клавиатуры (Enter, пробел) вместо удержания — окно подтверждения. */
+    [data-hold] { position: relative; overflow: hidden; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation; --hold-fill: rgba(var(--ac),0.42); }
+    [data-hold] .hold-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--hold-fill); pointer-events: none; }
+    [data-hold].holding .hold-fill { width: 100%; transition: width var(--hold-ms, 900ms) linear; }
+    [data-hold] .hold-l { position: relative; display: block; pointer-events: none; }
+    [data-hold].nudge { animation: holdNudge .32s ease; }
+    @keyframes holdNudge { 20%, 60% { transform: translateX(-4px); } 40%, 80% { transform: translateX(4px); } }
+    .shift-bar .shift-btn.hold { width: 100%; padding: 14px 16px; }
+    .shift-bar .shift-btn.hold.stop { --hold-fill: rgba(var(--c-red-rgb),0.38); color: var(--c-red2); border-color: rgba(var(--c-red-rgb),0.5); background: rgba(var(--c-red-rgb),0.06); box-shadow: none; }
+    .shift-bar .shift-btn.hold:active:not(:disabled) { transform: scale(0.985); }
+    .shift-bar .shift-btn.hold.stop:active:not(:disabled) { background: rgba(var(--c-red-rgb),0.1); }
+    .shift-bar .shift-btn.quiet { color: var(--text); border-color: rgba(var(--fg-rgb),0.2); background: rgba(var(--fg-rgb),0.04); box-shadow: none; }
+    .shift-bar .shift-btn.quiet:active:not(:disabled) { background: rgba(var(--fg-rgb),0.1); }
+    .shift-hint { font-size: 11.5px; line-height: 1.4; color: var(--text-muted); text-align: center; }
+    .btn-cta.ck-go.hold { --hold-fill: rgba(0,0,0,0.24); }
+    .ckf-prev { margin-top: 12px; padding: 14px; border-radius: 16px; border: 1px dashed rgba(var(--fg-rgb),0.2); }
+    .ckf-prev-h { margin-bottom: 10px; font-size: 11px; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text-muted); }
+    .ckf-prev .shift-bar, .ckf-prev .btn-cta { pointer-events: none; }
+    .ckf-prev .ck-prog { margin-top: 0; }
+    .ck-erow-s { margin-top: 8px; font-size: 12px; line-height: 1.45; color: var(--text-muted); }
+    .ck-erow-s.warn { color: var(--c-gold); }
+    @media (prefers-reduced-motion: reduce) { [data-hold].nudge { animation: none; } }
     /* Чек-лист смены: прохождение при открытии и закрытии, редактор в «Сервисе» */
     .ck-prog { margin: 14px 0 6px; }
     .ck-prog-t { display: flex; justify-content: space-between; align-items: baseline; font-size: 12.5px; color: var(--text-sub); }
@@ -4898,6 +5070,17 @@ body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-le
   <div style="padding:0 16px" id="marketingContent"><div class="loading">Загружаю...</div></div>
 </div>
 
+<!-- ADMIN: ОПРОСЫ (конструктор) -->
+<div class="screen" id="screen-svforms">
+  <div class="header">
+    <div class="back-btn" onclick="syHeaderBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Опросы</h1><p id="syHeadSub">Конструктор · гостевой бот</p></div>
+  </div>
+  <div style="padding:0 16px" id="syContent"><div class="loading">Загружаю...</div></div>
+</div>
+
 <!-- ADMIN: АНАЛИТИКА — СРАВНЕНИЕ ПЕРИОДОВ -->
 <div class="screen" id="screen-analytics">
   <div class="header">
@@ -5093,7 +5276,7 @@ body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-le
     <div class="back-btn" onclick="showScreen('service')">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
-    <div><h1 style="font-size:14px;letter-spacing:1px;">Опросы</h1><p>Фон, ретушь, тексты</p></div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Оформление отзыва</h1><p>Отзыв гостя и опрос команды</p></div>
   </div>
   <div style="padding:0 16px"><div id="surveysContent" style="margin-top:6px"><div class="loading">Загружаю...</div></div></div>
 </div>
@@ -5761,7 +5944,7 @@ body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-le
 <!-- ЧЕК-ЛИСТ ПРИ ОТКРЫТИИ / ЗАКРЫТИИ СМЕНЫ -->
 <div class="screen" id="screen-shift-check">
   <div class="header">
-    <div class="back-btn" onclick="showScreen('home')">
+    <div class="back-btn" onclick="shiftCheckBack()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
     <div><h1 style="font-size:14px;letter-spacing:1px;" id="ckTitle">Открытие смены</h1><p id="ckSub"></p></div>
@@ -5769,7 +5952,8 @@ body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-le
   <div style="padding:0 16px">
     <div class="ck-prog"><div class="ck-prog-t" id="ckProgT"></div><div class="ck-meter" id="ckMeter"><i></i></div></div>
     <div id="ckList"></div>
-    <button type="button" class="btn-cta ck-go" id="ckGo" onclick="shiftCheckGo()">Открыть смену</button>
+    <button type="button" class="btn-cta ck-go hold" id="ckGo" data-hold="shiftCheckGo" data-ms="900" oncontextmenu="return false"><i class="hold-fill"></i><span class="hold-l" id="ckGoL">Открыть смену</span></button>
+    <div class="shift-hint" id="ckHint" style="margin-top:8px"></div>
     <button type="button" class="ck-skip" id="ckSkip" onclick="shiftCheckSkip()">Не всё сделано — открыть так</button>
     <div style="height:16px"></div>
   </div>
@@ -5799,6 +5983,7 @@ body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-le
     <div class="poster-note" id="ckfNote"></div>
     <div id="ckfList"></div>
     <div id="ckfExtra"></div>
+    <div id="ckfPreview"></div>
     <div class="tf-save"><button class="btn-cta" id="ckfSaveBtn" onclick="ckfSave()">Сохранить</button></div>
     <div style="height:8px"></div>
   </div>
@@ -6458,7 +6643,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const sticky = document.getElementById('cardSticky');
     if (sticky) sticky.style.display = 'none';
 
-    myShift = { loaded: false, open: null, busy: false, err: false };
+    myShift = { loaded: false, open: null, busy: false, err: false, lists: { open: null, close: null } };
+    try { holdCancel(); } catch {}
     // главный экран и боковые панели — пустые до следующего входа
     const grid = document.getElementById('quickActionsGrid');
     if (grid) grid.innerHTML = '';
@@ -6503,7 +6689,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const list = [];
     if (can('menu.manage')) list.push({ group: G.content, icon: 'menu', short: 'меню', title: 'Меню', sub: 'Позиции, цены, фото', fn: 'openMenuEdit()' });
     if (can('stories.manage')) list.push({ group: G.content, icon: 'stories', short: 'сторис', title: 'Сторис', sub: 'Фото бара и ВИП-комнат', fn: 'openStoriesEdit()' });
-    if (can('surveys.manage')) list.push({ group: G.content, icon: 'surveys', short: 'опросы', title: 'Опросы', sub: 'Фон, ретушь, тексты', fn: 'openSurveysEdit()' });
+    if (can('surveys.manage')) list.push({ group: G.content, icon: 'surveys', short: 'отзыв гостя', title: 'Оформление отзыва', sub: 'Отзыв гостя и опрос команды: фон, тексты', fn: 'openSurveysEdit()' });
     if (can('tv.manage')) list.push({ group: G.content, icon: 'tv', short: 'тв-экраны', title: 'ТВ-экраны', sub: 'ВИП-комнаты и терраса: приветствие, фон, сообщения', fn: 'openTv()' });
     if (can('checklists.manage')) list.push({ group: G.team, icon: 'checklists', short: 'чек-листы', title: 'Чек-листы', sub: 'Открытие и закрытие смены', fn: 'openChecklistsEdit()' });
     if (can('tobacco.manage')) list.push({ group: G.team, icon: 'tobacco', short: 'табак', title: 'Табак', sub: 'Вкусы, остатки табака и углей', fn: 'openTobacco()' });
@@ -6760,6 +6946,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
     if (can('events.manage')) marketingRows += qrow(icons.events, 'Афиша', 'Мероприятия', "openEvents()");
     if (can('marketing.send')) marketingRows += qrow(icons.marketing, 'Рассылки', 'Через бота', "openMarketing()");
+    if (can('surveys.manage')) marketingRows += qrow(icons.surveys, 'Опросы', 'Конструктор · ответы', "openSurveyForms()");
     if (can('analytics.view')) analyticsRows += qrow(icons.dashboard, 'Дашборд', 'Показатели за период', "openDashboard()");
     if (can('analytics.view')) analyticsRows += qrow(icons.analytics, 'Аналитика', 'Сравнение периодов', "openAnalytics()");
     if (can('analytics.view')) analyticsRows += qrow(icons.forecast, 'Прогноз', 'Загрузка на неделю', "openForecast()");
@@ -15757,32 +15944,83 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   // ─── СМЕНА: «открыл» и «закрыл» ───
   // Сотрудник нажимает кнопку наверху главного экрана. Основатель и администратор на экране «Кто на смене»
   // видят, кто и во сколько открыл и закрыл (сегодня и вчера; день заведения до 06:00 — ещё вчерашний).
-  var myShift = { loaded: false, open: null, busy: false, err: false };
-  function shiftBarHtml() {
-    if (!myShift.loaded) {
-      return myShift.err
-        ? `<div class="shift-bar-t"><div class="shift-bar-h">Не удалось проверить смену</div><div class="shift-bar-s">Нет связи с сервером</div></div><button type="button" class="shift-btn" onclick="loadMyShift()">Повторить</button>`
+  var myShift = { loaded: false, open: null, busy: false, err: false, lists: { open: null, close: null } };
+  const SHIFT_FLIP_MIN = 10; // открыл и сразу закрыл (или наоборот) раньше, чем через столько минут — переспрашиваем
+
+  // Карточка «Смена» на главном экране сотрудника. Чек-лист открытия и закрытия — часть карточки:
+  //  • смена не открыта и у роли есть чек-лист открытия — прогресс и кнопка «Пройти чек-лист открытия»; смена откроется на экране чек-листа;
+  //  • на смене и есть чек-лист закрытия — прогресс и тихая кнопка «Чек-лист закрытия»; смена закроется на экране чек-листа;
+  //  • чек-листа нет — «Открыть смену» / «Закрыть смену» срабатывают только при удержании кнопки (~1 с): случайный тап ничего не делает.
+  // Закрыть смену сразу после открытия (и открыть сразу после закрытия) без переспроса нельзя — см. shiftFlipGuard.
+  function shiftElapsed(iso) {
+    const t = Date.parse(iso);
+    if (!t) return '';
+    const min = Math.max(0, Math.floor((Date.now() - t) / 60000));
+    return min < 1 ? 'только что' : shDuration(min);
+  }
+  function holdBtn(o) {
+    return `<button type="button" class="${o.cls}" data-hold="${o.fn}" data-arg="${escHtml(o.arg || '')}" data-ms="${o.ms || 900}" data-confirm="${escHtml(o.confirm || '')}" data-ok="${escHtml(o.ok || '')}"${o.danger ? ' data-danger="1"' : ''}${o.disabled ? ' disabled' : ''} oncontextmenu="return false"><i class="hold-fill"></i><span class="hold-l">${escHtml(o.label)}</span></button>`;
+  }
+  // Сколько пунктов списка этого вида отмечено на этом устройстве (null — чек-листа нет)
+  function shiftProgOf(st, kind) {
+    const items = st.lists && st.lists[kind];
+    if (!items || !items.length) return null;
+    const on = st.preview ? st.preview.on : shiftCheckLoad(kind, items);
+    return { n: items.length, done: Math.min(on.size, items.length) };
+  }
+  function shiftProgHtml(p, label) {
+    const pct = Math.round(p.done / p.n * 100);
+    return `<div class="shift-prog"><span>${label}</span><div class="ck-meter${p.done === p.n ? ' full' : ''}"><i style="width:${pct}%"></i></div><b>${p.done} из ${p.n}</b></div>`;
+  }
+  function shiftBarHtml(st) {
+    st = st || myShift;
+    if (!st.loaded) {
+      return st.err
+        ? `<div class="shift-bar-t"><div class="shift-bar-h">Не удалось проверить смену</div><div class="shift-bar-s">Нет связи с сервером</div></div><div class="shift-act"><button type="button" class="shift-btn" onclick="loadMyShift()">Повторить</button></div>`
         : `<div class="shift-bar-t"><div class="shift-bar-h">Смена</div><div class="shift-bar-s">Проверяю…</div></div>`;
     }
-    if (myShift.open) {
-      return `<div class="shift-bar-t"><div class="shift-bar-h"><i></i>Вы на смене с ${escHtml(myShift.open.opened)}</div><div class="shift-bar-s">Уходя, нажмите «Закрыть смену»</div></div>`
-        + `<button type="button" class="shift-btn" ${myShift.busy ? 'disabled' : ''} onclick="shiftClose()">Закрыть смену</button>`;
+    const dis = st.busy ? ' disabled' : '';
+    if (st.open) {
+      const p = shiftProgOf(st, 'close');
+      const el = shiftElapsed(st.open.openedAt);
+      const head = `<div class="shift-bar-h"><i></i>На смене с ${escHtml(st.open.opened)}${el ? ` <em>· ${escHtml(el)}</em>` : ''}</div>`;
+      if (p) {
+        return `<div class="shift-bar-t">${head}<div class="shift-bar-s">Уходя, пройдите чек-лист закрытия — после него смена закроется</div>${shiftProgHtml(p, 'Закрытие')}</div>`
+          + `<div class="shift-act"><button type="button" class="shift-btn quiet"${dis} onclick="shiftStart('close')">${p.done === p.n ? 'Завершить закрытие' : p.done ? 'Продолжить чек-лист закрытия' : 'Чек-лист закрытия'}<span class="shift-arr">›</span></button></div>`;
+      }
+      return `<div class="shift-bar-t">${head}<div class="shift-bar-s">Уходя, нажмите и удерживайте «Закрыть смену»</div></div>`
+        + `<div class="shift-act">${holdBtn({ cls: 'shift-btn hold stop', label: 'Удерживайте, чтобы закрыть смену', fn: 'shiftHoldDone', arg: 'close', ms: 1100, confirm: 'Закрыть смену?\n\nВремя ухода запишется сейчас.', ok: 'Закрыть смену', danger: true, disabled: st.busy })}</div>`;
     }
-    return `<div class="shift-bar-t"><div class="shift-bar-h">Смена не открыта</div><div class="shift-bar-s">Нажмите, когда приступили к работе</div></div>`
-      + `<button type="button" class="shift-btn primary" ${myShift.busy ? 'disabled' : ''} onclick="shiftOpen()">Открыть смену</button>`;
+    const p = shiftProgOf(st, 'open');
+    if (p) {
+      return `<div class="shift-bar-t"><div class="shift-bar-h">Смена не открыта</div><div class="shift-bar-s">Отметьте чек-лист открытия — после него смена откроется</div>${shiftProgHtml(p, 'Открытие')}</div>`
+        + `<div class="shift-act"><button type="button" class="shift-btn primary"${dis} onclick="shiftStart('open')">${p.done === p.n ? 'Завершить открытие' : p.done ? 'Продолжить чек-лист' : 'Пройти чек-лист открытия'}<span class="shift-arr">›</span></button></div>`;
+    }
+    return `<div class="shift-bar-t"><div class="shift-bar-h">Смена не открыта</div><div class="shift-bar-s">Приступили к работе — нажмите и удерживайте кнопку</div></div>`
+      + `<div class="shift-act">${holdBtn({ cls: 'shift-btn primary hold', label: 'Удерживайте, чтобы открыть смену', fn: 'shiftHoldDone', arg: 'open', ms: 900, confirm: 'Открыть смену?\n\nВремя прихода запишется сейчас.', ok: 'Открыть смену', disabled: st.busy })}</div>`;
   }
   function renderShiftBar() {
     const el = document.getElementById('shiftBar');
-    if (!el) return;
+    if (!el || holdSt) return; // пока кнопку удерживают, карточку не перерисовываем
     el.className = 'shift-bar' + (myShift.open ? ' on' : '');
     el.innerHTML = shiftBarHtml();
   }
+  async function shiftFetchList(kind) {
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/staff/shift/checklist?kind=${kind}&pin=${getPin()}`);
+      if (!res.ok) return res.status === 404 ? [] : null; // 404 — сервер ещё без чек-листов
+      const d = await res.json().catch(() => null);
+      return d && Array.isArray(d.items) ? d.items : null;
+    } catch { return null; }
+  }
   async function loadMyShift() {
     try {
-      const res = await fetch(`${PROXY_BASE}/api/staff/shift?pin=${getPin()}`);
+      const [res, lo, lc] = await Promise.all([fetch(`${PROXY_BASE}/api/staff/shift?pin=${getPin()}`), shiftFetchList('open'), shiftFetchList('close')]);
       if (!res.ok) throw new Error('status ' + res.status);
       const d = await res.json();
       myShift.open = d.open || null;
+      if (lo) myShift.lists.open = lo;   // не получилось загрузить список — остаётся прежний
+      if (lc) myShift.lists.close = lc;
       myShift.loaded = true;
       myShift.err = false;
     } catch {
@@ -15790,9 +16028,32 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     }
     renderShiftBar();
   }
-  // Нажатие «Открыть смену» / «Закрыть смену»: сначала берём чек-лист своей роли. Есть пункты — экран с отметками,
-  // нет — действие сразу, как раньше. Сервер сам проверяет, что всё отмечено (или нажато «Не всё сделано»).
-  async function shiftStart(kind) {
+  // «На смене с 19:30 · 2 ч» идёт сама: раз в минуту обновляем карточку
+  setInterval(() => { if (myShift.loaded && myShift.open) renderShiftBar(); }, 60000);
+
+  // Открыл и сразу закрыл (или закрыл и сразу открыл) — почти всегда случайное нажатие: переспрашиваем
+  function shiftLastKey() { return `shiftlast:${currentEmployeeName || ''}`; }
+  function shiftLastSet(kind) { try { localStorage.setItem(shiftLastKey(), JSON.stringify({ kind, at: Date.now() })); } catch {} }
+  function shiftLastGet() { try { const v = JSON.parse(localStorage.getItem(shiftLastKey()) || 'null'); return v && typeof v.at === 'number' ? v : null; } catch { return null; } }
+  async function shiftFlipGuard(kind) {
+    const ago = (min) => min < 1 ? 'только что' : `${min} мин назад`;
+    if (kind === 'close' && myShift.open) {
+      const t = Date.parse(myShift.open.openedAt);
+      const min = t ? Math.floor((Date.now() - t) / 60000) : null;
+      if (min !== null && min < SHIFT_FLIP_MIN) return askConfirm(`Смена открыта ${ago(min)}\n\nЗакрыть её сразу? Если нажали случайно — вернитесь.`, { ok: 'Всё равно закрыть', cancel: 'Вернуться', danger: true });
+    }
+    if (kind === 'open') {
+      const last = shiftLastGet();
+      const min = last && last.kind === 'close' ? Math.floor((Date.now() - last.at) / 60000) : null;
+      if (min !== null && min < SHIFT_FLIP_MIN) return askConfirm(`Смена закрыта ${ago(min)}\n\nОткрыть новую? Если нажали случайно — вернитесь.`, { ok: 'Открыть', cancel: 'Вернуться' });
+    }
+    return true;
+  }
+
+  // Вход в открытие / закрытие смены: свежий чек-лист своей роли. Есть пункты — экран с отметками (смена откроется или закроется
+  // на нём), нет — действие сразу. held — кнопку уже удержали (это и есть подтверждение); без удержания спросим окном.
+  // Сервер сам проверяет, что всё отмечено (или нажато «Не всё сделано»).
+  async function shiftStart(kind, held) {
     if (myShift.busy) return;
     myShift.busy = true; renderShiftBar();
     let items = [];
@@ -15812,11 +16073,16 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     } finally {
       myShift.busy = false; renderShiftBar();
     }
+    myShift.lists[kind] = items;
+    renderShiftBar();
     if (items.length) { openShiftCheck(kind, items); return; }
-    if (kind === 'close' && !await askConfirm('Закрыть смену? Время ухода запишется сейчас.', { ok: 'Закрыть смену' })) return;
+    if (!held && !await askConfirm(kind === 'close' ? 'Закрыть смену?\n\nВремя ухода запишется сейчас.' : 'Открыть смену?\n\nВремя прихода запишется сейчас.', { ok: kind === 'close' ? 'Закрыть смену' : 'Открыть смену' })) return;
     return shiftAction(kind);
   }
+  function shiftHoldDone(kind) { return shiftStart(kind === 'close' ? 'close' : 'open', true); }
   async function shiftAction(kind, extra) {
+    if (myShift.busy) return;
+    if (!await shiftFlipGuard(kind)) return;
     if (myShift.busy) return;
     myShift.busy = true; renderShiftBar(); renderShiftCheckIfActive();
     try {
@@ -15841,6 +16107,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       const d = await res.json().catch(() => ({}));
       myShift.open = d.open || null;
       myShift.loaded = true;
+      shiftLastSet(kind);
       shiftCheckClear(kind);
       if (activeScreenName() === 'shift-check') showScreen('home');
       showToast(kind === 'open' ? `Смена открыта${d.open ? ' · ' + d.open.opened : ''}` : `Смена закрыта${d.closed ? ' · ' + d.closed : ''}`);
@@ -15892,8 +16159,13 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     document.getElementById('ckList').innerHTML = items.map((x, i) =>
       `<button type="button" class="ck-row${on.has(x.id) ? ' on' : ''}" role="checkbox" aria-checked="${on.has(x.id)}" onclick="shiftCheckToggle(${i})"><span class="ck-box">${CK_TICK}</span><span class="ck-tx">${escHtml(x.text)}</span></button>`).join('');
     const go = document.getElementById('ckGo');
-    go.textContent = open ? 'Открыть смену' : 'Закрыть смену';
     go.disabled = !all || myShift.busy;
+    go.dataset.ms = open ? '900' : '1100';
+    go.dataset.confirm = open ? 'Открыть смену?\n\nВремя прихода запишется сейчас.' : 'Закрыть смену?\n\nВремя ухода запишется сейчас.';
+    go.dataset.ok = open ? 'Открыть смену' : 'Закрыть смену';
+    if (!open) go.dataset.danger = '1'; else delete go.dataset.danger;
+    document.getElementById('ckGoL').textContent = all ? (open ? 'Удерживайте, чтобы открыть смену' : 'Удерживайте, чтобы закрыть смену') : (open ? 'Открыть смену' : 'Закрыть смену');
+    document.getElementById('ckHint').textContent = all ? 'Нажмите и держите кнопку, пока не заполнится полоса' : 'Кнопка станет доступна, когда отмечены все пункты';
     const skip = document.getElementById('ckSkip');
     skip.style.display = all ? 'none' : '';
     skip.textContent = open ? 'Не всё сделано — открыть так' : 'Не всё сделано — закрыть так';
@@ -15905,7 +16177,9 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     if (shiftCheck.on.has(it.id)) shiftCheck.on.delete(it.id); else shiftCheck.on.add(it.id);
     shiftCheckSave();
     renderShiftCheck();
+    renderShiftBar();
   }
+  function shiftCheckBack() { showScreen('home'); renderShiftBar(); }
   function shiftCheckPayload(skip) {
     return {
       seen: shiftCheck.items.map(x => x.id),
@@ -15941,6 +16215,68 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   }
   function shiftOpen() { return shiftStart('open'); }
   function shiftClose() { return shiftStart('close'); }
+
+  // ── Кнопки «удерживать» (data-hold) ──
+  // Нажали и держим: полоса заполняется слева направо, по заполнении вызывается функция data-hold с аргументом data-arg.
+  // Отпустили раньше, ушли пальцем с кнопки или начали прокрутку — ничего не произошло. Обычный тап подсказывает «держите».
+  // Enter и пробел (клавиатура, экранные читалки) удерживать не могут — для них то же действие через окно подтверждения.
+  var holdSt = null, holdNudgeT = 0, holdDoneAt = 0;
+  function holdCancel() {
+    if (!holdSt) return;
+    clearTimeout(holdSt.timer);
+    holdSt.btn.classList.remove('holding');
+    holdSt = null;
+  }
+  function holdRun(b) {
+    const fn = window[b.dataset.hold];
+    if (typeof fn === 'function') fn(b.dataset.arg || undefined);
+  }
+  function holdFinish(b) {
+    clearTimeout(holdSt && holdSt.timer);
+    holdSt = null;
+    b.classList.remove('holding');
+    b.classList.add('held');
+    holdDoneAt = Date.now();
+    try { if (navigator.vibrate) navigator.vibrate(25); } catch {}
+    holdRun(b);
+  }
+  function holdHint(b) {
+    const l = b.querySelector('.hold-l');
+    if (!l || b.classList.contains('nudge')) return;
+    const was = l.textContent;
+    l.textContent = 'Держите нажатой, пока заполнится полоса';
+    b.classList.add('nudge');
+    clearTimeout(holdNudgeT);
+    holdNudgeT = setTimeout(() => { l.textContent = was; b.classList.remove('nudge'); }, 1700);
+  }
+  document.addEventListener('pointerdown', (e) => {
+    const b = e.target.closest && e.target.closest('[data-hold]');
+    if (!b || b.disabled || (e.pointerType === 'mouse' && e.button !== 0)) return;
+    holdCancel();
+    b.classList.remove('held');
+    const ms = Number(b.dataset.ms) || 900;
+    b.style.setProperty('--hold-ms', ms + 'ms');
+    b.classList.remove('holding'); void b.offsetWidth; b.classList.add('holding');
+    holdSt = { btn: b, timer: setTimeout(() => { if (holdSt && holdSt.btn === b) holdFinish(b); }, ms) };
+  });
+  document.addEventListener('pointermove', (e) => {
+    if (!holdSt) return;
+    const r = holdSt.btn.getBoundingClientRect(), s = 12;
+    if (e.clientX < r.left - s || e.clientX > r.right + s || e.clientY < r.top - s || e.clientY > r.bottom + s) holdCancel();
+  }, { passive: true });
+  ['pointerup', 'pointercancel'].forEach(t => document.addEventListener(t, holdCancel));
+  window.addEventListener('blur', holdCancel);
+  document.addEventListener('contextmenu', (e) => { if (e.target.closest && e.target.closest('[data-hold]')) e.preventDefault(); });
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest && e.target.closest('[data-hold]');
+    if (!b) return;
+    e.preventDefault(); e.stopPropagation();
+    if (b.disabled) return;
+    if (b.classList.contains('held')) { b.classList.remove('held'); return; } // «клик» после удержания, действие уже выполнено
+    if (Date.now() - holdDoneAt < 900) return;                                  // то же, но кнопка уже перерисована под пальцем
+    if (e.detail !== 0) { holdHint(b); return; }                               // обычный тап
+    askConfirm(b.dataset.confirm || 'Подтвердить?', { ok: b.dataset.ok || 'Да', danger: b.dataset.danger === '1' }).then(ok => { if (ok) holdRun(b); }); // клавиатура
+  }, true);
 
   // Экран для основателя и администратора
   var sh = { days: [], sel: 0, seq: 0 };
@@ -17010,7 +17346,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   // ─── ЧЕК-ЛИСТЫ СМЕНЫ: РЕДАКТОР («Сервис» → «Чек-листы») ───
   // У каждой роли два списка: «Открытие» (проходят при нажатии «Открыть смену») и «Закрытие». Пустой список — у роли чек-листа нет.
   var ckAdmin = null;
-  var ckf = { role: null, tab: 'open', open: [], close: [], dirty: false, busy: false, bulk: false };
+  var ckf = { role: null, tab: 'open', open: [], close: [], dirty: false, busy: false, bulk: false, prev: false, prevOn: { open: new Set(), close: new Set() } };
   // Примеры для начала: подставляются в список по кнопке и не сохраняются, пока их не сохранят вручную
   const CK_EXAMPLES = {
     'Администратор': {
@@ -17024,6 +17360,19 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   };
   const CK_KIND = { open: 'Открытие', close: 'Закрытие' };
   const ckCount = (list) => list.filter(x => String(x.text).trim()).length;
+  // Кого касается список роли: сколько человек и у всех ли есть право «Отмечать начало и конец своей смены»
+  function ckCoverHtml(r) {
+    const st = Array.isArray(r.staff) ? r.staff : null;
+    if (!st) return '';
+    const has = r.open.length + r.close.length > 0;
+    if (!st.length) return `<div class="ck-erow-s">Сотрудников с этой ролью пока нет</div>`;
+    const no = st.filter(x => !x.mark);
+    const names = (arr) => arr.slice(0, 4).map(x => escHtml(x.name)).join(', ') + (arr.length > 4 ? ` и ещё ${arr.length - 4}` : '');
+    const n = st.length;
+    let out = `<div class="ck-erow-s">${n} ${ruPlural(n, 'сотрудник', 'сотрудника', 'сотрудников')}${has ? ` · увидят чек-лист: ${n - no.length}` : ''}</div>`;
+    if (no.length) out += `<div class="ck-erow-s warn">Без карточки смены, нет права «Отмечать смену»: ${names(no)}<br>Выдать: «Сотрудники» → сотрудник → права</div>`;
+    return out;
+  }
 
   function openChecklistsEdit() {
     showScreen('checklists-edit');
@@ -17055,9 +17404,10 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       return `<div class="ck-erow" role="button" tabindex="0" onclick="openChecklistForm('${escJs(r.key)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openChecklistForm('${escJs(r.key)}')}">
         <div class="ck-erow-t">${escHtml(r.name)}</div>
         <div class="ck-erow-c">${chip('open')}${chip('close')}</div>
+        ${ckCoverHtml(r)}
       </div>`;
     }).join('');
-    el.innerHTML = `<div class="ck-note">Сотрудник нажимает «Открыть смену» — и проходит список своей роли, потом смена открывается. То же при закрытии. Если у роли списка нет, смена открывается одной кнопкой. Работать в приложении можно и без открытой смены.</div>`
+    el.innerHTML = `<div class="ck-note">Чек-лист — часть смены. На главном экране у сотрудника карточка «Смена»: пока смена не открыта, там чек-лист открытия; когда он на смене — чек-лист закрытия. Отметил все пункты, подержал кнопку — смена открылась или закрылась. Если у роли списка нет, смена открывается и закрывается удержанием одной кнопки. Работать в приложении можно и без открытой смены.</div>`
       + `<div class="sd-cat">Роли</div>` + (rows || '<div class="empty-state">Ролей нет</div>') + '<div style="height:16px"></div>';
   }
 
@@ -17069,7 +17419,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       tab: ckf.tab === 'close' ? 'close' : 'open',
       open: r.open.map(x => ({ id: x.id, text: x.text })),
       close: r.close.map(x => ({ id: x.id, text: x.text })),
-      dirty: false, busy: false, bulk: false
+      dirty: false, busy: false, bulk: false,
+      prev: false, prevOn: { open: new Set(), close: new Set() }
     };
     showScreen('checklist-form');
     document.getElementById('ckfTitle').textContent = r.name;
@@ -17109,8 +17460,48 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     if (tools) extra += `<div class="ckf-tools">${tools}</div>`;
     if (ckf.bulk) extra += `<div class="ckf-bulk"><textarea class="form-input" id="ckfBulkText" placeholder="Каждый пункт с новой строки. Можно вставить из заметок: маркеры и номера уберутся сами."></textarea><button type="button" class="btn-primary btn-full" onclick="ckfBulkAdd()">Добавить в список</button></div>`;
     document.getElementById('ckfExtra').innerHTML = extra;
+    ckfRenderPreview();
   }
-  function ckfInput(i, v) { const it = ckf[ckf.tab][i]; if (it) { it.text = v; ckf.dirty = true; } }
+  // «Как увидит сотрудник»: та же карточка «Смена» и тот же экран чек-листа, что у сотрудника, по тому, что сейчас на экране (до сохранения)
+  function ckfPrevToggle() { ckf.prev = !ckf.prev; ckfRenderPreview(); }
+  function ckfPrevTick(id) {
+    const on = ckf.prevOn[ckf.tab];
+    if (on.has(id)) on.delete(id); else on.add(id);
+    ckfRenderPreview();
+  }
+  function ckfRenderPreview() {
+    const el = document.getElementById('ckfPreview');
+    if (!el) return;
+    const tab = ckf.tab;
+    const clean = (k) => ckf[k].map((x, i) => ({ id: k + i, text: String(x.text).trim() })).filter(x => x.text);
+    const lists = { open: clean('open'), close: clean('close') };
+    const items = lists[tab];
+    const on = new Set([...ckf.prevOn[tab]].filter(id => items.some(x => x.id === id)));
+    ckf.prevOn[tab] = on;
+    const btn = `<button type="button" class="ckf-tool" onclick="ckfPrevToggle()">${ckf.prev ? 'Скрыть предпросмотр' : 'Как это увидит сотрудник'}</button>`;
+    if (!ckf.prev) { el.innerHTML = `<div class="ckf-tools" style="margin-top:14px">${btn}</div>`; return; }
+    const at = new Date(Date.now() - 135 * 60000);
+    const st = {
+      loaded: true, busy: false, err: false, lists, preview: { on },
+      open: tab === 'close' ? { opened: at.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }), openedAt: at.toISOString() } : null
+    };
+    const kindOpen = tab === 'open';
+    const done = items.filter(x => on.has(x.id)).length;
+    const all = items.length > 0 && done === items.length;
+    let screen;
+    if (items.length) {
+      screen = `<div class="ckf-prev-h" style="margin-top:16px">Дальше — экран чек-листа (отметки можно пробовать)</div>`
+        + `<div class="ck-prog"><div class="ck-prog-t"><span>Отмечено</span><b>${done} из ${items.length}</b></div><div class="ck-meter${all ? ' full' : ''}"><i style="width:${Math.round(done / items.length * 100)}%"></i></div></div>`
+        + items.map(x => `<button type="button" class="ck-row${on.has(x.id) ? ' on' : ''}" role="checkbox" aria-checked="${on.has(x.id)}" onclick="ckfPrevTick('${x.id}')"><span class="ck-box">${CK_TICK}</span><span class="ck-tx">${escHtml(x.text)}</span></button>`).join('')
+        + `<div class="btn-cta ck-go" style="${all ? '' : 'opacity:.45'}">${all ? (kindOpen ? 'Удерживайте, чтобы открыть смену' : 'Удерживайте, чтобы закрыть смену') : (kindOpen ? 'Открыть смену' : 'Закрыть смену')}</div>`;
+    } else {
+      screen = `<div class="ckf-empty">Пунктов нет — у сотрудника на карточке будет одна кнопка, которую надо удерживать.</div>`;
+    }
+    el.innerHTML = `<div class="ckf-tools" style="margin-top:14px">${btn}</div>`
+      + `<div class="ckf-prev"><div class="ckf-prev-h">Так увидит ${escHtml(ckf.role.name.toLowerCase())} · ${kindOpen ? 'до открытия смены' : 'во время смены'}</div>`
+      + `<div class="shift-bar${st.open ? ' on' : ''}">${shiftBarHtml(st)}</div>${screen}</div>`;
+  }
+  function ckfInput(i, v) { const it = ckf[ckf.tab][i]; if (it) { it.text = v; ckf.dirty = true; if (ckf.prev) ckfRenderPreview(); } }
   function ckfKey(e, i) {
     if (e.key !== 'Enter') return;
     e.preventDefault();
@@ -20745,9 +21136,952 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     authEnter('Вы вышли на всех устройствах');
   }
 
+  // ─────────────────────────────────────────────────────────────────────────────
+  // ОПРОСЫ — КОНСТРУКТОР (как в CosmosResto): шаги «Основные детали → Вопросы → Условия → Дизайн» и вкладки
+  // «Конструктор / Ссылка и QR / Ответы». Опросы хранятся на сервере (/api/admin/survey-forms*), гость проходит их
+  // в гостевом приложении по ссылке t.me/<бот>?start=survey_<код>. Старые опросы «Отзыв гостя (CSI + NPS)» и
+  // «Опрос команды (eNPS)» — отдельно, в «Сервис → Оформление отзыва»: их вопросы фиксированные.
+  // Шаги умещаются примерно на один экран, кнопки внизу всегда на виду (как в «Рассылках»).
+  // ─────────────────────────────────────────────────────────────────────────────
+  let syData = null;          // /api/admin/survey-forms: опросы, бот, пределы, цвета по умолчанию
+  let syForm = null;          // опрос в работе (null — виден список)
+  let syTab = 'build';        // build · share · results
+  let syStep = 1;
+  let syVisited = new Set([1]);
+  let syDirty = false;
+  let syBusy = false;
+  let syPage = 0;             // открытая страница вопросов
+  let syOpenQ = '';           // раскрытый вопрос
+  let syCond = {};            // «Показать, если…» раскрыто: { id вопроса: true/false }
+  let syPrevMode = 'start';   // что показывает телефон справа: start · page · thanks
+  let syRes = null;           // итоги по вопросам
+  let syResp = null;          // список ответов гостей: { items, total }
+  let syRespOpen = {};        // раскрытые ответы гостей
+  let syTextsAll = {};        // «показать все» у текстовых вопросов
+  let syFile = null;          // готовая выгрузка CSV: { blob, name } (на телефоне её отдаём через «Поделиться»)
+
+  const SY_STEPS = ['Основные детали', 'Вопросы', 'Условия', 'Дизайн'];
+  const SY_TYPE_NAME = { choice: 'Выбор', nps: 'NPS 1–10', rating: 'Звёзды 1–5', text: 'Текст' };
+  const SY_ADD = { choice: 'Выбор', nps: 'NPS', rating: 'Звёзды', text: 'Текст' };
+  const SY_REPEAT = [[0, 'Один раз'], [7, 'Раз в неделю'], [30, 'Раз в месяц'], [90, 'Раз в квартал'], [-1, 'Без ограничений']];
+  const SY_COLORS = [['bg', 'Фон'], ['field', 'Поля и варианты'], ['accent', 'Акцент, кнопки'], ['text', 'Текст'], ['text2', 'Подсказки'], ['btnText', 'Текст на кнопке']];
+  const SY_TRASH = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
+  const SY_START_TEXT = 'Расскажите, пожалуйста, о вашем опыте посещения';
+  const SY_CONSENT_TEXT = 'Согласен на обработку персональных данных';
+
+  const syById = (id) => document.getElementById(id);
+  const syRid = (p) => p + Math.random().toString(36).slice(2, 8).padEnd(5, '0');
+  const syHex = (v, d) => (/^#[0-9a-fA-F]{6}$/.test(String(v || '')) ? String(v).toLowerCase() : d);
+  const syDay = (d) => (d ? new Date(d + 'T00:00:00').toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) : '');
+  const syAllQs = () => syForm.pages.flatMap(p => p.questions);
+  const syQNum = (id) => syAllQs().findIndex(q => q.id === id) + 1;
+  function syFindQ(id) {
+    for (const [pi, page] of syForm.pages.entries()) {
+      const qi = page.questions.findIndex(q => q.id === id);
+      if (qi >= 0) return { pi, qi, q: page.questions[qi], page };
+    }
+    return null;
+  }
+
+  function syNewQ(type) {
+    return { id: syRid('q'), type, title: '', hint: '', required: true, options: type === 'choice' ? [{ id: syRid('o'), text: '' }, { id: syRid('o'), text: '' }] : [], multiple: false, other: false, otherLabel: '', showIf: null };
+  }
+  function syBlank() {
+    return {
+      id: null, slug: '', status: 'draft', state: 'draft', title: '', startText: SY_START_TEXT, startButton: 'Начать', consent: false, consentText: SY_CONSENT_TEXT,
+      thanksTitle: '', thanksText: '', pages: [{ id: syRid('p'), title: '', questions: [] }], design: { colors: { ...syData.colors }, tint: true },
+      anonymous: false, repeatDays: 0, startsAt: null, endsAt: null, maxResponses: null, logo: null, background: null, responses: 0, link: null, preview: '', problem: ''
+    };
+  }
+  // Приводим то, что пришло с сервера, к виду для конструктора
+  function syNorm(s) {
+    const f = JSON.parse(JSON.stringify(s));
+    if (!Array.isArray(f.pages) || !f.pages.length) f.pages = [{ id: syRid('p'), title: '', questions: [] }];
+    const dc = (f.design && f.design.colors) || {};
+    f.design = { colors: { ...syData.colors, ...dc }, tint: !(f.design && f.design.tint === false) };
+    f.startsAt = f.startsAt || null; f.endsAt = f.endsAt || null; f.maxResponses = f.maxResponses || null;
+    return f;
+  }
+  // Новый опрос из заготовки
+  const SY_PRESETS = [
+    { title: 'Опрос на отток', hint: 'Почему перестали ходить, оценка визита, «что не понравилось» (только тем, кто поставил до 6)', make: () => {
+      const q = (type, title, extra) => ({ ...syNewQ(type), title, ...extra });
+      const opts = (arr) => arr.map(t => ({ id: syRid('o'), text: t }));
+      const nps = q('nps', 'Оцените ваш последний визит по шкале от 1 до 10', { hint: '1 — не оправдал ожиданий, 10 — полностью оправдал' });
+      return { title: 'Опрос на отток', startText: 'Расскажите, пожалуйста, почему вы давно не были у нас. Это займёт минуту', pages: [
+        { id: syRid('p'), title: '', questions: [q('choice', 'Поделитесь, почему вы перестали посещать нас?', { multiple: true, other: true, otherLabel: 'Другое', options: opts(['Не было подходящего повода', 'Изменился образ жизни', 'Неудобная локация', 'Выбрал другое место']) })] },
+        { id: syRid('p'), title: 'Последний визит', questions: [nps,
+          q('choice', 'Отметьте, что вам не понравилось', { multiple: true, other: true, otherLabel: 'Другое', options: opts(['Меню', 'Сервис', 'Атмосфера', 'Кальян', 'Цены', 'Музыка', 'Ожидание']), showIf: { q: nps.id, op: 'lte', value: 6 } }),
+          q('text', 'Что нам улучшить?', { required: false })] }] };
+    } },
+    { title: 'Оценка вечера', hint: 'Звёзды, что понравилось больше всего и что улучшить', make: () => {
+      const q = (type, title, extra) => ({ ...syNewQ(type), title, ...extra });
+      const opts = (arr) => arr.map(t => ({ id: syRid('o'), text: t }));
+      return { title: 'Оценка вечера', startText: 'Как вам вечер на Крыше? Ответьте на три коротких вопроса', pages: [{ id: syRid('p'), title: '', questions: [
+        q('rating', 'Как вы оцениваете вечер?'),
+        q('choice', 'Что понравилось больше всего?', { multiple: true, options: opts(['Атмосфера', 'Кальян', 'Меню', 'Сервис', 'Музыка']), required: false }),
+        q('text', 'Что можно улучшить?', { required: false })] }] };
+    } },
+    { title: 'Пожелания гостей', hint: 'Что хотят видеть на Крыше: музыка, события, вкусы, меню', make: () => {
+      const q = (type, title, extra) => ({ ...syNewQ(type), title, ...extra });
+      const opts = (arr) => arr.map(t => ({ id: syRid('o'), text: t }));
+      return { title: 'Пожелания гостей', startText: 'Помогите нам стать лучше: чего вам не хватает на Крыше?', pages: [{ id: syRid('p'), title: '', questions: [
+        q('choice', 'Что бы вы хотели видеть на Крыше?', { multiple: true, other: true, otherLabel: 'Своё', options: opts(['Живая музыка', 'Тематические вечера', 'Новые вкусы кальяна', 'Больше блюд в меню', 'Коктейльная карта']) }),
+        q('text', 'Ваша идея', { required: false })] }] };
+    } }
+  ];
+
+  function syPayload(f) {
+    return {
+      title: f.title, startText: f.startText, startButton: f.startButton, consent: f.consent, consentText: f.consentText, thanksTitle: f.thanksTitle, thanksText: f.thanksText,
+      pages: f.pages, design: f.design, anonymous: f.anonymous, repeatDays: f.repeatDays, startsAt: f.startsAt || null, endsAt: f.endsAt || null, maxResponses: f.maxResponses || null
+    };
+  }
+  // Что не заполнено на шаге (то же, что проверит сервер перед публикацией)
+  function syQuestionsProblem(f) {
+    const qs = f.pages.flatMap(p => p.questions);
+    if (!qs.length) return 'Добавьте хотя бы один вопрос';
+    let n = 0;
+    for (const q of qs) {
+      n++;
+      if (!q.title.trim()) return `Вопрос ${n}: введите текст вопроса`;
+      if (q.type === 'choice') {
+        const opts = q.options.filter(o => o.text.trim());
+        if (opts.length < 2) return `Вопрос ${n}: нужно хотя бы два варианта ответа`;
+        if (q.options.some(o => !o.text.trim())) return `Вопрос ${n}: есть пустой вариант ответа — заполните или удалите его`;
+        if (new Set(opts.map(o => o.text.trim().toLowerCase())).size !== opts.length) return `Вопрос ${n}: два одинаковых варианта ответа`;
+      }
+      if (q.showIf && q.showIf.op === 'in' && !(q.showIf.values || []).length) return `Вопрос ${n}: в условии «показать, если…» выберите вариант ответа`;
+    }
+    for (const [i, p] of f.pages.entries()) if (!p.questions.length) return `Страница ${i + 1} пустая — добавьте вопрос или удалите страницу`;
+    return '';
+  }
+  function syStepProblem(f, step) {
+    if (step === 1) return f.title.trim() ? '' : 'Введите название опроса';
+    if (step === 2) return syQuestionsProblem(f);
+    if (step === 3) {
+      if (f.consent && !f.consentText.trim()) return 'Включено согласие на обработку данных — впишите его текст';
+      if (f.startsAt && f.endsAt && f.endsAt < f.startsAt) return 'Опрос не может закончиться раньше, чем начнётся';
+      return '';
+    }
+    return '';
+  }
+  function syStatus(s) {
+    if (s.status === 'draft') return ['Черновик', ''];
+    if (s.status === 'closed') return ['Снят с публикации', 'warn'];
+    if (s.state === 'open') return ['Опубликован', 'good'];
+    return [({ soon: 'Ждёт начала', ended: 'Срок вышел', full: 'Набран предел' })[s.state] || 'Опубликован', 'warn'];
+  }
+  function syUpdateHead() {
+    const el = syById('syHeadSub');
+    if (!el) return;
+    el.textContent = syForm ? (syForm.id ? syStatus(syForm)[0] : 'Новый опрос') : 'Конструктор · гостевой бот';
+  }
+
+  // ── список ──
+  async function openSurveyForms() {
+    showScreen('svforms');
+    syForm = null; syDirty = false;
+    const el = syById('syContent');
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    syUpdateHead();
+    try {
+      syData = await mkApi('GET', '/api/admin/survey-forms');
+      renderSyList();
+    } catch (e) {
+      if (activeScreenName() === 'svforms') el.innerHTML = errorStateHtml(e.message || 'Не удалось загрузить опросы', 'openSurveyForms()');
+    }
+  }
+  async function syReloadList() {
+    try { syData = await mkApi('GET', '/api/admin/survey-forms'); } catch (e) { notify(e.message || 'Не удалось обновить список'); }
+    syForm = null; syDirty = false;
+    syUpdateHead();
+    if (syData) renderSyList();
+  }
+  function syCardHtml(s) {
+    const [label, cls] = syStatus(s);
+    const id = escJs(s.id);
+    const btn = (t, call, extra) => `<button type="button" class="mk2-act${extra ? ' ' + extra : ''}" onclick="event.stopPropagation();${call}">${t}</button>`;
+    const acts = btn('Изменить', `syOpen('${id}')`) + btn(`Ответы${s.responses ? ' · ' + s.responses : ''}`, `syOpen('${id}','results')`) + btn('Копия', `syDuplicate('${id}')`) + btn('Удалить', `syDelete('${id}')`, 'dng');
+    const stats = s.responses
+      ? `Ответов <b>${s.responses}</b>${s.lastResponseAt ? ' · последний ' + escHtml(mkAgo(s.lastResponseAt).toLowerCase()) : ''}`
+      : (s.status === 'published' ? 'Пока никто не ответил' : 'Ответов нет');
+    return `<div class="mk2-card" onclick="syOpen('${id}')">
+      <div class="mk2-card-top"><div class="mk2-card-t">${escHtml(s.title)}</div><span class="pill ${cls}">${escHtml(label)}</span></div>
+      <div class="mk2-meta"><span class="pill">${s.questions} ${ruPlural(s.questions, 'вопрос', 'вопроса', 'вопросов')}</span>${s.pagesCount > 1 ? `<span class="pill">${s.pagesCount} ${ruPlural(s.pagesCount, 'страница', 'страницы', 'страниц')}</span>` : ''}</div>
+      <div class="mk2-stats">${stats}</div>
+      <div class="mk2-acts">${acts}</div>
+    </div>`;
+  }
+  function renderSyList() {
+    const el = syById('syContent');
+    if (!el || !syData) return;
+    const list = syData.surveys || [];
+    let html = `<div class="mk2-head"><div class="mk2-head-t">Опросы</div><button type="button" class="btn-new-guest" onclick="syNew()">+ Новый опрос</button></div>`;
+    html += list.length
+      ? `<div class="mk2-list">${list.map(syCardHtml).join('')}</div>`
+      : `<div class="empty-state" style="padding:24px 10px 10px">Опросов пока нет. Начните с готовой заготовки или соберите свой.</div>`;
+    html += `<div class="sec" style="margin-top:26px">Заготовки</div><div class="mk2-presets">${SY_PRESETS.map((p, i) => `
+      <div class="mk2-preset" onclick="syNew(${i})"><b>${escHtml(p.title)}</b><small>${escHtml(p.hint)}</small></div>`).join('')}</div>`;
+    html += `<div class="mk-rules">Гость открывает опрос по ссылке или QR-коду через гостевого бота. Ответ анонимного опроса не привязывается к карточке гостя. «Отзыв гостя (CSI + NPS)» и «Опрос команды (eNPS)» с фиксированными вопросами настраиваются отдельно — в «Сервис → Оформление отзыва».</div>`;
+    el.innerHTML = html;
+  }
+  function syResetUi() {
+    syStep = 1; syVisited = new Set([1]); syDirty = false; syBusy = false; syPage = 0; syOpenQ = ''; syCond = {}; syPrevMode = 'start';
+    syRes = null; syResp = null; syRespOpen = {}; syTextsAll = {}; syFile = null;
+  }
+  async function syOpen(id, tab) {
+    const el = syById('syContent');
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const d = await mkApi('GET', `/api/admin/survey-forms/${encodeURIComponent(id)}`);
+      syForm = syNorm(d.survey);
+      syResetUi();
+      syTab = tab || 'build';
+      renderSyEdit();
+    } catch (e) { notify(e.message || 'Не удалось открыть опрос'); renderSyList(); }
+  }
+  function syNew(presetIndex) {
+    const p = typeof presetIndex === 'number' ? SY_PRESETS[presetIndex] : null;
+    syForm = Object.assign(syBlank(), p ? p.make() : {});
+    syResetUi();
+    syTab = 'build';
+    syDirty = !!p;
+    renderSyEdit();
+    window.scrollTo(0, 0);
+  }
+  async function syBack() {
+    if (syDirty && !(await askConfirm('Выйти без сохранения?\n\nВсё, что вы изменили в этом опросе, пропадёт.', { ok: 'Выйти', danger: true }))) return;
+    await syReloadList();
+  }
+  function syHeaderBack() { if (syForm) syBack(); else showScreen('home'); }
+  async function syDuplicate(id) {
+    try { await mkApi('POST', `/api/admin/survey-forms/${encodeURIComponent(id)}/duplicate`); notify('Копия создана — она в черновиках', 'ok'); await syReloadList(); }
+    catch (e) { notify(e.message || 'Не удалось сделать копию'); }
+  }
+  async function syDelete(id) {
+    const s = (syData.surveys || []).find(x => x.id === id);
+    if (!await askConfirm(`Удалить опрос «${s ? s.title : ''}»?${s && s.responses ? `\n\nВместе с ним удалятся все ответы (${s.responses}). Это нельзя отменить.` : ''}`, { ok: 'Удалить', danger: true })) return;
+    try { await mkApi('DELETE', `/api/admin/survey-forms/${encodeURIComponent(id)}`); notify('Опрос удалён', 'ok'); await syReloadList(); }
+    catch (e) { notify(e.message || 'Не удалось удалить'); }
+  }
+
+  // ── редактор: вкладки и шаги ──
+  function renderSyEdit() {
+    const el = syById('syContent'), f = syForm;
+    const tabs = [['build', 'Конструктор'], ['share', 'Ссылка и QR'], ['results', f.id && f.responses ? `Ответы · ${f.responses}` : 'Ответы']];
+    el.innerHTML = `<div class="sy-tabs">${mkSeg3(tabs, syTab, 'sySetTab', 'Раздел опроса')}</div><div id="syBody"></div>`;
+    syUpdateHead();
+    renderSyBody();
+  }
+  function sySetTab(t) {
+    if (t !== 'build' && !syForm.id) { notify('Сначала сохраните опрос — тогда появятся ссылка и ответы'); return; }
+    syTab = t;
+    renderSyEdit();
+    window.scrollTo(0, 0);
+  }
+  function renderSyBody() {
+    const box = syById('syBody');
+    if (!box || !syForm) return;
+    if (syTab === 'share') { box.innerHTML = syShareHtml(); return; }
+    if (syTab === 'results') { renderSyResults(); return; }
+    box.innerHTML = `<div class="mk2-bar sy-bar"><div class="mk2-steps" id="syStepsBar">${sySteps()}</div></div>
+      <div class="sy-wrap" id="syWrap" data-step="${syStep}">
+        <div class="mk2-main"><div class="mk2-panel" id="syPanel"></div></div>
+        <div class="mk2-aside"><div class="mk2-aside-card" id="syAside"></div></div>
+        <div class="mk2-foot" id="syFoot"></div>
+      </div>`;
+    renderSyPanel(); renderSyAside(); renderSyFoot();
+  }
+  function sySteps() {
+    return SY_STEPS.map((l, i) => {
+      const n = i + 1;
+      const done = n !== syStep && syVisited.has(n) && !syStepProblem(syForm, n);
+      return `${i ? '<div class="mk2-line"></div>' : ''}<button type="button" class="mk2-stp${n === syStep ? ' cur' : ''}${done ? ' done' : ''}" onclick="syGoStep(${n})"><i>${done ? '✓' : n}</i><span>${l}</span></button>`;
+    }).join('');
+  }
+  function syGoStep(n) {
+    syStep = n; syVisited.add(n); syPrevMode = n === 2 ? 'page' : 'start';
+    if (syTab !== 'build') { syTab = 'build'; renderSyEdit(); window.scrollTo(0, 0); return; }
+    const s = syById('syStepsBar'); if (s) s.innerHTML = sySteps();
+    const w = syById('syWrap'); if (w) w.dataset.step = String(n);
+    renderSyPanel(); renderSyAside(); renderSyFoot();
+    window.scrollTo(0, 0);
+  }
+  // Отметки шагов и телефон обновляем на лету, не пересобирая поля (иначе курсор убегает)
+  function syRefresh() {
+    syDirty = true;
+    const s = syById('syStepsBar'); if (s) s.innerHTML = sySteps();
+    renderSyAside();
+  }
+  function syOn(name, value) { syForm[name] = value; syRefresh(); }
+  function syToggle(name) {
+    syForm[name] = !syForm[name];
+    if (name === 'consent' && syForm.consent && !syForm.consentText.trim()) syForm.consentText = SY_CONSENT_TEXT;
+    renderSyPanel(); syRefresh();
+  }
+
+  function renderSyPanel() {
+    const box = syById('syPanel');
+    if (!box || !syForm) return;
+    box.innerHTML = [syStep1Html, syStep2Html, syStep3Html, syStep4Html][syStep - 1](syForm);
+  }
+
+  // Шаг 1. Основные детали
+  function syStep1Html(f) {
+    return `
+      <div class="mk2-fld"><label class="form-label" for="syTitle">Название опроса</label>
+        <input class="form-input" id="syTitle" maxlength="80" value="${escHtml(f.title)}" placeholder="Например: Почему вы перестали ходить к нам" oninput="syOn('title', this.value)">
+        <div class="mk2-hint">Название видите только вы. Гость его не видит.</div></div>
+      <div class="mk2-fld"><label class="form-label" for="syStartText">Приветствие гостю</label>
+        <textarea class="form-input" id="syStartText" rows="3" maxlength="250" placeholder="${escHtml(SY_START_TEXT)}" oninput="syOn('startText', this.value)" style="height:78px">${escHtml(f.startText)}</textarea>
+        <div class="mk2-hint">Крупный текст на первом экране, над кнопкой.</div></div>
+      <div class="mk2-fld"><label class="form-label" for="syStartBtn">Текст кнопки</label>
+        <input class="form-input" id="syStartBtn" maxlength="30" value="${escHtml(f.startButton)}" placeholder="Начать" oninput="syOn('startButton', this.value)"></div>`;
+  }
+
+  // Шаг 2. Вопросы
+  function syStep2Html(f) {
+    if (syPage >= f.pages.length) syPage = f.pages.length - 1;
+    const p = f.pages[syPage];
+    const base = f.pages.slice(0, syPage).reduce((n, x) => n + x.questions.length, 0);
+    return `
+      <div class="mk2-chips sy-pages">${f.pages.map((x, i) => `<div class="chip mk2-sc${i === syPage ? ' selected' : ''}" onclick="sySetPage(${i})">Стр. ${i + 1}</div>`).join('')}<div class="chip mk2-more" onclick="syAddPage()">+ Страница</div></div>
+      <div class="sy-pt"><input class="form-input" id="syPageTitle" maxlength="60" value="${escHtml(p.title)}" placeholder="Название страницы — по желанию" oninput="syPageTitle(this.value)">${f.pages.length > 1 ? `<button type="button" class="sy-x" title="Удалить страницу" aria-label="Удалить страницу" onclick="syDelPage(${syPage})">${SY_TRASH}</button>` : ''}</div>
+      ${p.questions.length ? p.questions.map((q, i) => syQHtml(q, base + i + 1)).join('') : '<div class="sy-empty">На этой странице пока нет вопросов</div>'}
+      <div class="sy-add"><span>Добавить вопрос:</span>${['choice', 'nps', 'rating', 'text'].map(t => `<div class="chip" onclick="syAddQ('${t}')">${SY_ADD[t]}</div>`).join('')}</div>`;
+  }
+  function syQHtml(q, n) {
+    const open = syOpenQ === q.id;
+    const meta = [SY_TYPE_NAME[q.type], q.required ? '' : 'по желанию', q.showIf ? 'по условию' : ''].filter(Boolean).join(' · ');
+    let h = `<div class="sy-q${open ? ' open' : ''}" data-q="${escHtml(q.id)}"><div class="sy-q-h" onclick="syToggleQ('${escJs(q.id)}')"><span class="sy-q-n">${n}</span><span class="sy-q-m"><span class="sy-q-t${q.title.trim() ? '' : ' empty'}">${escHtml(q.title.trim() || 'Вопрос без текста')}</span><span class="sy-q-k">${escHtml(meta)}</span></span><i class="sy-chev"></i></div>`;
+    if (!open) return h + '</div>';
+    const id = escJs(q.id);
+    h += `<div class="sy-q-b">
+      <div class="mk2-seg3" role="radiogroup" aria-label="Тип вопроса">${['choice', 'nps', 'rating', 'text'].map(t => `<button type="button" role="radio" aria-checked="${q.type === t}" class="${q.type === t ? 'sel' : ''}" onclick="sySetType('${id}','${t}')">${SY_ADD[t]}</button>`).join('')}</div>
+      <div class="mk2-fld"><textarea class="form-input" id="syQt" rows="2" maxlength="250" placeholder="Текст вопроса" oninput="syQ('${id}','title',this.value)" style="height:62px">${escHtml(q.title)}</textarea></div>
+      <div class="mk2-fld"><input class="form-input" maxlength="250" placeholder="Подсказка — по желанию" value="${escHtml(q.hint)}" oninput="syQ('${id}','hint',this.value)"></div>`;
+    if (q.type === 'choice') {
+      h += `<div class="sy-opts">${q.options.map((o, i) => `<div class="sy-opt"><input class="form-input" data-o="${escHtml(o.id)}" maxlength="100" placeholder="Вариант ${i + 1}" value="${escHtml(o.text)}" oninput="syOpt('${id}','${escJs(o.id)}',this.value)" onkeydown="syOptKey(event,'${id}','${escJs(o.id)}')"><button type="button" class="sy-x" title="Удалить вариант" aria-label="Удалить вариант" onclick="syDelOpt('${id}','${escJs(o.id)}')">✕</button></div>`).join('')}</div>
+        <div class="mk2-chips"><div class="chip mk2-more" onclick="syAddOpt('${id}')">+ Вариант</div></div>
+        ${mkSwitchRow('Несколько ответов', 'Гость может отметить несколько вариантов', q.multiple, `syQToggle('${id}','multiple')`)}
+        ${mkSwitchRow('Вариант «Другое»', 'Гость впишет свой ответ', q.other, `syQToggle('${id}','other')`)}
+        ${q.other ? `<div class="mk2-sub"><input class="form-input" maxlength="40" value="${escHtml(q.otherLabel)}" placeholder="Другое" oninput="syQ('${id}','otherLabel',this.value)"></div>` : ''}`;
+    } else if (q.type === 'nps') {
+      h += `<div class="mk2-hint">Гость выбирает число от 1 до 10. В итогах считаем индекс NPS: 9–10 — сторонники, 1–6 — критики.</div>`;
+    } else if (q.type === 'rating') {
+      h += `<div class="mk2-hint">Гость ставит от 1 до 5 звёзд. В итогах — средняя оценка и распределение.</div>`;
+    } else {
+      h += `<div class="mk2-hint">Свободный ответ до 1000 знаков.</div>`;
+    }
+    h += mkSwitchRow('Обязательный вопрос', 'Без ответа гость не пройдёт дальше', q.required, `syQToggle('${id}','required')`);
+    h += syCondHtml(q);
+    h += `<div class="sy-tools"><button type="button" class="mk2-act" onclick="syMoveQ('${id}',-1)">↑ Выше</button><button type="button" class="mk2-act" onclick="syMoveQ('${id}',1)">↓ Ниже</button><button type="button" class="mk2-act" onclick="syDupQ('${id}')">Копия</button><button type="button" class="mk2-act dng" onclick="syDelQ('${id}')">Удалить</button></div>`;
+    return h + '</div></div>';
+  }
+  // «Показать, если…»: условие по ответу на один из предыдущих вопросов
+  function syCondText(q) {
+    const c = q.showIf, src = c && syFindQ(c.q);
+    if (!c || !src) return 'всегда';
+    const n = syQNum(src.q.id);
+    if (c.op === 'answered') return `есть ответ на вопрос ${n}`;
+    if (c.op === 'in') { const names = src.q.options.filter(o => (c.values || []).includes(o.id)).map(o => o.text.trim() || '…'); return `вопрос ${n}: ${names.join(', ') || 'выберите вариант'}`; }
+    return `вопрос ${n}: оценка ${c.op === 'lte' ? 'не выше' : 'не ниже'} ${c.value}`;
+  }
+  function syCondHtml(q) {
+    const n = syQNum(q.id);
+    const earlier = syAllQs().slice(0, n - 1);
+    if (!earlier.length) return '';
+    const open = syCond[q.id] === undefined ? !!q.showIf : !!syCond[q.id];
+    const id = escJs(q.id), c = q.showIf, src = c && syFindQ(c.q);
+    let body = '';
+    if (open) {
+      const srcOpts = [['', 'Всегда показывать'], ...earlier.map((e, i) => [e.id, `${i + 1}. ${e.title.trim().slice(0, 40) || 'Вопрос без текста'}`])];
+      body = `<div class="mk2-sub">${mkSelect('syCs', srcOpts, c ? c.q : '', `sySetCondSrc('${id}', this.value)`)}</div>`;
+      if (c && src) {
+        const st = src.q;
+        if (st.type === 'choice') {
+          body += `<div class="mk2-sub">${mkSelect('syCo', [['in', 'выбран один из вариантов'], ['answered', 'любой ответ']], c.op, `sySetCondOp('${id}', this.value)`)}</div>`;
+          if (c.op === 'in') {
+            const real = st.options.filter(o => o.text.trim());
+            body += real.length
+              ? `<div class="mk2-chips">${real.map(o => `<div class="chip mk2-sc${(c.values || []).includes(o.id) ? ' selected' : ''}" onclick="syCondOpt('${id}','${escJs(o.id)}')">${escHtml(o.text.trim())}</div>`).join('')}</div>`
+              : '<div class="mk2-hint">У выбранного вопроса пока нет вариантов ответа.</div>';
+          }
+        } else if (st.type === 'nps' || st.type === 'rating') {
+          const max = st.type === 'nps' ? 10 : 5;
+          const nums = Array.from({ length: max }, (_, i) => [i + 1, String(i + 1)]);
+          body += `<div class="mk2-row">${mkSelect('syCo', [['lte', 'оценка не выше'], ['gte', 'оценка не ниже'], ['answered', 'любой ответ']], c.op, `sySetCondOp('${id}', this.value)`)}${c.op !== 'answered' ? mkSelect('syCv', nums, c.value, `syCondVal('${id}', this.value)`) : ''}</div>`;
+        } else {
+          body += '<div class="mk2-hint">Покажем вопрос, если гость что-нибудь написал.</div>';
+        }
+      }
+    }
+    return `<div class="sy-cond"><div class="mk2-adv${open ? ' open' : ''}"><button type="button" class="mk2-adv-h" onclick="syToggleCond('${id}')"><span>Показать, если…</span><small>${escHtml(syCondText(q))}</small><i></i></button>${open ? `<div class="mk2-adv-b">${body}</div>` : ''}</div></div>`;
+  }
+
+  // ── действия над страницами и вопросами ──
+  function sySetPage(i) { syPage = i; syOpenQ = ''; syPrevMode = 'page'; renderSyPanel(); renderSyAside(); }
+  function syAddPage() {
+    if (syForm.pages.length >= (syData.limits.pages || 20)) { notify(`Больше ${syData.limits.pages || 20} страниц в опросе нельзя`); return; }
+    syForm.pages.push({ id: syRid('p'), title: '', questions: [] });
+    syPage = syForm.pages.length - 1; syOpenQ = ''; renderSyPanel(); syRefresh();
+  }
+  async function syDelPage(i) {
+    const p = syForm.pages[i];
+    if (p.questions.length && !await askConfirm(`Удалить страницу ${i + 1} вместе с её вопросами (${p.questions.length})?`, { ok: 'Удалить', danger: true })) return;
+    syForm.pages.splice(i, 1);
+    if (!syForm.pages.length) syForm.pages.push({ id: syRid('p'), title: '', questions: [] });
+    syPage = Math.min(syPage, syForm.pages.length - 1); syOpenQ = '';
+    syAfterStructure(); renderSyPanel(); syRefresh();
+  }
+  function syPageTitle(v) { syForm.pages[syPage].title = v; syRefresh(); }
+  function syToggleQ(id) {
+    syOpenQ = syOpenQ === id ? '' : id;
+    renderSyPanel();
+    const f = syFindQ(id);
+    if (syOpenQ && f && !f.q.title.trim()) { const t = syById('syQt'); if (t) t.focus(); }
+  }
+  function syAddQ(type) {
+    if (syAllQs().length >= (syData.limits.questions || 50)) { notify(`Больше ${syData.limits.questions || 50} вопросов в опросе нельзя`); return; }
+    const q = syNewQ(type);
+    syForm.pages[syPage].questions.push(q);
+    syOpenQ = q.id; syPrevMode = 'page';
+    renderSyPanel(); syRefresh();
+    const t = syById('syQt'); if (t) t.focus();
+    const o = document.querySelector('.sy-q.open'); if (o && o.scrollIntoView) o.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+  function syQ(id, key, v) {
+    const f = syFindQ(id); if (!f) return;
+    f.q[key] = v;
+    if (key === 'title') {
+      const t = document.querySelector(`.sy-q[data-q="${id}"] .sy-q-t`);
+      if (t) { t.textContent = v.trim() || 'Вопрос без текста'; t.classList.toggle('empty', !v.trim()); }
+    }
+    syRefresh();
+  }
+  function syQToggle(id, key) {
+    const f = syFindQ(id); if (!f) return;
+    f.q[key] = !f.q[key];
+    if (key === 'other' && f.q.other && !f.q.otherLabel) f.q.otherLabel = 'Другое';
+    renderSyPanel(); syRefresh();
+  }
+  function sySetType(id, type) {
+    const f = syFindQ(id); if (!f || f.q.type === type) return;
+    f.q.type = type;
+    if (type === 'choice') { while (f.q.options.length < 2) f.q.options.push({ id: syRid('o'), text: '' }); }
+    else { f.q.multiple = false; f.q.other = false; }
+    syAfterStructure(); renderSyPanel(); syRefresh();
+  }
+  function syOpt(qid, oid, v) { const f = syFindQ(qid); const o = f && f.q.options.find(x => x.id === oid); if (o) { o.text = v; syRefresh(); } }
+  function syAddOpt(qid, afterOid) {
+    const f = syFindQ(qid); if (!f) return;
+    if (f.q.options.length >= (syData.limits.options || 20)) { notify(`Больше ${syData.limits.options || 20} вариантов нельзя`); return; }
+    const o = { id: syRid('o'), text: '' };
+    const i = afterOid ? f.q.options.findIndex(x => x.id === afterOid) : -1;
+    if (i >= 0) f.q.options.splice(i + 1, 0, o); else f.q.options.push(o);
+    renderSyPanel(); syRefresh();
+    const inp = document.querySelector(`input[data-o="${o.id}"]`); if (inp) inp.focus();
+  }
+  function syOptKey(e, qid, oid) {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    const f = syFindQ(qid), o = f && f.q.options.find(x => x.id === oid);
+    if (o && o.text.trim()) syAddOpt(qid, oid);
+  }
+  function syDelOpt(qid, oid) {
+    const f = syFindQ(qid); if (!f) return;
+    f.q.options = f.q.options.filter(x => x.id !== oid);
+    syAfterStructure(); renderSyPanel(); syRefresh();
+  }
+  function syDupQ(id) {
+    const f = syFindQ(id); if (!f) return;
+    if (syAllQs().length >= (syData.limits.questions || 50)) { notify(`Больше ${syData.limits.questions || 50} вопросов в опросе нельзя`); return; }
+    const c = JSON.parse(JSON.stringify(f.q));
+    c.id = syRid('q'); c.options.forEach(o => { o.id = syRid('o'); }); c.showIf = null;
+    f.page.questions.splice(f.qi + 1, 0, c);
+    syOpenQ = c.id; renderSyPanel(); syRefresh();
+  }
+  async function syDelQ(id) {
+    const f = syFindQ(id); if (!f) return;
+    if (f.q.title.trim() && !await askConfirm(`Удалить вопрос «${f.q.title.trim().slice(0, 60)}»?`, { ok: 'Удалить', danger: true })) return;
+    f.page.questions.splice(f.qi, 1);
+    syOpenQ = '';
+    syAfterStructure(); renderSyPanel(); syRefresh();
+  }
+  // Вверх/вниз; с края страницы вопрос уходит на соседнюю
+  function syMoveQ(id, dir) {
+    const f = syFindQ(id); if (!f) return;
+    const { pi, qi, page } = f;
+    if (dir < 0) {
+      if (qi > 0) [page.questions[qi - 1], page.questions[qi]] = [page.questions[qi], page.questions[qi - 1]];
+      else if (pi > 0) { page.questions.splice(qi, 1); syForm.pages[pi - 1].questions.push(f.q); syPage = pi - 1; }
+      else return;
+    } else {
+      if (qi < page.questions.length - 1) [page.questions[qi + 1], page.questions[qi]] = [page.questions[qi], page.questions[qi + 1]];
+      else if (pi < syForm.pages.length - 1) { page.questions.splice(qi, 1); syForm.pages[pi + 1].questions.unshift(f.q); syPage = pi + 1; }
+      else return;
+    }
+    syAfterStructure(); renderSyPanel(); syRefresh();
+    const o = document.querySelector('.sy-q.open'); if (o && o.scrollIntoView) o.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+  // После удаления/перестановки условия «показать, если…» могли потерять смысл: источник должен стоять выше и подходить по типу
+  function syAfterStructure() {
+    const seen = new Map();
+    let cleared = 0;
+    for (const q of syAllQs()) {
+      const c = q.showIf;
+      if (c) {
+        const src = seen.get(c.q);
+        let ok = !!src;
+        if (ok && c.op === 'in') { ok = src.type === 'choice'; if (ok) c.values = (c.values || []).filter(v => src.options.some(o => o.id === v)); }
+        else if (ok && (c.op === 'lte' || c.op === 'gte')) ok = (src.type === 'nps' || src.type === 'rating') && c.value <= (src.type === 'nps' ? 10 : 5);
+        if (!ok) { q.showIf = null; cleared++; }
+      }
+      seen.set(q.id, q);
+    }
+    if (cleared) notify(`Условие «показать, если…» снято у вопросов: ${cleared} — вопрос, от которого оно зависело, изменён или стоит ниже`);
+  }
+  function syToggleCond(id) {
+    const f = syFindQ(id); if (!f) return;
+    const open = syCond[id] === undefined ? !!f.q.showIf : !!syCond[id];
+    syCond[id] = !open; renderSyPanel();
+  }
+  function sySetCondSrc(id, srcId) {
+    const f = syFindQ(id); if (!f) return;
+    const s = srcId && syFindQ(srcId);
+    if (!s) f.q.showIf = null;
+    else f.q.showIf = s.q.type === 'choice' ? { q: s.q.id, op: 'in', values: [] } : s.q.type === 'nps' ? { q: s.q.id, op: 'lte', value: 6 } : s.q.type === 'rating' ? { q: s.q.id, op: 'lte', value: 3 } : { q: s.q.id, op: 'answered' };
+    syCond[id] = true; renderSyPanel(); syRefresh();
+  }
+  function sySetCondOp(id, op) {
+    const f = syFindQ(id); if (!f || !f.q.showIf) return;
+    const c = f.q.showIf, s = syFindQ(c.q); if (!s) return;
+    if (op === 'in') f.q.showIf = { q: c.q, op, values: c.values || [] };
+    else if (op === 'answered') f.q.showIf = { q: c.q, op };
+    else f.q.showIf = { q: c.q, op, value: c.value || (s.q.type === 'nps' ? 6 : 3) };
+    renderSyPanel(); syRefresh();
+  }
+  function syCondVal(id, v) { const f = syFindQ(id); if (f && f.q.showIf) { f.q.showIf.value = Number(v); renderSyPanel(); syRefresh(); } }
+  function syCondOpt(id, oid) {
+    const f = syFindQ(id); if (!f || !f.q.showIf) return;
+    const vs = f.q.showIf.values || [];
+    f.q.showIf.values = vs.includes(oid) ? vs.filter(x => x !== oid) : vs.concat(oid);
+    renderSyPanel(); syRefresh();
+  }
+
+  // Шаг 3. Условия
+  function syStep3Html(f) {
+    return `
+      ${mkSwitchRow('Анонимный опрос', 'Ответ не привязывается к карточке гостя. Пройти повторно всё равно нельзя', f.anonymous, "syToggle('anonymous')")}
+      <div class="mk2-fld"><label class="form-label" for="syRepeat">Как часто можно проходить</label>
+        ${mkSelect('syRepeat', SY_REPEAT, f.repeatDays, "syForm.repeatDays=Number(this.value);syRefresh()")}</div>
+      <div class="mk2-fld"><div class="form-label">Принимаем ответы</div>
+        <div class="mk2-dt"><input type="date" class="form-input fld-date" id="syFrom" value="${escHtml(f.startsAt || '')}" aria-label="С даты" onchange="syForm.startsAt=this.value||null;syRefresh()"><input type="date" class="form-input fld-date" id="syTo" value="${escHtml(f.endsAt || '')}" aria-label="По дату" onchange="syForm.endsAt=this.value||null;syRefresh()"></div>
+        <div class="mk2-hint">С какой даты и по какую включительно. Пусто — без ограничения по сроку.</div></div>
+      <div class="mk2-fld"><label class="form-label" for="syMax">Предел ответов</label>
+        <input class="form-input" id="syMax" type="number" inputmode="numeric" min="1" max="${syData.limits.maxResponses || 100000}" value="${f.maxResponses || ''}" placeholder="Без предела" oninput="syForm.maxResponses=this.value?Number(this.value):null;syRefresh()">
+        <div class="mk2-hint">Когда наберётся столько ответов, опрос закроется сам.</div></div>
+      ${mkSwitchRow('Согласие на обработку данных', 'Галочка на первом экране: без неё опрос не начать', f.consent, "syToggle('consent')")}
+      ${f.consent ? `<div class="mk2-sub"><textarea class="form-input" id="syConsent" rows="2" maxlength="250" placeholder="${escHtml(SY_CONSENT_TEXT)}" oninput="syOn('consentText', this.value)" style="height:62px">${escHtml(f.consentText)}</textarea></div>` : ''}`;
+  }
+
+  // Шаг 4. Дизайн
+  function syImgRow(which, title, url) {
+    const logo = which === 'logo';
+    return `<div class="sy-img"><div class="sy-img-th${logo ? ' logo' : ''}"${url ? ` style="background-image:url('${escHtml(url)}')"` : ''}></div>
+      <div class="sy-img-t">${title}<small id="syImgNote-${which}">${url ? 'Загружено' : (logo ? 'PNG с прозрачным фоном смотрится лучше всего' : 'Фото или рисунок на весь экран')}</small></div>
+      <div class="sy-img-b"><button type="button" class="mk2-act" onclick="syById('syFile-${which}').click()">${url ? 'Заменить' : 'Загрузить'}</button>${url ? `<button type="button" class="mk2-act dng" onclick="syRemoveImage('${which}')">Убрать</button>` : ''}</div>
+      <input type="file" id="syFile-${which}" accept="image/*" hidden onchange="syOnImage('${which}', this)"></div>`;
+  }
+  function syStep4Html(f) {
+    const c = f.design.colors;
+    return `
+      <div class="mk2-fld"><div class="form-label">Цвета</div>
+        <div class="sy-colors">${SY_COLORS.map(([k, l]) => `<label class="sy-color"><input type="color" value="${syHex(c[k], syData.colors[k])}" onchange="syColor('${k}', this.value)" oninput="syColor('${k}', this.value)"><span>${l}<small id="syHex-${k}">${syHex(c[k], syData.colors[k])}</small></span></label>`).join('')}</div>
+        <div class="mk2-chips"><div class="chip mk2-more" onclick="syResetColors()">Вернуть фирменные цвета</div></div></div>
+      <div class="mk2-fld"><div class="form-label">Картинки</div>
+        ${syImgRow('logo', 'Логотип', f.logo)}${syImgRow('background', 'Фон', f.background)}
+        ${f.background ? mkSwitchRow('Затемнять фон', 'Текст остаётся читаемым на любой картинке', f.design.tint, "syToggleTint()") : ''}</div>
+      <div class="mk2-fld"><div class="form-label">После ответа</div>
+        <input class="form-input" maxlength="80" value="${escHtml(f.thanksTitle)}" placeholder="Спасибо!" aria-label="Заголовок после ответа" oninput="syForm.thanksTitle=this.value;syPrevMode='thanks';syRefresh()">
+        <div class="mk2-sub"><textarea class="form-input" rows="2" maxlength="300" placeholder="Ваши ответы получены — они помогают нам становиться лучше." aria-label="Текст после ответа" oninput="syForm.thanksText=this.value;syPrevMode='thanks';syRefresh()" style="height:62px">${escHtml(f.thanksText)}</textarea></div></div>`;
+  }
+  function syColor(k, v) {
+    syForm.design.colors[k] = syHex(v, syData.colors[k]);
+    const h = syById('syHex-' + k); if (h) h.textContent = syForm.design.colors[k];
+    syRefresh();
+  }
+  function syResetColors() { syForm.design.colors = { ...syData.colors }; renderSyPanel(); syRefresh(); }
+  function syToggleTint() { syForm.design.tint = !syForm.design.tint; renderSyPanel(); syRefresh(); }
+
+  // Картинки загружаем сразу на сервер (нужен сохранённый опрос) — логотип PNG с прозрачностью, фон JPEG до ~1,5 МБ
+  async function syCompressImage(file, which) {
+    const img = await loadImageForCanvas(file);
+    const max = which === 'logo' ? 640 : 1600;
+    const k = Math.min(1, max / Math.max(img.width, img.height));
+    const w = Math.max(1, Math.round(img.width * k)), h = Math.max(1, Math.round(img.height * k));
+    const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    if (which === 'logo') {
+      ctx.drawImage(img, 0, 0, w, h);
+      if (img.close) img.close();
+      let blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+      if (blob && blob.size > 1.5 * 1024 * 1024) blob = await new Promise(r => canvas.toBlob(r, 'image/webp', 0.9)) || blob;
+      if (!blob) throw new Error('encode');
+      return { blob, type: blob.type || 'image/png' };
+    }
+    ctx.fillStyle = '#140a03'; ctx.fillRect(0, 0, w, h); ctx.drawImage(img, 0, 0, w, h);
+    if (img.close) img.close();
+    for (const q of [0.82, 0.72, 0.6]) {
+      const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', q));
+      if (blob && (blob.size <= 1.5 * 1024 * 1024 || q === 0.6)) return { blob, type: 'image/jpeg' };
+    }
+    throw new Error('encode');
+  }
+  async function syOnImage(which, input) {
+    const file = input.files && input.files[0];
+    input.value = '';
+    if (!file) return;
+    const f = syForm;
+    if (!f.id) { const saved = await sySave(true); if (!saved) return; }
+    const note = () => syById('syImgNote-' + which);
+    if (note()) note().textContent = 'Загружаю…';
+    try {
+      const { blob, type } = await syCompressImage(file, which);
+      const res = await fetch(`${PROXY_BASE}/api/admin/survey-forms/${encodeURIComponent(syForm.id)}/${which}?pin=${getPin()}`, { method: 'POST', headers: { 'Content-Type': type }, body: blob });
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить картинку'));
+      const d = await res.json();
+      syForm[which] = d.url || null;
+      if (syTab === 'build' && syStep === 4) { renderSyPanel(); renderSyAside(); }
+      notify(which === 'logo' ? 'Логотип загружен' : 'Фон загружен', 'ok');
+    } catch (e) {
+      if (note()) note().textContent = 'Не получилось';
+      notify(e && e.message && e.message !== 'encode' && e.message !== 'decode' ? e.message : 'Не получилось открыть это фото. Сохраните его как JPG или PNG и выберите снова.');
+    }
+  }
+  async function syRemoveImage(which) {
+    if (!syForm.id) return;
+    try {
+      await mkApi('DELETE', `/api/admin/survey-forms/${encodeURIComponent(syForm.id)}/${which}`);
+      syForm[which] = null;
+      renderSyPanel(); renderSyAside();
+    } catch (e) { notify(e.message || 'Не удалось убрать картинку'); }
+  }
+
+  // ── телефон справа: как увидит гость ──
+  function syPvAnswer(q) {
+    if (q.type === 'choice') {
+      const real = q.options.filter(o => o.text.trim());
+      const rows = real.length ? real : [{ text: 'Вариант 1' }, { text: 'Вариант 2' }].map(x => ({ ...x, ph: true }));
+      return rows.map(o => `<div class="sy-ph-o${q.multiple ? ' sq' : ''}${o.ph ? ' ph' : ''}"><i></i>${escHtml(o.text.trim())}</div>`).join('') + (q.other ? `<div class="sy-ph-o${q.multiple ? ' sq' : ''}"><i></i>${escHtml(q.otherLabel || 'Другое')}</div>` : '');
+    }
+    if (q.type === 'nps') return `<div class="sy-ph-nps">${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => `<span>${n}</span>`).join('')}</div>`;
+    if (q.type === 'rating') return '<div class="sy-ph-stars">★★★★★</div>';
+    return '<div class="sy-ph-ta"></div>';
+  }
+  function syPreviewHtml() {
+    const f = syForm, c = f.design.colors, d = (k) => syHex(c[k], syData.colors[k]);
+    const style = `--p-bg:${d('bg')};--p-field:${d('field')};--p-accent:${d('accent')};--p-text:${d('text')};--p-text2:${d('text2')};--p-btn:${d('btnText')}`;
+    const bg = f.background ? `<div class="sy-ph-bg" style="background-image:url('${escHtml(f.background)}')"></div>${f.design.tint ? '<div class="sy-ph-tint"></div>' : ''}` : '';
+    const logo = f.logo ? `<img class="sy-ph-logo" src="${escHtml(f.logo)}" alt="">` : '';
+    let inner;
+    if (syPrevMode === 'page') {
+      const i = Math.min(syPage, f.pages.length - 1), p = f.pages[i], tot = f.pages.length;
+      const qs = p.questions.map(q => `<div class="sy-ph-q"><div class="sy-ph-qt">${escHtml(q.title.trim() || 'Текст вопроса')}${q.required ? ' <em>*</em>' : ''}</div>${q.hint.trim() ? `<div class="sy-ph-qh">${escHtml(q.hint)}</div>` : ''}${syPvAnswer(q)}</div>`).join('');
+      inner = `<div class="sy-ph-prog"><i style="width:${Math.round((i + 1) / tot * 100)}%"></i></div>${p.title.trim() ? `<div class="sy-ph-pt">${escHtml(p.title)}</div>` : ''}${qs || '<div class="sy-ph-p" style="margin-top:40px">На странице пока нет вопросов</div>'}
+        <div class="sy-ph-fade"></div><div class="sy-ph-nav">${i > 0 ? '<span class="g">Назад</span>' : ''}<span>${i < tot - 1 ? 'Далее' : 'Отправить'}</span></div>`;
+    } else if (syPrevMode === 'thanks') {
+      inner = `<div class="sy-ph-ok">✓</div><div class="sy-ph-h" style="margin-top:0">${escHtml(f.thanksTitle.trim() || 'Спасибо!')}</div><div class="sy-ph-p">${escHtml(f.thanksText.trim() || 'Ваши ответы получены — они помогают нам становиться лучше.')}</div>`;
+    } else {
+      inner = `<div class="sy-ph-h">${escHtml(f.startText.trim() || SY_START_TEXT)}</div>
+        ${f.anonymous ? '<div class="sy-ph-p">Опрос анонимный: ответы не привязываются к вашему профилю.</div>' : ''}
+        ${f.consent ? `<div class="sy-ph-consent"><i></i><span>${escHtml(f.consentText.trim() || SY_CONSENT_TEXT)}</span></div>` : ''}
+        <div class="sy-ph-btn">${escHtml(f.startButton.trim() || 'Начать')}</div>`;
+    }
+    return `<div class="sy-ph" style="${style}">${bg}<div class="sy-ph-in">${logo}${inner}</div></div>`;
+  }
+  function renderSyAside() {
+    const box = syById('syAside');
+    if (!box || !syForm) return;
+    const f = syForm;
+    const modes = [['start', 'Начало'], ['page', 'Вопросы'], ['thanks', 'Спасибо']];
+    box.innerHTML = `<div class="mk2-aside-t">Как увидит гость</div>
+      <div class="sy-pv-modes">${modes.map(([k, l]) => `<div class="chip${syPrevMode === k ? ' selected' : ''}" onclick="syPrevMode='${k}';renderSyAside()">${l}</div>`).join('')}${syPrevMode === 'page' && f.pages.length > 1 ? f.pages.map((p, i) => `<div class="chip${i === syPage ? ' selected' : ''}" onclick="sySetPage(${i})">Стр. ${i + 1}</div>`).join('') : ''}</div>
+      ${syPreviewHtml()}
+      ${f.preview && f.id ? `<div class="mk2-chips" style="justify-content:center;margin-top:10px"><div class="chip mk2-more" onclick="syOpenPreview()">Открыть как у гостя ↗</div></div>` : ''}`;
+  }
+  function syOpenPreview() {
+    if (!syForm || !syForm.preview) return;
+    if (syDirty) notify('В открытом виде — последняя сохранённая версия. Сохраните правки, чтобы они появились');
+    try { if (tg && tg.openLink) { tg.openLink(syForm.preview); return; } } catch (e) { /* откроем как обычную ссылку */ }
+    window.open(syForm.preview, '_blank', 'noopener');
+  }
+
+  // ── кнопки внизу ──
+  function renderSyFoot() {
+    const box = syById('syFoot');
+    if (!box || !syForm) return;
+    const f = syForm;
+    const back = syStep > 1 ? `<button type="button" class="btn-ghost mk2-back" onclick="syGoStep(${syStep - 1})">← Назад</button>` : '';
+    const dis = syBusy ? 'disabled' : '';
+    const save = `<button type="button" class="btn-ghost" id="sySaveBtn" onclick="sySave()" ${dis}>Сохранить</button>`;
+    let primary;
+    if (syStep < 4) primary = `${save}<button type="button" class="btn-cta" onclick="syGoStep(${syStep + 1})">Далее →</button>`;
+    else if (f.status === 'published') primary = `<button type="button" class="btn-cta" id="sySaveBtn" onclick="sySave()" ${dis}>Сохранить</button>`;
+    else primary = `${save}<button type="button" class="btn-cta" id="syGo" onclick="syPublish()" ${dis}>${f.status === 'closed' ? 'Опубликовать снова' : 'Опубликовать'}</button>`;
+    box.innerHTML = back + primary;
+  }
+
+  // ── сохранить, опубликовать, снять ──
+  async function sySave(silent) {
+    if (syBusy) return null;
+    const f = syForm;
+    if (!f.title.trim()) { notify('Введите название опроса'); syGoStep(1); return null; }
+    syBusy = true; renderSyFoot();
+    try {
+      const d = await mkApi(f.id ? 'PUT' : 'POST', f.id ? `/api/admin/survey-forms/${encodeURIComponent(f.id)}` : '/api/admin/survey-forms', syPayload(f));
+      syForm = syNorm(d.survey); syDirty = false;
+      const w = (d.warnings || [])[0];
+      if (w) notify(w); else if (!silent) notify('Сохранено', 'ok');
+      syUpdateHead();
+      if (syTab === 'build') { renderSyPanel(); renderSyAside(); const s = syById('syStepsBar'); if (s) s.innerHTML = sySteps(); }
+      return syForm;
+    } catch (e) { notify(e.message || 'Не удалось сохранить'); return null; }
+    finally { syBusy = false; renderSyFoot(); }
+  }
+  // Статус и ссылки меняем, не трогая несохранённые правки в полях
+  function syMerge(s) {
+    for (const k of ['slug', 'status', 'state', 'publishedAt', 'closedAt', 'link', 'preview', 'responses', 'lastResponseAt', 'problem', 'updatedAt']) syForm[k] = s[k];
+    syUpdateHead();
+  }
+  async function syPublish() {
+    const f = syForm;
+    for (const s of [1, 2, 3]) {
+      const p = syStepProblem(f, s);
+      if (p) { notify(p); syGoStep(s); return; }
+    }
+    if (!await askConfirm(`${f.status === 'closed' ? 'Опубликовать снова' : 'Опубликовать'} «${f.title.trim()}»?\n\nГости смогут открыть опрос по ссылке сразу. Править его можно и после публикации.`, { ok: 'Опубликовать' })) return;
+    const saved = await sySave(true);
+    if (!saved) return;
+    syBusy = true; renderSyFoot();
+    try {
+      const d = await mkApi('POST', `/api/admin/survey-forms/${encodeURIComponent(saved.id)}/publish`, {});
+      syMerge(d.survey);
+      notify('Опрос опубликован', 'ok');
+      syBusy = false; syTab = 'share'; renderSyEdit(); window.scrollTo(0, 0);
+    } catch (e) { notify(e.message || 'Не удалось опубликовать'); syBusy = false; renderSyFoot(); }
+  }
+  async function syUnpublish() {
+    if (!await askConfirm(`Снять «${syForm.title.trim()}» с публикации?\n\nГость, открывший ссылку, увидит, что опрос завершён. Уже собранные ответы сохранятся.`, { ok: 'Снять', danger: true })) return;
+    try {
+      const d = await mkApi('POST', `/api/admin/survey-forms/${encodeURIComponent(syForm.id)}/unpublish`, {});
+      syMerge(d.survey); notify('Опрос снят с публикации', 'ok'); renderSyBody();
+    } catch (e) { notify(e.message || 'Не удалось снять с публикации'); }
+  }
+  async function syToDraft() {
+    try {
+      const d = await mkApi('POST', `/api/admin/survey-forms/${encodeURIComponent(syForm.id)}/to-draft`, {});
+      syMerge(d.survey); notify('Опрос вернулся в черновики', 'ok'); renderSyBody();
+    } catch (e) { notify(e.message || 'Не удалось вернуть в черновики'); }
+  }
+
+  // ── вкладка «Ссылка и QR» ──
+  function syStateText(f) {
+    if (f.status === 'draft') return 'Черновик. Гости пока не могут открыть опрос: опубликуйте его — и ссылка заработает.';
+    if (f.status === 'closed') return 'Снят с публикации. По ссылке гость увидит, что опрос завершён. Собранные ответы на месте.';
+    if (f.state === 'soon') return `Опубликован, но ответы начнут принимать с ${syDay(f.startsAt)}.`;
+    if (f.state === 'ended') return `Срок приёма ответов вышел ${syDay(f.endsAt)}. Чтобы принимать снова, продлите дату в «Условиях».`;
+    if (f.state === 'full') return `Набран предел ответов (${f.maxResponses}). Чтобы принимать дальше, увеличьте предел в «Условиях».`;
+    return 'Опубликован и принимает ответы. Гости открывают его по ссылке или QR-коду.';
+  }
+  function syShareHtml() {
+    const f = syForm;
+    const [label, cls] = syStatus(f);
+    let acts = '';
+    if (f.status === 'draft') acts = `<button type="button" class="btn-cta" style="width:auto;margin:0;padding:11px 22px" onclick="syPublish()">Опубликовать</button>`;
+    else if (f.status === 'published') acts = `<button type="button" class="btn-ghost danger" style="width:auto;margin:0" onclick="syUnpublish()">Снять с публикации</button>`;
+    else acts = `<button type="button" class="btn-cta" style="width:auto;margin:0;padding:11px 22px" onclick="syPublish()">Опубликовать снова</button><button type="button" class="btn-ghost" style="width:auto;margin:0" onclick="syToDraft()">В черновики</button>`;
+    let link;
+    if (f.link) {
+      link = `<div class="sv-link" id="syLinkText">${escHtml(f.link)}</div>
+        <div class="sv-qr">${qrSvg(f.link)}</div>
+        <div class="poster-actions" style="margin-top:10px">
+          <button type="button" class="btn-primary" onclick="syCopyLink()">Скопировать ссылку</button>
+          <button type="button" class="btn-primary" onclick="syPrintQr()">Распечатать QR</button>
+          <button type="button" class="btn-primary" onclick="syOpenPreview()">Открыть как у гостя</button>
+        </div>
+        <div class="poster-note">Ссылка откроет гостевого бота, а он — опрос. QR-код можно поставить на стол или добавить в рассылку.${f.status === 'published' ? '' : ' Пока опрос не опубликован, гость по ссылке его не увидит.'}</div>`;
+    } else {
+      link = `<div class="poster-note warn">Ссылка пока недоступна — не удалось узнать имя гостевого бота. Откройте вкладку позже.</div>
+        ${f.preview ? `<div class="poster-actions" style="margin-top:10px"><button type="button" class="btn-primary" onclick="syOpenPreview()">Открыть как у гостя</button></div>` : ''}`;
+    }
+    return `<div class="sy-narrow"><div class="sy-state"><div><span class="pill ${cls}">${escHtml(label)}</span></div><p>${escHtml(syStateText(f))}</p><div class="sy-state-b">${acts}</div></div>
+      <div class="sy-share">${link}</div></div>`;
+  }
+  function syCopyLink() { if (syForm && syForm.link) copyText(syForm.link, 'Ссылка скопирована'); }
+  function syPrintQr() {
+    const f = syForm;
+    if (!f || !f.link) return;
+    document.getElementById('qpH').textContent = f.startText.trim() || SY_START_TEXT;
+    document.getElementById('qpT').textContent = 'Пройдите короткий опрос — это займёт минуту';
+    document.getElementById('qpQr').innerHTML = qrSvg(f.link, 1);
+    document.getElementById('qpHint').textContent = 'Наведите камеру телефона на код';
+    document.body.classList.add('printing-qr');
+    const done = () => { document.body.classList.remove('printing-qr'); window.removeEventListener('afterprint', done); };
+    window.addEventListener('afterprint', done);
+    try { window.print(); } catch { done(); notify('Печать не открылась — сделайте скриншот QR-кода'); }
+    setTimeout(done, 60000);
+  }
+
+  // ── вкладка «Ответы» ──
+  async function syLoadResults(more) {
+    const f = syForm;
+    if (!f || !f.id) return;
+    const box = syById('syBody');
+    const base = `/api/admin/survey-forms/${encodeURIComponent(f.id)}`;
+    if (!more) { syRes = null; syResp = null; if (box) box.innerHTML = '<div class="loading">Загружаю...</div>'; }
+    try {
+      if (!more) {
+        const [r, l] = await Promise.all([mkApi('GET', `${base}/results`), mkApi('GET', `${base}/responses?limit=20&offset=0`)]);
+        syRes = r; syResp = { items: l.items || [], total: l.total || 0 };
+      } else {
+        const l = await mkApi('GET', `${base}/responses?limit=20&offset=${syResp.items.length}`);
+        syResp.items = syResp.items.concat(l.items || []); syResp.total = l.total || syResp.total;
+      }
+      f.responses = syRes.total;
+      const tabBtn = document.querySelectorAll('.sy-tabs button')[2];
+      if (tabBtn) tabBtn.textContent = f.responses ? `Ответы · ${f.responses}` : 'Ответы';
+      if (syTab === 'results') renderSyResults();
+    } catch (e) {
+      if (syTab === 'results' && box) box.innerHTML = errorStateHtml(e.message || 'Не удалось загрузить ответы', 'syLoadResults()');
+    }
+  }
+  const syPct = (n, of) => (of ? Math.round(n / of * 100) : 0);
+  function syStatHtml(s) {
+    let body = '';
+    if (s.type === 'choice') {
+      const max = Math.max(1, ...s.options.map(o => o.n));
+      body = (s.options || []).map(o => `<div class="sy-bar"><div class="sy-bar-t"><span>${escHtml(o.label)}</span><b>${o.n}${s.answered ? ` · ${syPct(o.n, s.answered)}%` : ''}</b></div><div class="sy-bar-f"><i style="width:${o.n ? Math.max(3, Math.round(o.n / max * 100)) : 0}%"></i></div></div>`).join('');
+      if (s.others && s.others.length) {
+        const all = !!syTextsAll[s.q];
+        const shown = all ? s.others : s.others.slice(0, 5);
+        body += `<div class="sy-oth"><b>Свои ответы:</b> ${shown.map(t => `«${escHtml(t)}»`).join(' · ')}${s.others.length > 5 ? ` <a href="#" onclick="syTextsAll['${escJs(s.q)}']=${!all};renderSyResults();return false" style="color:var(--accent)">${all ? 'свернуть' : `ещё ${s.others.length - 5}`}</a>` : ''}</div>`;
+      }
+    } else if (s.type === 'nps') {
+      if (s.nps === undefined || s.nps === null) body = '<div class="mk2-hint" style="margin-top:0">Оценок пока нет</div>';
+      else {
+        const mx = Math.max(1, ...s.dist);
+        body = `<div class="sy-nps"><span class="sy-nps-n ${s.nps > 0 ? 'pos' : s.nps < 0 ? 'neg' : ''}">NPS ${s.nps > 0 ? '+' : ''}${s.nps}</span><small>средняя оценка ${String(s.avg).replace('.', ',')}</small></div>
+          <div class="sy-stack"><i class="det" style="flex:${s.detractors}"></i><i class="pas" style="flex:${s.passives}"></i><i class="pro" style="flex:${s.promoters}"></i></div>
+          <div class="sy-legend"><span>Критики (1–6): ${s.detractors}</span><span>Нейтральные (7–8): ${s.passives}</span><span>Сторонники (9–10): ${s.promoters}</span></div>
+          <div class="sy-cols">${s.dist.map((n, i) => `<div><i style="height:${Math.round(n / mx * 100)}%"></i>${i + 1}</div>`).join('')}</div>`;
+      }
+    } else if (s.type === 'rating') {
+      if (s.avg === null || s.avg === undefined) body = '<div class="mk2-hint" style="margin-top:0">Оценок пока нет</div>';
+      else {
+        const mx = Math.max(1, ...s.dist);
+        body = `<div class="sy-nps"><span class="sy-nps-n">★ ${String(s.avg).replace('.', ',')}</span><small>средняя оценка из 5</small></div>
+          ${s.dist.map((n, i) => ({ n, star: i + 1 })).reverse().map(x => `<div class="sy-bar"><div class="sy-bar-t"><span>${x.star} ${ruPlural(x.star, 'звезда', 'звезды', 'звёзд')}</span><b>${x.n}</b></div><div class="sy-bar-f"><i style="width:${x.n ? Math.max(3, Math.round(x.n / mx * 100)) : 0}%"></i></div></div>`).join('')}`;
+      }
+    } else {
+      const list = s.texts || [];
+      const all = !!syTextsAll[s.q];
+      const shown = all ? list : list.slice(0, 5);
+      body = list.length
+        ? shown.map(t => `<div class="sy-txt"><p>${escHtml(t.text)}</p><small>${[t.guest, t.at ? mkAgo(t.at) : ''].filter(Boolean).map(escHtml).join(' · ')}</small></div>`).join('')
+          + (list.length > 5 ? `<div class="mk2-chips"><div class="chip mk2-more" onclick="syTextsAll['${escJs(s.q)}']=${!all};renderSyResults()">${all ? 'Свернуть' : `Показать все (${list.length})`}</div></div>` : '')
+        : '<div class="mk2-hint" style="margin-top:0">Ответов пока нет</div>';
+    }
+    return `<div class="sy-res"><div class="sy-res-t">${escHtml(s.title || 'Вопрос')}</div><div class="sy-res-s">${SY_TYPE_NAME[s.type] || ''} · ответили ${s.answered}${s.removed ? ' · вопрос удалён из опроса' : ''}</div>${body}</div>`;
+  }
+  function syAnsText(a) {
+    const v = a.v;
+    if (a.type === 'choice') {
+      const parts = ((v && v.labels) || []).slice();
+      if (v && v.other) parts.push(`${(v.otherLabel || 'Другое')}: ${v.other}`);
+      return parts.join(', ') || '—';
+    }
+    if (a.type === 'nps') return `${v} из 10`;
+    if (a.type === 'rating') return `${v} из 5`;
+    return String(v == null ? '' : v) || '—';
+  }
+  function syRespHtml() {
+    const l = syResp;
+    if (!l || !l.items.length) return '';
+    let h = `<div class="sec" style="margin-top:26px">Ответы гостей<span class="sy-cnt">${l.total}</span></div>`;
+    h += l.items.map(it => {
+      const open = !!syRespOpen[it.id], id = escJs(it.id);
+      const name = it.guestId ? (it.guest || 'Гость') : 'Аноним';
+      return `<div class="sy-resp${open ? ' open' : ''}"><div class="sy-resp-h" onclick="syToggleResp('${id}')"><span class="sy-resp-n">${escHtml(name)}</span><span class="sy-resp-d">${escHtml(mkAgo(it.at))}</span><i class="sy-chev"></i></div>
+        ${open ? `<div class="sy-resp-b">${it.answers.map(a => `<div class="sy-ans"><span>${escHtml(a.title || 'Вопрос')}</span><b>${escHtml(syAnsText(a))}</b></div>`).join('')}
+          <div class="sy-resp-a">${it.guestId ? `<button type="button" class="mk2-act" onclick="openGuestCard('${escJs(it.guestId)}')">Карточка гостя</button>` : ''}<button type="button" class="mk2-act dng" onclick="syDelResp('${id}')">Удалить ответ</button></div></div>` : ''}</div>`;
+    }).join('');
+    if (l.items.length < l.total) h += `<div class="mk2-chips" style="justify-content:center;margin-top:10px"><div class="chip mk2-more" onclick="syLoadResults(true)">Показать ещё</div></div>`;
+    return h;
+  }
+  function renderSyResults() {
+    const box = syById('syBody');
+    if (!box || !syForm) return;
+    if (!syRes) { syLoadResults(); return; }
+    const r = syRes;
+    let h = `<div class="sy-narrow"><div class="sy-sum"><b>${r.total}</b><span>${ruPlural(r.total, 'ответ', 'ответа', 'ответов')}</span>${r.lastAt ? `<small>последний — ${escHtml(mkAgo(r.lastAt).toLowerCase())}</small>` : ''}<div class="sy-sum-r">${r.total ? `<button type="button" class="mk2-act" id="syExportBtn" onclick="syExport()">${syFile ? 'Сохранить файл' : 'Выгрузить в CSV'}</button>` : ''}</div></div>`;
+    if (r.anonymous) h += '<div class="mk2-hint" style="margin:0 0 4px">Опрос анонимный: ответы не привязаны к гостям.</div>';
+    if (!r.total) {
+      h += `<div class="empty-state" style="padding:24px 10px">Ответов пока нет. ${syForm.status === 'published' ? 'Поделитесь ссылкой — первые результаты появятся здесь.' : 'Опубликуйте опрос и поделитесь ссылкой.'}</div>
+        <div class="mk2-chips" style="justify-content:center"><div class="chip mk2-more" onclick="sySetTab('share')">Ссылка и QR</div></div>`;
+    } else {
+      h += r.stats.map(syStatHtml).join('') + syRespHtml();
+    }
+    box.innerHTML = h + '</div>';
+  }
+  function syToggleResp(id) { syRespOpen[id] = !syRespOpen[id]; renderSyResults(); }
+  async function syDelResp(id) {
+    if (!await askConfirm('Удалить этот ответ?\n\nИз итогов он пропадёт, вернуть его нельзя.', { ok: 'Удалить', danger: true })) return;
+    try {
+      await mkApi('DELETE', `/api/admin/survey-forms/${encodeURIComponent(syForm.id)}/responses/${encodeURIComponent(id)}`);
+      notify('Ответ удалён', 'ok');
+      syFile = null;
+      await syLoadResults();
+    } catch (e) { notify(e.message || 'Не удалось удалить ответ'); }
+  }
+  // Выгрузка для Excel: на компьютере файл скачивается сразу; на телефоне — кнопкой «Сохранить файл» через «Поделиться»
+  async function syExport() {
+    const btn = syById('syExportBtn');
+    if (syFile) { await sySaveFile(syFile); return; }
+    if (btn) { btn.disabled = true; btn.textContent = 'Готовлю файл…'; }
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/survey-forms/${encodeURIComponent(syForm.id)}/export?pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось выгрузить ответы'));
+      const buf = await res.arrayBuffer();
+      const day = new Date().toISOString().slice(0, 10);
+      const file = { blob: new Blob([buf], { type: 'text/csv;charset=utf-8' }), name: `opros-${syForm.slug || 'otvety'}-${day}.csv` };
+      const touch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+      let canShare = false;
+      try { canShare = !!(touch && navigator.canShare && navigator.canShare({ files: [new File([file.blob], file.name, { type: file.blob.type })] })); } catch (e) { canShare = false; }
+      if (canShare) { syFile = file; renderSyResults(); notify('Файл готов — нажмите «Сохранить файл»', 'ok'); }
+      else await sySaveFile(file);
+    } catch (e) { notify(e.message && e.message !== 'Failed to fetch' ? e.message : 'Не удалось выгрузить — проверьте соединение'); }
+    finally { const b = syById('syExportBtn'); if (b) { b.disabled = false; b.textContent = syFile ? 'Сохранить файл' : 'Выгрузить в CSV'; } }
+  }
+  async function sySaveFile(file) {
+    if (syFile) {
+      try { await navigator.share({ files: [new File([file.blob], file.name, { type: file.blob.type })] }); return; }
+      catch (e) { if (e && e.name === 'AbortError') return; }
+    }
+    const url = URL.createObjectURL(file.blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = file.name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+    notify('Файл сохранён — откройте его в Excel', 'ok');
+  }
+
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'tobacco', 'tips-mine', 'tips-admin', 'xr', 'xr-edit', 'xr-tpl', 'dashboard', 'autotags', 'autotag-edit'];
+  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'svforms', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'tobacco', 'tips-mine', 'tips-admin', 'xr', 'xr-edit', 'xr-tpl', 'dashboard', 'autotags', 'autotag-edit'];
   var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'tips-mine', 'tips-admin', 'xr-edit', 'xr-tpl', 'autotag-edit', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklist-form'];
   // «card» остаётся в списке: на узком окне это колонка; на широком её растягивает правило «#screen-card» в wide-css, а две колонки включает container-запрос
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
@@ -24626,7 +25960,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
       { key: 'mkt', title: 'Маркетинг', icon: ic('<path d="M3 11l15-6v14L3 13z"/><path d="M7 13.5l1.2 5a1.6 1.6 0 0 0 3.1-.7L10.8 16"/><path d="M21 9.5v5"/>'), items: [
         { key: 'events', label: 'Афиша', ok: perm('events.manage'), go: function () { openEvents(); }, screens: ['events', 'add-event'] },
-        { key: 'broadcast', label: 'Рассылки', ok: perm('marketing.send'), go: function () { openMarketing(); }, screens: ['marketing'] } ] },
+        { key: 'broadcast', label: 'Рассылки', ok: perm('marketing.send'), go: function () { openMarketing(); }, screens: ['marketing'] },
+        { key: 'surveyforms', label: 'Опросы', ok: perm('surveys.manage'), go: function () { openSurveyForms(); }, screens: ['svforms'] } ] },
 
       { key: 'an', title: 'Аналитика', icon: ic('<path d="M5 20V11M11 20V4M17 20v-6M3 20h18"/>'), items: [
         { key: 'analytics', label: 'Аналитика', ok: perm('analytics.view'), go: function () { openAnalytics(); }, screens: ['analytics'] },
