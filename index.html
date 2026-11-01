@@ -18277,6 +18277,10 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   }
 
   // ── панель сверху: период, сравнение, группировка, вкладки, значки
+  // Ряд «чипов»-переключателей: общий помощник — им пользуются «Обратная связь» и другие экраны, не только аналитика
+  function anChips(list, current, setter) {
+    return `<div class="chip-row an-chips">${list.map(([v, label]) => `<div class="chip${current === v ? ' selected' : ''}" onclick="${setter}('${v}')">${label}</div>`).join('')}</div>`;
+  }
   function openAnalytics() {
     showScreen('analytics');
     axInitGlobal();
