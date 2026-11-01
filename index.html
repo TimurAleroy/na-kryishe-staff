@@ -3009,6 +3009,31 @@
     .desk-panel .dp-row .dp-bf-k { margin-bottom: 3px; font-size: 11px; letter-spacing: 0.1px; text-transform: none; color: var(--text-muted); }
     .desk-panel .dp-row .dp-bf-v { overflow-wrap: anywhere; }
     .desk-panel .dp-row .dp-bf-v b { font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 1.12em; letter-spacing: 0.3px; color: var(--accent); margin-right: 4px; font-variant-numeric: tabular-nums; }
+    /* Раскрытие «Вечера сегодня»: по нажатию на заголовок — все брони вечера по времени; свёрнуто — только плитки и ближайшая бронь */
+    .desk-panel .dp-chev { display: none; flex: 0 0 auto; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 9px; border: 1px solid var(--border); color: var(--text-sub); transition: transform .2s ease, background .15s, color .15s, border-color .15s; }
+    .desk-panel .dp-label.foldable { cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; transition: color .15s; }
+    .desk-panel .dp-label.foldable .dp-chev { display: inline-flex; }
+    .desk-panel .dp-label.foldable:hover { color: var(--text); }
+    .desk-panel .dp-label.foldable:hover .dp-chev { background: var(--accent-dim); border-color: rgba(var(--ac),0.5); color: var(--accent); }
+    .desk-panel .dp-label.foldable:focus-visible { outline: 2px solid rgba(var(--ac),0.6); outline-offset: 3px; border-radius: 9px; }
+    .desk-panel .dp-label.foldable.open .dp-chev { transform: rotate(180deg); }
+    .dp-bf-lh { margin: 2px 2px 7px; font-size: 11px; letter-spacing: 0.1px; color: var(--text-muted); }
+    .dp-bf-list { display: flex; flex-direction: column; max-height: min(60vh, 620px); overflow-y: auto; margin-bottom: 8px; padding-right: 3px; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: rgba(var(--fg-rgb),0.22) transparent; }
+    .dp-bf-list.fresh { animation: dpBfIn .22s ease both; }
+    @keyframes dpBfIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+    .desk-panel .dp-row.bf-li { display: flex; flex: 0 0 auto; align-items: center; gap: 10px; margin-bottom: 5px; padding: 8px 11px; }
+    .desk-panel .dp-row.bf-li .bf-t { flex: 0 0 auto; min-width: 40px; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 13px; letter-spacing: 0.3px; color: var(--accent); font-variant-numeric: tabular-nums; }
+    .desk-panel .dp-row.bf-li .bf-m { flex: 1 1 auto; min-width: 0; }
+    .desk-panel .dp-row.bf-li .bf-n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .desk-panel .dp-row.bf-li .dp-sub { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; }   /* в узкой панели «стол Общий зал 3» переносится, а не режется: номер стола важнее всего */
+    .desk-panel .dp-row.bf-li .bf-s { flex: 0 0 auto; display: inline-flex; color: var(--c-gold); }
+    .desk-panel .dp-row.bf-li .bf-s.ok { color: var(--c-green); }
+    .desk-panel .dp-row.bf-li .bf-s.bad { color: var(--c-red2); }
+    .desk-panel .dp-row.bf-li.done { opacity: 0.6; }
+    .desk-panel .dp-row.bf-li.done:hover { opacity: 1; }
+    .desk-panel .dp-row.bf-li.next { background: rgba(var(--ac),0.09); box-shadow: inset 3px 0 0 var(--accent); }
+    .desk-panel .dp-row.bf-li.over { box-shadow: inset 3px 0 0 var(--c-gold); }
+    @media (prefers-reduced-motion: reduce) { .dp-bf-list.fresh { animation: none; } .desk-panel .dp-chev { transition: none; } }
 
     /* 900(колонка) + 16*2(отступы) + 230*2(панели) = 1392 — при более узком окне панели не показываем,
        чтобы не наезжали на контент. Шире — панели растут: на 1700px и больше они по 372px. */
@@ -4010,7 +4035,7 @@ body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-le
 </aside>
 <aside class="desk-panel right" id="deskRight">
   <div class="dp-section" id="dpBriefSec">
-    <div class="dp-label"><span class="dp-lt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z"/></svg>Вечер сегодня</span></div>
+    <div class="dp-label" onclick="dpBriefHeadClick()" onkeydown="dpBriefHeadKey(event)"><span class="dp-lt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z"/></svg>Вечер сегодня</span><span class="dp-chev" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span></div>
     <div id="dpBrief"><div class="dp-loading">Загружаю...</div></div>
   </div>
   <div class="dp-section">
@@ -6633,11 +6658,49 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // Брони приходят каждые 30 секунд вместе с проверкой опозданий, поэтому сводка живёт сама; раз в минуту
   // пересчитывается «ближайшая бронь» (время идёт). Блок, которого нет по правам сотрудника, в сводке не показываем.
   var dpBriefData = { bookings: null };
+  // Раскрыт ли список броней вечера (запоминаем на этом устройстве) и «только что нажали» — для короткого появления списка
+  var dpBriefOpen = false, dpBriefAnim = false;
+  try { dpBriefOpen = localStorage.getItem('dp_brief_open') === '1'; } catch {}
   function dpBriefSet(part) { Object.assign(dpBriefData, part); renderDpBrief(); }
   function dpBriefReset() {
     dpBriefData = { bookings: null };
     const box = document.getElementById('dpBrief');
     if (box) { box._html = ''; box.innerHTML = '<div class="dp-loading">Загружаю...</div>'; }
+    dpBriefFold(false, false);
+  }
+  function dpBriefToggle() {
+    dpBriefOpen = !dpBriefOpen; dpBriefAnim = true;
+    try { localStorage.setItem('dp_brief_open', dpBriefOpen ? '1' : '0'); } catch {}
+    renderDpBrief();
+  }
+  function dpBriefHeadClick() { if (document.querySelector('#dpBriefSec .dp-label.foldable')) dpBriefToggle(); }
+  function dpBriefHeadKey(e) { if ((e.key === 'Enter' || e.key === ' ') && e.target === e.currentTarget) { e.preventDefault(); dpBriefHeadClick(); } }
+  // Заголовок «Вечер сегодня» — кнопка только когда есть что раскрывать (бронь, которой нет в строке «Ближайшая бронь»)
+  function dpBriefFold(on, open) {
+    const lb = document.querySelector('#dpBriefSec .dp-label'); if (!lb) return;
+    lb.classList.toggle('foldable', !!on); lb.classList.toggle('open', !!(on && open));
+    if (on) {
+      lb.setAttribute('role', 'button'); lb.setAttribute('tabindex', '0'); lb.setAttribute('aria-controls', 'dpBrief');
+      lb.setAttribute('aria-expanded', open ? 'true' : 'false'); lb.title = open ? 'Свернуть брони вечера' : 'Показать все брони вечера';
+    } else ['role', 'tabindex', 'aria-controls', 'aria-expanded', 'title'].forEach(a => lb.removeAttribute(a));
+  }
+  const DP_BF_CLOCK = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>';
+  const DP_BF_RING = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5" stroke-dasharray="3.2 3.2"/></svg>';
+  // Одна строка в раскрытом списке: время, имя, «2 гостя · стол 3» и справа значок состояния (пришёл / опаздывает / время прошло / ждёт подтверждения)
+  function dpBriefRow(x, isNext) {
+    const b = x.b, slot = x.slot, n = Number(b.guests) || 0;
+    const sub = [n ? `${n} ${ruPlural(n, 'гость', 'гостя', 'гостей')}` : '', b.table ? `стол ${b.table}` : ''].filter(Boolean).join(' · ');
+    const arrived = b.arrival?.status === 'arrived';
+    const over = !arrived && bookingOverdueMin(b) !== null;
+    const late = !arrived && bookingLate(b);
+    let cls = '', ico = '', tip = '';
+    if (arrived) { cls = 'done'; ico = `<span class="bf-s ok">${DP_OK}</span>`; tip = b.arrival.leftAt ? 'Гость ушёл' : 'Пришёл'; }
+    else if (over) { cls = 'over'; ico = `<span class="bf-s bad">${DP_BF_CLOCK}</span>`; tip = 'Время брони прошло, отметки о приходе нет'; }
+    else if (late) { cls = 'over'; ico = `<span class="bf-s">${DP_BF_CLOCK}</span>`; tip = `Предупредил, что опаздывает (в ${late})`; }
+    else if (b.status === 'pending') { ico = `<span class="bf-s">${DP_BF_RING}</span>`; tip = 'Ждёт подтверждения'; }
+    if (isNext) cls += ' next';
+    const name = escHtml(b.name || 'Гость');
+    return `<div class="dp-row bf-li ${cls}" onclick="openBookings()" title="${escHtml((b.name || 'Гость') + (tip ? ' — ' + tip : ''))}"><b class="bf-t">${slot ? hhmm(slot.start) : '—'}</b><div class="bf-m"><div class="bf-n">${name}</div>${sub ? `<div class="dp-sub">${escHtml(sub)}</div>` : ''}</div>${ico}</div>`;
   }
   function renderDpBrief() {
     const box = document.getElementById('dpBrief');
@@ -6645,7 +6708,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const d = dpBriefData;
     if (d.bookings === null) return;   // пока брони не пришли — остаётся «Загружаю...»
     const now = venueNow();
-    let html = '';
+    let html = '', foldOn = false, foldOpen = false;
     if (can('bookings.view')) {
       const day = (Array.isArray(d.bookings) ? d.bookings : []).filter(b => !b.past && !b.cancelled && b.status !== 'cancelled'
         && b.arrival?.status !== 'noshow' && bookingVenueDay(b.iso) === now.day);
@@ -6658,7 +6721,13 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const late = day.filter(b => bookingLate(b)).length;
       const tile = (n, cap) => `<div class="dp-bf-tile${n ? '' : ' zero'}"><b>${n}</b><span>${cap}</span></div>`;
       html += `<div class="dp-bf-tiles">${tile(guests, 'Гостей')}${tile(day.length, 'Броней')}${tile(arrived, 'Пришли')}</div>`;
-      if (next) {
+      // раскрывать есть что, когда броней больше, чем показывает строка «Ближайшая бронь» (или её нет, а брони были)
+      foldOn = day.length > (next ? 1 : 0);
+      foldOpen = foldOn && dpBriefOpen;
+      if (foldOpen) {
+        const all = day.map(b => ({ b, slot: bookingSlot(b) })).sort((x, y) => (x.slot ? x.slot.start : 1e9) - (y.slot ? y.slot.start : 1e9));
+        html += `<div class="dp-bf-lh">Брони вечера · ${all.length}</div><div class="dp-bf-list">${all.map(x => dpBriefRow(x, !!next && next.b === x.b)).join('')}</div>`;
+      } else if (next) {
         const n = Number(next.b.guests) || 0;
         const sub = [n ? `${n} ${ruPlural(n, 'гость', 'гостя', 'гостей')}` : '', next.b.table ? `стол ${next.b.table}` : ''].filter(Boolean).join(' · ');
         html += `<div class="dp-row" onclick="openBookings()"><div class="dp-bf-k">Ближайшая бронь</div><div class="dp-bf-v"><b>${hhmm(next.slot.start)}</b>${escHtml(next.b.name || 'Гость')}</div>${sub ? `<div class="dp-sub">${escHtml(sub)}</div>` : ''}</div>`;
@@ -6669,9 +6738,14 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       }
       if (late) html += `<div class="dp-row bf-late" onclick="openBookings()"><div class="dp-bf-k">Предупредили</div><div class="dp-bf-v">Опаздывают: ${late}</div></div>`;
     }
+    dpBriefFold(foldOn, foldOpen);
+    const anim = dpBriefAnim; dpBriefAnim = false;
     if (box._html === html) return;     // ничего не изменилось — не трогаем (иначе строка мигала бы раз в минуту)
     box._html = html;
+    const keep = box.querySelector('.dp-bf-list')?.scrollTop || 0;   // обновление раз в 30 секунд не должно сбрасывать прокрутку списка
     box.innerHTML = html || '<div class="dp-empty">Пока нечего показать</div>';
+    const lst = box.querySelector('.dp-bf-list');
+    if (lst) { if (anim) lst.classList.add('fresh'); else if (keep) lst.scrollTop = keep; }
   }
   setInterval(renderDpBrief, 60000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) renderDpBrief(); });
