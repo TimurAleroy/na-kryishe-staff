@@ -2836,7 +2836,7 @@
     .undo-toast:not(.show) { pointer-events: none; }
     .undo-toast button { background: none; border: none; color: var(--accent); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; padding: 4px 2px; }
     /* Смена: плашка с кнопкой на главном экране и экран «Кто на смене» (основатель, администратор) */
-    .shift-bar { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; }
+    .shift-bar { grid-column: 1 / -1; max-width: 520px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; }
     .shift-bar.on { border-color: rgba(var(--c-green-rgb),0.35); background: linear-gradient(180deg, rgba(var(--c-green-rgb),0.07), var(--bg-card) 70%); }
     .shift-bar-t { flex: 1 1 140px; min-width: 0; }
     .shift-bar-h { font-size: 14px; color: var(--text); line-height: 1.3; font-weight: 500; }
@@ -2845,7 +2845,7 @@
     .shift-bar-s { font-size: 11.5px; line-height: 1.35; color: var(--text-muted); margin-top: 1px; }
     .shift-meter { height: 3px; margin-top: 7px; }
     .shift-act { flex: 0 0 auto; margin-left: auto; display: flex; }
-    .shift-act.wide { flex: 1 1 100%; max-width: 420px; }
+    .shift-act.wide { flex: 1 1 100%; max-width: 300px; }
     .shift-btn { flex: 0 0 auto; border: 1px solid rgba(var(--ac),0.5); background: var(--accent-dim); color: var(--accent); border-radius: 100px; padding: 9px 14px; font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap; }
     .shift-btn.primary { background: var(--accent); color: var(--on-solid2); border-color: var(--accent); font-weight: 500; }
     .shift-btn:disabled { opacity: 0.5; cursor: default; }
