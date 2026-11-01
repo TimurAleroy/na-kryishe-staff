@@ -2836,18 +2836,17 @@
     .undo-toast:not(.show) { pointer-events: none; }
     .undo-toast button { background: none; border: none; color: var(--accent); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; padding: 4px 2px; }
     /* Смена: плашка с кнопкой на главном экране и экран «Кто на смене» (основатель, администратор) */
-    .shift-bar { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; }
+    .shift-bar { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; }
     .shift-bar.on { border-color: rgba(var(--c-green-rgb),0.35); background: linear-gradient(180deg, rgba(var(--c-green-rgb),0.07), var(--bg-card) 70%); }
-    .shift-bar-t { flex: 1 1 240px; min-width: 0; }
-    .shift-bar-h { font-size: 14px; color: var(--text); line-height: 1.35; font-weight: 500; }
+    .shift-bar-t { flex: 1 1 140px; min-width: 0; }
+    .shift-bar-h { font-size: 14px; color: var(--text); line-height: 1.3; font-weight: 500; }
     .shift-bar-h i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--c-green); margin-right: 7px; box-shadow: 0 0 8px rgba(var(--c-green-rgb),0.6); vertical-align: 1px; }
     .shift-bar-h em { font-style: normal; font-weight: 400; color: var(--text-sub); }
-    .shift-bar-s { font-size: 12px; line-height: 1.45; color: var(--text-muted); margin-top: 3px; }
-    .shift-prog { display: flex; align-items: center; gap: 10px; margin-top: 10px; font-size: 12px; color: var(--text-sub); }
-    .shift-prog .ck-meter { flex: 1; margin-top: 0; }
-    .shift-prog b { font-weight: 500; color: var(--text); white-space: nowrap; }
-    .shift-act { flex: 1 1 260px; max-width: 360px; margin-left: auto; display: flex; flex-direction: column; gap: 6px; }
-    .shift-btn { flex: 0 0 auto; border: 1px solid rgba(var(--ac),0.5); background: var(--accent-dim); color: var(--accent); border-radius: 100px; padding: 12px 16px; font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap; }
+    .shift-bar-s { font-size: 11.5px; line-height: 1.35; color: var(--text-muted); margin-top: 1px; }
+    .shift-meter { height: 3px; margin-top: 7px; }
+    .shift-act { flex: 0 0 auto; margin-left: auto; display: flex; }
+    .shift-act.wide { flex: 1 1 100%; max-width: 420px; }
+    .shift-btn { flex: 0 0 auto; border: 1px solid rgba(var(--ac),0.5); background: var(--accent-dim); color: var(--accent); border-radius: 100px; padding: 9px 14px; font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap; }
     .shift-btn.primary { background: var(--accent); color: var(--on-solid2); border-color: var(--accent); font-weight: 500; }
     .shift-btn:disabled { opacity: 0.5; cursor: default; }
     .shift-btn .shift-arr { margin-left: 6px; opacity: 0.7; }
@@ -2859,7 +2858,7 @@
     [data-hold] .hold-l { position: relative; display: block; pointer-events: none; }
     [data-hold].nudge { animation: holdNudge .32s ease; }
     @keyframes holdNudge { 20%, 60% { transform: translateX(-4px); } 40%, 80% { transform: translateX(4px); } }
-    .shift-bar .shift-btn.hold { width: 100%; padding: 14px 16px; }
+    .shift-bar .shift-btn.hold { width: 100%; padding: 11px 14px; }
     .shift-bar .shift-btn.hold.stop { --hold-fill: rgba(var(--c-red-rgb),0.38); color: var(--c-red2); border-color: rgba(var(--c-red-rgb),0.5); background: rgba(var(--c-red-rgb),0.06); box-shadow: none; }
     .shift-bar .shift-btn.hold:active:not(:disabled) { transform: scale(0.985); }
     .shift-bar .shift-btn.hold.stop:active:not(:disabled) { background: rgba(var(--c-red-rgb),0.1); }
@@ -15968,10 +15967,11 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const on = st.preview ? st.preview.on : shiftCheckLoad(kind, items);
     return { n: items.length, done: Math.min(on.size, items.length) };
   }
-  function shiftProgHtml(p, label) {
-    const pct = Math.round(p.done / p.n * 100);
-    return `<div class="shift-prog"><span>${label}</span><div class="ck-meter${p.done === p.n ? ' full' : ''}"><i style="width:${pct}%"></i></div><b>${p.done} из ${p.n}</b></div>`;
+  function shiftMeter(p) {
+    return `<div class="ck-meter shift-meter${p.done === p.n ? ' full' : ''}"><i style="width:${Math.round(p.done / p.n * 100)}%"></i></div>`;
   }
+  // Название состояния слева, одна кнопка справа; пояснений нет. Кнопки «удерживать» (когда чек-листа нет) идут второй строкой на всю ширину:
+  // их удобнее держать большим пальцем.
   function shiftBarHtml(st) {
     st = st || myShift;
     if (!st.loaded) {
@@ -15983,21 +15983,20 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     if (st.open) {
       const p = shiftProgOf(st, 'close');
       const el = shiftElapsed(st.open.openedAt);
-      const head = `<div class="shift-bar-h"><i></i>На смене с ${escHtml(st.open.opened)}${el ? ` <em>· ${escHtml(el)}</em>` : ''}</div>`;
       if (p) {
-        return `<div class="shift-bar-t">${head}<div class="shift-bar-s">Уходя, пройдите чек-лист закрытия — после него смена закроется</div>${shiftProgHtml(p, 'Закрытие')}</div>`
-          + `<div class="shift-act"><button type="button" class="shift-btn quiet"${dis} onclick="shiftStart('close')">${p.done === p.n ? 'Завершить закрытие' : p.done ? 'Продолжить чек-лист закрытия' : 'Чек-лист закрытия'}<span class="shift-arr">›</span></button></div>`;
+        return `<div class="shift-bar-t"><div class="shift-bar-h"><i></i>На смене с ${escHtml(st.open.opened)}</div><div class="shift-bar-s">${el ? escHtml(el) + ' · ' : ''}закрытие ${p.done} из ${p.n}</div>${shiftMeter(p)}</div>`
+          + `<div class="shift-act"><button type="button" class="shift-btn quiet"${dis} onclick="shiftStart('close')">${p.done === p.n ? 'Завершить' : p.done ? 'Продолжить' : 'К чек-листу'}<span class="shift-arr">›</span></button></div>`;
       }
-      return `<div class="shift-bar-t">${head}<div class="shift-bar-s">Уходя, нажмите и удерживайте «Закрыть смену»</div></div>`
-        + `<div class="shift-act">${holdBtn({ cls: 'shift-btn hold stop', label: 'Удерживайте, чтобы закрыть смену', fn: 'shiftHoldDone', arg: 'close', ms: 1100, confirm: 'Закрыть смену?\n\nВремя ухода запишется сейчас.', ok: 'Закрыть смену', danger: true, disabled: st.busy })}</div>`;
+      return `<div class="shift-bar-t"><div class="shift-bar-h"><i></i>На смене с ${escHtml(st.open.opened)}${el ? ` <em>· ${escHtml(el)}</em>` : ''}</div></div>`
+        + `<div class="shift-act wide">${holdBtn({ cls: 'shift-btn hold stop', label: 'Удерживайте, чтобы закрыть смену', fn: 'shiftHoldDone', arg: 'close', ms: 1100, confirm: 'Закрыть смену?\n\nВремя ухода запишется сейчас.', ok: 'Закрыть смену', danger: true, disabled: st.busy })}</div>`;
     }
     const p = shiftProgOf(st, 'open');
     if (p) {
-      return `<div class="shift-bar-t"><div class="shift-bar-h">Смена не открыта</div><div class="shift-bar-s">Отметьте чек-лист открытия — после него смена откроется</div>${shiftProgHtml(p, 'Открытие')}</div>`
-        + `<div class="shift-act"><button type="button" class="shift-btn primary"${dis} onclick="shiftStart('open')">${p.done === p.n ? 'Завершить открытие' : p.done ? 'Продолжить чек-лист' : 'Пройти чек-лист открытия'}<span class="shift-arr">›</span></button></div>`;
+      return `<div class="shift-bar-t"><div class="shift-bar-h">Смена не открыта</div><div class="shift-bar-s">Чек-лист открытия · ${p.done} из ${p.n}</div>${shiftMeter(p)}</div>`
+        + `<div class="shift-act"><button type="button" class="shift-btn primary"${dis} onclick="shiftStart('open')">${p.done === p.n ? 'Завершить' : p.done ? 'Продолжить' : 'К чек-листу'}<span class="shift-arr">›</span></button></div>`;
     }
-    return `<div class="shift-bar-t"><div class="shift-bar-h">Смена не открыта</div><div class="shift-bar-s">Приступили к работе — нажмите и удерживайте кнопку</div></div>`
-      + `<div class="shift-act">${holdBtn({ cls: 'shift-btn primary hold', label: 'Удерживайте, чтобы открыть смену', fn: 'shiftHoldDone', arg: 'open', ms: 900, confirm: 'Открыть смену?\n\nВремя прихода запишется сейчас.', ok: 'Открыть смену', disabled: st.busy })}</div>`;
+    return `<div class="shift-bar-t"><div class="shift-bar-h">Смена не открыта</div></div>`
+      + `<div class="shift-act wide">${holdBtn({ cls: 'shift-btn primary hold', label: 'Удерживайте, чтобы открыть смену', fn: 'shiftHoldDone', arg: 'open', ms: 900, confirm: 'Открыть смену?\n\nВремя прихода запишется сейчас.', ok: 'Открыть смену', disabled: st.busy })}</div>`;
   }
   function renderShiftBar() {
     const el = document.getElementById('shiftBar');
