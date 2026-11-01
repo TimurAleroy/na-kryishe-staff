@@ -397,6 +397,16 @@
     .rs-who { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; }
     .result-name { display: flex; align-items: center; gap: 7px; }
     .rs-nm { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    /* Запись брони: поиск гостя в базе и подсказка по номеру */
+    .ab-results { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; max-height: 360px; overflow-y: auto; }
+    .ab-results:empty { display: none; }
+    .ab-results .result-item { width: 100%; margin: 0; padding: 10px 12px; box-sizing: border-box; }
+    .ab-results .result-sub { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; letter-spacing: 0.3px; }
+    .ab-note { font-size: 12.5px; line-height: 1.4; color: var(--text-muted); padding: 2px 2px; }
+    .ab-note.warn { color: var(--c-red-soft); }
+    .ab-picked { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border: 1px solid rgba(var(--ac), 0.4); background: var(--accent-dim); border-radius: 14px; }
+    .ab-picked .result-name { white-space: normal; flex-wrap: wrap; }
+    .ab-picked .link-btn { white-space: nowrap; padding: 6px 2px; flex: none; }
     .result-name .rs-flag { flex: none; font-family: 'Montserrat', sans-serif; font-size: 10.5px; line-height: 1; padding: 3px 7px; border-radius: 100px; letter-spacing: 0; }
     .result-sub { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 9px; }
     .rs-none { font-family: 'Montserrat', sans-serif; font-size: 11.5px; letter-spacing: 0; color: var(--text-muted); }
@@ -1656,106 +1666,239 @@
     .log-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 11px; color: var(--text-muted); margin-bottom: 7px; }
     .log-text { font-size: 12.5px; color: var(--text-sub); line-height: 1.45; white-space: pre-line; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
     .log-stats { font-size: 12px; color: var(--text); margin-top: 7px; }
-    /* АНАЛИТИКА */
-    .an-layout { display: block; }
+    /* АНАЛИТИКА — КОНСТРУКТОР (как в Cosmos: несколько показателей на одном графике, у каждого свои настройки и фильтры) */
     .an-step { display: flex; align-items: center; gap: 9px; font-size: 11px; letter-spacing: 0.1px; text-transform: none; color: var(--text-muted); margin: 24px 0 10px; }
-    .an-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; margin-top: 8px; }
-    .an-panel-head { display: flex; align-items: center; gap: 12px; padding: 13px 14px; cursor: pointer; }
-    .an-panel-t { font-size: 11px; letter-spacing: 0.1px; text-transform: none; color: var(--text-muted); }
-    .an-panel-s { font-size: 12.5px; color: var(--text); line-height: 1.4; margin-top: 3px; }
-    .an-panel-btn { margin-left: auto; font-size: 12px; color: var(--accent); white-space: nowrap; }
-    .an-panel-body { display: none; padding: 0 14px 16px; }
-    .an-panel.open .an-panel-body { display: block; }
-    .an-panel-body > .an-step:first-child { margin-top: 4px; }
-    .an-deck { margin-top: 14px; padding: 14px; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border); }
-    .an-deck-t, .an-deck-ready-t { font-size: 13px; color: var(--text); margin-bottom: 10px; }
-    .an-deck-ready-s { font-size: 11px; color: var(--text-muted); margin: -6px 0 10px; word-break: break-all; }
-    .an-deck-btns { display: flex; gap: 8px; flex-wrap: wrap; }
-    .an-deck-btn { flex: 1 1 140px; text-align: center; padding: 11px 12px; border-radius: 12px; border: 1px solid rgba(var(--ac),0.4); color: var(--accent); font-size: 13px; cursor: pointer; }
-    .an-deck-btn.primary { background: var(--accent-dim); }
-    .an-deck-btn.off { opacity: 0.5; pointer-events: none; }
-    .an-deck-err { margin-top: 8px; font-size: 12px; color: var(--c-coral); }
-    .an-done { margin-top: 22px; text-align: center; padding: 12px; border-radius: 12px; background: var(--accent-dim); border: 1px solid rgba(var(--ac),0.4); color: var(--accent); font-size: 13px; cursor: pointer; }
-    @media (max-width: 699px) {
-      .an-panel-body .chip:not(.selected), .an-panel-body .an-seg, .an-panel-body .an-fold { background: rgba(var(--w-rgb),0.03); }
-    }
     .an-step b { width: 18px; height: 18px; border-radius: 50%; background: var(--accent-dim); color: var(--accent); font-size: 10px; font-weight: 500; display: inline-flex; align-items: center; justify-content: center; letter-spacing: 0; flex-shrink: 0; }
     .an-group { font-size: 11px; color: var(--text-muted); margin: 12px 0 6px; }
     .an-chips .chip { padding: 8px 12px; font-size: 12px; }
     .chip.disabled { opacity: 0.35; pointer-events: none; }
-    .an-help { margin-top: 12px; padding: 10px 12px; border-left: 2px solid var(--accent); background: rgba(var(--ac),0.07); border-radius: 0 10px 10px 0; font-size: 12px; line-height: 1.5; color: var(--text-sub); }
-    .an-range { font-size: 12px; color: var(--text-muted); margin-top: 9px; line-height: 1.4; }
-    .an-dates { display: flex; align-items: center; gap: 8px; margin-top: 10px; color: var(--text-muted); }
-    .an-seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 3px; }
-    .an-seg > div { text-align: center; padding: 9px 4px; font-size: 12px; color: var(--text-sub); border-radius: 9px; cursor: pointer; }
-    .an-seg > div.selected { background: var(--accent-dim); color: var(--accent); }
-    .an-fold { margin-top: 24px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; }
-    .an-fold summary { list-style: none; display: flex; align-items: center; gap: 10px; padding: 13px 14px; cursor: pointer; font-size: 13px; color: var(--text); }
-    .an-fold summary::-webkit-details-marker { display: none; }
-    .an-fold summary::after { content: '›'; color: var(--text-muted); font-size: 18px; line-height: 1; transform: rotate(90deg); transition: transform .15s; }
-    .an-fold[open] summary::after { transform: rotate(-90deg); }
-    .an-filter-sum { margin-left: auto; font-size: 12px; color: var(--accent); text-align: right; }
-    .an-filter-sum.none { color: var(--text-muted); }
-    .an-fold-body { padding: 0 14px 14px; }
-    .an-fold-card { margin-top: 12px; }
+    .an-help { margin-top: 10px; padding: 10px 12px; border-left: 2px solid var(--accent); background: rgba(var(--ac),0.07); border-radius: 0 10px 10px 0; font-size: 12px; line-height: 1.5; color: var(--text-sub); }
     .an-note { font-size: 11.5px; color: var(--text-muted); line-height: 1.45; margin-top: 10px; }
     .an-reset { display: inline-block; margin-top: 12px; font-size: 12px; color: var(--accent); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
-    .an-result { transition: opacity .15s; }
-    .an-result.an-loading { opacity: 0.45; pointer-events: none; }
-    .an-hero { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin: 20px 0 0; }
-    .an-hero-title { font-size: 11px; letter-spacing: 0.1px; text-transform: none; color: var(--text-muted); }
-    .an-hero-filters { font-size: 11.5px; color: var(--accent); margin-top: 4px; }
-    .an-total { font-family: 'Montserrat', sans-serif; font-size: 46px; line-height: 1.05; color: var(--text); margin: 10px 0 3px; display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap; }
-    .an-unit { font-family: 'Montserrat', sans-serif; font-size: 14px; color: var(--text-sub); }
-    .an-period { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-    .an-empty-hint { font-size: 12.5px; color: var(--text-sub); margin-top: 10px; line-height: 1.45; }
-    .an-cmp { margin-top: 14px; padding: 11px 12px; border-radius: 12px; background: rgba(var(--w-rgb),0.03); border: 1px solid var(--border); }
-    .an-cmp.up { background: rgba(var(--c-green-rgb),0.08); border-color: rgba(var(--c-green-rgb),0.25); }
-    .an-cmp.down { background: rgba(var(--c-red2-rgb),0.08); border-color: rgba(var(--c-red2-rgb),0.25); }
-    .an-cmp-main { font-size: 13.5px; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; color: var(--text-sub); line-height: 1.35; }
-    .an-cmp.up .an-cmp-main { color: var(--c-green); }
-    .an-cmp.down .an-cmp-main { color: var(--c-red2); }
-    .an-arrow { font-size: 16px; }
-    .an-pct { margin-left: auto; font-size: 12px; }
-    .an-cmp-was { font-size: 11.5px; color: var(--text-muted); margin-top: 5px; }
-    .an-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); gap: 8px; margin-top: 12px; }
-    .an-fact { background: rgba(var(--w-rgb),0.03); border: 1px solid var(--border); border-radius: 12px; padding: 9px 10px; min-width: 0; }
-    .an-fact-l { font-size: 10px; color: var(--text-muted); line-height: 1.3; }
-    .an-fact-v { font-family: 'Montserrat', sans-serif; font-size: 18px; color: var(--text); margin-top: 3px; }
-    .an-fact-s { font-size: 10.5px; color: var(--text-sub); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .an-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 14px 14px 12px; margin-top: 12px; }
     .an-card-title { font-size: 11px; letter-spacing: 0.1px; text-transform: none; color: var(--text-muted); margin-bottom: 10px; }
-    .an-chart { overflow-x: auto; margin: 0 -6px; }
-    .an-col { fill: transparent; }
-    .an-col.on { fill: rgba(var(--ac),0.16); }
-    .an-hit { fill: transparent; cursor: pointer; }
-    .an-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 11px; color: var(--text-sub); margin: 8px 2px 2px; }
-    .an-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
-    .an-pick { min-height: 20px; font-size: 12.5px; color: var(--text-sub); margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); line-height: 1.5; }
-    .an-pick b { color: var(--text); font-weight: 500; }
-    .an-pick .up { color: var(--c-green); }
-    .an-pick .down { color: var(--c-red2); }
-    .an-table-wrap { max-height: 360px; overflow-y: auto; }
-    .an-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-    .an-table th { text-align: left; font-weight: 400; font-size: 11px; letter-spacing: 0.1px; text-transform: none; color: var(--text-muted); padding: 6px 4px; position: sticky; top: 0; background: var(--bg-card); }
-    .an-table td { padding: 7px 4px; border-top: 1px solid var(--border); color: var(--text-sub); }
-    .an-table .num { text-align: right; }
-    .an-table td.num { color: var(--text); }
-    .an-table td.g { color: var(--c-green); }
-    .an-table td.b { color: var(--c-red2); }
     .an-top-row { position: relative; display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 10px; overflow: hidden; margin-bottom: 6px; background: rgba(var(--w-rgb),0.03); font-size: 13px; }
     .an-top-bar { position: absolute; left: 0; top: 0; bottom: 0; background: rgba(var(--ac),0.18); }
     .an-top-row > span { position: relative; }
     .an-top-n { color: var(--text-muted); width: 14px; }
     .an-top-name { flex: 1; color: var(--text); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .an-top-cnt { color: var(--text-sub); font-size: 12px; }
-    @media (min-width: 700px) {
-      .an-layout { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 28px; align-items: start; }
-      .an-hero { margin-top: 8px; }
-      .an-panel { background: none; border: none; margin-top: 0; }
-      .an-panel-head, .an-done { display: none; }
-      .an-panel-body { display: block; padding: 0; }
-      .an-panel-body > .an-step:first-child { margin-top: 8px; }
+
+    /* панель сверху: период, сравнение, группировка, вкладки, значки справа */
+    .ax-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 2px 0 12px; }
+    .ax-bar-sp { flex: 1 1 8px; }
+    .ax-dd-wrap { position: relative; }
+    .ax-btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 14px; border-radius: 100px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-sub); font-family: 'Montserrat', sans-serif; font-size: 12.5px; font-weight: 500; cursor: pointer; white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: border-color .15s, background .15s, color .15s; }
+    .ax-btn b { font-weight: 500; color: var(--text); }
+    .ax-btn .mut { color: var(--text-muted); font-weight: 400; }
+    .ax-btn svg { flex-shrink: 0; opacity: .85; }
+    .ax-btn.on { border-color: rgba(var(--ac),0.5); background: var(--accent-dim); }
+    @media (hover: hover) { .ax-btn:hover { border-color: rgba(var(--ac),0.45); color: var(--text); } }
+    .ax-btn.ico { width: 38px; height: 38px; padding: 0; justify-content: center; }
+    .ax-btn:focus-visible, .ax-tool:focus-visible, .ax-act:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(var(--ac),0.3); }
+    .ax-tabs { display: inline-flex; padding: 3px; gap: 2px; border-radius: 100px; border: 1px solid var(--border); background: var(--bg-card); }
+    .ax-tabs button { padding: 7px 16px; border-radius: 100px; border: none; background: transparent; font-family: 'Montserrat', sans-serif; font-size: 12.5px; color: var(--text-sub); cursor: pointer; }
+    .ax-tabs button.on { background: var(--accent-dim); color: var(--accent); }
+    .ax-dd { display: none; position: absolute; top: calc(100% + 6px); left: 0; z-index: 60; min-width: 240px; max-width: min(360px, calc(100vw - 32px)); background: var(--bg-pop); border: 1px solid rgba(var(--fg-rgb),0.14); border-radius: 16px; padding: 6px; box-shadow: 0 14px 40px rgba(0,0,0,0.45); }
+    .ax-dd.right { left: auto; right: 0; }
+    .ax-dd.open { display: block; }
+    .ax-dd-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 11px; font-size: 13px; color: var(--text-sub); cursor: pointer; line-height: 1.3; }
+    .ax-dd-item > span:first-child { flex: 1; min-width: 0; }
+    .ax-dd-item small { display: block; font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .ax-dd-item.on { color: var(--accent); background: var(--accent-dim); }
+    @media (hover: hover) { .ax-dd-item:hover { background: rgba(var(--fg-rgb),0.06); color: var(--text); } .ax-dd-item.on:hover { color: var(--accent); background: var(--accent-dim); } }
+    .ax-dd-item.dng { color: var(--c-red2); }
+    .ax-dd-sep { height: 1px; background: var(--border); margin: 6px 4px; }
+    .ax-dd-t { padding: 8px 12px 4px; font-size: 11px; color: var(--text-muted); }
+    .ax-dd-note { padding: 4px 12px 8px; font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+    .ax-dates { display: flex; align-items: center; gap: 8px; padding: 4px 8px 8px; color: var(--text-muted); }
+    .ax-dates input { flex: 1; min-width: 0; padding: 10px; font-size: 13px; height: 42px; }
+    .ax-vname { padding: 4px 8px 8px; }
+    .ax-vname input { width: 100%; padding: 10px 12px; font-size: 13px; margin-bottom: 8px; }
+    .ax-seg { display: flex; gap: 3px; padding: 3px; border-radius: 100px; border: 1px solid var(--border); background: var(--bg-card); }
+    .ax-seg > div { flex: 1; text-align: center; padding: 9px 6px; font-size: 12.5px; color: var(--text-sub); border-radius: 100px; cursor: pointer; white-space: nowrap; }
+    .ax-seg > div.on { background: var(--accent-dim); color: var(--accent); }
+    .ax-seg > div.dis { opacity: 0.35; pointer-events: none; }
+    .ax-dd .ax-seg { margin: 2px 8px 8px; }
+
+    /* карточка с графиком */
+    .ax-result { transition: opacity .15s; }
+    .ax-result.ld { opacity: 0.5; pointer-events: none; }
+    .ax-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 18px; padding: 14px; }
+    .ax-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .ax-chip { position: relative; display: flex; align-items: stretch; flex: 1 1 230px; max-width: 360px; min-width: 0; border-radius: 14px; border: 1px solid var(--border); background: rgba(var(--w-rgb),0.03); overflow: hidden; }
+    .ax-chip::before { content: ''; width: 4px; background: var(--sc); flex-shrink: 0; }
+    .ax-chip.off { opacity: 0.5; }
+    .ax-chip-main { flex: 1; min-width: 0; padding: 10px 6px 10px 12px; cursor: pointer; }
+    .ax-chip-name { font-size: 12px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ax-chip-val { font-family: 'Montserrat', sans-serif; font-size: 22px; color: var(--text); margin-top: 3px; display: flex; align-items: baseline; gap: 4px 8px; flex-wrap: wrap; line-height: 1.15; }
+    .ax-chip-val small { font-size: 11.5px; color: var(--text-sub); font-weight: 400; }
+    .ax-chip-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .ax-chip-sub.bad { color: var(--c-red2); }
+    .ax-d { font-family: 'Montserrat', sans-serif; font-size: 11.5px; font-weight: 500; white-space: nowrap; }
+    .ax-d.up { color: var(--c-green); }
+    .ax-d.down { color: var(--c-red2); }
+    .ax-d.flat { color: var(--text-muted); }
+    .ax-chip-tools { display: flex; flex-direction: column; justify-content: space-between; padding: 5px 5px 5px 0; gap: 2px; }
+    .ax-tool { position: relative; width: 30px; height: 30px; padding: 0; border-radius: 50%; border: none; background: transparent; color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    @media (hover: hover) { .ax-tool:hover { background: rgba(var(--fg-rgb),0.08); color: var(--text); } }
+    .ax-tool.on { color: var(--accent); }
+    .ax-tool .bdg { position: absolute; top: 0; right: -1px; min-width: 15px; height: 15px; border-radius: 8px; background: var(--accent); color: #1E1004; font-size: 9.5px; line-height: 15px; text-align: center; font-weight: 600; padding: 0 3px; font-family: 'Montserrat', sans-serif; }
+    .ax-add { flex: 0 0 auto; align-self: stretch; min-height: 64px; display: flex; align-items: center; gap: 8px; padding: 0 18px; border: 1px dashed rgba(var(--ac),0.5); border-radius: 14px; color: var(--accent); font-family: 'Montserrat', sans-serif; font-size: 13px; background: transparent; cursor: pointer; }
+    .ax-add.off { opacity: 0.4; }
+    @media (hover: hover) { .ax-add:hover { background: var(--accent-dim); } }
+    .ax-warn { padding: 10px 12px; border-radius: 12px; font-size: 12px; line-height: 1.45; color: var(--c-amber-soft); background: rgba(var(--c-amber-rgb),0.08); border: 1px solid rgba(var(--c-amber-rgb),0.25); margin-bottom: 10px; }
+    .ax-warn.err { color: var(--c-red2); background: rgba(var(--c-red2-rgb),0.08); border-color: rgba(var(--c-red2-rgb),0.25); }
+    .ax-plot { position: relative; width: 100%; min-height: 250px; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+    .ax-plot svg { display: block; }
+    .ax-plot text { font-family: 'Montserrat', sans-serif; }
+    .ax-hl { fill: rgba(var(--ac),0.13); pointer-events: none; }
+    .ax-tip { position: absolute; z-index: 5; pointer-events: none; min-width: 160px; max-width: 270px; background: var(--bg-pop); border: 1px solid rgba(var(--fg-rgb),0.16); border-radius: 12px; padding: 9px 11px; box-shadow: 0 10px 28px rgba(0,0,0,0.45); font-size: 12px; color: var(--text-sub); display: none; }
+    .ax-tip-h { font-size: 11.5px; color: var(--text-muted); margin-bottom: 6px; }
+    .ax-tip-r { display: flex; align-items: center; gap: 7px; margin-top: 5px; line-height: 1.3; }
+    .ax-tip-r i { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; }
+    .ax-tip-r span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ax-tip-r b { color: var(--text); font-weight: 500; margin-left: auto; padding-left: 10px; white-space: nowrap; }
+    .ax-tip-c { font-size: 11px; color: var(--text-muted); margin: 1px 0 0 16px; display: flex; gap: 8px; justify-content: space-between; }
+    .ax-tip-c .up { color: var(--c-green); }
+    .ax-tip-c .down { color: var(--c-red2); }
+    .ax-hint { font-size: 11px; color: var(--text-muted); margin-top: 8px; line-height: 1.45; display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: center; }
+    .ax-hint i { display: inline-block; width: 14px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; border: 1px solid rgba(var(--fg-rgb),0.5); background: repeating-linear-gradient(135deg, rgba(var(--fg-rgb),0.5) 0 2px, transparent 2px 5px); }
+    .ax-empty { padding: 34px 12px; text-align: center; font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+    /* таблица */
+    .ax-tablewrap { overflow: auto; max-height: 560px; border-radius: 12px; border: 1px solid var(--border); }
+    .ax-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12.5px; min-width: max-content; }
+    .ax-table th { position: sticky; top: 0; z-index: 2; background: var(--bg-pop); text-align: right; font-weight: 400; font-size: 11px; color: var(--text-muted); padding: 8px 10px; white-space: nowrap; border-bottom: 1px solid var(--border); }
+    .ax-table th.grp { color: var(--text); text-align: left; border-left: 1px solid var(--border); }
+    .ax-table th.grp i { display: inline-block; width: 8px; height: 8px; border-radius: 3px; margin-right: 7px; }
+    .ax-table tr.h2 th { top: 31px; }
+    .ax-table th:first-child, .ax-table td:first-child { text-align: left; position: sticky; left: 0; background: var(--bg-card); z-index: 1; }
+    .ax-table th:first-child { z-index: 3; background: var(--bg-pop); }
+    .ax-table td { padding: 8px 10px; border-top: 1px solid var(--border); text-align: right; color: var(--text); white-space: nowrap; }
+    .ax-table td.m { color: var(--text-muted); }
+    .ax-table td.g { color: var(--c-green); }
+    .ax-table td.b { color: var(--c-red2); }
+    .ax-table td.sep, .ax-table th.sep { border-left: 1px solid var(--border); }
+    .ax-table tr.tot td { font-weight: 500; background: var(--bg-pop); border-top: 1px solid rgba(var(--fg-rgb),0.18); }
+    .ax-table tr.tot td:first-child { background: var(--bg-pop); }
+
+    /* сводка по показателям под графиком */
+    .ax-sum { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 440px)); gap: 12px; margin-top: 12px; }
+    .ax-scard { position: relative; overflow: hidden; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 17px 14px 14px; min-width: 0; }
+    .ax-scard::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--sc); }
+    .ax-scard.off { opacity: 0.6; }
+    .ax-scard-t { font-size: 11px; color: var(--text-muted); }
+    .ax-scard-f { font-size: 11.5px; color: var(--accent); margin-top: 3px; }
+    .ax-scard-v { font-family: 'Montserrat', sans-serif; font-size: 36px; line-height: 1.05; color: var(--text); margin: 10px 0 3px; display: flex; align-items: baseline; gap: 4px 9px; flex-wrap: wrap; }
+    .ax-scard-v small { font-size: 14px; color: var(--text-sub); }
+    .ax-scard-p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .ax-cmp { margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: rgba(var(--w-rgb),0.03); border: 1px solid var(--border); }
+    .ax-cmp.up { background: rgba(var(--c-green-rgb),0.08); border-color: rgba(var(--c-green-rgb),0.25); }
+    .ax-cmp.down { background: rgba(var(--c-red2-rgb),0.08); border-color: rgba(var(--c-red2-rgb),0.25); }
+    .ax-cmp-main { font-size: 13px; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; color: var(--text-sub); line-height: 1.35; }
+    .ax-cmp.up .ax-cmp-main { color: var(--c-green); }
+    .ax-cmp.down .ax-cmp-main { color: var(--c-red2); }
+    .ax-cmp-main em { font-style: normal; margin-left: auto; font-size: 12px; }
+    .ax-cmp-was { font-size: 11.5px; color: var(--text-muted); margin-top: 5px; }
+    .ax-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(78px, 1fr)); gap: 8px; margin-top: 10px; }
+    .ax-fact { background: rgba(var(--w-rgb),0.03); border: 1px solid var(--border); border-radius: 12px; padding: 8px 10px; min-width: 0; }
+    .ax-fact-l { font-size: 10px; color: var(--text-muted); line-height: 1.3; }
+    .ax-fact-v { font-family: 'Montserrat', sans-serif; font-size: 17px; color: var(--text); margin-top: 3px; }
+    .ax-fact-s { font-size: 10.5px; color: var(--text-sub); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ax-what { margin-top: 10px; font-size: 11.5px; color: var(--text-muted); line-height: 1.45; }
+    .ax-what summary { cursor: pointer; list-style: none; color: var(--text-sub); }
+    .ax-what summary::-webkit-details-marker { display: none; }
+    .ax-what summary::after { content: ' ›'; }
+    .ax-what[open] summary::after { content: ' ‹'; }
+    .ax-what div { margin-top: 6px; }
+
+    /* полоса состояния выгрузки презентации */
+    .ax-deckrow:empty { display: none; }
+    .ax-deckrow { margin: 0 0 12px; }
+    .ax-strip { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 14px; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border); font-size: 12.5px; color: var(--text-sub); }
+    .ax-strip.err { color: var(--c-red2); border-color: rgba(var(--c-red2-rgb),0.3); }
+    .ax-strip .nm { color: var(--text-muted); font-size: 11px; word-break: break-all; flex: 1 1 100%; }
+    .ax-strip .sp { flex: 1; }
+
+    /* боковая панель «Редактировать показатель» и окно «Фильтры» */
+    .ax-ov { position: fixed; inset: 0; z-index: 380; background: rgba(10,5,0,0.5); display: none; }
+    .ax-ov.open { display: block; animation: axFade .15s ease; }
+    @keyframes axFade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes axSlideR { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+    @keyframes axSlideUp { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+    .ax-drawer { position: absolute; top: 0; right: 0; bottom: 0; width: min(430px, 100vw); background: var(--bg); border-left: 1px solid rgba(var(--fg-rgb),0.14); display: flex; flex-direction: column; box-shadow: -18px 0 50px rgba(0,0,0,0.45); animation: axSlideR .22s cubic-bezier(.2,.8,.2,1); }
+    .ax-dr-head { display: flex; align-items: center; gap: 10px; padding: 16px 18px; border-bottom: 1px solid var(--border); }
+    .ax-dr-t { flex: 1; font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 500; color: var(--text); }
+    .ax-x { width: 32px; height: 32px; border-radius: 50%; border: none; background: rgba(var(--fg-rgb),0.06); color: var(--text-sub); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+    .ax-dr-body { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 18px 18px; -webkit-overflow-scrolling: touch; }
+    .ax-dr-foot { padding: 12px 18px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .ax-dr-err { flex: 1 1 100%; font-size: 12px; line-height: 1.45; color: var(--c-red2); }
+    .ax-fld { margin-bottom: 18px; }
+    .ax-fld > label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 7px; }
+    .ax-fld .form-input { padding: 12px 14px; font-size: 14px; }
+    .ax-fld .an-help { margin-top: 8px; }
+    .ax-sw { display: flex; flex-wrap: wrap; gap: 10px; }
+    .ax-sw i { width: 28px; height: 28px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; box-shadow: inset 0 0 0 2px var(--bg); }
+    .ax-sw i.on { border-color: var(--text); }
+    .ax-row { display: flex; align-items: center; gap: 12px; }
+    .ax-row > div:first-child { flex: 1; min-width: 0; font-size: 13px; color: var(--text); }
+    .ax-row small { display: block; font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .ax-row.dis { opacity: 0.4; pointer-events: none; }
+    .ax-switch { position: relative; width: 42px; height: 24px; border-radius: 12px; background: rgba(var(--fg-rgb),0.18); cursor: pointer; flex-shrink: 0; transition: background .15s; }
+    .ax-switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--text); transition: left .15s; }
+    .ax-switch.on { background: var(--accent); }
+    .ax-switch.on::after { left: 21px; background: #1E1004; }
+    .ax-fbtn { width: 100%; display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text); font-family: 'Montserrat', sans-serif; font-size: 13px; cursor: pointer; text-align: left; }
+    .ax-fbtn span { flex: 1; min-width: 0; }
+    .ax-fbtn small { display: block; font-size: 11.5px; color: var(--accent); margin-top: 2px; white-space: normal; }
+    .ax-fbtn .n { flex: none; min-width: 20px; height: 20px; border-radius: 10px; background: var(--accent); color: #1E1004; font-size: 11px; line-height: 20px; text-align: center; padding: 0 6px; font-weight: 600; }
+    .ax-act { padding: 11px 18px; border-radius: 100px; font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid rgba(var(--fg-rgb),0.18); background: rgba(var(--fg-rgb),0.03); color: var(--text-sub); text-align: center; -webkit-tap-highlight-color: transparent; transition: background .15s, border-color .15s; }
+    @media (hover: hover) { .ax-act:hover { border-color: rgba(var(--fg-rgb),0.34); color: var(--text); } }
+    .ax-act.pri { color: var(--accent-hi, var(--accent)); border-color: rgba(var(--ac),0.78); background: linear-gradient(180deg, rgba(var(--ac),0.32), rgba(var(--ac),0.14)); font-weight: 600; margin-left: auto; }
+    .ax-act.dng { color: var(--c-red2); border-color: rgba(var(--c-red2-rgb),0.4); }
+    .ax-act:active { transform: scale(0.975); }
+    .ax-ov-c { z-index: 395; align-items: center; justify-content: center; padding: 20px; }
+    .ax-ov-c.open { display: flex; }
+    .ax-fp { width: min(640px, 100%); height: min(520px, 88vh); background: var(--bg-pop); border: 1px solid rgba(var(--fg-rgb),0.16); border-radius: 20px; display: flex; flex-direction: column; box-shadow: 0 24px 70px rgba(0,0,0,0.55); animation: axFade .15s ease; overflow: hidden; }
+    .ax-fp-head { display: flex; align-items: center; gap: 10px; padding: 14px 16px 12px 18px; border-bottom: 1px solid var(--border); }
+    .ax-fp-t { font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 500; color: var(--text); }
+    .ax-fp-s { flex: 1; min-width: 0; font-size: 12px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ax-fp-body { flex: 1; min-height: 0; display: grid; grid-template-columns: 210px minmax(0, 1fr); }
+    .ax-fp-dims { border-right: 1px solid var(--border); overflow-y: auto; padding: 8px; }
+    .ax-fp-dim { display: flex; align-items: center; gap: 8px; padding: 11px 12px; border-radius: 11px; font-size: 13px; color: var(--text-sub); cursor: pointer; line-height: 1.3; }
+    .ax-fp-dim.on { background: var(--accent-dim); color: var(--accent); }
+    .ax-fp-dim.dis { opacity: 0.4; cursor: default; }
+    @media (hover: hover) { .ax-fp-dim:not(.on):not(.dis):hover { background: rgba(var(--fg-rgb),0.06); color: var(--text); } }
+    .ax-fp-dim .n { margin-left: auto; flex: none; min-width: 18px; height: 18px; border-radius: 9px; background: var(--accent); color: #1E1004; font-size: 10.5px; line-height: 18px; text-align: center; padding: 0 5px; font-weight: 600; }
+    .ax-fp-opts { overflow-y: auto; padding: 10px 14px 14px; min-width: 0; }
+    .ax-fp-note { font-size: 11.5px; color: var(--text-muted); line-height: 1.45; margin-bottom: 8px; }
+    .ax-fp-all { display: inline-block; font-size: 12px; color: var(--accent); cursor: pointer; margin: 0 0 6px 6px; text-decoration: underline; text-underline-offset: 3px; }
+    .ax-opt { display: flex; align-items: center; gap: 12px; padding: 10px 6px; font-size: 13.5px; color: var(--text); cursor: pointer; border-radius: 10px; }
+    @media (hover: hover) { .ax-opt:hover { background: rgba(var(--fg-rgb),0.05); } }
+    .ax-cb { width: 19px; height: 19px; border-radius: 6px; border: 1.5px solid rgba(var(--fg-rgb),0.35); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .ax-opt.on .ax-cb { background: var(--accent); border-color: var(--accent); }
+    .ax-opt.on .ax-cb::after { content: ''; width: 9px; height: 5px; border-left: 2px solid #1E1004; border-bottom: 2px solid #1E1004; transform: rotate(-45deg) translate(1px, -1px); }
+    .ax-fp-foot { display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--border); align-items: center; }
+    .ax-fp-foot .ax-act.pri { margin-left: auto; }
+    .ax-fp-foot .n { display: inline-block; margin-left: 8px; min-width: 18px; height: 18px; border-radius: 9px; background: var(--accent); color: #1E1004; font-size: 10.5px; line-height: 18px; text-align: center; padding: 0 5px; }
+    @media (max-width: 699px) {
+      .ax-btn { padding: 8px 12px; font-size: 12px; }
+      .ax-btn.ico { width: 36px; height: 36px; }
+      .ax-bar-sp { display: none; }
+      .ax-tabs { order: 5; }
+      .ax-dd { position: fixed; left: 16px; right: 16px; top: auto; bottom: 16px; max-width: none; z-index: 70; max-height: 70vh; overflow-y: auto; }
+      .ax-dd.right { left: 16px; right: 16px; }
+      .ax-chip { flex: 1 1 100%; max-width: none; }
+      .ax-add { flex: 1 1 100%; justify-content: center; min-height: 48px; }
+      .ax-card { padding: 12px; }
+      .ax-drawer { top: auto; left: 0; width: 100%; max-height: 92vh; border-left: none; border-top: 1px solid rgba(var(--fg-rgb),0.14); border-radius: 20px 20px 0 0; box-shadow: 0 -18px 50px rgba(0,0,0,0.45); animation: axSlideUp .22s cubic-bezier(.2,.8,.2,1); }
+      .ax-ov-c { align-items: flex-end; padding: 0; }
+      .ax-fp { width: 100%; height: 86vh; border-radius: 20px 20px 0 0; }
+      .ax-fp-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+      .ax-fp-dims { display: flex; gap: 4px; overflow-x: auto; overflow-y: hidden; border-right: none; border-bottom: 1px solid var(--border); padding: 8px; }
+      .ax-fp-dim { flex: none; white-space: nowrap; }
+      .ax-sum { grid-template-columns: minmax(0, 1fr); }
     }
     .fb-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 14px 0 8px; }
     .fb-stat { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 10px; text-align: center; }
@@ -4281,13 +4424,22 @@ body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-le
     <div><h1 style="font-size:14px;letter-spacing:1px;">Записать бронь</h1></div>
   </div>
   <div style="padding:0 16px">
+    <div class="form-group" id="abFindGroup">
+      <label class="form-label">Гость уже есть в базе? Найдите его</label>
+      <div id="abPicked"></div>
+      <div id="abFindBox">
+        <input class="form-input" id="abSearch" type="text" maxlength="60" placeholder="Имя, телефон или последние цифры номера" autocomplete="off" oninput="abSearchInput()">
+        <div class="ab-results" id="abResults"></div>
+      </div>
+    </div>
     <div class="form-group">
       <label class="form-label">Имя гостя</label>
-      <input class="form-input" id="abName" type="text" placeholder="Имя">
+      <input class="form-input" id="abName" type="text" placeholder="Имя" autocomplete="off" oninput="abFieldEdited()">
     </div>
     <div class="form-group">
       <label class="form-label">Телефон</label>
-      <input class="form-input" id="abPhone" type="tel" value="+7" oninput="formatRuPhone(this)">
+      <input class="form-input" id="abPhone" type="tel" value="+7" oninput="formatRuPhone(this);abFieldEdited();abPhoneLookup()">
+      <div class="ab-results" id="abPhoneHint"></div>
     </div>
     <div class="form-row form-group" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
       <div>
@@ -4605,11 +4757,12 @@ body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-le
     <div class="back-btn" onclick="showScreen('home')">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
-    <div><h1 style="font-size:14px;letter-spacing:1px;">Аналитика</h1><p>Сравнение периодов</p></div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Аналитика</h1><p>Конструктор показателей</p></div>
   </div>
-  <div style="padding:0 16px" class="an-layout">
-    <div id="analyticsControls" class="an-controls"></div>
-    <div id="analyticsResult" class="an-result"></div>
+  <div style="padding:0 16px">
+    <div id="analyticsControls"></div>
+    <div id="anDeckRow" class="ax-deckrow"></div>
+    <div id="analyticsResult" class="ax-result"></div>
   </div>
 </div>
 
@@ -5604,6 +5757,10 @@ body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-le
 </div>
 
 <!-- EDIT FIELD OVERLAY -->
+<!-- Аналитика: боковая панель «Редактировать показатель» и окно «Фильтры» -->
+<div class="ax-ov" id="axOv" onclick="if(event.target===this)axDrClose()"></div>
+<div class="ax-ov ax-ov-c" id="axFpOv" onclick="if(event.target===this)axFpClose()"></div>
+
 <div class="overlay" id="editOverlay">
   <div class="overlay-card">
     <div class="overlay-title" id="editOverlayTitle">Изменить</div>
@@ -6141,7 +6298,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     tgAdmin = null;
     au.items = []; au.actors = []; au.types = []; au.total = 0; au.hasMore = false; au.q = ''; au.who = ''; au.type = '';
     try { window._eventsCache = null; } catch {}
-    anLast = null;
+    anLast = null; anData = axNewData(); anState = axDefaultState(); anAx.model = null; anDeck = { busy: '', ready: null, error: '' };
     scheduleShiftsByDate = {};
     ['analyticsResult', 'analyticsControls'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = ''; });
     // набранное в формах (имя и телефон гостя в новой брони, текст рассылки и т. п.)
@@ -9258,6 +9415,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const pre = prefill || {};
     document.getElementById('abName').value = '';
     document.getElementById('abPhone').value = '+7';
+    abReset();
     const nowLocal = new Date();
     document.getElementById('abDate').value = pre.date || `${nowLocal.getFullYear()}-${String(nowLocal.getMonth() + 1).padStart(2, '0')}-${String(nowLocal.getDate()).padStart(2, '0')}`;
     document.getElementById('abTime').value = pre.time || '20:00';
@@ -9271,6 +9429,173 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       onTableSelectChange('abTable', 'abTableConflictWarning');
     }
     showScreen('add-booking');
+  }
+
+  // ─── ПОИСК ГОСТЯ В БАЗЕ ПРИ ЗАПИСИ БРОНИ ───────────
+  // Гость позвонил: имя, телефон или последние цифры номера — находим карточку и подставляем имя и телефон.
+  // Бронь по-прежнему привязывается по номеру телефона, так что история и теги сложатся в ту же карточку.
+  // Если номер набрали руками целиком — тоже проверяем, кто это (одна запись или несколько на общем номере).
+  let abPicked = null;   // { id, name, phone, nonGrata, vip }
+  let abSeq = 0, abTimer = null, abFound = [];
+  let abPhoneSeq = 0, abPhoneTimer = null, abPhoneFound = [];
+  const abEl = id => document.getElementById(id);
+  function abReset() {
+    abPicked = null; abFound = []; abPhoneFound = [];
+    abSeq++; abPhoneSeq++;
+    clearTimeout(abTimer); clearTimeout(abPhoneTimer);
+    const grp = abEl('abFindGroup');
+    if (grp) grp.style.display = can('guests.view') ? '' : 'none';
+    const inp = abEl('abSearch'); if (inp) inp.value = '';
+    const r = abEl('abResults'); if (r) r.innerHTML = '';
+    const h = abEl('abPhoneHint'); if (h) h.innerHTML = '';
+    abRenderPicked();
+  }
+  // Телефон из базы приходит «+7XXXXXXXXXX» — в поле он ложится в привычном виде
+  function abPutPhone(phone) {
+    const d = String(phone || '').replace(/\D/g, '');
+    const nat = d.length >= 11 ? d.slice(-10) : d;
+    const el = abEl('abPhone');
+    if (!el) return;
+    el.value = ruPhoneFormat(nat);
+    el.dataset.phoneDigits = nat;
+  }
+  const abDigitsOf = v => String(v || '').replace(/\D/g, '');
+  // Строка найденного гостя: имя, метки, телефон, сегмент, визиты — как в поиске гостей, но нажатие подставляет гостя в форму
+  function abRowHtml(g, i, fn) {
+    const name = String(g.name || 'Без имени');
+    const flags = (g.vip ? '<span class="bk-flag vip rs-flag">★ VIP</span>' : '') + (g.nonGrata ? '<span class="bk-flag danger rs-flag">Нон-грата</span>' : '') + (g.allergy ? '<span class="bk-flag danger rs-flag">Аллергия</span>' : '');
+    const seg = g.segment ? segmentPillHtml(g.segmentKey, g.segment, true) : '';
+    const n = Number(g.visitsTotal) || 0;
+    const ago = g.lastVisit ? rsAgo(g.daysSince) : '';
+    const meta = [n ? `${n} ${ruPlural(n, 'визит', 'визита', 'визитов')}` : (g.visitsTotal === 0 ? 'визитов пока нет' : ''), ago ? `был ${ago}` : ''].filter(Boolean).join(' · ');
+    return `<div class="result-item" role="button" tabindex="0" onclick="${fn}(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+      <div class="rs-who"><div class="result-avatar">${escHtml(name.charAt(0).toUpperCase())}</div>
+        <div class="result-main"><div class="result-name"><span class="rs-nm">${escHtml(name)}</span>${flags}</div>
+          <div class="result-sub">${g.phone ? `<span>${escHtml(g.phone)}</span>` : '<span>без номера</span>'}${seg}</div>
+          ${meta ? `<div class="rs-meta">${escHtml(meta)}</div>` : ''}</div></div>
+      <svg class="result-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+    </div>`;
+  }
+  async function abFetchGuests(q) {
+    const c = classifySearch(q);
+    if (c.kind === 'name' || c.kind === 'empty') {
+      if (c.kind === 'empty' || c.q.length < 2) return { list: [], hint: '' };
+      const res = await fetch(`${PROXY_BASE}/api/staff/search?name=${encodeURIComponent(c.q)}&pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return null; }
+      if (!res.ok) throw new Error('search');
+      const list = await res.json();
+      return { list: (Array.isArray(list) ? list : []).filter(g => g && g.id && g.source !== 'general'), hint: '' };
+    }
+    // цифры: ищем по последним 4, затем сужаем до введённого окончания номера
+    const digits = c.digits;
+    if (digits.length < 4) return { list: [], hint: 'Для поиска по номеру нужны хотя бы последние 4 цифры' };
+    const res = await fetch(`${PROXY_BASE}/api/staff/search-last4?digits=${digits.slice(-4)}&pin=${getPin()}`);
+    if (res.status === 401) { showScreen('pin'); return null; }
+    if (!res.ok) throw new Error('search');
+    const all = await res.json();
+    const tail = digits.length >= 11 ? digits.slice(-10) : digits;
+    const list = (Array.isArray(all) ? all : []).filter(g => g && g.id && g.source !== 'general' && abDigitsOf(g.phone).endsWith(tail));
+    return { list, hint: digits.length > 4 && digits.length < 10 ? 'Ищем по концу номера' : '' };
+  }
+  function abSearchInput() {
+    clearTimeout(abTimer);
+    const box = abEl('abResults'), inp = abEl('abSearch');
+    if (!box || !inp) return;
+    const q = inp.value.trim();
+    const seq = ++abSeq;
+    if (!q) { box.innerHTML = ''; abFound = []; return; }
+    const c = classifySearch(q);
+    if (c.kind === 'name' && c.q.length < 2) { box.innerHTML = ''; abFound = []; return; }
+    box.innerHTML = '<div class="ab-note">Ищу...</div>';
+    abTimer = setTimeout(async () => {
+      try {
+        const r = await abFetchGuests(q);
+        if (seq !== abSeq || r === null) return;
+        abFound = r.list.slice(0, 20);
+        box.innerHTML = (r.hint ? `<div class="ab-note">${escHtml(r.hint)}</div>` : '')
+          + (abFound.length ? abFound.map((g, i) => abRowHtml(g, i, 'abPick')).join('')
+            : `<div class="ab-note">${r.hint && !r.list.length && /хотя бы/.test(r.hint) ? '' : 'В базе не нашли. Впишите имя и телефон ниже — это новый гость.'}</div>`);
+      } catch {
+        if (seq === abSeq) box.innerHTML = '<div class="ab-note warn">Поиск не сработал — попробуйте ещё раз или впишите имя и телефон ниже</div>';
+      }
+    }, 300);
+  }
+  function abPick(i, fromPhone) {
+    const g = (fromPhone ? abPhoneFound : abFound)[i];
+    if (!g) return;
+    abPicked = { id: g.id, name: String(g.name || ''), phone: g.phone || '', nonGrata: !!g.nonGrata, vip: !!g.vip, row: g };
+    abSeq++; abPhoneSeq++;
+    abEl('abName').value = abPicked.name;
+    if (abPicked.phone) abPutPhone(abPicked.phone);
+    const r = abEl('abResults'); if (r) r.innerHTML = '';
+    const h = abEl('abPhoneHint'); if (h) h.innerHTML = '';
+    abFound = []; abPhoneFound = [];
+    abRenderPicked();
+  }
+  function abPickPhone(i) { abPick(i, true); }
+  function abUnpick() {
+    const p = abPicked;
+    abPicked = null;
+    // подставленные из базы имя и телефон убираем, чтобы не остались от прежнего гостя; то, что уже поправили руками, не трогаем
+    const nm = abEl('abName'), ph = abEl('abPhone');
+    if (p && nm && nm.value.trim() === p.name.trim()) nm.value = '';
+    if (p && ph && abDigitsOf(ph.value).slice(-10) === abDigitsOf(p.phone).slice(-10)) { ph.value = '+7'; ph.dataset.phoneDigits = ''; }
+    abRenderPicked();
+    const h = abEl('abPhoneHint'); if (h) h.innerHTML = '';
+    const inp = abEl('abSearch'); if (inp) { inp.value = ''; try { inp.focus(); } catch {} }
+  }
+  function abRenderPicked() {
+    const box = abEl('abPicked'), find = abEl('abFindBox');
+    if (!box) return;
+    const p = abPicked;
+    if (!p) { box.innerHTML = ''; if (find) find.style.display = ''; return; }
+    if (find) find.style.display = 'none';
+    const g = p.row || {};
+    const seg = g.segment ? segmentPillHtml(g.segmentKey, g.segment, true) : '';
+    const n = Number(g.visitsTotal) || 0;
+    const ago = g.lastVisit ? rsAgo(g.daysSince) : '';
+    const meta = [n ? `${n} ${ruPlural(n, 'визит', 'визита', 'визитов')}` : '', ago ? `был ${ago}` : ''].filter(Boolean).join(' · ');
+    const flags = (p.vip ? '<span class="bk-flag vip rs-flag">★ VIP</span>' : '') + (p.nonGrata ? '<span class="bk-flag danger rs-flag">Нон-грата</span>' : '') + (g.allergy ? '<span class="bk-flag danger rs-flag">Аллергия</span>' : '');
+    box.innerHTML = `<div class="ab-picked">
+      <div style="min-width:0"><div class="result-name"><span class="rs-nm" style="white-space:normal">${escHtml(p.name || 'Гость')}</span>${flags}</div>
+        <div class="result-sub">${p.phone ? `<span>${escHtml(p.phone)}</span>` : ''}${seg}</div>
+        ${meta ? `<div class="rs-meta" style="margin-top:4px">${escHtml(meta)}</div>` : ''}
+        ${p.nonGrata ? '<div class="ab-note warn" style="margin-top:6px">Гость в списке «нон-грата». Перед записью уточните у администратора.</div>' : ''}
+        <div class="ab-note" style="margin-top:4px">Бронь ляжет в карточку этого гостя.</div></div>
+      <button type="button" class="link-btn" onclick="abUnpick()">Другой гость</button></div>`;
+  }
+  // Имя или номер поправили руками после выбора — это уже не тот гость, пометку снимаем (поля остаются как есть)
+  function abFieldEdited() {
+    if (!abPicked) return;
+    const nm = abEl('abName'), ph = abEl('abPhone');
+    const same = nm && ph && nm.value.trim() === abPicked.name.trim() && abDigitsOf(ph.value).slice(-10) === abDigitsOf(abPicked.phone).slice(-10);
+    if (same) return;
+    abPicked = null;
+    abRenderPicked();
+  }
+  // Номер набрали целиком — смотрим, кто это
+  function abPhoneLookup() {
+    clearTimeout(abPhoneTimer);
+    const hint = abEl('abPhoneHint'), ph = abEl('abPhone');
+    if (!hint || !ph) return;
+    const seq = ++abPhoneSeq;
+    const d = abDigitsOf(ph.value);
+    if (abPicked || d.length !== 11 || !can('guests.view')) { hint.innerHTML = ''; abPhoneFound = []; return; }
+    abPhoneTimer = setTimeout(async () => {
+      try {
+        const res = await fetch(`${PROXY_BASE}/api/staff/search-last4?digits=${d.slice(-4)}&pin=${getPin()}`);
+        if (seq !== abPhoneSeq || res.status === 401) return;
+        if (!res.ok) { hint.innerHTML = ''; return; }
+        const all = await res.json();
+        if (seq !== abPhoneSeq) return;
+        abPhoneFound = (Array.isArray(all) ? all : []).filter(g => g && g.id && g.source !== 'general' && abDigitsOf(g.phone).slice(-10) === d.slice(-10));
+        if (!abPhoneFound.length) { hint.innerHTML = '<div class="ab-note">Этого номера в базе нет — гость будет новым</div>'; return; }
+        // одна карточка и имя ещё не вписано — подставляем сами
+        if (abPhoneFound.length === 1 && !abEl('abName').value.trim()) { abPick(0, true); return; }
+        hint.innerHTML = `<div class="ab-note">${abPhoneFound.length === 1 ? 'По этому номеру в базе:' : 'На этом номере несколько гостей — выберите:'}</div>`
+          + abPhoneFound.slice(0, 6).map((g, i) => abRowHtml(g, i, 'abPickPhone')).join('');
+      } catch { if (seq === abPhoneSeq) hint.innerHTML = ''; }
+    }, 350);
   }
 
   // Пересобирает список столов с пометками занятости под выбранную в форме
@@ -9299,6 +9624,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (!name) { notify('Укажите имя гостя'); return; }
     if (!phone || phone.replace(/\D/g, '').length !== 11) { notify('Телефон гостя — 11 цифр: +7 и ещё 10'); return; }
     if (!dateVal || !timeVal) { notify('Укажите дату и время'); return; }
+    if (abPicked && abPicked.nonGrata && !await askConfirm(`«${abPicked.name}» в списке «нон-грата».\n\nВсё равно записать бронь?`, { ok: 'Записать' })) return;
     let knownTableConflict = false;
 
     // Финальная проверка конфликта прямо перед созданием — не полагаемся
@@ -17063,54 +17389,63 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     }
   }
 
-  // ─── АДМИН: АНАЛИТИКА (СРАВНЕНИЕ ПЕРИОДОВ) ─────
-  // Логика и показатели те же, что раньше: сервер считает всё сам (/api/admin/analytics),
-  // здесь только подача — шаги 1–4, итог словами, график с нажатием, таблица.
+  // ─── АДМИН: АНАЛИТИКА (КОНСТРУКТОР) ─────
+  // Как в Cosmos: на одном графике до четырёх показателей, у каждого свои настройки (вид, накопление, доля, цвет)
+  // и свои фильтры. Сервер считает каждый показатель отдельным запросом (/api/admin/analytics),
+  // здесь только сборка: панель периода, легенда, график с подсказкой, таблица, сводка, выгрузки.
 
-  const AN_METRICS = [
-    ['visits', 'Визиты'],
-    ['guests', 'Гости (уникальные)'],
-    ['newGuests', 'Новые гости'],
-    ['returning', 'Вернувшиеся гости'],
-    ['bookings', 'Брони'],
-    ['cancellations', 'Отмены броней'],
-    ['cancelNoSeats', 'Отмены: нет мест'],
-    ['cancelChangedMind', 'Отмены: гость передумал'],
-    ['arrivals', 'Пришли по брони'],
-    ['noShows', 'Неявки по броням'],
-    ['unmarked', 'Брони без отметки'],
-    ['walkIns', 'Посадки без брони'],
-    ['stay', 'Среднее время визита'],
-    ['turnover', 'Оборот столов'],
-    ['csi', 'CSI — средняя оценка'],
-    ['nps', 'NPS гостей'],
-    ['enps', 'eNPS команды']
-  ];
-  // Как показатели сгруппированы на экране и как коротко называются на кнопках
+  const AN_TITLES = {
+    visits: 'Визиты', guests: 'Гости (уникальные)', newGuests: 'Новые гости', returning: 'Вернувшиеся гости',
+    bookings: 'Брони', guestsBooked: 'Гостей по броням', guestsArrived: 'Пришло гостей', partySize: 'Размер компании',
+    arrivals: 'Пришли по брони', noShows: 'Неявки по броням', noShowRate: 'Доля неявок',
+    cancellations: 'Отмены броней', cancelRate: 'Доля отмен', cancelNoSeats: 'Отмены: нет мест', cancelChangedMind: 'Отмены: гость передумал',
+    unmarked: 'Брони без отметки', walkIns: 'Посадки без брони',
+    stay: 'Среднее время визита', turnover: 'Оборот столов',
+    csi: 'CSI — средняя оценка', nps: 'NPS гостей', enps: 'eNPS команды'
+  };
+  // Тип значения (как у сервера): считаем штуки / уникальных / сумму людей / среднее / долю / минуты / оценку
+  const AN_KINDS = {
+    visits: 'count', guests: 'unique', newGuests: 'count', returning: 'unique',
+    bookings: 'count', guestsBooked: 'sum', guestsArrived: 'sum', partySize: 'avg',
+    arrivals: 'count', noShows: 'count', noShowRate: 'pct',
+    cancellations: 'count', cancelRate: 'pct', cancelNoSeats: 'count', cancelChangedMind: 'count',
+    unmarked: 'count', walkIns: 'count',
+    stay: 'duration', turnover: 'ratio', csi: 'avg', nps: 'score', enps: 'score'
+  };
+  // Как показатели сгруппированы (категории в окне «Редактировать показатель»)
   const AN_METRIC_GROUPS = [
     ['Гости', ['visits', 'guests', 'newGuests', 'returning']],
-    ['Брони', ['bookings', 'cancellations', 'cancelNoSeats', 'cancelChangedMind', 'arrivals', 'noShows', 'unmarked', 'walkIns']],
+    ['Брони', ['bookings', 'guestsBooked', 'guestsArrived', 'partySize', 'arrivals', 'noShows', 'noShowRate', 'cancellations', 'cancelRate', 'cancelNoSeats', 'cancelChangedMind', 'unmarked', 'walkIns']],
     ['Столы', ['stay', 'turnover']],
     ['Оценки', ['csi', 'nps', 'enps']]
   ];
+  const AN_ALL_METRICS = AN_METRIC_GROUPS.flatMap(g => g[1]);
   const AN_CHIP_LABELS = {
     visits: 'Визиты', guests: 'Уникальные гости', newGuests: 'Новые гости', returning: 'Вернувшиеся',
-    bookings: 'Брони', cancellations: 'Отмены', cancelNoSeats: 'Нет мест', cancelChangedMind: 'Передумали', arrivals: 'Пришли по брони', noShows: 'Неявки', unmarked: 'Без отметки', walkIns: 'Без брони',
+    bookings: 'Брони', guestsBooked: 'Гостей по броням', guestsArrived: 'Пришло гостей', partySize: 'Размер компании',
+    arrivals: 'Пришли по брони', noShows: 'Неявки', noShowRate: 'Доля неявок',
+    cancellations: 'Отмены', cancelRate: 'Доля отмен', cancelNoSeats: 'Нет мест', cancelChangedMind: 'Передумали',
+    unmarked: 'Без отметки', walkIns: 'Без брони',
     stay: 'Время визита', turnover: 'Оборот столов',
     csi: 'CSI', nps: 'NPS гостей', enps: 'eNPS команды'
   };
-  // Что значит показатель — простыми словами, показывается под кнопками
+  // Что значит показатель — простыми словами
   const AN_HELP = {
     visits: 'Сколько раз гости были у нас. Один гость за вечер — один визит, даже если заказал несколько кальянов.',
     guests: 'Сколько разных гостей у нас побывало. Кто приходил три раза, считается один раз.',
     newGuests: 'Гости, у которых первый записанный визит попал в этот период.',
     returning: 'Гости, которые были в этом периоде и приходили к нам раньше — до его начала.',
     bookings: 'Сколько броней на даты периода. Отменённые не считаются.',
-    cancellations: 'Сколько броней на даты периода отменили. Чем меньше, тем лучше.',
-    cancelNoSeats: 'Отмены, где сотрудник выбрал причину «Нет мест»: вы теряете гостей из-за заполненного зала. Причина записывается с 6 октября, раньше — без причины.',
-    cancelChangedMind: 'Отмены, где сотрудник выбрал причину «Гость передумал». Причина записывается с 6 октября, раньше — без причины.',
+    guestsBooked: 'Сколько человек записано в бронях на даты периода: складываем число гостей из каждой брони. Отменённые не считаются; брони без числа гостей пропускаем.',
+    guestsArrived: 'Сколько человек пришло по броням с отметкой «Пришёл»: складываем число гостей из этих броней.',
+    partySize: 'Сколько человек в одной брони в среднем. Считаются брони, где указано число гостей; отменённые — нет.',
     arrivals: 'Брони с отметкой «Пришёл». Брони без отметки не считаются ни здесь, ни в неявках.',
     noShows: 'Брони с отметкой «Не пришёл». Чем меньше, тем лучше.',
+    noShowRate: 'Какая часть броней оказалась неявками: неявки ÷ (пришли + неявки). Брони без отметки не считаются. Чем меньше, тем лучше.',
+    cancellations: 'Сколько броней на даты периода отменили. Чем меньше, тем лучше.',
+    cancelRate: 'Какая часть броней отменена: отмены ÷ все брони на даты периода (вместе с отменёнными). Чем меньше, тем лучше.',
+    cancelNoSeats: 'Отмены, где сотрудник выбрал причину «Нет мест»: вы теряете гостей из-за заполненного зала. Причина записывается с 6 октября, раньше — без причины.',
+    cancelChangedMind: 'Отмены, где сотрудник выбрал причину «Гость передумал». Причина записывается с 6 октября, раньше — без причины.',
     unmarked: 'Брони прошедших вечеров, по которым так и не нажали «Пришёл» или «Не пришёл». Чем меньше, тем лучше: без отметки неизвестно, пришёл ли гость, и статистика приходов неполная. Мероприятия не считаются.',
     walkIns: 'Сколько раз гостей посадили за стол без брони (кнопка «Посадить без брони» на схеме). В «Брони» и «Пришли по брони» они не входят.',
     stay: 'Сколько в среднем гость сидит за столом: от отметки «Пришёл» до отметки «Гость ушёл». Считаются только брони, где нажали обе кнопки.',
@@ -17126,6 +17461,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     newGuests: ['новый гость', 'новых гостя', 'новых гостей'],
     returning: ['вернувшийся гость', 'вернувшихся гостя', 'вернувшихся гостей'],
     bookings: ['бронь', 'брони', 'броней'],
+    guestsBooked: ['гость по броням', 'гостя по броням', 'гостей по броням'],
+    guestsArrived: ['гость пришёл', 'гостя пришли', 'гостей пришли'],
     cancellations: ['отмена', 'отмены', 'отмен'],
     cancelNoSeats: ['отмена: нет мест', 'отмены: нет мест', 'отмен: нет мест'],
     cancelChangedMind: ['отмена: гость передумал', 'отмены: гость передумал', 'отмен: гость передумал'],
@@ -17134,216 +17471,188 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     unmarked: ['бронь без отметки', 'брони без отметки', 'броней без отметки'],
     walkIns: ['посадка без брони', 'посадки без брони', 'посадок без брони']
   };
-  const AN_VISIT_METRICS = ['visits', 'guests', 'newGuests', 'returning'];
-  const AN_LOWER_BETTER = ['cancellations', 'cancelNoSeats', 'cancelChangedMind', 'noShows', 'unmarked']; // для них рост — плохо
-  const AN_PERIODS = [['7', '7 дней'], ['30', '30 дней'], ['90', '90 дней'], ['month', 'Этот месяц'], ['year', 'Этот год'], ['custom', 'Свои даты']];
-  const AN_GROUPS = [['day', 'По дням'], ['week', 'По неделям'], ['month', 'По месяцам']];
-  const AN_COMPARE = [['prev', 'Прошлый период'], ['year', 'Прошлый год'], ['none', 'Без сравнения']];
-  const AN_DOW = [['', 'Все дни'], ['1', 'Понедельники'], ['2', 'Вторники'], ['3', 'Среды'], ['4', 'Четверги'], ['5', 'Пятницы'], ['6', 'Субботы'], ['7', 'Воскресенья']];
-  const AN_DOW_SHORT = { '': 'Все дни', '1': 'Пн', '2': 'Вт', '3': 'Ср', '4': 'Чт', '5': 'Пт', '6': 'Сб', '7': 'Вс' };
-  // Сегмент гостя — сегодняшний (кто сейчас «Чемпион», чьи визиты за период считаем)
-  const AN_SEGMENT = [['', 'Все гости'], ['vip', 'VIP'], ['champions', 'Чемпионы'], ['loyalPlus', 'Лояльные+'], ['loyal', 'Лояльные'], ['active', 'Активные'], ['sleeping', 'Спящие'], ['lost', 'Потерянные']];
+  const AN_LOWER_BETTER = ['cancellations', 'cancelNoSeats', 'cancelChangedMind', 'noShows', 'unmarked', 'noShowRate', 'cancelRate']; // для них рост — плохо
+  const AN_PERIODS = [['7', '7 дней'], ['30', '30 дней'], ['90', '90 дней'], ['month', 'Этот месяц'], ['lastMonth', 'Прошлый месяц'], ['year', 'Этот год'], ['custom', 'Свои даты']];
+  const AN_GROUPS = [['day', 'Дням', 'по дням'], ['week', 'Неделям', 'по неделям'], ['month', 'Месяцам', 'по месяцам']];
+  const AN_COMPARE = [['prev', 'Прошлый период', 'Сразу перед выбранным, той же длины'], ['year', 'Прошлый год', 'Те же даты год назад'], ['none', 'Без сравнения', '']];
+  const AN_DOW_SHORT = { '1': 'Пн', '2': 'Вт', '3': 'Ср', '4': 'Чт', '5': 'Пт', '6': 'Сб', '7': 'Вс' };
   const AN_WEEKDAYS = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
   const AN_AVG_WORD = { day: 'день', week: 'неделю', month: 'месяц' };
 
-  const AN_DEFAULTS = { metric: 'visits', period: '30', group: 'day', compare: 'prev', dow: '', segment: '', from: '', to: '', filtersOpen: false, panelOpen: false };
-  let anState = { ...AN_DEFAULTS };
-  let anRequestSeq = 0;
-  let anLast = null; // последний посчитанный результат — для нажатия на столбики
+  // Чем можно резать показатель. Ключи совпадают с параметрами сервера (dows → dow).
+  const AX_DIMS = [
+    { k: 'dows', label: 'День недели', opts: [[1, 'Понедельник', 'Пн'], [2, 'Вторник', 'Вт'], [3, 'Среда', 'Ср'], [4, 'Четверг', 'Чт'], [5, 'Пятница', 'Пт'], [6, 'Суббота', 'Сб'], [7, 'Воскресенье', 'Вс']],
+      note: 'Для броней — день, на который записан гость. Для времени визита и оборота столов — вечер, когда гость пришёл.' },
+    { k: 'slot', label: 'Время брони', opts: [['day', 'До 18:00'], ['e1', '18:00–20:00'], ['e2', '20:00–22:00'], ['night', 'С 22:00 и ночью']],
+      note: 'Брони без указанного времени в этот срез не попадают.' },
+    { k: 'segment', label: 'Лояльность гостя', opts: [['vip', 'VIP'], ['champions', 'Чемпионы'], ['loyalPlus', 'Лояльные+'], ['loyal', 'Лояльные'], ['active', 'Активные'], ['sleeping', 'Спящие'], ['lost', 'Потерянные']],
+      note: 'Сегмент — сегодняшний: берём тех, кто в нём сейчас. Брони без карточки гостя в этот срез не попадают.' },
+    { k: 'zone', label: 'Стол и зона', opts: [['hall', 'Общий зал'], ['terrace', 'Терраса'], ['vip', 'VIP-комнаты'], ['none', 'Стол не назначен']],
+      note: 'Зона определяется по названию стола в брони.' },
+    { k: 'party', label: 'Размер компании', opts: [['1-2', '1–2 человека'], ['3-4', '3–4 человека'], ['5-6', '5–6 человек'], ['7+', '7 и больше']],
+      note: 'Брони без числа гостей в этот срез не попадают.' },
+    { k: 'source', label: 'Откуда бронь', opts: [['site', 'Сайт'], ['app', 'Приложение гостя'], ['bot', 'Бот'], ['staff', 'Сотрудник или телефон']],
+      note: 'Кто создал бронь: гость сам (сайт, приложение, бот) или сотрудник, в том числе по звонку.' }
+  ];
+  const AX_DIM = Object.fromEntries(AX_DIMS.map(d => [d.k, d]));
+  const AX_VISIT_M = ['visits', 'guests', 'newGuests', 'returning'];
+  // Какие срезы действуют на показатель (то же самое считает сервер и присылает в ответе как applied)
+  function axApplies(metric) {
+    if (metric === 'enps') return [];
+    if (AX_VISIT_M.includes(metric)) return ['dows', 'segment'];
+    if (metric === 'turnover') return ['dows', 'zone'];
+    if (['csi', 'nps'].includes(metric)) return ['dows'];
+    return ['dows', 'slot', 'segment', 'zone', 'party', 'source'];
+  }
+  const AX_COLORS = ['#C98A4B', '#5B9BD5', '#7BC47F', '#B08AD8', '#E0B34A', '#E07A9A', '#4FB8B0', '#9CA3AF'];
+  const AX_MAX = 4;
+  const AX_KEY = 'an_state2', AX_VIEWS = 'an_views';
 
-  function openAnalytics() {
-    showScreen('analytics');
-    renderAnalyticsControls();
-    loadAnalytics();
+  // ── показатель на графике
+  let axUid = 0;
+  const axNewId = () => 's' + Date.now().toString(36) + (++axUid).toString(36);
+  const axEmptyF = () => ({ dows: [], slot: [], segment: [], zone: [], party: [], source: [] });
+  function axNewSeriesRaw(metric, color) {
+    return { id: axNewId(), metric: AN_KINDS[metric] ? metric : 'visits', name: '', color: color || AX_COLORS[0], mode: 'abs', cum: false, type: 'auto', hidden: false, f: axEmptyF() };
+  }
+  function axFreeColor() {
+    const used = anState.series.map(s => s.color);
+    return AX_COLORS.find(c => !used.includes(c)) || AX_COLORS[anState.series.length % AX_COLORS.length];
+  }
+  const axClone = o => JSON.parse(JSON.stringify(o));
+  const axName = s => (s.name || '').trim() || AN_CHIP_LABELS[s.metric];
+  const axKind = s => AN_KINDS[s.metric];
+  const axAdditive = metric => ['count', 'sum'].includes(AN_KINDS[metric]);   // можно считать накопление и долю от итога
+  // Шкала на графике: показатели одного класса делят ось, больше двух классов на график не помещаются
+  function axClass(s) {
+    const k = axKind(s);
+    if (s.mode === 'share' || k === 'pct') return 'pct';
+    if (k === 'count' || k === 'unique' || k === 'sum') return 'cnt';
+    if (k === 'duration') return 'min';
+    if (k === 'score') return 'score';
+    return 'num';
+  }
+  const AX_CLASS_NAME = { cnt: 'штуки', min: 'время', num: 'средние значения', pct: 'проценты', score: 'оценка от −100 до +100' };
+
+  // Чистим то, что пришло из localStorage: там может быть что угодно
+  function axCleanSeries(r) {
+    if (!r || typeof r !== 'object' || !AN_KINDS[r.metric]) return null;
+    const s = axNewSeriesRaw(r.metric, /^#[0-9a-f]{6}$/i.test(r.color) ? r.color : AX_COLORS[0]);
+    s.name = typeof r.name === 'string' ? r.name.slice(0, 40) : '';
+    s.mode = r.mode === 'share' && axAdditive(s.metric) ? 'share' : 'abs';
+    s.cum = !!r.cum && axAdditive(s.metric);
+    s.type = ['bar', 'line'].includes(r.type) ? r.type : 'auto';
+    s.hidden = !!r.hidden;
+    AX_DIMS.forEach(d => {
+      const raw = r.f && Array.isArray(r.f[d.k]) ? r.f[d.k] : [];
+      s.f[d.k] = d.opts.map(o => o[0]).filter(v => raw.some(x => String(x) === String(v)));
+    });
+    return s;
+  }
+  function axCleanState(r) {
+    if (!r || typeof r !== 'object') return null;
+    const classes = new Set();
+    const series = (Array.isArray(r.series) ? r.series : []).map(axCleanSeries).filter(Boolean).filter(s => {
+      classes.add(axClass(s));
+      return classes.size <= 2;   // третья шкала на график не помещается
+    }).slice(0, AX_MAX);
+    if (!series.length) return null;
+    const ok = (v, list, def) => list.includes(v) ? v : def;
+    const date = v => /^\d{4}-\d{2}-\d{2}$/.test(String(v || '')) ? v : '';
+    return {
+      series, period: ok(r.period, AN_PERIODS.map(p => p[0]), '30'), from: date(r.from), to: date(r.to),
+      group: ok(r.group, ['day', 'week', 'month'], 'day'), compare: ok(r.compare, ['prev', 'year', 'none'], 'prev'),
+      tab: ok(r.tab, ['chart', 'table'], 'chart'), values: ok(r.values, ['auto', 'always', 'never'], 'auto')
+    };
+  }
+  function axDefaultState() {
+    return { series: [axNewSeriesRaw('visits', AX_COLORS[0])], period: '30', from: '', to: '', group: 'day', compare: 'prev', tab: 'chart', values: 'auto', pop: '', drawer: null, fp: null };
+  }
+  function axStoredState() {
+    try {
+      const st = axCleanState(JSON.parse(localStorage.getItem(AX_KEY) || 'null'));
+      return st ? Object.assign(axDefaultState(), st) : null;
+    } catch (e) { return null; }
+  }
+  function axPersist() {
+    try {
+      const { series, period, from, to, group, compare, tab, values } = anState;
+      localStorage.setItem(AX_KEY, JSON.stringify({ series, period, from, to, group, compare, tab, values }));
+    } catch (e) { /* без хранилища — работает, просто не запоминает */ }
+  }
+  function axNewData() { return { byId: {}, seq: 0, oldServer: false }; }
+
+  let anState = axStoredState() || axDefaultState();
+  let anData = axNewData();
+  let anLast = null;          // что сейчас нарисовано: для выгрузок
+  let anAx = { model: null, ro: null, w: 0, inited: false };
+
+  // Свежий экран: из главной (график по одному показателю) — только он и период
+  function anFresh(o) {
+    anState = Object.assign(axDefaultState(), o || {});
+    anData = axNewData();
+    anLast = null;
+    axPersist();
   }
 
-  function anRange() {
+  // ── период, группировка, сравнение
+  function axRangeFor(period, cFrom, cTo) {
     const today = venueDayStr();
-    switch (anState.period) {
+    switch (period) {
       case '7': return { from: shiftDateStr(today, -6), to: today };
       case '90': return { from: shiftDateStr(today, -89), to: today };
       case 'month': return { from: today.slice(0, 8) + '01', to: today };
+      case 'lastMonth': { const last = shiftDateStr(today.slice(0, 8) + '01', -1); return { from: last.slice(0, 8) + '01', to: last }; }
       case 'year': return { from: today.slice(0, 5) + '01-01', to: today };
-      case 'custom': return { from: anState.from || shiftDateStr(today, -29), to: anState.to || today };
+      case 'custom': return { from: cFrom || shiftDateStr(today, -29), to: cTo || today };
       default: return { from: shiftDateStr(today, -29), to: today };
     }
   }
-
-  function anDaysBetween(a, b) {
-    return Math.round((new Date(b + 'T12:00:00') - new Date(a + 'T12:00:00')) / 86400000);
-  }
+  const anRange = () => axRangeFor(anState.period, anState.from, anState.to);
+  function anDaysBetween(a, b) { return Math.round((new Date(b + 'T12:00:00') - new Date(a + 'T12:00:00')) / 86400000); }
   function anShiftYear(iso) {
     const md = iso.slice(5, 10) === '02-29' ? '02-28' : iso.slice(5, 10);
     return `${Number(iso.slice(0, 4)) - 1}-${md}`;
   }
   // Тот же отрезок сравнения, что считает сервер — чтобы показать его до загрузки
-  function anCompareRange(r) {
-    if (anState.compare === 'none') return null;
-    if (anState.compare === 'year') return { from: anShiftYear(r.from), to: anShiftYear(r.to) };
+  function anCompareRange(r, kind) {
+    kind = kind || anState.compare;
+    if (kind === 'none') return null;
+    if (kind === 'year') return { from: anShiftYear(r.from), to: anShiftYear(r.to) };
     const len = anDaysBetween(r.from, r.to) + 1;
     return { from: shiftDateStr(r.from, -len), to: shiftDateStr(r.from, -1) };
   }
-  function anRangeText(r) {
+  // Разбивка по умолчанию под длину периода — её всё равно можно поменять
+  function axGroupFor(period, r) {
+    if (period === '7' || period === '30' || period === 'month' || period === 'lastMonth') return 'day';
+    if (period === '90') return 'week';
+    if (period === 'year') return 'month';
     const n = anDaysBetween(r.from, r.to) + 1;
-    return `${fmtDMY(r.from)} — ${fmtDMY(r.to)} · ${n} ${ruPlural(n, 'день', 'дня', 'дней')}`;
-  }
-  function anCompareText(r) {
-    const c = anCompareRange(r);
-    if (!c) return 'Сравнение выключено — видно только выбранный период';
-    return `${anState.compare === 'year' ? 'Те же даты год назад' : 'Предыдущий такой же отрезок'}: ${fmtDMY(c.from)} — ${fmtDMY(c.to)}`;
-  }
-  function anFilterSummary() {
-    const parts = [];
-    if (anState.dow) parts.push(AN_DOW.find(x => x[0] === anState.dow)?.[1]);
-    if (anState.segment && AN_VISIT_METRICS.includes(anState.metric)) parts.push(AN_SEGMENT.find(x => x[0] === anState.segment)?.[1]);
-    return parts.filter(Boolean).join(' · ');
+    return n <= 45 ? 'day' : n <= 200 ? 'week' : 'month';
   }
 
-  function anChips(list, current, setter) {
-    return `<div class="chip-row an-chips">${list.map(([v, label]) => `<div class="chip${current === v ? ' selected' : ''}" onclick="${setter}('${v}')">${label}</div>`).join('')}</div>`;
+  // ── фильтры показателя в тексте
+  function axFilterParts(f, applied) {
+    if (!f) return [];
+    const out = [];
+    AX_DIMS.forEach(d => {
+      if (applied && !applied.includes(d.k)) return;
+      const vals = Array.isArray(f[d.k]) ? f[d.k] : [];
+      if (!vals.length) return;
+      const names = vals.map(v => { const o = d.opts.find(o => String(o[0]) === String(v)); return o ? (o[2] || o[1]) : String(v); });
+      out.push(names.length <= 2 || d.k === 'dows' ? names.join(', ') : `${d.label}: ${names.length}`);
+    });
+    return out;
   }
-  function anSeg(list, current, setter) {
-    return `<div class="an-seg">${list.map(([v, label]) => `<div class="${current === v ? 'selected' : ''}" onclick="${setter}('${v}')">${label}</div>`).join('')}</div>`;
-  }
+  const axFilterCount = (f, applied) => AX_DIMS.reduce((n, d) => n + (applied.includes(d.k) ? (f[d.k] || []).length : 0), 0);
 
-  function renderAnalyticsControls() {
-    const el = document.getElementById('analyticsControls');
-    const r = anRange();
-    const visitMetric = AN_VISIT_METRICS.includes(anState.metric);
-    const summary = anFilterSummary();
-    const filtersOpen = anState.filtersOpen || !!summary;
-    el.innerHTML = `
-      <div class="an-panel${anState.panelOpen ? ' open' : ''}">
-      <div class="an-panel-head" onclick="anTogglePanel()">
-        <div style="min-width:0"><div class="an-panel-t">Настройки показа</div><div class="an-panel-s">${escHtml(anSummaryLine())}</div></div>
-        <span class="an-panel-btn">${anState.panelOpen ? 'Свернуть' : 'Изменить'}</span>
-      </div>
-      <div class="an-panel-body">
-      <div class="an-step"><b>1</b>Что смотрим</div>
-      ${AN_METRIC_GROUPS.map(([group, keys]) => `
-        <div class="an-group">${group}</div>
-        <div class="chip-row an-chips">${keys.map(k => `<div class="chip${anState.metric === k ? ' selected' : ''}" onclick="anSet('metric','${k}')">${AN_CHIP_LABELS[k]}</div>`).join('')}</div>`).join('')}
-      <div class="an-help">${AN_HELP[anState.metric]}</div>
-
-      <div class="an-step"><b>2</b>За какой период</div>
-      ${anChips(AN_PERIODS, anState.period, 'anSetPeriod')}
-      ${anState.period === 'custom' ? `
-        <div class="an-dates">
-          <input type="date" class="form-input" value="${r.from}" onchange="anSetDate('from', this.value)">
-          <span>—</span>
-          <input type="date" class="form-input" value="${r.to}" onchange="anSetDate('to', this.value)">
-        </div>` : ''}
-      <div class="an-range" id="anRangeText">${anRangeText(r)}</div>
-
-      <div class="an-step"><b>3</b>С чем сравнить</div>
-      ${anSeg(AN_COMPARE, anState.compare, 'anSetCompare')}
-      <div class="an-range" id="anCompareText">${anCompareText(r)}</div>
-
-      <div class="an-step"><b>4</b>Как разбить график</div>
-      ${anSeg(AN_GROUPS, anState.group, 'anSetGroup')}
-
-      <details class="an-fold" ${filtersOpen ? 'open' : ''} ontoggle="anState.filtersOpen = this.open">
-        <summary><span>Фильтры</span><span class="an-filter-sum${summary ? '' : ' none'}">${summary ? escHtml(summary) : 'не выбраны'}</span></summary>
-        <div class="an-fold-body">
-          <div class="an-group" style="margin-top:2px">День недели</div>
-          <div class="chip-row an-chips">${AN_DOW.map(([v]) => `<div class="chip${anState.dow === v ? ' selected' : ''}" onclick="anSet('dow','${v}')">${AN_DOW_SHORT[v]}</div>`).join('')}</div>
-          <div class="an-group">Какие гости</div>
-          <div class="chip-row an-chips">${AN_SEGMENT.map(([v, label]) => `<div class="chip${anState.segment === v ? ' selected' : ''}${visitMetric ? '' : ' disabled'}" onclick="anSet('segment','${v}')">${label}</div>`).join('')}</div>
-          <div class="an-note">${visitMetric
-            ? (anState.segment ? 'Считаем визиты тех, кто в этом сегменте сейчас.' : 'Сегмент — сегодняшний: кто сейчас «Чемпион», того визиты и считаем.')
-            : 'Сегмент работает только для показателей из группы «Гости».' + (anState.segment ? ' Выбранный сегмент сейчас не применяется.' : '')}</div>
-          ${summary ? '<div class="an-reset" onclick="anResetFilters()">Сбросить фильтры</div>' : ''}
-        </div>
-      </details>
-      <div class="an-done" onclick="anTogglePanel(true)">Показать результат</div>
-      </div>
-      </div>`;
-  }
-
-  // Одна строка про текущие настройки — видна, когда панель свёрнута (на телефоне)
-  function anSummaryLine() {
-    const r = anRange();
-    const period = anState.period === 'custom' ? `${fmtDM(r.from)}–${fmtDM(r.to)}` : AN_PERIODS.find(x => x[0] === anState.period)[1];
-    const cmp = { prev: 'с прошлым периодом', year: 'с прошлым годом', none: 'без сравнения' }[anState.compare];
-    const grp = { day: 'по дням', week: 'по неделям', month: 'по месяцам' }[anState.group];
-    return [AN_CHIP_LABELS[anState.metric], period, cmp, grp, anFilterSummary()].filter(Boolean).join(' · ');
-  }
-  // На телефоне настройки сворачиваются, чтобы сразу было видно результат
-  function anTogglePanel(scrollToResult) {
-    const panel = document.querySelector('#analyticsControls .an-panel');
-    if (!panel) return;
-    const open = scrollToResult === true ? false : !panel.classList.contains('open');
-    panel.classList.toggle('open', open);
-    anState.panelOpen = open;
-    const btn = panel.querySelector('.an-panel-btn');
-    if (btn) btn.textContent = open ? 'Свернуть' : 'Изменить';
-    if (scrollToResult === true) document.getElementById('analyticsResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  function anSet(key, value) {
-    anState[key] = value;
-    renderAnalyticsControls();
-    loadAnalytics();
-  }
-  function anSetPeriod(p) {
-    anState.period = p;
-    // Разбивка по умолчанию под длину периода — её всё равно можно поменять
-    if (p === '7' || p === '30' || p === 'month') anState.group = 'day';
-    else if (p === '90') anState.group = 'week';
-    else if (p === 'year') anState.group = 'month';
-    if (p === 'custom' && !anState.from) { const r = anRange(); anState.from = r.from; anState.to = r.to; }
-    renderAnalyticsControls();
-    loadAnalytics();
-  }
-  function anSetGroup(g) { anSet('group', g); }
-  function anSetCompare(c) { anSet('compare', c); }
-  function anSetDate(which, value) {
-    if (!value) return;
-    anState[which] = value;
-    const r = anRange();
-    const a = document.getElementById('anRangeText'), b = document.getElementById('anCompareText');
-    if (a) a.textContent = anRangeText(r);
-    if (b) b.textContent = anCompareText(r);
-    loadAnalytics();
-  }
-  function anResetFilters() {
-    anState.dow = '';
-    anState.segment = '';
-    renderAnalyticsControls();
-    loadAnalytics();
-  }
-
-  async function loadAnalytics() {
-    const out = document.getElementById('analyticsResult');
-    anDeck.ready = null; // настройки изменились — готовый файл уже не тот
-    // Прошлый результат остаётся на экране приглушённым — страница не «прыгает»
-    if (out.querySelector('.an-hero')) out.classList.add('an-loading');
-    else out.innerHTML = '<div class="loading">Считаю...</div>';
-    const r = anRange();
-    const q = new URLSearchParams({ metric: anState.metric, group: anState.group, compare: anState.compare, from: r.from, to: r.to });
-    if (anState.dow) q.set('dow', anState.dow);
-    if (anState.segment && AN_VISIT_METRICS.includes(anState.metric)) q.set('segment', anState.segment);
-    const seq = ++anRequestSeq;
-    try {
-      const res = await fetch(`${PROXY_BASE}/api/admin/analytics?${q.toString()}&pin=${getPin()}`);
-      if (res.status === 401) { showScreen('pin'); return; }
-      if (res.status === 403) { accessDenied(); return; }
-      if (!res.ok) throw new Error(await responseError(res, 'Не удалось посчитать'));
-      const data = await res.json();
-      if (seq !== anRequestSeq) return; // пока считали, настройки уже поменяли
-      out.classList.remove('an-loading');
-      out.innerHTML = renderAnalyticsResult(data);
-    } catch (e) {
-      if (seq !== anRequestSeq) return;
-      out.classList.remove('an-loading');
-      out.innerHTML = `<div class="empty-state">${escHtml(e.message || 'Не удалось посчитать')}<div class="an-reset" style="margin-top:12px" onclick="loadAnalytics()">Повторить</div></div>`;
-    }
-  }
-
+  // ── форматирование
+  const axRound = (v, d = 1) => { const k = Math.pow(10, d); return Math.round(v * k) / k; };
   function anFormat(v, kind) {
     if (v === null || v === undefined) return '—';
     if (kind === 'duration') return shDuration(v);
     if (kind === 'avg' || kind === 'ratio') return String(v).replace('.', ',');
+    if (kind === 'pct') return String(v).replace('.', ',') + '%';
     if (kind === 'score') return signed(v);
     return String(v);
   }
@@ -17356,23 +17665,23 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     if (value === null || value === undefined) return '';
     if (d.metric === 'csi') return ' / 10';
     if (d.metric === 'turnover') return ' на стол за вечер';
+    if (d.metric === 'partySize') return ' чел. в брони';
     const u = AN_UNITS[d.metric];
     return u ? ' ' + ruPlural(Math.abs(value), u[0], u[1], u[2]) : '';
   }
-  function anIsGood(d, delta) {
-    return AN_LOWER_BETTER.includes(d.metric) ? delta < 0 : delta > 0;
-  }
+  function anIsGood(d, delta) { return AN_LOWER_BETTER.includes(d.metric) ? delta < 0 : delta > 0; }
   // «пт 26.09» для дней, «22.09–28.09» для недель, «сен 2026» для месяцев
   function anBucketName(start, label, group) {
     if (group === 'day' && start) return `${AN_WEEKDAYS[new Date(start + 'T12:00:00').getDay()]} ${fmtDM(start)}`;
     return label;
   }
-  // Если выбран один день недели, а разбивка по дням — остальные дни в графике и таблице
-  // только мешают (столбики с нулями). Сравнение выровнено по индексу, поэтому убираем парами.
+  // Если выбраны дни недели, а разбивка по дням — остальные дни в графике и таблице только мешают (столбики с нулями).
+  // Сравнение выровнено по индексу, поэтому убираем парами.
   function anVisibleBuckets(d) {
-    if (d.dow && d.group === 'day') return d.buckets.filter(b => {
+    const dows = Array.isArray(d.dows) ? d.dows : (d.dow ? [Number(d.dow)] : []);
+    if (dows.length && d.group === 'day') return d.buckets.filter(b => {
       const wd = new Date(b.start + 'T12:00:00').getDay();
-      return (wd === 0 ? 7 : wd) === Number(d.dow);
+      return dows.includes(wd === 0 ? 7 : wd);
     });
     return d.buckets;
   }
@@ -17381,6 +17690,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     if (d.delta === 0) return d.compare === 'year' ? 'Столько же, сколько в прошлом году' : 'Столько же, сколько в прошлом периоде';
     const up = d.delta > 0, abs = Math.abs(d.delta);
     if (d.kind === 'duration') return `На ${shDuration(abs)} ${up ? 'дольше' : 'короче'}, ${cmpWhat}`;
+    if (d.kind === 'pct') return `На ${String(abs).replace('.', ',')} п. п. ${up ? 'выше' : 'ниже'}, ${cmpWhat}`;
     if (d.kind === 'avg' || d.kind === 'ratio') return `На ${String(abs).replace('.', ',')} ${up ? 'выше' : 'ниже'}, ${cmpWhat}`;
     if (d.kind === 'score') return `На ${abs} ${ruPlural(abs, 'пункт', 'пункта', 'пунктов')} ${up ? 'выше' : 'ниже'}, ${cmpWhat}`;
     return `На ${abs} ${up ? 'больше' : 'меньше'}, ${cmpWhat}`;
@@ -17388,97 +17698,1020 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   function anBucketDiff(d, b) {
     if (b.value === null || b.compareValue === null) return null;
     const delta = Math.round((b.value - b.compareValue) * 10) / 10;
-    const text = d.kind === 'duration' ? `${delta > 0 ? '+' : delta < 0 ? '−' : ''}${shDuration(Math.abs(delta))}` : (d.kind === 'avg' || d.kind === 'ratio') ? signed(delta).replace('.', ',') : signed(delta);
+    const text = d.kind === 'duration' ? `${delta > 0 ? '+' : delta < 0 ? '−' : ''}${shDuration(Math.abs(delta))}` : (d.kind === 'avg' || d.kind === 'ratio') ? signed(delta).replace('.', ',') : d.kind === 'pct' ? signed(delta).replace('.', ',') + ' п. п.' : signed(delta);
     // время визита — ни «хорошо», ни «плохо»: дольше сидят — меньше оборот, поэтому без цвета
     return { delta, text, cls: delta === 0 || d.kind === 'duration' ? '' : anIsGood(d, delta) ? 'g' : 'b' };
   }
-
-  function anFactsHtml(d, vis) {
-    const tiles = anFactTiles(d, vis);
-    if (!tiles.length) return '';
-    return `<div class="an-facts">${tiles.map(([l, v, s]) => `<div class="an-fact"><div class="an-fact-l">${escHtml(l)}</div><div class="an-fact-v">${escHtml(v)}</div>${s ? `<div class="an-fact-s">${escHtml(s)}</div>` : ''}</div>`).join('')}</div>`;
+  // Подписи «Лучше всего / В среднем / Слабее всего»
+  function anFactTiles(d, vis) {
+    const vals = vis.filter(b => b.value !== null);
+    if (vals.length < 2) return [];
+    const tiles = [];
+    if (d.kind === 'count' || d.kind === 'unique' || d.kind === 'sum') {
+      const avg = Math.round(vals.reduce((s, b) => s + b.value, 0) / vals.length * 10) / 10;
+      tiles.push(['В среднем за ' + AN_AVG_WORD[d.group], String(avg).replace('.', ','), '']);
+    }
+    const sorted = [...vals].sort((a, b) => b.value - a.value);
+    const lower = AN_LOWER_BETTER.includes(d.metric);
+    const best = lower ? sorted[sorted.length - 1] : sorted[0];
+    const worst = lower ? sorted[0] : sorted[sorted.length - 1];
+    if (best.value !== worst.value) {
+      tiles.push([d.kind === 'duration' ? 'Дольше всего' : 'Лучше всего', anFormat(best.value, d.kind), anBucketName(best.start, best.label, d.group)]);
+      tiles.push([d.kind === 'duration' ? 'Короче всего' : 'Слабее всего', anFormat(worst.value, d.kind), anBucketName(worst.start, worst.label, d.group)]);
+    }
+    return tiles;
   }
 
-  function renderAnalyticsResult(d) {
-    const hasCmp = d.compare !== 'none' && d.compareFrom;
+  // ── загрузка
+  const axSigOf = (s, r) => [s.metric, r.from, r.to, anState.group, anState.compare,
+    axApplies(s.metric).map(k => (s.f[k] || []).join(',')).join('|')].join('~');
+  function axQuery(s, r) {
+    const q = new URLSearchParams({ metric: s.metric, group: anState.group, compare: anState.compare, from: r.from, to: r.to });
+    axApplies(s.metric).forEach(k => { if ((s.f[k] || []).length) q.set(k === 'dows' ? 'dow' : k, s.f[k].join(',')); });
+    return q.toString();
+  }
+  async function axFetchOne(s, r) {
+    const sig = axSigOf(s, r);
+    const keep = (entry) => {
+      const cur = anState.series.find(x => x.id === s.id);
+      if (cur && axSigOf(cur, anRange()) === sig) anData.byId[s.id] = Object.assign({ sig }, entry);
+    };
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/analytics?${axQuery(s, r)}&pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось посчитать'));
+      const d = await res.json();
+      if (d.metric !== s.metric) throw new Error('Сервер ещё не знает этого показателя. Сначала обновите сервер.');
+      if (!Array.isArray(d.applied)) anData.oldServer = true;
+      keep({ d });
+    } catch (e) {
+      keep({ error: (e && e.message) || 'Не удалось посчитать' });
+    }
+  }
+  async function axLoad(force) {
+    const r = anRange();
+    const seq = ++anData.seq;
+    anDeck.ready = null;   // настройки изменились — готовый файл уже не тот
+    anRenderDeckRow();
+    Object.keys(anData.byId).forEach(id => { if (!anState.series.some(s => s.id === id)) delete anData.byId[id]; });
+    const pending = anState.series.filter(s => { const e = anData.byId[s.id]; return force || !e || e.sig !== axSigOf(s, r); });
+    if (!pending.length) { axRenderResult(); return; }
+    const out = document.getElementById('analyticsResult');
+    if (out) {
+      if (out.querySelector('.ax-card')) out.classList.add('ld');
+      else out.innerHTML = '<div class="loading">Считаю...</div>';
+    }
+    await Promise.all(pending.map(s => axFetchOne(s, r)));
+    if (seq !== anData.seq) return;   // пока считали, настройки уже поменяли
+    axRenderResult();
+  }
+
+  // ── модель графика: что рисуем, по каким корзинам, в каких шкалах
+  function axModel() {
+    const items = anState.series.map(s => ({ s, e: anData.byId[s.id] || null }));
+    const ready = items.filter(x => x.e && x.e.d);
+    const refItem = ready.find(x => x.s.metric !== 'enps') || ready[0] || null;
+    const ref = refItem ? refItem.e.d.buckets : [];
+    const hasCmp = anState.compare !== 'none' && !!(refItem && refItem.e.d.compareFrom);
+    const drawable = it => it.e && it.e.d && !it.s.hidden && (it.s.metric !== 'enps' || anState.group === 'month');
+    const drawnItems = items.filter(drawable);
+    // eNPS считается по месяцам: подтягиваем его значения к корзинам остальных показателей по номеру месяца
+    const align = (it) => {
+      const bk = it.e.d.buckets;
+      if (bk === ref || it.s.metric !== 'enps') return bk;
+      return ref.map(rb => bk.find(b => b.start.slice(0, 7) === rb.start.slice(0, 7)) || { value: null, compareValue: null });
+    };
+    const drawn = drawnItems.map(it => {
+      const s = it.s, d = it.e.d, kind = axKind(s), bk = align(it);
+      const cmpOn = hasCmp && bk.some(b => b.compareValue !== null && b.compareValue !== undefined);
+      const additive = axAdditive(s.metric);
+      const tr = (arr, on) => {
+        let a = arr.slice();
+        if (!on) return a.map(() => null);
+        if (additive && s.cum) { let run = 0; a = a.map(v => { run += (v || 0); return run; }); }
+        if (additive && s.mode === 'share') {
+          const den = arr.reduce((x, v) => x + (v || 0), 0);
+          a = a.map(v => v === null || v === undefined ? null : den > 0 ? axRound(v / den * 100, 1) : null);
+        }
+        return a;
+      };
+      return { s, d, kind, name: axName(s), cls: axClass(s), cur: tr(bk.map(b => b.value), true), cmp: tr(bk.map(b => b.compareValue), cmpOn), hasC: cmpOn, bk };
+    });
+    // дни недели: если у всех показателей выбраны дни, остальные дни убираем (разбивка по дням)
+    let idx = ref.map((_, i) => i);
+    if (anState.group === 'day' && drawn.length && drawn.every(x => (x.s.f.dows || []).length)) {
+      const set = new Set(drawn.flatMap(x => x.s.f.dows));
+      idx = idx.filter(i => { const wd = new Date(ref[i].start + 'T12:00:00').getDay(); return set.has(wd === 0 ? 7 : wd); });
+    }
+    const classes = [];
+    drawn.forEach(x => { if (!classes.includes(x.cls)) classes.push(x.cls); });
+    const shown = drawn.filter(x => classes.slice(0, 2).includes(x.cls));   // третья шкала на график не помещается
+    const n = idx.length;
+    shown.forEach(x => { x.type = x.s.type === 'auto' ? (x.s.cum || n > 35 ? 'line' : 'bar') : x.s.type; });
+    return { items, ready, ref, refItem, hasCmp, drawn: shown, idx, classes: classes.slice(0, 2), n };
+  }
+
+  // ── шкалы
+  const AX_TIME_STEPS = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 480, 720, 1440];   // шаг шкалы времени — «человеческий»: полчаса, час, два
+  function axNice(raw, minStep, cls) {
+    if (!(raw > 0)) return minStep || 1;
+    if (cls === 'min') return AX_TIME_STEPS.find(st => st >= raw - 1e-9 && st >= (minStep || 0)) || 1440;
+    const e = Math.pow(10, Math.floor(Math.log10(raw)));
+    for (const k of [1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10]) { const st = k * e; if (st >= raw - 1e-9 && st >= (minStep || 0)) return st; }
+    return 10 * e;
+  }
+  function axScales(m) {
+    const ext = {};
+    m.drawn.forEach(x => {
+      x.cur.concat(x.cmp).forEach(v => {
+        if (v === null || v === undefined || isNaN(v)) return;
+        const e = ext[x.cls] || (ext[x.cls] = { min: Infinity, max: -Infinity });
+        e.min = Math.min(e.min, v); e.max = Math.max(e.max, v);
+      });
+    });
+    const sc = {};
+    const minStepOf = cls => (cls === 'num' || cls === 'pct') ? 0.1 : 1;
+    let K = 4;
+    m.classes.forEach((cls, i) => {
+      const e = ext[cls] || { min: 0, max: 1 };
+      let lo0 = Math.min(0, e.min), hi0 = Math.max(0, e.max);
+      if (cls === 'num' && e.max > 0 && e.min >= 0) lo0 = 0;
+      if (hi0 <= lo0) hi0 = lo0 + 1;
+      if (i === 0) {
+        const step = axNice((hi0 - lo0) / 4, minStepOf(cls), cls);
+        const lo = Math.floor(lo0 / step + 1e-9) * step;
+        K = Math.max(2, Math.round((Math.ceil(hi0 / step - 1e-9) * step - lo) / step));
+        sc[cls] = { lo, hi: lo + K * step, step, K };
+      } else {
+        let st = axNice((hi0 - lo0) / K, minStepOf(cls), cls);
+        for (let g = 0; g < 60; g++) {
+          const below = lo0 < 0 ? Math.ceil(-lo0 / st - 1e-9) : 0;
+          const lo = -below * st, hi = lo + K * st;
+          if (below <= K && hi >= hi0 - 1e-9) { sc[cls] = { lo, hi, step: st, K }; break; }
+          st = axNice(st * 1.01, minStepOf(cls), cls);
+        }
+        if (!sc[cls]) sc[cls] = { lo: 0, hi: K * st, step: st, K };
+      }
+    });
+    return sc;
+  }
+  function axFmtTick(cls, v) {
+    const r = axRound(v, 2);
+    if (cls === 'min') return anChartVal(Math.round(r), 'duration');
+    if (cls === 'pct') return String(r).replace('.', ',') + '%';
+    if (cls === 'score') return r > 0 ? '+' + r : String(r).replace('-', '−');
+    return String(r).replace('.', ',');
+  }
+  function axFmtVal(x, v) {
+    if (v === null || v === undefined) return '—';
+    if (x.s.mode === 'share' && axAdditive(x.s.metric)) return String(axRound(v, 1)).replace('.', ',') + '%';
+    return anFormat(v, x.kind);
+  }
+  function axDiff(x, a, b) {
+    if (a === null || a === undefined || b === null || b === undefined) return null;
+    const delta = axRound(a - b, 1);
+    const pctLike = x.kind === 'pct' || (x.s.mode === 'share' && axAdditive(x.s.metric));
+    let text;
+    if (x.kind === 'duration') text = (delta > 0 ? '+' : delta < 0 ? '−' : '') + shDuration(Math.abs(delta));
+    else text = signed(delta).replace('.', ',').replace('-', '−') + (pctLike ? ' п. п.' : '');
+    const cls = delta === 0 || x.kind === 'duration' ? '' : anIsGood({ metric: x.s.metric }, delta) ? 'g' : 'b';
+    return { delta, text, cls };
+  }
+
+  // ── значки
+  const AX_ICO = {
+    cal: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>',
+    cmp: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18V9m5 9V5m6 13v-6m5 6V8"/></svg>',
+    grp: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h16M4 12h10M4 17h6"/></svg>',
+    dl: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 19h14"/></svg>',
+    bm: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M7 4h10a1 1 0 011 1v15l-6-4-6 4V5a1 1 0 011-1z"/></svg>',
+    gear: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>',
+    eye: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+    eyeoff: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18M10.6 5.1A9.7 9.7 0 0112 5c6.4 0 10 7 10 7a17 17 0 01-3.2 4M6.5 6.6C3.7 8.3 2 12 2 12s3.6 7 10 7c1.7 0 3.2-.4 4.5-1M9.9 9.9a3 3 0 004.2 4.2"/></svg>',
+    flt: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16l-6 8v6l-4-2v-4z"/></svg>',
+    plus: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+    x: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+    chev: '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>'
+  };
+
+  // ── график
+  function axLabels(m) {
+    return m.idx.map(i => {
+      const b = m.ref[i];
+      if (anState.group === 'month') {
+        const mm = /^(\S+)\s+(\d{4})$/.exec(String(b.label == null ? '' : b.label));
+        return mm ? { a: mm[1], y: mm[2] } : { a: String(b.label || ''), y: '' };
+      }
+      const wd = AN_WEEKDAYS[new Date(b.start + 'T12:00:00').getDay()];
+      return { a: fmtDM(b.start), w: anState.group === 'day' ? wd : '' };
+    });
+  }
+  const axTint = (m, cls) => { const xs = m.drawn.filter(x => x.cls === cls); return xs.length === 1 ? xs[0].s.color : 'var(--text-muted)'; };
+
+  function axChartSvg(m, W, H) {
+    const sc = axScales(m);
+    const [cl, cr] = m.classes;
+    const ticks = cls => Array.from({ length: sc[cls].K + 1 }, (_, i) => axRound(sc[cls].lo + i * sc[cls].step, 4));
+    const tw = cls => cls ? Math.max(...ticks(cls).map(t => axFmtTick(cls, t).length)) * 6.3 + 8 : 0;
+    const padL = cl ? tw(cl) + 6 : 10, padR = cr ? tw(cr) + 6 : 12;
+    const labels = axLabels(m);
+    const twoLine = labels.some(l => l.y || l.w);
+    const top = 20, bottom = twoLine ? 40 : 26;
+    const plotW = Math.max(40, W - padL - padR), plotH = H - top - bottom;
+    const n = m.n, slot = plotW / n;
+    const y = (cls, v) => top + (sc[cls].hi - v) / (sc[cls].hi - sc[cls].lo) * plotH;
+    const barS = m.drawn.filter(x => x.type === 'bar'), lineS = m.drawn.filter(x => x.type === 'line');
+    const C = barS.reduce((a, x) => a + 1 + (x.hasC ? 1 : 0), 0);
+    const GAP = 2;
+    const gw = C ? Math.min(slot * 0.82, C * 30 + (C - 1) * GAP) : 0;
+    const barW = C ? Math.max(2, (gw - (C - 1) * GAP) / C) : 0;
+    // подписи значений: по умолчанию — когда они помещаются
+    const maxLen = Math.max(1, ...m.drawn.map(x => Math.max(1, ...x.cur.filter(v => v !== null && v !== undefined).map(v => axFmtVal(x, v).length))));
+    const showBarVals = anState.values === 'never' ? false : anState.values === 'always' ? n <= 40 : (barW >= maxLen * 5.4 && n <= 31);
+    const showLineVals = anState.values === 'never' ? false : n <= (anState.values === 'always' ? 40 : 12);
+
+    let svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="График показателей">`;
+    svg += '<defs>';
+    barS.forEach((x, k) => {
+      if (x.hasC) svg += `<pattern id="axh${k}" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="5" fill="${x.s.color}" fill-opacity="0.12"/><line x1="0" y1="0" x2="0" y2="5" stroke="${x.s.color}" stroke-width="2" stroke-opacity="0.72"/></pattern>`;
+    });
+    svg += '</defs>';
+    // сетка по левой шкале, подписи шкал слева и справа
+    const K = sc[cl].K;
+    for (let i = 0; i <= K; i++) {
+      const yy = top + plotH * i / K;
+      svg += `<line x1="${padL}" x2="${W - padR}" y1="${yy.toFixed(1)}" y2="${yy.toFixed(1)}" stroke="rgba(var(--fg-rgb),${i === K ? 0.2 : 0.07})" stroke-width="1"${i === K ? '' : ' stroke-dasharray="3 4"'}/>`;
+    }
+    [[cl, 'end', padL - 6], [cr, 'start', W - padR + 6]].forEach(([cls, anchor, tx]) => {
+      if (!cls) return;
+      const tint = axTint(m, cls);
+      ticks(cls).forEach((t, i) => {
+        const yy = top + plotH * (sc[cls].K - i) / sc[cls].K;
+        svg += `<text x="${tx}" y="${(yy + 3.5).toFixed(1)}" text-anchor="${anchor}" font-size="10" fill="${tint}">${escHtml(axFmtTick(cls, t))}</text>`;
+      });
+    });
+    [cl, cr].forEach(cls => {   // нулевая линия, если шкала уходит в минус
+      if (cls && sc[cls].lo < 0) svg += `<line x1="${padL}" x2="${W - padR}" y1="${y(cls, 0).toFixed(1)}" y2="${y(cls, 0).toFixed(1)}" stroke="rgba(var(--fg-rgb),0.3)" stroke-width="1"/>`;
+    });
+    svg += `<rect id="axHl" class="ax-hl" x="${padL}" y="${top}" width="${slot.toFixed(1)}" height="${plotH}" rx="4" style="display:none"/>`;
+
+    // столбики: текущий период и штриховка сравнения рядом
+    let col = 0;
+    const cols = barS.map(x => { const c = { cur: col++, cmp: x.hasC ? col++ : -1 }; return c; });
+    barS.forEach((x, k) => {
+      const zeroY = y(x.cls, 0);
+      const bar = (v, c, fill, stroke) => {
+        if (!v || c < 0) return;
+        const out = [];
+        for (let p = 0; p < n; p++) {
+          const val = v[p];
+          if (val === null || val === undefined) continue;
+          const yv = y(x.cls, val), h = Math.max(1.5, Math.abs(zeroY - yv));
+          const yTop = val >= 0 ? zeroY - h : zeroY;
+          const x0 = padL + p * slot + (slot - gw) / 2 + c * (barW + GAP);
+          out.push(`<rect x="${x0.toFixed(1)}" y="${yTop.toFixed(1)}" width="${barW.toFixed(1)}" height="${h.toFixed(1)}" rx="${Math.min(3, barW / 3).toFixed(1)}" fill="${fill}"${stroke ? ` stroke="${stroke}" stroke-opacity="0.6" stroke-width="1"` : ''}/>`);
+        }
+        svg += out.join('');
+      };
+      const vals = x.cur.length ? m.idx.map(i => x.cur[i]) : [];
+      const cvals = m.idx.map(i => x.cmp[i]);
+      if (x.hasC) bar(cvals, cols[k].cmp, `url(#axh${k})`, x.s.color);
+      bar(vals, cols[k].cur, x.s.color, '');
+      if (showBarVals) {
+        vals.forEach((val, p) => {
+          if (val === null || val === undefined) return;
+          const yv = y(x.cls, val);
+          const cx = padL + p * slot + (slot - gw) / 2 + cols[k].cur * (barW + GAP) + barW / 2;
+          svg += `<text x="${cx.toFixed(1)}" y="${(val >= 0 ? yv - 4 : yv + 11).toFixed(1)}" text-anchor="middle" font-size="10" fill="var(--text-sub)">${escHtml(x.cls === 'min' ? anChartVal(val, 'duration') : axFmtVal(x, val))}</text>`;
+        });
+      }
+    });
+
+    // линии: сравнение пунктиром
+    lineS.forEach(x => {
+      const path = (arr) => { let d = '', pen = false; arr.forEach((v, p) => { if (v === null || v === undefined) { pen = false; return; } d += `${pen ? 'L' : 'M'}${(padL + (p + 0.5) * slot).toFixed(1)} ${y(x.cls, v).toFixed(1)}`; pen = true; }); return d; };
+      const vals = m.idx.map(i => x.cur[i]), cvals = m.idx.map(i => x.cmp[i]);
+      if (x.hasC) svg += `<path d="${path(cvals)}" fill="none" stroke="${x.s.color}" stroke-opacity="0.55" stroke-width="2" stroke-dasharray="5 4" stroke-linejoin="round" stroke-linecap="round"/>`;
+      svg += `<path d="${path(vals)}" fill="none" stroke="${x.s.color}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>`;
+      if (n <= 45) vals.forEach((val, p) => { if (val !== null && val !== undefined) svg += `<circle cx="${(padL + (p + 0.5) * slot).toFixed(1)}" cy="${y(x.cls, val).toFixed(1)}" r="3.2" fill="${x.s.color}" stroke="var(--bg-card)" stroke-width="1.5"/>`; });
+      if (showLineVals) vals.forEach((val, p) => {
+        if (val === null || val === undefined) return;
+        svg += `<text x="${(padL + (p + 0.5) * slot).toFixed(1)}" y="${(y(x.cls, val) - 8).toFixed(1)}" text-anchor="middle" font-size="10" fill="var(--text-sub)">${escHtml(x.cls === 'min' ? anChartVal(val, 'duration') : axFmtVal(x, val))}</text>`;
+      });
+    });
+
+    // подписи под осью: считаем с конца — последний (самый свежий) период подписан всегда
+    const lblW = Math.max(...labels.map(l => Math.max(l.a.length, l.y ? 4 : 0, l.w ? 2 : 0))) * 5.8 + 10;
+    const every = Math.max(1, Math.ceil(lblW / slot));
+    let lastY = '';
+    const shown = [];
+    labels.forEach((l, p) => { if ((n - 1 - p) % every === 0) shown.push(p); });
+    shown.forEach(p => {
+      const l = labels[p], cx = padL + (p + 0.5) * slot;
+      svg += `<text x="${cx.toFixed(1)}" y="${twoLine ? H - 23 : H - 8}" text-anchor="middle" font-size="10" fill="var(--text-muted)">${escHtml(l.a)}</text>`;
+      if (l.w) svg += `<text x="${cx.toFixed(1)}" y="${H - 10}" text-anchor="middle" font-size="9" fill="var(--text-muted)" fill-opacity="0.75">${escHtml(l.w)}</text>`;
+      if (l.y) { if (l.y !== lastY) svg += `<text x="${cx.toFixed(1)}" y="${H - 10}" text-anchor="middle" font-size="9" fill="var(--text-muted)" fill-opacity="0.75">${escHtml(l.y)}</text>`; lastY = l.y; }
+    });
+    svg += '</svg>';
+    return { svg, geo: { padL, padR, slot, plotW, top, plotH, n, W, H } };
+  }
+
+  // «Авто»: столбики, пока они читаются; на узком экране и при густой сетке — линии
+  function axFitTypes(m, W) {
+    const plotW = Math.max(40, W - 72), n = Math.max(1, m.n);
+    const cand = m.drawn.filter(x => x.s.type === 'auto' && !x.s.cum && n <= 35);
+    const fixedBars = m.drawn.filter(x => x.s.type === 'bar');
+    const C = cand.concat(fixedBars).reduce((a, x) => a + 1 + (x.hasC ? 1 : 0), 0);
+    const barW = C ? (Math.min(plotW / n * 0.82, C * 30 + (C - 1) * 2) - (C - 1) * 2) / C : 99;
+    const dense = barW < 3;
+    let changed = false;
+    m.drawn.forEach(x => {
+      const t = x.s.type === 'auto' ? (x.s.cum || n > 35 || dense ? 'line' : 'bar') : x.s.type;
+      if (t !== x.type) { x.type = t; changed = true; }
+    });
+    return changed;
+  }
+  function axHintHtml(m) {
+    const hint = [];
+    const r = m.refItem && m.refItem.e.d;
+    if (m.hasCmp && r) hint.push(m.drawn.some(x => x.type === 'bar' && x.hasC) ? `<span><i></i>Штриховка — сравнение: ${fmtDM(r.compareFrom)}–${fmtDM(r.compareTo)}</span>` : `<span>Пунктир — сравнение: ${fmtDM(r.compareFrom)}–${fmtDM(r.compareTo)}</span>`);
+    if (m.classes.length === 2) hint.push(`<span>Слева шкала «${AX_CLASS_NAME[m.classes[0]]}», справа — «${AX_CLASS_NAME[m.classes[1]]}»</span>`);
+    hint.push('<span>Наведите на график, чтобы увидеть значения</span>');
+    return hint.join('');
+  }
+
+  // Рисуем график по ширине контейнера: размеры меряем, а не подгоняем вьюбоксом — подписи остаются нормального размера
+  function axDrawChart() {
+    const box = document.getElementById('axPlot');
+    const m = anAx.model;
+    if (!box || !m) return;
+    const W = Math.round(box.clientWidth) || 640;
+    anAx.w = W;
+    const H = W < 520 ? 250 : 320;
+    if (axFitTypes(m, W)) { const hb = document.getElementById('axHint'); if (hb) hb.innerHTML = axHintHtml(m); }
+    const r = axChartSvg(m, W, H);
+    m.geo = r.geo;
+    box.style.minHeight = H + 'px';
+    box.innerHTML = r.svg + '<div class="ax-tip" id="axTip"></div>';
+    if (typeof ResizeObserver === 'function') {
+      if (!anAx.ro) anAx.ro = new ResizeObserver(() => {
+        const b = document.getElementById('axPlot');
+        if (b && b.clientWidth && Math.abs(b.clientWidth - anAx.w) > 6 && document.getElementById('screen-analytics').classList.contains('active')) axDrawChart();
+      });
+      anAx.ro.disconnect();
+      anAx.ro.observe(box);
+    }
+  }
+
+  function axTipHtml(m, pos) {
+    const i = m.idx[pos], b = m.ref[i];
+    const g = anState.group;
+    const head = anBucketName(b.start, b.label, g);
+    const cmpName = m.hasCmp && b.compareStart ? anBucketName(b.compareStart, b.compareLabel, g) : '';
+    let h = `<div class="ax-tip-h">${escHtml(head)}</div>`;
+    m.drawn.forEach(x => {
+      h += `<div class="ax-tip-r"><i style="background:${x.s.color}"></i><span>${escHtml(x.name)}</span><b>${escHtml(axFmtVal(x, x.cur[i]))}</b></div>`;
+      if (x.hasC) {
+        const df = axDiff(x, x.cur[i], x.cmp[i]);
+        h += `<div class="ax-tip-c"><span>было${cmpName ? ' · ' + escHtml(cmpName) : ''}: ${escHtml(axFmtVal(x, x.cmp[i]))}</span>${df ? `<span class="${df.cls === 'g' ? 'up' : df.cls === 'b' ? 'down' : ''}">${escHtml(df.text)}</span>` : ''}</div>`;
+      }
+    });
+    return h;
+  }
+  function axHover(ev) {
+    const m = anAx.model, box = document.getElementById('axPlot');
+    if (!m || !m.geo || !box) return;
+    const g = m.geo, rect = box.getBoundingClientRect();
+    const x = ev.clientX - rect.left, yy = ev.clientY - rect.top;
+    const pos = Math.floor((x - g.padL) / g.slot);
+    if (x < g.padL || x > g.padL + g.plotW || pos < 0 || pos >= g.n) { axLeave(); return; }
+    const tip = document.getElementById('axTip'), hl = document.getElementById('axHl');
+    if (!tip) return;
+    if (hl) { hl.setAttribute('x', (g.padL + pos * g.slot).toFixed(1)); hl.style.display = ''; }
+    tip.innerHTML = axTipHtml(m, pos);
+    tip.style.display = 'block';
+    const cx = g.padL + (pos + 0.5) * g.slot, tw = tip.offsetWidth, th = tip.offsetHeight;
+    let left = cx + 16;
+    if (left + tw > g.W - 4) left = cx - 16 - tw;
+    left = Math.max(4, left);
+    const topPx = Math.min(Math.max(yy - th / 2, 4), Math.max(4, g.H - th - 4));
+    tip.style.left = left + 'px';
+    tip.style.top = topPx + 'px';
+  }
+  function axLeave() {
+    const tip = document.getElementById('axTip'), hl = document.getElementById('axHl');
+    if (tip) tip.style.display = 'none';
+    if (hl) hl.style.display = 'none';
+  }
+
+  // ── легенда: «чипы» показателей
+  function axDeltaChip(d) {
+    if (!d || d.delta === null || d.delta === undefined) return '';
+    const cls = d.delta === 0 || d.kind === 'duration' ? 'flat' : anIsGood(d, d.delta) ? 'up' : 'down';
+    const arrow = d.delta === 0 ? '→' : d.delta > 0 ? '▲' : '▼';
+    let t;
+    if (d.deltaPct !== null && d.deltaPct !== undefined) t = Math.abs(d.deltaPct) + '%';
+    else if (d.kind === 'duration') t = shDuration(Math.abs(d.delta));
+    else if (d.kind === 'pct') t = String(Math.abs(d.delta)).replace('.', ',') + ' п. п.';
+    else t = String(Math.abs(d.delta)).replace('.', ',');
+    return `<span class="ax-d ${cls}">${arrow} ${t}</span>`;
+  }
+  function axChipHtml(it, m) {
+    const s = it.s, e = it.e, d = e && e.d;
+    const ap = d && Array.isArray(d.applied) ? d.applied : axApplies(s.metric);
+    const fp = axFilterParts(s.f, ap);
+    const fcount = axFilterCount(s.f, ap);
+    let val, unit = '', delta = '', subBad = false;
+    if (!e) { val = '…'; }
+    else if (e.error) { val = '!'; subBad = true; }
+    else { val = anFormat(d.total, d.kind); unit = anUnit(d, d.total).trim(); delta = axDeltaChip(d); }
+    const tags = [];
+    if (e && e.error) tags.push(e.error);
+    else {
+      tags.push(fp.length ? fp.join(' · ') : 'Без фильтров');
+      if (s.mode === 'share' && axAdditive(s.metric)) tags.push('доля от итога');
+      if (s.cum && axAdditive(s.metric)) tags.push('с накоплением');
+      if (m.classes.length === 2 && !s.hidden) { const dr = m.drawn.find(x => x.s.id === s.id); if (dr) tags.push(dr.cls === m.classes[1] ? 'правая шкала' : 'левая шкала'); }
+    }
+    return `<div class="ax-chip${s.hidden ? ' off' : ''}" style="--sc:${s.color}">
+      <div class="ax-chip-main" onclick="axEdit('${s.id}')" title="Настроить показатель">
+        <div class="ax-chip-name">${escHtml(axName(s))}</div>
+        <div class="ax-chip-val"><span>${escHtml(val)}</span>${unit ? `<small>${escHtml(unit)}</small>` : ''}${delta}</div>
+        <div class="ax-chip-sub${subBad ? ' bad' : ''}">${escHtml(tags.join(' · '))}</div>
+      </div>
+      <div class="ax-chip-tools">
+        <button type="button" class="ax-tool${s.hidden ? '' : ' on'}" onclick="axToggle('${s.id}')" title="${s.hidden ? 'Показать на графике' : 'Скрыть с графика'}" aria-label="${s.hidden ? 'Показать на графике' : 'Скрыть с графика'}">${s.hidden ? AX_ICO.eyeoff : AX_ICO.eye}</button>
+        <button type="button" class="ax-tool${fcount ? ' on' : ''}" onclick="axOpenFp('${s.id}')" title="Фильтры показателя" aria-label="Фильтры показателя">${AX_ICO.flt}${fcount ? `<span class="bdg">${fcount}</span>` : ''}</button>
+      </div>
+    </div>`;
+  }
+
+  // ── таблица
+  function axTableHtml(m) {
+    if (!m.drawn.length) return '<div class="ax-empty">Нет показателей для таблицы: все скрыты или ещё считаются.</div>';
+    const cmp = m.hasCmp;
+    const tag = x => (x.s.mode === 'share' && axAdditive(x.s.metric) ? ', доля' : '') + (x.s.cum && axAdditive(x.s.metric) ? ', накоплением' : '');
+    let h = '<div class="ax-tablewrap"><table class="ax-table"><thead>';
+    h += `<tr><th${cmp ? ' rowspan="2"' : ''}>Период</th>${m.drawn.map(x => `<th class="grp" colspan="${cmp && x.hasC ? 3 : 1}"><i style="background:${x.s.color}"></i>${escHtml(x.name + tag(x))}</th>`).join('')}</tr>`;
+    if (cmp) h += `<tr class="h2">${m.drawn.map(x => x.hasC ? '<th class="sep">Значение</th><th>Было</th><th>Разница</th>' : '<th class="sep">Значение</th>').join('')}</tr>`;
+    h += '</thead><tbody>';
+    m.idx.forEach(i => {
+      const b = m.ref[i];
+      h += `<tr><td>${escHtml(anBucketName(b.start, b.label, anState.group))}</td>`;
+      m.drawn.forEach(x => {
+        h += `<td class="sep">${escHtml(axFmtVal(x, x.cur[i]))}</td>`;
+        if (x.hasC) { const df = axDiff(x, x.cur[i], x.cmp[i]); h += `<td class="m">${escHtml(axFmtVal(x, x.cmp[i]))}</td><td class="${df ? df.cls : ''}">${df ? escHtml(df.text) : '—'}</td>`; }
+      });
+      h += '</tr>';
+    });
+    h += '<tr class="tot"><td>За период</td>';
+    m.drawn.forEach(x => {
+      const d = x.d, share = x.s.mode === 'share' && axAdditive(x.s.metric);
+      const tot = share ? '100%' : anFormat(d.total, d.kind), ct = share ? '100%' : anFormat(d.compareTotal, d.kind);
+      h += `<td class="sep">${escHtml(tot)}</td>`;
+      if (x.hasC) { const df = share ? null : axDiff(x, d.total, d.compareTotal); h += `<td class="m">${escHtml(ct)}</td><td class="${df ? df.cls : ''}">${df ? escHtml(df.text) : '—'}</td>`; }
+    });
+    h += '</tr></tbody></table></div>';
+    return h;
+  }
+
+  // ── сводка по каждому показателю под графиком
+  function axSamplesText(d) {
+    if (d.samples == null) return '';
+    const n = d.samples;
+    if (d.metric === 'stay') return `Посчитано по ${n} ${ruPlural(n, 'визиту', 'визитам', 'визитам')} с отметкой «Гость ушёл»`;
+    if (d.metric === 'turnover') return `Посчитано по ${n} ${ruPlural(n, 'занятому столу', 'занятым столам', 'занятым столам')} за вечер`;
+    if (d.metric === 'noShowRate') return `Посчитано по ${n} ${ruPlural(n, 'брони', 'броням', 'броням')} с отметкой «Пришёл» или «Не пришёл»`;
+    if (d.metric === 'cancelRate') return `Посчитано по ${n} ${ruPlural(n, 'брони', 'броням', 'броням')}, считая отменённые`;
+    return '';
+  }
+  function axNoDataHint(d) {
+    if (d.metric === 'enps') return 'За этот период нет закончившегося месяца, где ответили трое и больше. Так опрос остаётся анонимным: оценка текущего месяца откроется, когда он закончится.';
+    if (d.metric === 'stay') return 'За этот период нет броней с отметкой «Гость ушёл». Время визита появится, когда в бронях начнут отмечать уход.';
+    return 'За этот период нет данных. Попробуйте выбрать период побольше или снять фильтры.';
+  }
+  function axSumCard(it) {
+    const s = it.s, d = it.e.d;
+    const ap = Array.isArray(d.applied) ? d.applied : axApplies(s.metric);
+    const fp = axFilterParts(s.f, ap).join(' · ');
     const vis = anVisibleBuckets(d);
-    anLast = { d, vis, hasCmp };
-    const filters = [];
-    if (d.dow) filters.push(AN_DOW.find(x => x[0] === String(d.dow))?.[1]);
-    if (d.segment) filters.push(AN_SEGMENT.find(x => x[0] === d.segment)?.[1]);
-
-    // Итог
-    const noData = d.total === null;
-    let html = `<div class="an-hero">
-      <div class="an-hero-title">${escHtml(d.title)}</div>
-      ${filters.length ? `<div class="an-hero-filters">${escHtml(filters.join(' · '))}</div>` : ''}
-      <div class="an-total"><span>${anFormat(d.total, d.kind)}</span><span class="an-unit">${escHtml(anUnit(d, d.total).trim())}</span></div>
-      <div class="an-period">${fmtDMY(d.from)} — ${fmtDMY(d.to)}</div>`;
-    if (d.metric === 'nps' || d.metric === 'enps') html += '<div class="an-period">Шкала от −100 до +100</div>';
-    if (noData) html += `<div class="an-empty-hint">${d.metric === 'enps' ? 'За этот период нет закончившегося месяца, где ответили трое и больше. Так опрос остаётся анонимным: оценка текущего месяца откроется, когда он закончится.' : d.metric === 'stay' ? 'За этот период нет броней с отметкой «Гость ушёл». Время визита появится, когда в бронях начнут отмечать уход.' : 'За этот период нет данных. Попробуйте выбрать период побольше.'}</div>`;
-    else if (d.samples != null) html += `<div class="an-period">${d.metric === 'stay'
-      ? `Посчитано по ${d.samples} ${ruPlural(d.samples, 'визиту', 'визитам', 'визитам')} с отметкой «Гость ушёл»`
-      : `Посчитано по ${d.samples} ${ruPlural(d.samples, 'занятому столу', 'занятым столам', 'занятым столам')} за вечер`}</div>`;
-
-    if (hasCmp) {
-      const cmpRange = `${fmtDMY(d.compareFrom)} — ${fmtDMY(d.compareTo)}`;
-      if (d.delta !== null) {
+    let h = `<div class="ax-scard${s.hidden ? ' off' : ''}" style="--sc:${s.color}">
+      <div class="ax-scard-t">${escHtml(axName(s))}</div>
+      ${fp ? `<div class="ax-scard-f">${escHtml(fp)}</div>` : ''}
+      <div class="ax-scard-v"><span>${escHtml(anFormat(d.total, d.kind))}</span>${d.total === null ? '' : `<small>${escHtml(anUnit(d, d.total).trim())}</small>`}</div>
+      <div class="ax-scard-p">${fmtDMY(d.from)} — ${fmtDMY(d.to)}</div>`;
+    if (d.metric === 'nps' || d.metric === 'enps') h += '<div class="ax-scard-p">Шкала от −100 до +100</div>';
+    if (d.total === null) h += `<div class="an-note">${escHtml(axNoDataHint(d))}</div>`;
+    else if (axSamplesText(d)) h += `<div class="ax-scard-p">${escHtml(axSamplesText(d))}</div>`;
+    if (d.compare !== 'none' && d.compareFrom) {
+      const cr = `${fmtDMY(d.compareFrom)} — ${fmtDMY(d.compareTo)}`;
+      if (d.delta !== null && d.delta !== undefined) {
         const cls = d.delta === 0 || d.kind === 'duration' ? 'flat' : anIsGood(d, d.delta) ? 'up' : 'down';
         const arrow = d.delta === 0 ? '→' : d.delta > 0 ? '↑' : '↓';
-        html += `<div class="an-cmp ${cls}">
-          <div class="an-cmp-main"><span class="an-arrow">${arrow}</span><span>${escHtml(anDeltaSentence(d))}</span>${d.deltaPct !== null ? `<span class="an-pct">${signed(d.deltaPct)}%</span>` : ''}</div>
-          <div class="an-cmp-was">Было: ${escHtml(anFormat(d.compareTotal, d.kind) + anUnit(d, d.compareTotal))} · ${cmpRange}</div>
-        </div>`;
+        h += `<div class="ax-cmp ${cls}"><div class="ax-cmp-main"><span>${arrow}</span><span>${escHtml(anDeltaSentence(d))}</span>${d.deltaPct !== null && d.deltaPct !== undefined ? `<em>${signed(d.deltaPct)}%</em>` : ''}</div>
+          <div class="ax-cmp-was">Было: ${escHtml(anFormat(d.compareTotal, d.kind) + anUnit(d, d.compareTotal))} · ${cr}</div></div>`;
       } else {
-        html += `<div class="an-cmp flat">
-          <div class="an-cmp-main"><span>Сравнить не с чем</span></div>
-          <div class="an-cmp-was">${d.compareTotal === null ? `За ${cmpRange} данных нет` : `Было: ${escHtml(anFormat(d.compareTotal, d.kind))} · ${cmpRange}`}</div>
-        </div>`;
+        h += `<div class="ax-cmp"><div class="ax-cmp-main"><span>Сравнить не с чем</span></div><div class="ax-cmp-was">${d.compareTotal === null ? `За ${cr} данных нет` : `Было: ${escHtml(anFormat(d.compareTotal, d.kind))} · ${cr}`}</div></div>`;
       }
     }
-    html += anFactsHtml(d, vis);
-    html += '</div>';
-    html += `<div class="an-deck" id="anDeckRow">${anDeckRowHtml()}</div>`;
-
-    // График
-    const groupWord = { day: 'по дням', week: 'по неделям', month: 'по месяцам' }[d.group];
-    html += `<div class="an-card">
-      <div class="an-card-title">Динамика · ${groupWord}</div>
-      <div class="an-chart">${anChartSvg(d, hasCmp, vis)}</div>
-      <div class="an-legend"><span><i style="background:var(--accent)"></i>Сейчас · ${fmtDM(d.from)}–${fmtDM(d.to)}</span>${hasCmp ? `<span><i style="background:rgba(var(--fg-rgb),0.28)"></i>Было · ${fmtDM(d.compareFrom)}–${fmtDM(d.compareTo)}</span>` : ''}</div>
-      <div class="an-pick" id="anPick">Нажмите на столбик, чтобы увидеть точное значение.</div>
-      ${vis.length > 40 ? '<div class="an-note">Листайте график вбок →</div>' : ''}
-    </div>`;
-
-    // Таблица
-    html += `<details class="an-fold an-fold-card" ${vis.length <= 10 ? 'open' : ''}>
-      <summary><span>Таблица по периодам</span><span class="an-filter-sum none">${vis.length} ${ruPlural(vis.length, 'строка', 'строки', 'строк')}</span></summary>
-      <div class="an-fold-body"><div class="an-table-wrap"><table class="an-table"><thead><tr><th>Период</th><th class="num">Значение</th>${hasCmp ? '<th class="num">Было</th><th class="num">Разница</th>' : ''}</tr></thead><tbody>`;
-    html += vis.map(b => {
-      const diff = hasCmp ? anBucketDiff(d, b) : null;
-      return `<tr><td>${escHtml(anBucketName(b.start, b.label, d.group))}</td><td class="num">${anFormat(b.value, d.kind)}</td>${hasCmp ? `<td class="num" style="color:var(--text-muted)">${anFormat(b.compareValue, d.kind)}</td><td class="num ${diff ? diff.cls : ''}">${diff ? diff.text : '—'}</td>` : ''}</tr>`;
-    }).join('');
-    html += '</tbody></table></div></div></details>';
-
-    // Топ кальянов за тот же период — независимо от выбранного показателя
-    html += '<div class="an-card"><div class="an-card-title">Топ кальянов за период</div>';
-    if (d.topHookahs && d.topHookahs.length) {
-      const max = Math.max(...d.topHookahs.map(h => h.count), 1);
-      html += d.topHookahs.map((h, i) => `<div class="an-top-row"><div class="an-top-bar" style="width:${Math.max(6, Math.round(h.count / max * 100))}%"></div><span class="an-top-n">${i + 1}</span><span class="an-top-name">${escHtml(h.flavor)}</span><span class="an-top-cnt">${h.count} ${ruPlural(h.count, 'раз', 'раза', 'раз')}</span></div>`).join('');
-      html += '<div class="an-note">По записанным заказам за те же даты, что и график.</div>';
-    } else {
-      html += '<div class="an-note" style="margin-top:0">За этот период заказы кальянов не записаны.</div>';
-    }
-    html += '</div>';
-
-    return html;
+    const tiles = anFactTiles(d, vis);
+    if (tiles.length) h += `<div class="ax-facts">${tiles.map(([l, v, sb]) => `<div class="ax-fact"><div class="ax-fact-l">${escHtml(l)}</div><div class="ax-fact-v">${escHtml(v)}</div>${sb ? `<div class="ax-fact-s">${escHtml(sb)}</div>` : ''}</div>`).join('')}</div>`;
+    h += `<details class="ax-what"><summary>Что значит</summary><div>${escHtml(AN_HELP[s.metric] || '')}</div></details>`;
+    return h + '</div>';
   }
 
+  function axTopHookahs(d) {
+    let h = '<div class="an-card"><div class="an-card-title">Топ кальянов за период</div>';
+    if (d && d.topHookahs && d.topHookahs.length) {
+      const max = Math.max(...d.topHookahs.map(x => x.count), 1);
+      h += d.topHookahs.map((x, i) => `<div class="an-top-row"><div class="an-top-bar" style="width:${Math.max(6, Math.round(x.count / max * 100))}%"></div><span class="an-top-n">${i + 1}</span><span class="an-top-name">${escHtml(x.flavor)}</span><span class="an-top-cnt">${x.count} ${ruPlural(x.count, 'раз', 'раза', 'раз')}</span></div>`).join('');
+      h += '<div class="an-note">По записанным заказам за те же даты, что и график.</div>';
+    } else {
+      h += '<div class="an-note" style="margin-top:0">За этот период заказы кальянов не записаны.</div>';
+    }
+    return h + '</div>';
+  }
+
+  // ── весь результат
+  function axRenderResult() {
+    const out = document.getElementById('analyticsResult');
+    if (!out) return;
+    out.classList.remove('ld');
+    const m = axModel();
+    anAx.model = m;
+    anLast = m;
+    if (!anState.series.length) {
+      out.innerHTML = `<div class="ax-card"><div class="ax-empty">Показателей на графике нет.<br>Добавьте первый — и появятся график, таблица и сводка.</div>
+        <div class="ax-legend" style="justify-content:center"><button type="button" class="ax-add" onclick="axAdd()">${AX_ICO.plus}Показатель</button></div></div>`;
+      return;
+    }
+    let h = '<div class="ax-card">';
+    if (anData.oldServer) h += '<div class="ax-warn">Сервер аналитики ещё не обновлён: новые показатели и срезы он считает без уточнений. Сначала установите сервер, потом приложение.</div>';
+    m.items.forEach(it => { if (it.e && it.e.error) h += `<div class="ax-warn err">«${escHtml(axName(it.s))}»: ${escHtml(it.e.error)} <span class="an-reset" style="margin:0 0 0 6px" onclick="axLoad(true)">Повторить</span></div>`; });
+    if (anState.group !== 'month' && m.items.some(it => it.s.metric === 'enps' && !it.s.hidden)) h += '<div class="ax-warn">eNPS по дням и неделям не считается: опрос анонимный и показывается за месяц. Выберите группировку «по месяцам» — тогда он появится на графике.</div>';
+    m.items.forEach(it => {
+      const d = it.e && it.e.d;
+      if (!d || !Array.isArray(d.applied)) return;
+      const lost = AX_DIMS.filter(dm => (it.s.f[dm.k] || []).length && !d.applied.includes(dm.k));
+      if (lost.length) h += `<div class="ax-warn">На «${escHtml(axName(it.s))}» не действует: ${escHtml(lost.map(l => l.label).join(', '))}. Эти срезы показателю не подходят, график посчитан без них.</div>`;
+    });
+    h += `<div class="ax-legend">${m.items.map(it => axChipHtml(it, m)).join('')}<button type="button" class="ax-add${anState.series.length >= AX_MAX ? ' off' : ''}" onclick="axAdd()">${AX_ICO.plus}Показатель</button></div>`;
+    if (anState.tab === 'table') h += axTableHtml(m);
+    else {
+      const anyData = m.drawn.some(x => x.cur.concat(x.cmp).some(v => v !== null && v !== undefined));
+      if (!m.drawn.length) h += '<div class="ax-empty">Все показатели скрыты. Нажмите на глаз в легенде, чтобы вернуть их на график.</div>';
+      else if (!m.n || !anyData) h += '<div class="ax-empty">За этот период данных нет. Попробуйте выбрать период побольше или снять фильтры.</div>';
+      else {
+        h += '<div class="ax-plot" id="axPlot" onpointermove="axHover(event)" onpointerdown="axHover(event)" onpointerleave="if(event.pointerType===\'mouse\')axLeave()"></div>';
+        axFitTypes(m, Math.max(240, (out.clientWidth || 640) - 40));
+        h += `<div class="ax-hint" id="axHint">${axHintHtml(m)}</div>`;
+      }
+    }
+    h += '</div>';
+    const sums = m.items.filter(it => it.e && it.e.d);
+    if (sums.length) h += `<div class="ax-sum">${sums.map(axSumCard).join('')}</div>`;
+    h += axTopHookahs(m.refItem ? m.refItem.e.d : (sums[0] ? sums[0].e.d : null));
+    out.innerHTML = h;
+    if (anState.tab === 'chart') axDrawChart();
+  }
+
+  // ── панель сверху: период, сравнение, группировка, вкладки, значки
+  function openAnalytics() {
+    showScreen('analytics');
+    axInitGlobal();
+    anState.pop = ''; anState.drawer = null; anState.fp = null;
+    anData = axNewData();   // каждый заход считаем заново: за это время появились брони и визиты
+    axRenderDrawer(); axRenderFp();
+    axRenderBar();
+    axLoad();
+  }
+  function axInitGlobal() {
+    if (anAx.inited) return;
+    anAx.inited = true;
+    // клик мимо открытого списка закрывает его
+    document.addEventListener('pointerdown', e => {
+      if (!anState.pop) return;
+      if (e.target.closest && e.target.closest('.ax-dd-wrap')) return;
+      anState.pop = ''; axRenderBar();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && document.getElementById('screen-analytics').classList.contains('active')) axCloseTop();
+    });
+  }
+  // Закрывает самое верхнее: окно фильтров → боковую панель → список. true, если что-то закрыли
+  function axCloseTop() {
+    if (anState.fp) { anState.fp = null; axRenderFp(); return true; }
+    if (anState.drawer) { anState.drawer = null; axRenderDrawer(); return true; }
+    if (anState.pop) { anState.pop = ''; axRenderBar(); return true; }
+    return false;
+  }
+  function axCloseAll() {
+    if (!anState || (!anState.pop && !anState.drawer && !anState.fp)) return;
+    anState.pop = ''; anState.drawer = null; anState.fp = null;
+    axRenderDrawer(); axRenderFp(); axRenderBar();
+  }
+
+  function axRangeText(r) {
+    const n = anDaysBetween(r.from, r.to) + 1;
+    return `${fmtDMY(r.from)} — ${fmtDMY(r.to)} · ${n} ${ruPlural(n, 'день', 'дня', 'дней')}`;
+  }
+  function axRenderBar() {
+    const el = document.getElementById('analyticsControls');
+    if (!el) return;
+    const p = anState.pop, r = anRange();
+    const open = n => p === n ? ' open' : '', on = n => p === n ? ' on' : '';
+    const period = AN_PERIODS.find(x => x[0] === anState.period) || AN_PERIODS[1];
+    const cmp = AN_COMPARE.find(x => x[0] === anState.compare), grp = AN_GROUPS.find(x => x[0] === anState.group);
+    const periodItems = AN_PERIODS.filter(x => x[0] !== 'custom').map(([v, l]) => `<div class="ax-dd-item${anState.period === v ? ' on' : ''}" onclick="axSetPeriod('${v}')"><span>${l}<small>${escHtml(axRangeText(axRangeFor(v)))}</small></span></div>`).join('');
+    const cmpItems = AN_COMPARE.map(([v, l, sub]) => {
+      const cr = v === 'none' ? null : anCompareRange(r, v);
+      return `<div class="ax-dd-item${anState.compare === v ? ' on' : ''}" onclick="axSetCompare('${v}')"><span>${l}<small>${cr ? `${fmtDMY(cr.from)} — ${fmtDMY(cr.to)}` : 'Видно только выбранный период'}</small></span></div>`;
+    }).join('');
+    const grpItems = AN_GROUPS.map(([v, l]) => `<div class="ax-dd-item${anState.group === v ? ' on' : ''}" onclick="axSetGroup('${v}')"><span>${l}</span></div>`).join('');
+    const cr = anCompareRange(r);
+    el.innerHTML = `<div class="ax-bar">
+      <div class="ax-dd-wrap">
+        <button type="button" class="ax-btn${on('period')}" onclick="axPop('period')">${AX_ICO.cal}<b id="axPeriodLbl">${escHtml(period[1])}</b><span class="mut">${fmtDM(r.from)} — ${fmtDM(r.to)}</span>${AX_ICO.chev}</button>
+        <div class="ax-dd${open('period')}">
+          <div class="ax-dd-t">Период</div>${periodItems}
+          <div class="ax-dd-sep"></div>
+          <div class="ax-dd-t">Свои даты</div>
+          <div class="ax-dates"><input type="date" class="form-input" value="${r.from}" onchange="axSetDate('from', this.value)"><span>—</span><input type="date" class="form-input" value="${r.to}" onchange="axSetDate('to', this.value)"></div>
+          <div class="ax-dd-note">${escHtml(axRangeText(r))}. Не больше двух лет.</div>
+        </div>
+      </div>
+      <div class="ax-dd-wrap">
+        <button type="button" class="ax-btn${on('compare')}" onclick="axPop('compare')">${AX_ICO.cmp}<span class="mut">Сравнить</span><b>${escHtml(cmp[1])}</b>${AX_ICO.chev}</button>
+        <div class="ax-dd${open('compare')}"><div class="ax-dd-t">Сравнить с</div>${cmpItems}</div>
+      </div>
+      <div class="ax-dd-wrap">
+        <button type="button" class="ax-btn${on('group')}" onclick="axPop('group')">${AX_ICO.grp}<span class="mut">Группировка</span><b>${escHtml(grp[2])}</b>${AX_ICO.chev}</button>
+        <div class="ax-dd${open('group')}"><div class="ax-dd-t">Группировать по</div>${grpItems}</div>
+      </div>
+      <span class="ax-bar-sp"></span>
+      <div class="ax-tabs"><button type="button" class="${anState.tab === 'chart' ? 'on' : ''}" onclick="axTab('chart')">График</button><button type="button" class="${anState.tab === 'table' ? 'on' : ''}" onclick="axTab('table')">Таблица</button></div>
+      <div class="ax-dd-wrap">
+        <button type="button" class="ax-btn ico${on('dl')}" onclick="axPop('dl')" title="Скачать" aria-label="Скачать">${AX_ICO.dl}</button>
+        <div class="ax-dd right${open('dl')}">
+          <div class="ax-dd-t">Скачать</div>
+          <div class="ax-dd-item" onclick="axCsv()"><span>Таблица (CSV)<small>Откроется в Excel и Google Таблицах</small></span></div>
+          <div class="ax-dd-item" onclick="anExportDeck('selected')"><span>Презентация: показатели с графика<small>Итоги, график, таблица и топ кальянов</small></span></div>
+          <div class="ax-dd-item" onclick="anExportDeck('full')"><span>Презентация: полный отчёт<small>Все показатели без фильтров, за выбранный период</small></span></div>
+        </div>
+      </div>
+      <div class="ax-dd-wrap">
+        <button type="button" class="ax-btn ico${on('views')}" onclick="axPop('views')" title="Сохранённые виды" aria-label="Сохранённые виды">${AX_ICO.bm}</button>
+        <div class="ax-dd right${open('views')}">${axViewsHtml()}</div>
+      </div>
+      <div class="ax-dd-wrap">
+        <button type="button" class="ax-btn ico${on('prefs')}" onclick="axPop('prefs')" title="Настройки" aria-label="Настройки">${AX_ICO.gear}</button>
+        <div class="ax-dd right${open('prefs')}">
+          <div class="ax-dd-t">Подписи значений на графике</div>
+          <div class="ax-seg">${[['auto', 'Авто'], ['always', 'Всегда'], ['never', 'Нет']].map(([v, l]) => `<div class="${anState.values === v ? 'on' : ''}" onclick="axSetValues('${v}')">${l}</div>`).join('')}</div>
+          <div class="ax-dd-note">«Авто» — подписи, пока они помещаются над столбиками.</div>
+          <div class="ax-dd-sep"></div>
+          <div class="ax-dd-item dng" onclick="axReset()"><span>Сбросить настройки<small>Один показатель «Визиты», 30 дней</small></span></div>
+        </div>
+      </div>
+    </div>`;
+  }
+  function axPop(name) { anState.pop = anState.pop === name ? '' : name; axRenderBar(); }
+  function axTab(t) { anState.tab = t; axPersist(); axRenderBar(); axRenderResult(); }
+  function axSetValues(v) { anState.values = v; anState.pop = ''; axPersist(); axRenderBar(); axRenderResult(); }
+  function axSetPeriod(p) {
+    anState.period = p;
+    anState.group = axGroupFor(p, anRange());
+    anState.pop = '';
+    axPersist(); axRenderBar(); axLoad();
+  }
+  function axSetDate(which, v) {
+    if (!v) return;
+    const cur = anRange();
+    anState.from = cur.from; anState.to = cur.to;
+    anState[which] = v;
+    if (anState.from > anState.to) { if (which === 'from') anState.to = anState.from; else anState.from = anState.to; }
+    if (anDaysBetween(anState.from, anState.to) + 1 > 731) {
+      if (which === 'to') anState.from = shiftDateStr(anState.to, -730); else anState.to = shiftDateStr(anState.from, 730);
+      showToast('Период не больше двух лет');
+    }
+    anState.period = 'custom';
+    anState.group = axGroupFor('custom', anRange());
+    axPersist(); axRenderBar(); axLoad();
+  }
+  function axSetCompare(c) { anState.compare = c; anState.pop = ''; axPersist(); axRenderBar(); axLoad(); }
+  function axSetGroup(g) {
+    if (g === 'day' && anDaysBetween(anRange().from, anRange().to) + 1 > 400) { showToast('За такой период по дням слишком много точек — выберите недели или месяцы'); return; }
+    anState.group = g; anState.pop = '';
+    axPersist(); axRenderBar(); axLoad();
+  }
+  function axReset() { anFresh({}); axRenderBar(); axRenderDrawer(); axRenderFp(); axLoad(); showToast('Настройки сброшены'); }
+
+  // ── показатели на графике
+  function axToggle(id) {
+    const s = anState.series.find(x => x.id === id);
+    if (!s) return;
+    s.hidden = !s.hidden;
+    axPersist(); axRenderResult();
+  }
+  function axAdd() {
+    if (anState.series.length >= AX_MAX) { showToast(`На графике не больше ${AX_MAX} показателей`); return; }
+    const used = anState.series.map(s => s.metric);
+    const classes = new Set(anState.series.map(axClass));
+    // берём первый неиспользованный показатель, который помещается по шкалам
+    const pick = AN_ALL_METRICS.find(k => !used.includes(k) && k !== 'enps' && new Set([...classes, axClass({ metric: k, mode: 'abs' })]).size <= 2) || 'visits';
+    anState.drawer = { id: null, isNew: true, draft: axNewSeriesRaw(pick, axFreeColor()), err: '' };
+    anState.pop = '';
+    axRenderBar(); axRenderDrawer();
+  }
+  function axEdit(id) {
+    const s = anState.series.find(x => x.id === id);
+    if (!s) return;
+    anState.drawer = { id, isNew: false, draft: axClone(s), err: '' };
+    anState.pop = '';
+    axRenderBar(); axRenderDrawer();
+  }
+  function axSanitizeDraft(d) {
+    if (!axAdditive(d.metric)) { d.mode = 'abs'; d.cum = false; }
+  }
+  function axDrSet(key, value) {
+    const dr = anState.drawer;
+    if (!dr) return;
+    dr.draft[key] = value; dr.err = '';
+    axSanitizeDraft(dr.draft);
+    axRenderDrawer();
+  }
+  function axDrCat(i) {
+    const dr = anState.drawer, g = AN_METRIC_GROUPS[Number(i)];
+    if (!dr || !g) return;
+    if (!g[1].includes(dr.draft.metric)) { dr.draft.metric = g[1][0]; axSanitizeDraft(dr.draft); }
+    dr.err = '';
+    axRenderDrawer();
+  }
+  function axDrMetric(m) {
+    const dr = anState.drawer;
+    if (!dr || !AN_KINDS[m]) return;
+    dr.draft.metric = m; dr.err = '';
+    axSanitizeDraft(dr.draft);
+    axRenderDrawer();
+  }
+  function axDrClose() { anState.drawer = null; axRenderDrawer(); }
+  // Больше двух разных шкал на график не помещается: проверяем при сохранении
+  function axClassError(draft, exceptId) {
+    const others = anState.series.filter(s => s.id !== exceptId);
+    const classes = new Set(others.map(axClass));
+    classes.add(axClass(draft));
+    if (classes.size <= 2) return '';
+    const used = [...new Set(others.map(axClass))].map(c => AX_CLASS_NAME[c]).join(' и ');
+    return `На одном графике помещаются не больше двух разных шкал. Сейчас заняты: ${used}. Уберите показатель с другой шкалой или выберите этому показателю ту же.`;
+  }
+  function axDrApply() {
+    const dr = anState.drawer;
+    if (!dr) return;
+    const d = dr.draft;
+    d.name = String(d.name || '').trim().slice(0, 40);
+    axSanitizeDraft(d);
+    const err = axClassError(d, dr.id);
+    if (err) { dr.err = err; axRenderDrawer(); return; }
+    if (dr.isNew) {
+      if (anState.series.length >= AX_MAX) { dr.err = `На графике не больше ${AX_MAX} показателей`; axRenderDrawer(); return; }
+      anState.series.push(d);
+    } else {
+      const i = anState.series.findIndex(s => s.id === dr.id);
+      if (i < 0) { axDrClose(); return; }
+      anState.series[i] = d;
+    }
+    anState.drawer = null;
+    axRenderDrawer(); axPersist(); axLoad();
+  }
+  function axDrCopy() {
+    const dr = anState.drawer;
+    if (!dr || dr.isNew) return;
+    if (anState.series.length >= AX_MAX) { dr.err = `На графике не больше ${AX_MAX} показателей`; axRenderDrawer(); return; }
+    const c = axClone(dr.draft);
+    c.id = axNewId(); c.color = axFreeColor(); c.hidden = false;
+    c.name = (c.name || AN_CHIP_LABELS[c.metric]).slice(0, 33) + ' (копия)';
+    anState.series.push(c);
+    anState.drawer = null;
+    axRenderDrawer(); axPersist(); axLoad();
+    showToast('Копия добавлена — откройте её и поменяйте фильтры');
+  }
+  async function axDrDelete() {
+    const dr = anState.drawer;
+    if (!dr || dr.isNew) return;
+    const s = anState.series.find(x => x.id === dr.id);
+    if (!s) { axDrClose(); return; }
+    if (!(await askConfirm(`Убрать показатель с графика?\n\n«${axName(s)}» исчезнет из графика, таблицы и сводки.`, { ok: 'Убрать', danger: true }))) return;
+    anState.series = anState.series.filter(x => x.id !== dr.id);
+    anState.drawer = null;
+    axRenderDrawer(); axPersist(); axLoad();
+  }
+
+  function axRenderDrawer() {
+    const ov = document.getElementById('axOv');
+    if (!ov) return;
+    const dr = anState.drawer;
+    if (!dr) { ov.classList.remove('open'); ov.innerHTML = ''; return; }
+    const d = dr.draft;
+    const prev = ov.querySelector('.ax-dr-body');
+    const keep = prev ? prev.scrollTop : 0;
+    const gi = Math.max(0, AN_METRIC_GROUPS.findIndex(g => g[1].includes(d.metric)));
+    const ap = axApplies(d.metric), fcount = axFilterCount(d.f, ap), fparts = axFilterParts(d.f, ap);
+    const addv = axAdditive(d.metric);
+    ov.innerHTML = `<div class="ax-drawer" role="dialog" aria-modal="true" aria-label="Настройка показателя">
+      <div class="ax-dr-head"><div class="ax-dr-t">${dr.isNew ? 'Новый показатель' : 'Редактировать показатель'}</div><button type="button" class="ax-x" onclick="axDrClose()" aria-label="Закрыть">${AX_ICO.x}</button></div>
+      <div class="ax-dr-body">
+        <div class="ax-fld"><label>Название на графике</label><input type="text" class="form-input" maxlength="40" value="${escHtml(d.name)}" placeholder="${escHtml(AN_CHIP_LABELS[d.metric])}" oninput="anState.drawer.draft.name=this.value"></div>
+        <div class="ax-fld"><label>Категория</label><select class="form-input" onchange="axDrCat(this.value)">${AN_METRIC_GROUPS.map((g, i) => `<option value="${i}"${i === gi ? ' selected' : ''}>${escHtml(g[0])}</option>`).join('')}</select></div>
+        <div class="ax-fld"><label>Показатель</label><select class="form-input" onchange="axDrMetric(this.value)">${AN_METRIC_GROUPS[gi][1].map(k => `<option value="${k}"${k === d.metric ? ' selected' : ''}>${escHtml(AN_TITLES[k])}</option>`).join('')}</select>
+          <div class="an-help">${escHtml(AN_HELP[d.metric] || '')}</div></div>
+        <div class="ax-fld"><label>Как показывать</label>
+          <div class="ax-seg"><div class="${d.mode === 'abs' ? 'on' : ''}" onclick="axDrSet('mode','abs')">Значения</div><div class="${d.mode === 'share' ? 'on' : ''}${addv ? '' : ' dis'}" onclick="axDrSet('mode','share')">Доля, %</div></div>
+          <div class="an-note" style="margin-top:7px">${addv ? '«Доля» — какую часть итога за период дал каждый день, неделя или месяц.' : 'Доля есть только у счётчиков: визиты, брони, отмены, число гостей.'}</div></div>
+        <div class="ax-fld"><div class="ax-row${addv ? '' : ' dis'}"><div>Накопление<small>Нарастающим итогом: каждый следующий день плюс все прошлые</small></div><div class="ax-switch${d.cum ? ' on' : ''}" onclick="axDrSet('cum',${!d.cum})" role="switch" aria-checked="${d.cum ? 'true' : 'false'}"></div></div></div>
+        <div class="ax-fld"><label>Вид на графике</label><div class="ax-seg">${[['auto', 'Авто'], ['bar', 'Столбцы'], ['line', 'Линия']].map(([v, l]) => `<div class="${d.type === v ? 'on' : ''}" onclick="axDrSet('type','${v}')">${l}</div>`).join('')}</div></div>
+        <div class="ax-fld"><label>Цвет</label><div class="ax-sw">${AX_COLORS.map(c => `<i class="${c.toLowerCase() === String(d.color).toLowerCase() ? 'on' : ''}" style="background:${c}" onclick="axDrSet('color','${c}')"></i>`).join('')}</div></div>
+        <div class="ax-fld"><label>Срезы</label><button type="button" class="ax-fbtn" onclick="axOpenFp('draft')">${AX_ICO.flt}<span>Фильтры${fparts.length ? `<small>${escHtml(fparts.join(' · '))}</small>` : '<small style="color:var(--text-muted)">не выбраны</small>'}</span>${fcount ? `<b class="n">${fcount}</b>` : ''}</button></div>
+      </div>
+      <div class="ax-dr-foot">
+        ${dr.err ? `<div class="ax-dr-err">${escHtml(dr.err)}</div>` : ''}
+        ${dr.isNew ? '' : '<button type="button" class="ax-act dng" onclick="axDrDelete()">Удалить</button><button type="button" class="ax-act" onclick="axDrCopy()">Копировать</button>'}
+        <button type="button" class="ax-act pri" onclick="axDrApply()">${dr.isNew ? 'Добавить' : 'Применить'}</button>
+      </div>
+    </div>`;
+    ov.classList.add('open');
+    const body = ov.querySelector('.ax-dr-body');
+    if (body) body.scrollTop = keep;
+  }
+
+  // ── окно «Фильтры»: слева срезы, справа галочки
+  function axOpenFp(id) {
+    let f, metric, name;
+    if (id === 'draft') { const d = anState.drawer && anState.drawer.draft; if (!d) return; f = d.f; metric = d.metric; name = d.name || AN_CHIP_LABELS[d.metric]; }
+    else { const s = anState.series.find(x => x.id === id); if (!s) return; f = s.f; metric = s.metric; name = axName(s); }
+    const ap = axApplies(metric);
+    if (!ap.length) { showToast('К eNPS срезы не применяются: опрос анонимный'); return; }
+    anState.fp = { target: id, metric, name, f: axClone(f), dim: ap[0] };
+    anState.pop = '';
+    axRenderBar(); axRenderFp();
+  }
+  function axFpDim(k) {
+    const fp = anState.fp;
+    if (!fp || !axApplies(fp.metric).includes(k)) return;
+    fp.dim = k; axRenderFp();
+  }
+  function axFpToggle(i) {
+    const fp = anState.fp;
+    if (!fp) return;
+    const dm = AX_DIM[fp.dim], o = dm.opts[i];
+    if (!o) return;
+    const cur = fp.f[fp.dim];
+    const at = cur.findIndex(v => String(v) === String(o[0]));
+    if (at >= 0) cur.splice(at, 1); else cur.push(o[0]);
+    cur.sort((a, b) => dm.opts.findIndex(x => x[0] === a) - dm.opts.findIndex(x => x[0] === b));
+    axRenderFp();
+  }
+  function axFpAll() {
+    const fp = anState.fp;
+    if (!fp) return;
+    const dm = AX_DIM[fp.dim];
+    fp.f[fp.dim] = fp.f[fp.dim].length === dm.opts.length ? [] : dm.opts.map(o => o[0]);
+    axRenderFp();
+  }
+  function axFpReset() {
+    const fp = anState.fp;
+    if (!fp) return;
+    fp.f = axEmptyF(); axRenderFp();
+  }
+  function axFpClose() { anState.fp = null; axRenderFp(); }
+  function axFpApply() {
+    const fp = anState.fp;
+    if (!fp) return;
+    if (fp.target === 'draft') {
+      if (anState.drawer) { anState.drawer.draft.f = fp.f; anState.drawer.err = ''; }
+      anState.fp = null; axRenderFp(); axRenderDrawer();
+      return;
+    }
+    const s = anState.series.find(x => x.id === fp.target);
+    anState.fp = null; axRenderFp();
+    if (s) { s.f = fp.f; axPersist(); axLoad(); }
+  }
+  function axRenderFp() {
+    const ov = document.getElementById('axFpOv');
+    if (!ov) return;
+    const fp = anState.fp;
+    if (!fp) { ov.classList.remove('open'); ov.innerHTML = ''; return; }
+    const ap = axApplies(fp.metric), dm = AX_DIM[fp.dim];
+    const total = axFilterCount(fp.f, ap);
+    const sel = fp.f[fp.dim] || [];
+    const prevOpts = ov.querySelector('.ax-fp-opts');
+    const keep = prevOpts && ov.dataset.dim === fp.dim ? prevOpts.scrollTop : 0;
+    ov.dataset.dim = fp.dim;
+    ov.innerHTML = `<div class="ax-fp" role="dialog" aria-modal="true" aria-label="Фильтры показателя">
+      <div class="ax-fp-head"><div class="ax-fp-t">Фильтры</div><div class="ax-fp-s">${escHtml(fp.name)}</div><button type="button" class="ax-x" onclick="axFpClose()" aria-label="Закрыть">${AX_ICO.x}</button></div>
+      <div class="ax-fp-body">
+        <div class="ax-fp-dims">${AX_DIMS.map(x => {
+          const ok = ap.includes(x.k), n = ok ? (fp.f[x.k] || []).length : 0;
+          return `<div class="ax-fp-dim${fp.dim === x.k ? ' on' : ''}${ok ? '' : ' dis'}" ${ok ? `onclick="axFpDim('${x.k}')"` : 'title="Не действует на этот показатель"'}><span>${escHtml(x.label)}</span>${n ? `<b class="n">${n}</b>` : ''}</div>`;
+        }).join('')}</div>
+        <div class="ax-fp-opts">
+          <div class="ax-fp-note">${escHtml(dm.note)}</div>
+          <span class="ax-fp-all" onclick="axFpAll()">${sel.length === dm.opts.length ? 'Снять все' : 'Выбрать все'}</span>
+          ${dm.opts.map((o, i) => `<div class="ax-opt${sel.some(v => String(v) === String(o[0])) ? ' on' : ''}" onclick="axFpToggle(${i})"><span class="ax-cb"></span><span>${escHtml(o[1])}</span></div>`).join('')}
+        </div>
+      </div>
+      <div class="ax-fp-foot"><button type="button" class="ax-act" onclick="axFpReset()">Сбросить всё</button><button type="button" class="ax-act" onclick="axFpClose()">Отмена</button><button type="button" class="ax-act pri" onclick="axFpApply()">Применить${total ? `<b class="n">${total}</b>` : ''}</button></div>
+    </div>`;
+    ov.classList.add('open');
+    const o2 = ov.querySelector('.ax-fp-opts');
+    if (o2) o2.scrollTop = keep;
+  }
+
+  // ── сохранённые виды (на этом устройстве)
+  function axGetViews() {
+    try {
+      const a = JSON.parse(localStorage.getItem(AX_VIEWS) || '[]');
+      return (Array.isArray(a) ? a : []).map(v => {
+        const st = axCleanState(v && v.state);
+        return st && typeof v.name === 'string' ? { id: String(v.id || '').replace(/[^a-z0-9]/gi, '').slice(0, 24) || axNewId(), name: v.name.slice(0, 40), state: st } : null;
+      }).filter(Boolean).slice(0, 12);
+    } catch (e) { return []; }
+  }
+  function axPutViews(list) {
+    try { localStorage.setItem(AX_VIEWS, JSON.stringify(list)); return true; }
+    catch (e) { showToast('Не удалось сохранить: в браузере закрыто хранилище'); return false; }
+  }
+  function axViewsHtml() {
+    const list = axGetViews();
+    let h = '<div class="ax-dd-t">Сохранённые виды</div>';
+    if (!list.length) h += '<div class="ax-dd-note">Пока пусто. Настройте график, дайте название и сохраните — вид будет под рукой на этом устройстве.</div>';
+    h += list.map(v => {
+      const n = v.state.series.length, per = (AN_PERIODS.find(x => x[0] === v.state.period) || AN_PERIODS[1])[1];
+      return `<div class="ax-dd-item" onclick="axApplyView('${v.id}')"><span>${escHtml(v.name)}<small>${n} ${ruPlural(n, 'показатель', 'показателя', 'показателей')} · ${escHtml(per)}</small></span><button type="button" class="ax-tool" onclick="event.stopPropagation();axDelView('${v.id}')" title="Удалить вид" aria-label="Удалить вид">${AX_ICO.x}</button></div>`;
+    }).join('');
+    h += `<div class="ax-dd-sep"></div><div class="ax-vname"><input type="text" class="form-input" id="axViewName" maxlength="40" placeholder="Название вида" onkeydown="if(event.key==='Enter')axSaveView()"><button type="button" class="ax-act pri" style="margin-left:0;width:100%" onclick="axSaveView()">Сохранить текущий вид</button></div>`;
+    return h;
+  }
+  function axSaveView() {
+    const inp = document.getElementById('axViewName');
+    const name = ((inp && inp.value) || '').trim().slice(0, 40);
+    if (!name) { showToast('Введите название вида'); if (inp) inp.focus(); return; }
+    const list = axGetViews();
+    const same = list.findIndex(v => v.name.toLowerCase() === name.toLowerCase());
+    if (same < 0 && list.length >= 12) { showToast('Видов не больше 12 — удалите ненужный'); return; }
+    const { series, period, from, to, group, compare, tab, values } = anState;
+    const entry = { id: same >= 0 ? list[same].id : axNewId(), name, state: axClone({ series, period, from, to, group, compare, tab, values }) };
+    if (same >= 0) list[same] = entry; else list.unshift(entry);
+    if (!axPutViews(list)) return;
+    anState.pop = ''; axRenderBar();
+    showToast(same >= 0 ? 'Вид обновлён' : 'Вид сохранён');
+  }
+  function axApplyView(id) {
+    const v = axGetViews().find(x => x.id === id);
+    if (!v) return;
+    anState = Object.assign(axDefaultState(), v.state);
+    anData = axNewData();
+    axPersist(); axRenderBar(); axRenderDrawer(); axRenderFp(); axLoad();
+  }
+  function axDelView(id) {
+    axPutViews(axGetViews().filter(v => v.id !== id));
+    axRenderBar();
+  }
+
+  // ── таблица в файл (CSV для Excel: с BOM, через «;», запятая в дробях)
+  function axCsv() {
+    const m = anAx.model;
+    anState.pop = ''; axRenderBar();
+    if (!m || !m.drawn.length || !m.n) { showToast('Нет данных для выгрузки'); return; }
+    const q = v => { const t = String(v === null || v === undefined ? '' : v); return /[;"\n\r]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
+    const num = v => v === null || v === undefined || isNaN(v) ? '' : String(v).replace('.', ',');
+    const unit = x => (x.s.mode === 'share' && axAdditive(x.s.metric) ? ', доля %' : x.kind === 'pct' ? ', %' : x.kind === 'duration' ? ', мин' : '') + (x.s.cum && axAdditive(x.s.metric) ? ', накоплением' : '');
+    const label = x => { const f = axFilterParts(x.s.f, Array.isArray(x.d.applied) ? x.d.applied : axApplies(x.s.metric)); return x.name + unit(x) + (f.length ? ' [' + f.join(' · ') + ']' : ''); };
+    const rows = [];
+    const head = ['Период'];
+    m.drawn.forEach(x => { head.push(label(x)); if (x.hasC) head.push(label(x) + ' — было', label(x) + ' — разница'); });
+    rows.push(head);
+    m.idx.forEach(i => {
+      const b = m.ref[i], row = [anBucketName(b.start, b.label, anState.group)];
+      m.drawn.forEach(x => { row.push(num(x.cur[i])); if (x.hasC) { const df = axDiff(x, x.cur[i], x.cmp[i]); row.push(num(x.cmp[i]), df ? num(df.delta) : ''); } });
+      rows.push(row);
+    });
+    const tot = ['За период'];
+    m.drawn.forEach(x => {
+      const share = x.s.mode === 'share' && axAdditive(x.s.metric);
+      tot.push(share ? '100' : num(x.d.total));
+      if (x.hasC) { const df = share ? null : axDiff(x, x.d.total, x.d.compareTotal); tot.push(share ? '100' : num(x.d.compareTotal), df ? num(df.delta) : ''); }
+    });
+    rows.push(tot);
+    const r = anRange();
+    const blob = new Blob(['﻿' + rows.map(rw => rw.map(q).join(';')).join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    anSaveDeckFile(blob, `na-kryshe-analytics_${r.from}_${r.to}.csv`);
+    showToast('Таблица сохранена');
+  }
   // ── ВЫГРУЗКА В ПРЕЗЕНТАЦИЮ (.pptx) ──────────────────────
-  // «Текущий» — показатель, который сейчас на экране: итог, динамика, таблица, кальяны.
-  // «Полный» — все показатели за выбранный период: сводка и по слайду на каждый.
+  // «Показатели с графика» — те, что сейчас на экране: итоги, динамика, таблица, кальяны.
+  // «Полный» — все показатели за выбранный период без фильтров: сводка и по слайду на каждый.
   // Файл собирается прямо в приложении (модуль PptxGenJS подгружается при первом нажатии).
-  const AN_ALL_METRICS = AN_METRIC_GROUPS.flatMap(g => g[1]);
   const ANDK = { bg: '140B00', card: '241709', line: '4A3420', acc: 'B87333', txt: 'F0DFC0', soft: 'C9A880', muted: '8A6A52', cmp: '8F7757', good: '7BC47F', bad: 'E07A5F' };
   const AN_DECK_FONT = 'Arial';
   let anDeck = { busy: '', ready: null, error: '' };
@@ -17492,20 +18725,21 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     ], () => !!window.PptxGenJS).catch(() => { throw new Error('Не удалось загрузить модуль презентаций. Проверьте интернет'); });
   }
 
-  // Настройки экрана на момент нажатия «Выгрузить»: пока презентация собирается (это несколько запросов подряд), период или фильтр
-  // могут поменять — раньше в одном файле тогда оказывались показатели за разные периоды.
-  function anSnapshot() { return { range: anRange(), group: anState.group, compare: anState.compare, dow: anState.dow, segment: anState.segment }; }
+  // Настройки экрана на момент нажатия «Скачать»: пока презентация собирается (для полного отчёта это несколько запросов подряд),
+  // период могут поменять — раньше в одном файле тогда оказывались показатели за разные периоды.
+  function anSnapshot() { return { range: anRange(), group: anState.group, compare: anState.compare }; }
+  // Полный отчёт — все показатели без срезов: у каждого показателя они свои, а здесь нужна общая картина
   async function anFetchMetric(metric, snap) {
     snap = snap || anSnapshot();
     const r = snap.range;
     const q = new URLSearchParams({ metric, group: snap.group, compare: snap.compare, from: r.from, to: r.to });
-    if (snap.dow) q.set('dow', snap.dow);
-    if (snap.segment && AN_VISIT_METRICS.includes(metric)) q.set('segment', snap.segment);
     const res = await fetch(`${PROXY_BASE}/api/admin/analytics?${q.toString()}&pin=${getPin()}`);
     if (res.status === 401) { showScreen('pin'); throw new Error('Войдите заново'); }
     if (res.status === 403) throw new Error('Нет доступа к аналитике');
     if (!res.ok) throw new Error(await responseError(res, 'Не удалось посчитать'));
-    return res.json();
+    const d = await res.json();
+    if (d.metric !== metric) throw new Error('Сервер ещё не знает всех показателей. Сначала обновите сервер.');
+    return d;
   }
 
   // Достаём все показатели небольшими пачками, чтобы не заваливать сервер
@@ -17521,31 +18755,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     return AN_ALL_METRICS.map(m => out[m]);
   }
 
-  // Подписи «Лучше всего / В среднем / Слабее всего» — те же, что на экране
-  function anFactTiles(d, vis) {
-    const vals = vis.filter(b => b.value !== null);
-    if (vals.length < 2) return [];
-    const tiles = [];
-    if (d.kind === 'count' || d.kind === 'unique') {
-      const avg = Math.round(vals.reduce((s, b) => s + b.value, 0) / vals.length * 10) / 10;
-      tiles.push(['В среднем за ' + AN_AVG_WORD[d.group], String(avg).replace('.', ','), '']);
-    }
-    const sorted = [...vals].sort((a, b) => b.value - a.value);
-    const lower = AN_LOWER_BETTER.includes(d.metric);
-    const best = lower ? sorted[sorted.length - 1] : sorted[0];
-    const worst = lower ? sorted[0] : sorted[sorted.length - 1];
-    if (best.value !== worst.value) {
-      tiles.push([d.kind === 'duration' ? 'Дольше всего' : 'Лучше всего', anFormat(best.value, d.kind), anBucketName(best.start, best.label, d.group)]);
-      tiles.push([d.kind === 'duration' ? 'Короче всего' : 'Слабее всего', anFormat(worst.value, d.kind), anBucketName(worst.start, worst.label, d.group)]);
-    }
-    return tiles;
-  }
-
   function anDeckFilters(d) {
-    const f = [];
-    if (d.dow) f.push(AN_DOW.find(x => x[0] === String(d.dow))?.[1]);
-    if (d.segment) f.push(AN_SEGMENT.find(x => x[0] === d.segment)?.[1]);
-    return f.filter(Boolean).join(' · ');
+    return axFilterParts(d.filters, Array.isArray(d.applied) ? d.applied : null).join(' · ');
   }
   function anDeckDeltaColor(d, delta) {
     if (delta === null || delta === 0 || d.kind === 'duration') return ANDK.soft;
@@ -17554,10 +18765,10 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   function anDeckDeltaShort(d) {
     if (d.delta === null) return '—';
     if (d.kind === 'duration') return (d.delta > 0 ? '+' : d.delta < 0 ? '−' : '') + shDuration(Math.abs(d.delta));
-    const base = (d.kind === 'avg' || d.kind === 'ratio') ? signed(d.delta).replace('.', ',') : signed(d.delta);
+    const base = (d.kind === 'avg' || d.kind === 'ratio') ? signed(d.delta).replace('.', ',') : d.kind === 'pct' ? signed(d.delta).replace('.', ',') + ' п. п.' : signed(d.delta);
     return d.deltaPct !== null ? `${base} (${signed(d.deltaPct)}%)` : base;
   }
-  function anChartNumFmt(kind) { return kind === 'avg' || kind === 'ratio' ? '0.0' : '0'; }
+  function anChartNumFmt(kind) { return kind === 'avg' || kind === 'ratio' || kind === 'pct' ? '0.0' : '0'; }
 
   function anDeckBase(pptx, title, sub, d0) {
     const s = pptx.addSlide();
@@ -17591,7 +18802,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       showLegend: !!hasCmp, legendPos: 'b', legendColor: ANDK.soft, legendFontSize: 11, legendFontFace: AN_DECK_FONT,
       showValue: vis.length <= 16, dataLabelColor: ANDK.txt, dataLabelFontSize: 10, dataLabelFontFace: AN_DECK_FONT,
       dataLabelPosition: 'outEnd', dataLabelFormatCode: anChartNumFmt(d.kind),
-      valAxisMaxVal: d.kind === 'avg' ? 10 : undefined
+      valAxisMaxVal: d.metric === 'csi' ? 10 : undefined
     });
   }
 
@@ -17668,17 +18879,18 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     });
   }
 
-  function anDeckSingle(pptx, d) {
+  function anDeckSingle(pptx, d, opts) {
+    opts = opts || {};
     const vis = anVisibleBuckets(d);
     const hasCmp = d.compare !== 'none' && d.compareFrom;
     const filters = anDeckFilters(d);
-    anDeckTitleSlide(pptx, d, d.title, 'Аналитика' + (filters ? ' · ' + filters : ''));
+    if (!opts.noTitle) anDeckTitleSlide(pptx, d, d.title, 'Аналитика' + (filters ? ' · ' + filters : ''));
     // Итог
     const s1 = anDeckBase(pptx, d.title, filters, d);
     const yEnd = anDeckHero(pptx, s1, d, 0.7, 1.7, 11.9, true);
     anDeckFacts(pptx, s1, d, vis, 0.7, Math.min(yEnd + 0.1, 5.5), 11.9);
     if (d.metric === 'nps' || d.metric === 'enps') s1.addText('Шкала от −100 до +100', { x: 0.7, y: 6.55, w: 8, h: 0.3, fontFace: AN_DECK_FONT, fontSize: 11, color: ANDK.muted });
-    else if (d.samples != null) s1.addText(d.metric === 'stay' ? `Посчитано по ${d.samples} визитам с отметкой «Гость ушёл»` : `Посчитано по ${d.samples} занятым столам за вечер`, { x: 0.7, y: 6.55, w: 10, h: 0.3, fontFace: AN_DECK_FONT, fontSize: 11, color: ANDK.muted });
+    else if (axSamplesText(d)) s1.addText(axSamplesText(d), { x: 0.7, y: 6.55, w: 10, h: 0.3, fontFace: AN_DECK_FONT, fontSize: 11, color: ANDK.muted });
     // График
     const groupWord = { day: 'по дням', week: 'по неделям', month: 'по месяцам' }[d.group];
     const s2 = anDeckBase(pptx, `Динамика · ${groupWord}`, d.title + (d.kind === 'duration' ? ' (в минутах)' : ''), d);
@@ -17705,7 +18917,32 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       const colW = hasCmp ? [4.6, 2.5, 2.5, 2.3] : [6.5, 5.4];
       s3.addTable(rows, { x: 0.7, y: 1.55, w: 11.9, colW, rowH: 0.38, fontFace: AN_DECK_FONT, fontSize: 13, border: { type: 'solid', pt: 0.5, color: ANDK.line }, fill: { color: ANDK.bg }, valign: 'middle', margin: [0, 0.12, 0, 0.12] });
     }
-    anDeckHookahs(pptx, d);
+    if (!opts.noHookahs) anDeckHookahs(pptx, d);
+  }
+
+  // Несколько показателей с графика в одном файле: общая титульная, сводка, по слайдам на каждый, кальяны один раз
+  function anDeckSelected(pptx, list) {
+    if (list.length === 1) { anDeckSingle(pptx, list[0]); return; }
+    const d0 = list[0], hasCmp = d0.compare !== 'none' && d0.compareFrom;
+    anDeckTitleSlide(pptx, d0, 'Показатели с графика', `${list.length} ${ruPlural(list.length, 'показатель', 'показателя', 'показателей')}`);
+    const s = anDeckBase(pptx, 'Сводка по показателям', hasCmp ? `Сравнение: ${fmtDMY(d0.compareFrom)} — ${fmtDMY(d0.compareTo)}` : 'Без сравнения', d0);
+    const hdr = (t, right) => ({ text: t, options: { bold: true, color: ANDK.acc, fill: { color: ANDK.card }, align: right ? 'right' : 'left' } });
+    const rows = [[hdr('Показатель'), hdr('Срезы'), hdr('Сейчас', true), ...(hasCmp ? [hdr('Было', true), hdr('Изменение', true)] : [])]];
+    list.forEach(d => {
+      const cell = (t, o = {}) => ({ text: String(t), options: { color: ANDK.txt, ...o } });
+      rows.push([
+        cell(d.title),
+        cell(anDeckFilters(d) || 'без срезов', { color: ANDK.soft, fontSize: 11 }),
+        cell(d.total === null ? '—' : anFormat(d.total, d.kind), { align: 'right', bold: true }),
+        ...(hasCmp ? [
+          cell(d.compareTotal === null ? '—' : anFormat(d.compareTotal, d.kind), { align: 'right', color: ANDK.soft }),
+          cell(anDeckDeltaShort(d), { align: 'right', color: anDeckDeltaColor(d, d.delta) })
+        ] : [])
+      ]);
+    });
+    s.addTable(rows, { x: 0.7, y: 1.5, w: 11.9, colW: hasCmp ? [3.4, 3.2, 1.7, 1.7, 1.9] : [4.4, 4.5, 3.0], rowH: 0.42, fontFace: AN_DECK_FONT, fontSize: 12.5, border: { type: 'solid', pt: 0.5, color: ANDK.line }, fill: { color: ANDK.bg }, valign: 'middle', margin: [0, 0.12, 0, 0.12] });
+    list.forEach(d => anDeckSingle(pptx, d, { noTitle: true, noHookahs: true }));
+    anDeckHookahs(pptx, d0);
   }
 
   function anDeckFull(pptx, list) {
@@ -17763,18 +19000,12 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     await anSaveDeckFile(f.blob, f.name);
   }
 
+  // Полоса состояния под панелью: идёт сборка / файл готов (на телефоне сохранение — отдельным нажатием) / ошибка
   function anDeckRowHtml() {
-    const busy = anDeck.busy;
-    if (anDeck.ready) {
-      return `<div class="an-deck-ready"><div class="an-deck-ready-t">Презентация готова</div><div class="an-deck-ready-s">${escHtml(anDeck.ready.name)}</div>
-        <div class="an-deck-btns"><div class="an-deck-btn primary" onclick="anShareDeckFile()">Сохранить файл</div><div class="an-deck-btn" onclick="anDeck.ready=null;anRenderDeckRow()">Закрыть</div></div></div>`;
-    }
-    return `<div class="an-deck-t">Выгрузить в презентацию</div>
-      <div class="an-deck-btns">
-        <div class="an-deck-btn${busy ? ' off' : ''}" onclick="anExportDeck('current')">${busy === 'current' ? 'Готовлю…' : 'Текущий показатель'}</div>
-        <div class="an-deck-btn${busy ? ' off' : ''}" onclick="anExportDeck('full')">${busy === 'full' ? 'Собираю все показатели…' : 'Полный отчёт'}</div>
-      </div>
-      ${anDeck.error ? `<div class="an-deck-err">${escHtml(anDeck.error)}</div>` : '<div class="an-note" style="margin-top:8px">Файл .pptx откроется в PowerPoint, Keynote и Google Презентациях. Берутся текущие период, сравнение и фильтры.</div>'}`;
+    if (anDeck.ready) return `<div class="ax-strip"><span>Презентация готова</span><span class="sp"></span><button type="button" class="ax-act pri" style="margin-left:0" onclick="anShareDeckFile()">Сохранить файл</button><button type="button" class="ax-act" onclick="anDeck.ready=null;anRenderDeckRow()">Закрыть</button><span class="nm">${escHtml(anDeck.ready.name)}</span></div>`;
+    if (anDeck.busy) return `<div class="ax-strip">${anDeck.busy === 'full' ? 'Собираю все показатели в презентацию…' : 'Готовлю презентацию…'}</div>`;
+    if (anDeck.error) return `<div class="ax-strip err"><span>${escHtml(anDeck.error)}</span><span class="sp"></span><button type="button" class="ax-act" onclick="anDeck.error='';anRenderDeckRow()">Закрыть</button></div>`;
+    return '';
   }
   function anRenderDeckRow() {
     const el = document.getElementById('anDeckRow');
@@ -17782,128 +19013,37 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   }
 
   async function anExportDeck(mode) {
+    anState.pop = ''; axRenderBar();
     if (anDeck.busy) return;
-    if (mode === 'current' && !anLast) { showToast('Сначала дождитесь результата'); return; }
+    let list = null;
+    if (mode === 'selected') {
+      const m = anAx.model;
+      if (anData.seq && Object.keys(anData.byId).length < anState.series.length) { showToast('Сначала дождитесь результата'); return; }
+      list = m ? m.items.filter(it => it.e && it.e.d && !it.s.hidden).map(it => Object.assign({}, it.e.d, { title: axName(it.s) })) : [];
+      if (!list.length) { showToast('Нет показателей для презентации'); return; }
+    }
     anDeck = { busy: mode, ready: null, error: '' };
     anRenderDeckRow();
     try {
       await anLoadPptx();
-      let list, d0;
-      if (mode === 'full') { list = await anFetchAll(anSnapshot()); d0 = list[0]; }
-      else { d0 = anLast.d; }
+      let d0;
+      if (mode === 'full') { list = await anFetchAll(anSnapshot()); }
+      d0 = list[0];
       const pptx = new window.PptxGenJS();
       pptx.layout = 'LAYOUT_WIDE';
-      pptx.title = mode === 'full' ? 'На Крыше — аналитика, полный отчёт' : `На Крыше — ${d0.title}`;
+      pptx.title = mode === 'full' ? 'На Крыше — аналитика, полный отчёт' : list.length > 1 ? 'На Крыше — аналитика, показатели с графика' : `На Крыше — ${d0.title}`;
       pptx.company = 'На Крыше';
-      if (mode === 'full') anDeckFull(pptx, list); else anDeckSingle(pptx, d0);
+      if (mode === 'full') anDeckFull(pptx, list); else anDeckSelected(pptx, list);
       const blob = await pptx.write({ outputType: 'blob' });
-      const name = `na-kryshe-analytics-${mode === 'full' ? 'full' : d0.metric}-${d0.from}_${d0.to}.pptx`;
+      const name = `na-kryshe-analytics-${mode === 'full' ? 'full' : list.length > 1 ? 'selected' : d0.metric}-${d0.from}_${d0.to}.pptx`;
       const mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
       anDeck = { busy: '', ready: null, error: '' };
-      if (mobile) anDeck.ready = { blob, name }; // на телефоне сохранение — отдельным нажатием, иначе браузер его блокирует
+      if (mobile) anDeck.ready = { blob, name };
       else { await anSaveDeckFile(blob, name); showToast('Презентация сохранена'); }
     } catch (e) {
       anDeck = { busy: '', ready: null, error: (e && e.message) || 'Не удалось собрать презентацию' };
     }
     anRenderDeckRow();
-  }
-
-  // Нажатие на столбик: подсвечиваем колонку и показываем значение словами
-  function anPick(i) {
-    if (!anLast) return;
-    const { d, vis, hasCmp } = anLast;
-    const b = vis[i];
-    if (!b) return;
-    document.querySelectorAll('#analyticsResult .an-col.on').forEach(e => e.classList.remove('on'));
-    const col = document.getElementById('anCol' + i);
-    if (col) col.classList.add('on');
-    let text = `<b>${escHtml(anBucketName(b.start, b.label, d.group))}</b>: ${b.value === null ? 'нет данных' : escHtml(anFormat(b.value, d.kind) + anUnit(d, b.value))}`;
-    if (hasCmp) {
-      const cName = b.compareStart ? anBucketName(b.compareStart, b.compareLabel, d.group) : '';
-      text += ` · было ${b.compareValue === null ? '—' : escHtml(anFormat(b.compareValue, d.kind))}${cName ? ` (${escHtml(cName)})` : ''}`;
-      const diff = anBucketDiff(d, b);
-      if (diff) text += ` · <span class="${diff.cls === 'g' ? 'up' : diff.cls === 'b' ? 'down' : ''}">${diff.text}</span>`;
-    }
-    const el = document.getElementById('anPick');
-    if (el) el.innerHTML = text;
-  }
-
-  // Столбики: текущий период (медь) и сравнение (светлые) рядом. Колонку можно нажать.
-  function anChartSvg(d, hasCmp, b) {
-    const vals = [];
-    b.forEach(x => { if (x.value !== null) vals.push(x.value); if (hasCmp && x.compareValue !== null) vals.push(x.compareValue); });
-    if (!vals.length) return '<div class="empty-state" style="padding:24px 10px">Нет данных за этот период</div>';
-    let minV = 0, maxV = Math.max(1, ...vals);
-    if (d.kind === 'avg') maxV = 10;
-    if (d.kind === 'score') { minV = Math.min(0, ...vals); maxV = Math.max(0, ...vals); if (minV === maxV) maxV = minV + 1; }
-    // До ~40 точек график помещается в ширину экрана целиком (удобнее сравнивать),
-    // больше — прокручивается вбок.
-    // Подписи под столбиками: «янв 2026» → сверху месяц, под ним год (год — только у первой подписи и там, где он меняется).
-    // Сколько подписей пропускать, считаем по ширине самой длинной: раньше при 10–12 месяцах они налезали друг на друга.
-    const lbl = b.map(x => {
-      const raw = (d.group === 'week' || d.group === 'day') ? fmtDM(x.start) : String(x.label == null ? '' : x.label);
-      const m = /^(\S+)\s+(\d{4})$/.exec(raw);
-      return m ? { a: m[1], y: m[2] } : { a: raw, y: '' };
-    });
-    const twoLine = lbl.some(l => l.y);
-    const left = 8, top = 18, bottom = twoLine ? 36 : 24, H = 190, FIT_W = 340;
-    const per = (FIT_W - left * 2) / b.length;
-    let barW, slot, gap, W;
-    if (per >= 8) {
-      gap = Math.min(10, per * 0.3);
-      slot = per - gap;
-      barW = hasCmp ? Math.min(14, (slot - 1) / 2) : Math.min(22, slot);
-      if (hasCmp) slot = 2 * barW + 1; else slot = barW;
-      gap = per - slot;
-      W = FIT_W;
-    } else {
-      barW = hasCmp ? 6 : 9;
-      slot = hasCmp ? 2 * barW + 1 : barW;
-      gap = 4;
-      W = left * 2 + b.length * (slot + gap);
-    }
-    const plotH = H - top - bottom;
-    const y = v => top + ((maxV - v) / (maxV - minV)) * plotH;
-    const zeroY = y(0);
-    const LBL_CH = 5.6;   // ширина одного знака при шрифте 9 — с запасом
-    const lblW = Math.max(...lbl.map(l => Math.max(l.a.length, l.y ? 4 : 0))) * LBL_CH + 8;
-    const labelEvery = Math.max(1, Math.ceil(lblW / (slot + gap)));
-    let lblYear = '';
-    const showValues = b.length <= 16;
-    const fits = W === FIT_W;
-    let svg = `<svg ${fits ? 'width="100%"' : `width="${W}"`} height="${H}" viewBox="0 0 ${W} ${H}" ${fits ? 'preserveAspectRatio="xMidYMid meet"' : ''} style="display:block" xmlns="http://www.w3.org/2000/svg">`;
-    svg += `<line x1="0" x2="${W}" y1="${zeroY}" y2="${zeroY}" stroke="rgba(var(--fg-rgb),0.15)" stroke-width="1"/>`;
-    // Без подписей над столбиками шкалу не видно — пишем верхнее значение слева сверху
-    if (!showValues && d.kind !== 'score') {
-      svg += `<line x1="0" x2="${W}" y1="${top}" y2="${top}" stroke="rgba(var(--fg-rgb),0.07)" stroke-width="1" stroke-dasharray="3 4"/>`;
-      svg += `<text x="2" y="${top - 5}" font-size="9" fill="var(--text-muted)">${d.kind === 'avg' ? '10' : 'макс. ' + anChartVal(maxV, d.kind)}</text>`;
-    }
-    b.forEach((x, i) => {
-      const x0 = left + i * (slot + gap) + gap / 2;
-      svg += `<rect class="an-col" id="anCol${i}" x="${x0 - gap / 2}" y="2" width="${slot + gap}" height="${H - bottom + 2}" rx="4"/>`;
-      const bar = (v, xx, fill) => {
-        if (v === null) return '';
-        const yv = y(v);
-        const h = Math.max(1.5, Math.abs(zeroY - yv));
-        const yTop = v >= 0 ? zeroY - h : zeroY;
-        return `<rect x="${xx}" y="${yTop}" width="${barW}" height="${h}" rx="${Math.min(2.5, barW / 3)}" fill="${fill}"/>`;
-      };
-      if (hasCmp) svg += bar(x.compareValue, x0 + barW + 1, 'rgba(var(--fg-rgb),0.28)');
-      svg += bar(x.value, x0, 'var(--accent)');
-      if (showValues && x.value !== null) {
-        const ty = x.value >= 0 ? y(x.value) - 4 : y(x.value) + 11;
-        svg += `<text x="${x0 + barW / 2}" y="${ty}" text-anchor="middle" font-size="9" fill="var(--text-sub)">${anChartVal(x.value, d.kind)}</text>`;
-      }
-      if ((b.length - 1 - i) % labelEvery === 0) {   // считаем с конца: последний (самый свежий) период всегда подписан
-        const l = lbl[i], cx = x0 + slot / 2;
-        svg += `<text x="${cx}" y="${twoLine ? H - 23 : H - 8}" text-anchor="middle" font-size="9" fill="var(--text-muted)">${escHtml(l.a)}</text>`;
-        if (l.y && l.y !== lblYear) svg += `<text x="${cx}" y="${H - 11}" text-anchor="middle" font-size="8.5" fill="var(--text-muted)" fill-opacity="0.75">${escHtml(l.y)}</text>`;
-        if (l.y) lblYear = l.y;
-      }
-      svg += `<rect class="an-hit" x="${x0 - gap / 2}" y="0" width="${slot + gap}" height="${H}" onclick="anPick(${i})"/>`;
-    });
-    svg += '</svg>';
-    return svg;
   }
 
   // ─── АДМИН: СЕГМЕНТЫ ГОСТЕЙ ───────────────────
@@ -19002,6 +20142,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     if (prev) screenScroll[prev] = window.scrollY;
     screens.forEach(s => document.getElementById('screen-' + s)?.classList.remove('active'));
     document.getElementById('screen-' + name)?.classList.add('active');
+    try { if (name !== 'analytics') axCloseAll(); } catch (e) { /* экран аналитики ещё не загружен */ }   // панель и окна аналитики не должны остаться висеть на другом экране
     document.body.classList.toggle('bk-wide', name === 'bookings'); // на широком экране «Брони» занимают и место правой панели
     document.body.classList.toggle('desk-home', name === 'home');   // боковые панели (дата, смена, афиша…) — только на главной
     // На широком экране всё занимает всю ширину, кроме форм и карточек одной записи: у них поля в 1200px бессмысленны,
@@ -19033,6 +20174,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   function handleBackPress() {
     const dlg = document.querySelector('.app-dialog-ov');
     if (dlg && dlg._cancel) return dlg._cancel();
+    if (activeScreenName() === 'analytics' && axCloseTop()) return;
     if (tbMode) { tbClose(); return; }
     const overlay = document.querySelector('.overlay.show');
     if (overlay) { overlay.classList.remove('show'); return; }
@@ -22161,7 +23303,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   };
   window.hdRefresh = function () { load(true); };
   window.hdOpen = function (m) {
-    anState = Object.assign({}, AN_DEFAULTS, { metric: m, period: String(state.period) });
+    var period = String(state.period);
+    anFresh({ series: [axNewSeriesRaw(m, AX_COLORS[0])], period: period, group: axGroupFor(period, axRangeFor(period)) });
     openAnalytics();
   };
   window.hdLeave = function (area) {
