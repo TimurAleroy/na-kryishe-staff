@@ -3798,6 +3798,55 @@ select[aria-expanded="true"] { border-color: rgba(var(--ac), 0.55) !important; b
 @media (max-width: 520px) { .search-under.sf-on .search-hint { flex: 1 0 100%; } .search-under.sf-on { gap: 8px 10px; } }
 </style>
 
+<style id="at-css">
+/* ─── Автотеги: список, форма настройки, вид в карточке гостя (цвет и подсказка) ─── */
+.at-intro { margin: 2px 0 12px; font-size: 12.5px; line-height: 1.5; color: var(--text-muted); }
+.at-intro b { color: var(--text); font-weight: 500; }
+.at-card { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; width: 100%; margin: 0 0 10px; padding: 14px 14px 13px; text-align: left; font: inherit; color: inherit; cursor: pointer;
+  border-radius: 16px; border: 1px solid var(--border); background: linear-gradient(160deg, rgba(var(--ac),0.06), rgba(var(--ac),0) 55%), var(--bg-card); transition: border-color .15s ease; }
+@media (hover: hover) { .at-card:hover { border-color: rgba(var(--ac),0.4); } }
+.at-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.at-card.off { opacity: .62; }
+.at-ch { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+.at-ct { font-size: 15px; font-weight: 500; color: var(--text); }
+.at-st { font-size: 11px; line-height: 1; padding: 4px 9px; border-radius: 100px; border: 1px solid var(--border); color: var(--text-muted); }
+.at-st.on { color: var(--c-green); border-color: rgba(var(--c-green-rgb),0.4); background: rgba(var(--c-green-rgb),0.1); }
+.at-st.warn { color: var(--c-amber); border-color: rgba(var(--c-amber-rgb),0.4); background: rgba(var(--c-amber-rgb),0.1); }
+.at-cs { font-size: 12.5px; color: var(--text-sub); line-height: 1.4; }
+.at-cr { font-size: 11.5px; color: var(--text-muted); line-height: 1.4; }
+.at-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.at-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 100px; font-size: 12px; font-weight: 500; line-height: 1.2;
+  color: rgb(var(--tc, var(--ac))); background: rgba(var(--tc, var(--ac)),0.13); border: 1px solid rgba(var(--tc, var(--ac)),0.4); }
+.at-chip b { font-weight: 500; font-variant-numeric: tabular-nums; color: var(--text); }
+
+.at-day { margin: 0; padding: 14px 14px 10px; }
+.at-bar { display: flex; height: 12px; gap: 2px; border-radius: 100px; overflow: hidden; }
+.at-bar i { display: block; min-width: 2px; background: rgb(var(--tc, var(--ac))); opacity: .85; }
+.at-bar-l { display: flex; justify-content: space-between; margin-top: 5px; font-size: 10.5px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.at-var { padding-bottom: 12px; }
+.at-vh { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+.at-vn { font-size: 11.5px; color: var(--text-muted); }
+.at-lab { display: block; margin: 12px 0 6px; font-size: 12px; color: var(--text-sub); }
+.at-lab i { font-style: normal; color: var(--text-muted); }
+.at-hc { margin-top: 4px; text-align: right; font-size: 10.5px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.at-var .tg-swatch { width: 34px; height: 34px; }
+.at-var .tg-swatch.none { font-size: 10px; }
+.at-prev { padding: 8px 14px 10px; }
+.at-pr { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 9px 0; border-top: 1px solid var(--border); }
+.at-pr:first-child { border-top: 0; }
+.at-pn { font-size: 13px; color: var(--text); font-variant-numeric: tabular-nums; }
+.at-pw { font-size: 11.5px; color: var(--text-muted); }
+.at-d { font-size: 11px; font-weight: 500; padding: 1px 7px; border-radius: 100px; }
+.at-d.up { color: var(--c-green); background: rgba(var(--c-green-rgb),0.12); }
+.at-d.down { color: var(--c-red2); background: rgba(var(--c-red-rgb),0.12); }
+.at-pf { padding: 6px 0 0; font-size: 11.5px; color: var(--text-muted); }
+
+/* карточка гостя: свой цвет автотега и подсказка */
+.autotag-hint { margin-top: 5px; font-size: 11.5px; line-height: 1.45; color: var(--text-muted); font-style: italic; }
+.autotag-card.at-col { border-color: rgba(var(--tc),0.34); background: rgba(var(--tc),0.06); }
+.autotag-card.at-col .autotag-icon { background: rgba(var(--tc),0.18); color: rgb(var(--tc)); }
+.gd-pill.at-col { --pc: rgb(var(--tc)); --pb: rgba(var(--tc),0.12); --pd: rgba(var(--tc),0.4); }
+</style>
 <style id="cosmos-skin">
 /* ═══ ОБЩИЙ ВИД В СТИЛЕ COSMOS ═══════════════════════════════════════════════════════
    Шрифт Montserrat, подписи обычным регистром (не ЗАГЛАВНЫМИ), капсульные кнопки, спокойные поля ввода.
@@ -4902,6 +4951,33 @@ html.rail-wide .rail-row .rail-btn { font-size: 13px; }
   </div>
 </div>
 
+<!-- АВТОТЕГИ: список (Сервис → Автотеги, только основатель) и форма настройки одного -->
+<div class="screen" id="screen-autotags">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('service')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Автотеги</h1><p>Что система отмечает в карточке гостя сама</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div id="atContent" style="margin-top:6px"><div class="loading">Загружаю...</div></div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<div class="screen" id="screen-autotag-edit">
+  <div class="header">
+    <div class="back-btn" onclick="atBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;" id="atEditTitle">Автотег</h1><p id="atEditSub">Настройка</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div id="atEditContent" style="margin-top:6px"></div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
 <div class="screen" id="screen-season">
   <div class="header">
     <div class="back-btn" onclick="showScreen('service')">
@@ -5930,7 +6006,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     currentPerms = new Set();
     permsSig = '';
     tagCatalog = null; tagCatalogSig = ''; tagCatalogAt = 0;
-    try { if (window.sfWipe) sfWipe(); } catch {} // выбранные сегменты и загруженные списки гостей прошлого сотрудника
+    try { if (window.sfWipe) sfWipe(); } catch {}
+    try { if (window.atWipe) atWipe(); } catch {} // настройки автотегов прошлого сотрудника // выбранные сегменты и загруженные списки гостей прошлого сотрудника
 
     bookingsListData = [];
     bookingsPastData = [];
@@ -6037,6 +6114,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'Логины, роли и права', fn: 'openEmployees()' });
     if (can('candidates.view')) list.push({ group: G.team, icon: 'candidates', short: 'кандидаты', title: 'Кандидаты', sub: 'Отклики на вакансии', fn: 'openCandidates()' });
     if (can('settings.manage')) list.push({ group: G.guests, icon: 'segments', short: 'правила сегментов', title: 'Правила сегментов', sub: 'Границы: дни и визиты', fn: 'openSegmentRules()' });
+    if (can('settings.manage')) list.push({ group: G.guests, icon: 'autotags', short: 'автотеги', title: 'Автотеги', sub: 'Что система отмечает в карточке гостя сама: пороги, цвета, кому показывать', fn: 'openAutotags()' });
     if (can('settings.manage')) list.push({ group: G.content, icon: 'season', short: 'сезоны', title: 'Сезоны', sub: 'Снег, сердечки, розы, Хэллоуин: в приложении и на ТВ', fn: 'openSeason()' });
     if (can('settings.manage')) list.push({ group: G.system, icon: 'reviews', short: 'отзывы', title: 'Просьбы об отзыве', sub: 'Когда и кому бот пишет', fn: 'openReviewRules()' });
     if (can('settings.manage') || can('events.manage')) list.push({ group: G.system, icon: 'venue', short: 'режим работы', title: 'Режим работы', sub: 'Часы, закрытые даты, терраса', fn: 'openVenue()' });
@@ -6204,6 +6282,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       tv: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/></svg>',
       surveys: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><path d="M8 13l2 2 4-4"/><line x1="8" y1="18" x2="12" y2="18"/></svg>',
       tags: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12V4a1 1 0 011-1h8l9 9-9 9-9-9z"/><circle cx="7.5" cy="7.5" r="1.3"/></svg>',
+      autotags: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.6L18.5 9l-4.7 1.4L12 15l-1.8-4.6L5.5 9l4.7-1.4z"/><path d="M18.5 15l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></svg>',
       reviews: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8-4.3-4.1 5.9-.9L12 3.5z"/></svg>',
       audit: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>',
       status: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 12 7 12 10 5 14 19 17 12 21 12"/></svg>',
@@ -18764,8 +18843,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'tobacco', 'tips-mine', 'tips-admin', 'xr', 'xr-edit', 'xr-tpl', 'dashboard'];
-  var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'segment-rules', 'season', 'tips-mine', 'tips-admin', 'xr-edit', 'xr-tpl', 'review-rules', 'venue', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'tobacco'];
+  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'tobacco', 'tips-mine', 'tips-admin', 'xr', 'xr-edit', 'xr-tpl', 'dashboard', 'autotags', 'autotag-edit'];
+  var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'segment-rules', 'season', 'tips-mine', 'tips-admin', 'xr-edit', 'xr-tpl', 'review-rules', 'venue', 'autotags', 'autotag-edit', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'tobacco'];
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
 
@@ -19595,53 +19674,64 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   // (большой / средний / низкий чек, чек в час, премиальный кальян, любимые позиции по чекам).
   function renderAutoTags(guest) {
     const at = guest.autoTags || {};
-    const card = (cls, icon, title, detail) => `
-      <div class="autotag-card ${cls}">
+    // «Сервис → Автотеги»: выключенные и скрытые от этой роли сервер называет в hidden; названия, цвета, подсказки вариантов — в cfg
+    // (у прежнего сервера их нет — тогда всё как раньше)
+    const hid = k => (at.hidden || []).includes(k);
+    const cv = (k, v) => ((at.cfg || {})[k] || {})[v] || null;
+    const card = (cls, icon, title, detail, v) => `
+      <div class="autotag-card ${cls}${v && v.color ? ` at-col tg-c-${escCls(v.color)}` : ''}">
         <div class="autotag-icon">${icon}</div>
-        <div><div class="autotag-title">${escHtml(title)}</div>${detail ? `<div class="autotag-detail">${escHtml(detail)}</div>` : ''}</div>
+        <div><div class="autotag-title">${escHtml(v && v.name ? v.name : title)}</div>${detail ? `<div class="autotag-detail">${escHtml(detail)}</div>` : ''}${v && v.hint ? `<div class="autotag-hint">${escHtml(v.hint)}</div>` : ''}</div>
       </div>`;
     const cards = [];
-    if (at.atRisk) {
+    if (at.atRisk && !hid('atRisk')) {
       const ds = at.daysSince;
       cards.push(card('risk',
         '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 17l-8.5-8.5-5 5L2 7"/><path d="M16 7h6v6"/></svg>',
         'Риск оттока',
-        ds === null || ds === undefined ? 'Визитов пока не записано' : `Не был(а) ${ds} ${ruPlural(ds, 'день', 'дня', 'дней')} — обычно заходит чаще`));
+        ds === null || ds === undefined ? 'Визитов пока не записано' : `Не был(а) ${ds} ${ruPlural(ds, 'день', 'дня', 'дней')} — обычно заходит чаще`,
+        cv('atRisk', 'main')));
     }
-    if (at.negativeReview) {
+    if (at.negativeReview && !hid('negativeReview')) {
       const nr = at.negativeReview;
       cards.push(card('negative',
         '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 15s1.5-2 4-2 4 2 4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
         'Негативный отзыв',
-        `Низкая оценка${nr.category ? ` «${nr.category}»` : ''}${nr.score !== null && nr.score !== undefined ? `: ${nr.score}/10` : ''}${nr.date ? `, ${humanDay(nr.date, { venue: true })}` : ''}`));
+        `Низкая оценка${nr.category ? ` «${nr.category}»` : ''}${nr.score !== null && nr.score !== undefined ? `: ${nr.score}/10` : ''}${nr.date ? `, ${humanDay(nr.date, { venue: true })}` : ''}`,
+        cv('negativeReview', 'main')));
     }
     // ДР сегодня — плашкой вверху; здесь — «скоро» и «недавно был»
-    if (at.birthday && at.birthday.when !== 'today') {
+    if (at.birthday && at.birthday.when !== 'today' && !hid('birthday')) {
       const bd = at.birthday;
       cards.push(card('birthday',
         '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 21h16v-8H4z"/><path d="M4 16c2 0 2-1.5 4-1.5S10 16 12 16s2-1.5 4-1.5 2 1.5 4 1.5"/><line x1="12" y1="13" x2="12" y2="9"/><path d="M12 9c-1 0-1.5-.8-1.5-1.6 0-1 1.5-2.4 1.5-2.4s1.5 1.4 1.5 2.4c0 .8-.5 1.6-1.5 1.6z"/></svg>',
         bd.when === 'soon' ? 'Скоро день рождения' : 'Недавно был день рождения',
-        bd.when === 'soon' ? `Через ${bd.days} ${ruPlural(bd.days, 'день', 'дня', 'дней')} — можно поздравить заранее` : `${bd.days} ${ruPlural(bd.days, 'день', 'дня', 'дней')} назад`));
+        bd.when === 'soon' ? `Через ${bd.days} ${ruPlural(bd.days, 'день', 'дня', 'дней')} — можно поздравить заранее` : `${bd.days} ${ruPlural(bd.days, 'день', 'дня', 'дней')} назад`,
+        cv('birthday', bd.when === 'soon' ? 'soon' : 'recent')));
     }
-    if (at.visitTime) {
+    if (at.visitTime && !hid('visitTime')) {
       const vt = at.visitTime;
       cards.push(card('time',
         GD_ICON[vt.key] || GD_ICON.day,
         `Время визита: ${vt.name.toLowerCase()}`,
-        `Обычно приходит ${vt.range} — ${vt.n} из ${vt.total} ${ruPlural(vt.total, 'визита', 'визитов', 'визитов')}`));
+        `Обычно приходит ${vt.range} — ${vt.n} из ${vt.total} ${ruPlural(vt.total, 'визита', 'визитов', 'визитов')}`,
+        cv('visitTime', vt.key)));
     }
-    if (at.stay) {
+    if (at.stay && !hid('stay')) {
       cards.push(card('stay',
         GD_ICON.clock,
         at.stay.key === 'long' ? 'Сидит долго' : 'Заходит ненадолго',
-        `В среднем ${shDuration(at.stay.avgMin)} за столом — по ${at.stay.n} ${ruPlural(at.stay.n, 'визиту', 'визитам', 'визитам')} с отметкой «ушёл»`));
+        `В среднем ${shDuration(at.stay.avgMin)} за столом — по ${at.stay.n} ${ruPlural(at.stay.n, 'визиту', 'визитам', 'визитам')} с отметкой «ушёл»`,
+        cv('stay', at.stay.key)));
     }
     const fav = guest.favorites || {};
-    if (fav.hookah) {
+    if (fav.hookah && !hid('favorite')) {
+      const fv = cv('favorite', 'main');
       cards.push(card('favorite',
         '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3v7a2 2 0 002 2v9M8 3v7"/><path d="M17 3c-1.5 0-2.5 1.5-2.5 4s1 4 2.5 4v10"/></svg>',
-        `Любимая позиция: ${fav.hookah.name}`,
-        `${fav.hookah.count} из ${fav.visitsWithHookah} ${ruPlural(fav.visitsWithHookah, 'визита', 'визитов', 'визитов')} с кальяном`));
+        `${fv && fv.name ? fv.name : 'Любимая позиция'}: ${fav.hookah.name}`,
+        `${fav.hookah.count} из ${fav.visitsWithHookah} ${ruPlural(fav.visitsWithHookah, 'визита', 'визитов', 'визитов')} с кальяном`,
+        fv ? { color: fv.color, hint: fv.hint } : null));
     }
     return cards.length ? cards.join('') : '<div class="autotag-empty">Без особых пометок</div>';
   }
@@ -19874,10 +19964,14 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   function gdPillsHtml(guest) {
     const at = guest.autoTags || {};
     const out = [];
-    if (at.visitTime) out.push(`<span class="gd-pill t-${escHtml(at.visitTime.key)}" title="Обычно приходит ${escHtml(at.visitTime.range)}">${GD_ICON[at.visitTime.key] || ''}${escHtml(at.visitTime.name)}</span>`);
-    if (at.stay) out.push(`<span class="gd-pill s-${escHtml(at.stay.key)}" title="В среднем ${escHtml(shDuration(at.stay.avgMin))} за столом">${GD_ICON.clock}${escHtml(at.stay.name)}</span>`);
+    // цвет и подсказка варианта — из «Сервис → Автотеги» (autoTags.cfg); без них плашки как были
+    const vcfg = (k, v) => ((at.cfg || {})[k] || {})[v] || {};
+    const col = c => c.color ? ` at-col tg-c-${escCls(c.color)}` : '';
+    const tip = (base, c) => escHtml(c.hint ? `${base} — ${c.hint}` : base);
+    if (at.visitTime) { const c = vcfg('visitTime', at.visitTime.key); out.push(`<span class="gd-pill t-${escHtml(at.visitTime.key)}${col(c)}" title="${tip('Обычно приходит ' + at.visitTime.range, c)}">${GD_ICON[at.visitTime.key] || ''}${escHtml(at.visitTime.name)}</span>`); }
+    if (at.stay) { const c = vcfg('stay', at.stay.key); out.push(`<span class="gd-pill s-${escHtml(at.stay.key)}${col(c)}" title="${tip('В среднем ' + shDuration(at.stay.avgMin) + ' за столом', c)}">${GD_ICON.clock}${escHtml(at.stay.name)}</span>`); }
     const bd = at.birthday;
-    if (bd && bd.when !== 'today') out.push(`<span class="gd-pill bd">${GD_ICON.cake}${bd.when === 'soon' ? 'Скоро ДР' : 'Был ДР'}</span>`);
+    if (bd && bd.when !== 'today') { const c = vcfg('birthday', bd.when === 'soon' ? 'soon' : 'recent'); out.push(`<span class="gd-pill bd${col(c)}"${c.hint ? ` title="${escHtml(c.hint)}"` : ''}>${GD_ICON.cake}${bd.when === 'soon' ? 'Скоро ДР' : 'Был ДР'}</span>`); }
     return out.join('');
   }
 
@@ -21677,11 +21771,14 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   function fmtDay(iso) { return new Date(iso + 'T12:00:00').toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }).replace('.', ''); }
   function range() { var to = venueDayStr(); return { from: shiftDateStr(to, -(state.period - 1)), to: to }; }
   function who() { try { return typeof authToken !== 'undefined' ? String(authToken || '') : ''; } catch (e) { return ''; } }
+  // 25 секунд на запрос: при зависшей связи значки «считаю…» не висят вечно — панель покажет «не загрузилось» с повтором
   function getJson(path) {
-    return fetch(PROXY_BASE + path).then(function (r) {
+    var ctl = typeof AbortController === 'function' ? new AbortController() : null;
+    var t = ctl ? setTimeout(function () { ctl.abort(); }, 25000) : 0;
+    return fetch(PROXY_BASE + path, ctl ? { signal: ctl.signal } : undefined).then(function (r) {
       if (!r.ok) throw new Error('http ' + r.status);
       return r.json();
-    });
+    }).then(function (v) { clearTimeout(t); return v; }, function (e) { clearTimeout(t); throw e; });
   }
   function analytics(metric, r) {
     var q = new URLSearchParams({ metric: metric, group: 'day', compare: 'prev', from: r.from, to: r.to });
@@ -21728,6 +21825,13 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       state.data = d; state.at = Date.now();
       el.classList.remove('busy');
       render();
+    }).catch(function (e) {
+      // сбой отрисовки не должен оставлять «Считаю…» и притушенный блок
+      if (seq !== state.seq) return;
+      el.classList.remove('busy');
+      try { console.warn('dashboard:', e); } catch (x) { /* без журнала */ }
+      var body = document.getElementById('hdBody');
+      if (body) body.innerHTML = '<div class="hd-note err">Не удалось показать показатели. <a href="#" onclick="hdRefresh();return false" style="color:inherit;text-decoration:underline">Повторить</a></div>';
     });
   }
 
@@ -21886,8 +21990,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   function render() {
     var d = state.data, body = document.getElementById('hdBody'), el = root();
-    if (!d || !body || !el || el.hidden) return;
-    if (!can('analytics.view')) { el.hidden = true; return; }
+    if (!d || !body || !el) return;
+    if (!can('analytics.view')) { el.innerHTML = '<div class="hd-note">Нет доступа к показателям.</div>'; el.removeAttribute('data-built'); return; }
     var sub = document.getElementById('hdSub');
     if (sub) sub.textContent = fmtDay(d.range.from) + ' – ' + fmtDay(d.range.to) + ' · сравнение с предыдущими ' + d.period + ' днями';
     var failed = KPI.every(function (k) { return !d.ok[k.m]; });
@@ -21939,7 +22043,10 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   window.loadDashboard = function () {
     var el = root();
     if (!el) return;
+    el.hidden = false;
     if (typeof can !== 'function' || !can('analytics.view')) { el.innerHTML = '<div class="hd-note">Нет доступа к показателям.</div>'; el.removeAttribute('data-built'); return; }
+    // вошёл другой сотрудник: цифры прежнего не показываем даже на секунду, пока грузятся его
+    if (state.who && state.who !== who()) { el.removeAttribute('data-built'); state.data = null; state.at = 0; }
     ensureFrame(el);
     load(false);
   };
@@ -21959,7 +22066,10 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   var lists = {};               // ключ → { at, rows }
   var counts = null, countsAt = 0, countsBusy = false;
   var seq = 0, timer = 0, page = 80, lastQ = '';
-  var CHECK = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17.5 19 7"/></svg>';
+  var pending = {};             // ключ → запрос списка, который уже в пути (набор имени не плодит одинаковые запросы)
+  var epoch = 0;                // растёт при выходе сотрудника: ответы прошлого сотрудника в кэш не попадают
+  var mine = false;             // в «Результатах» сейчас наше (загрузка / список сегментов / ошибка) — только такое мы и очищаем
+  var CHECK ='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17.5 19 7"/></svg>';
   var CROSS = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>';
 
   function $(id) { return document.getElementById(id); }
@@ -22028,9 +22138,10 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   function loadCounts() {
     if (!canSeg() || countsBusy || (counts && Date.now() - countsAt < 60000)) return;
     countsBusy = true;
+    var ep = epoch;
     fetch(PROXY_BASE + '/api/admin/segments?pin=' + getPin()).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
       countsBusy = false;
-      if (!d || !d.segments) return;
+      if (ep !== epoch || !d || !d.segments) return;
       counts = {}; countsAt = Date.now();
       d.segments.forEach(function (s) { counts[s.key] = s.end; });
       if (d.none) counts.none = d.none.end;
@@ -22063,21 +22174,30 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     return { kind: 'digits', q: q };
   }
   function headingEl() { var s = $('resultsSection'); return s ? s.querySelector('.sec') : null; }
+  // Уходим из режима сегментов (номер ищется обычным поиском): ответы на прежние запросы больше ничего не рисуют
   function leave() {
+    seq++; mine = false;
     var r = $('searchResults'); if (r) r.classList.remove('rs-seg');
     var h = headingEl(); if (h) h.textContent = 'Результаты';
   }
   function fetchList(key, force) {
     var c = lists[key];
     if (c && !force && Date.now() - c.at < 60000) return Promise.resolve(c.rows);
-    return fetch(PROXY_BASE + '/api/staff/guest-list?filter=' + encodeURIComponent(key) + '&pin=' + getPin()).then(function (res) {
+    if (pending[key]) return pending[key];
+    var ep = epoch;
+    var p = fetch(PROXY_BASE + '/api/staff/guest-list?filter=' + encodeURIComponent(key) + '&pin=' + getPin()).then(function (res) {
       if (res.status === 401) { showScreen('pin'); throw new Error('auth'); }
       if (!res.ok) return responseError(res, 'Не удалось загрузить список').then(function (m) { throw new Error(m); });
       return res.json();
     }).then(function (d) {
-      lists[key] = { at: Date.now(), rows: d.guests || [] };
-      return lists[key].rows;
+      var rows = (d && d.guests) || [];
+      if (ep === epoch) lists[key] = { at: Date.now(), rows: rows };
+      return rows;
     });
+    pending[key] = p;
+    var done = function () { if (pending[key] === p) delete pending[key]; };
+    p.then(done, done);
+    return p;
   }
   function rowFor(g) {
     return { id: g.id, name: g.name, vip: g.vip, segmentKey: g.segmentKey, segment: g.segment, lastVisit: g.lastVisit, daysSince: g.daysSince, visitsTotal: g.visitsYear, vyear: true };
@@ -22087,13 +22207,15 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     var out = $('searchResults');
     if (!out) return;
     if (!sel.length) {
-      if (out.classList.contains('rs-seg')) { out.innerHTML = ''; var sec = $('resultsSection'); if (sec) sec.style.display = 'none'; }
+      // сегменты сняты: убираем своё («Загружаю…», список, ошибку); ответ на уже ушедший запрос после этого ничего не нарисует (leave сдвигает seq)
+      if (mine) { out.innerHTML = ''; out.classList.remove('rs-table'); var sec = $('resultsSection'); if (sec) sec.style.display = 'none'; }
       leave();
       return;
     }
     var qk = queryKind();
     if (qk.kind === 'digits') return;           // номер ищет обычный поиск (кнопка «Найти»)
     var my = ++seq, keys = sel.slice();
+    mine = true;
     showResultsSection();
     var allCached = keys.every(function (k) { return lists[k] && Date.now() - lists[k].at < 60000; });
     if (!quiet && !allCached) out.innerHTML = '<div class="loading">Загружаю гостей...</div>';
@@ -22165,10 +22287,371 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     timer = setTimeout(function () { run(true); }, 140);
   };
   window.sfSync = function () { renderAll(); };
-  window.sfWipe = function () { sel = []; lists = {}; counts = null; countsAt = 0; panelOpen = false; seq++; clearTimeout(timer); lastQ = ''; try { renderAll(); } catch (e) {} };
+  window.sfWipe = function () {
+    var out = $('searchResults');
+    if (mine && out) { out.innerHTML = ''; out.classList.remove('rs-table'); var sec = $('resultsSection'); if (sec) sec.style.display = 'none'; } // список гостей прошлого сотрудника
+    sel = []; lists = {}; pending = {}; epoch++; counts = null; countsAt = 0; countsBusy = false; panelOpen = false; page = 80; clearTimeout(timer); lastQ = '';
+    try { leave(); renderAll(); } catch (e) {}
+  };
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && panelOpen && document.activeElement && document.activeElement.closest && document.activeElement.closest('#sfPanel')) { panelOpen = false; renderAll(); var b = $('sfBtn'); if (b) b.focus(); }
   });
+})();
+</script>
+
+<script id="at-js">
+/* ═══ АВТОТЕГИ: НАСТРОЙКА (Сервис → Автотеги, только основатель) ═══════════════════════════════════════════
+   Список автотегов и форма настройки одного: показ в карточке и официантам, пороги (шаги «−/+»), часы окон «Времени визита»,
+   название / цвет / подсказка каждого варианта, «что получится» — сколько гостей получит тег до сохранения.
+   Сервер: GET /api/admin/autotags, POST /api/admin/autotags/preview, PUT /api/admin/autotags (settings → autotags.config, без миграции).
+   Названия, цвета и подсказки приходят в карточку гостя вместе с автотегами (autoTags.cfg), см. renderAutoTags. */
+(function () {
+  var at = null;            // ответ сервера: config, defaults, limits, colors, meta, counts
+  var cfg = null;           // редактируемая копия настроек (все автотеги — сохраняются вместе)
+  var cur = '';             // какой автотег сейчас в форме
+  var baseJson = '';        // настройки на момент загрузки — по ним видно, есть ли несохранённые правки
+  var prev = null, prevSeq = 0, prevTimer = 0, loadSeq = 0, wipeSeq = 0, saving = false;
+
+  var ORDER = ['visitTime', 'stay', 'atRisk', 'negativeReview', 'birthday', 'favorite'];
+  var META = {
+    visitTime: { title: 'Время визита', sub: 'Когда гость обычно приходит: утро, день, вечер или ночь', show: 'Блок «Автотеги» и плашка под именем',
+      variants: [['morning', 'Утро'], ['day', 'День'], ['evening', 'Вечер'], ['night', 'Ночь']], count: true,
+      note: 'Считается по броням с отметкой «пришёл» (московский час прихода). Нужно хотя бы несколько вечеров, и большинство — в одном окне.' },
+    stay: { title: 'Продолжительность визита', sub: 'Сколько гость обычно сидит за столом: долго или быстро', show: 'Блок «Автотеги» и плашка под именем',
+      variants: [['long', 'Долго'], ['quick', 'Быстро']], count: true,
+      note: 'Считается по броням с отметками «пришёл» и «ушёл»: среднее время за столом. Между «Быстро» и «Долго» — обычный гость, тега нет.' },
+    atRisk: { title: 'Риск оттока', sub: 'Раньше ходил, а теперь давно не был', show: 'Блок «Автотеги» в карточке гостя',
+      variants: [['main', '']], count: true,
+      note: 'Границы («был недавно», сколько визитов делают гостя лояльным) задаются в «Правилах сегментов»; здесь меняется только вид тега и кому его показывать. Выключение убирает тег из карточки гостя, списки «Риск оттока» в таблице гостей остаются.' },
+    negativeReview: { title: 'Негативный отзыв', sub: 'Гость недавно поставил низкую оценку', show: 'Блок «Автотеги» в карточке гостя',
+      variants: [['main', '']], count: false,
+      note: 'Появляется, когда у гостя есть свежий отзыв с низкой оценкой. Считается при открытии карточки.' },
+    birthday: { title: 'День рождения', sub: 'ДР скоро или был недавно', show: 'Плашка «ДР сегодня», блок «Автотеги» и плашка под именем',
+      variants: [['soon', 'Скоро'], ['recent', 'Недавно']], count: true,
+      note: '«ДР сегодня» всегда выделяется красной плашкой вверху карточки. Окно действует и в бронях.' },
+    favorite: { title: 'Любимая позиция', sub: 'Самый частый вкус кальяна среди визитов', show: 'Блок «Автотеги» в карточке гостя',
+      variants: [['main', '']], count: false,
+      note: 'К названию добавляется сам вкус: «Любимая позиция: Мята».' }
+  };
+  // цвет по умолчанию (то, как тег выглядит, пока цвет не выбран)
+  var DEFC = { 'visitTime.morning': 'blue', 'visitTime.day': 'amber', 'visitTime.evening': 'purple', 'visitTime.night': 'gray', 'stay.long': 'blue', 'stay.quick': 'green',
+    'atRisk.main': 'amber', 'negativeReview.main': 'red', 'birthday.soon': 'green', 'birthday.recent': 'green', 'favorite.main': '' };
+  var COLOR_NAMES = { red: 'Красный', amber: 'Янтарный', green: 'Зелёный', blue: 'Синий', purple: 'Фиолетовый', pink: 'Розовый', gray: 'Серый' };
+  var IC = {
+    risk: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 17l-8.5-8.5-5 5L2 7"/><path d="M16 7h6v6"/></svg>',
+    negative: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 15s1.5-2 4-2 4 2 4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
+    cake: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 21h16v-8H4z"/><line x1="12" y1="13" x2="12" y2="9"/></svg>',
+    fav: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3v7a2 2 0 002 2v9M8 3v7"/><path d="M17 3c-1.5 0-2.5 1.5-2.5 4s1 4 2.5 4v10"/></svg>'
+  };
+  var SAMPLE = { visitTime: 'Обычно приходит 18:00–23:00 — 4 из 5 визитов', stay: 'В среднем 3 ч 30 мин за столом — по 4 визитам с отметкой «ушёл»',
+    atRisk: 'Не был(а) 41 день — обычно заходит чаще', negativeReview: 'Низкая оценка «Обслуживание»: 4/10, вчера', birthday: 'Через 3 дня — можно поздравить заранее', favorite: '3 из 4 визитов с кальяном' };
+  var CLS = { visitTime: 'time', stay: 'stay', atRisk: 'risk', negativeReview: 'negative', birthday: 'birthday', favorite: 'favorite' };
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return typeof escHtml === 'function' ? escHtml(s) : String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+  function plural(n, a, b, c) { return typeof ruPlural === 'function' ? ruPlural(n, a, b, c) : (n % 10 === 1 && n % 100 !== 11 ? a : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? b : c)); }
+  function dur(min) { var h = Math.floor(min / 60), m = min % 60; return h ? h + ' ч' + (m ? ' ' + m + ' мин' : '') : m + ' мин'; }
+  function hh(n) { return (n < 10 ? '0' : '') + n + ':00'; }
+  function getp(c, path) { return path.split('.').reduce(function (o, k) { return o == null ? o : o[k]; }, c); }
+  function setp(c, path, v) { var ks = path.split('.'), last = ks.pop(); var o = ks.reduce(function (x, k) { return x[k]; }, c); o[last] = v; }
+  function dirty() { return !!cfg && JSON.stringify(cfg) !== baseJson; }
+  function chip(color, def, text, extra) {
+    var c = color || def || '';
+    return '<span class="at-chip' + (c ? ' tg-c-' + c : '') + '">' + esc(text) + (extra || '') + '</span>';
+  }
+  function countOf(counts, k, vk) {
+    if (!counts) return null;
+    if (k === 'visitTime' || k === 'stay' || k === 'birthday') return (counts[k] || {})[vk];
+    if (k === 'atRisk') return counts.atRisk;
+    return null;
+  }
+
+  // ── список ───────────────────────────────────────────────────────────
+  window.openAutotags = function () {
+    if (typeof needPerm === 'function' && !needPerm('settings.manage', 'менять автотеги')) return;
+    showScreen('autotags');
+    load();
+  };
+  function load() {
+    var el = $('atContent'), my = ++loadSeq;
+    if (!el) return;
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    fetch(PROXY_BASE + '/api/admin/autotags').then(function (res) {
+      if (res.status === 401) { showScreen('pin'); return null; }
+      if (res.status === 403) { accessDenied(); return null; }
+      if (!res.ok) return responseError(res, 'Не удалось загрузить автотеги').then(function (m) { throw new Error(m); });
+      return res.json();
+    }).then(function (d) {
+      if (!d || my !== loadSeq) return;
+      at = d; cfg = clone(d.config); baseJson = JSON.stringify(cfg); prev = null;
+      renderList();
+    }).catch(function (e) {
+      if (my !== loadSeq) return;
+      el.innerHTML = errorStateHtml(e && e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером', 'atLoad()');
+    });
+  }
+  window.atLoad = load;
+  function summary(k, c) {
+    if (k === 'visitTime') return 'От ' + c.minVisits + ' ' + plural(c.minVisits, 'вечера', 'вечеров', 'вечеров') + ' с отметкой, не меньше ' + c.minShare + '% в одном окне';
+    if (k === 'stay') return '«Быстро» — до ' + dur(c.quickMax) + ', «долго» — от ' + dur(c.longMin) + ' за столом';
+    if (k === 'birthday') return 'За ' + c.windowDays + ' ' + plural(c.windowDays, 'день', 'дня', 'дней') + ' до и после дня рождения';
+    if (k === 'favorite') return 'Вкус, который брали от ' + c.minCount + ' ' + plural(c.minCount, 'раза', 'раз', 'раз');
+    if (k === 'atRisk') return 'Границы — в «Правилах сегментов»';
+    return 'Свежий отзыв с низкой оценкой';
+  }
+  function renderList() {
+    var el = $('atContent');
+    if (!el || !at) return;
+    var meta = at.meta && at.meta.updatedAt ? 'Последняя правка: ' + fmtDateTime(at.meta.updatedAt) + (at.meta.updatedBy ? ', ' + esc(at.meta.updatedBy) : '') : 'Пока стоят значения по умолчанию';
+    var n = at.counts ? at.counts.guests : 0;
+    var h = '<div class="at-intro"><b>' + n + '</b> ' + plural(n, 'гость', 'гостя', 'гостей') + ' в базе. Автотеги считаются сами, пересчитывать ничего не нужно — правка видна в карточках сразу. Цифры у цветных меток — сколько гостей получает тег сейчас.</div>';
+    ORDER.forEach(function (k) {
+      var m = META[k], c = at.config[k];
+      var chips = m.variants.map(function (v) {
+        var vc = c.variants[v[0]], cnt = countOf(at.counts, k, v[0]);
+        return chip(vc.color, DEFC[k + '.' + v[0]], v[1] || m.title, cnt == null ? '' : '<b>' + cnt + '</b>');
+      }).join('');
+      h += '<button type="button" class="at-card' + (c.enabled ? '' : ' off') + '" onclick="atEdit(\'' + k + '\')">'
+        + '<span class="at-ch"><span class="at-ct">' + esc(m.title) + '</span><span class="at-st' + (c.enabled ? ' on' : '') + '">' + (c.enabled ? 'Включён' : 'Выключен') + '</span>'
+        + (c.enabled && !c.waiter ? '<span class="at-st warn">Без официантов</span>' : '') + '</span>'
+        + '<span class="at-cs">' + esc(m.sub) + '</span>'
+        + '<span class="at-cr">' + esc(summary(k, c)) + '</span>'
+        + '<span class="at-chips">' + chips + '</span></button>';
+    });
+    h += '<div class="note" style="margin-top:6px">' + meta + '</div>';
+    el.innerHTML = h;
+  }
+
+  // ── форма одного автотега ────────────────────────────────────────────
+  function fields(k) {
+    var L = at.limits;
+    if (k === 'birthday') return [{ p: 'windowDays', t: 'За сколько дней отмечать', s: '«Скоро» — столько дней до дня рождения, «недавно» — столько дней после', u: 'дн.', step: 1, lim: L.birthday.windowDays }];
+    if (k === 'visitTime') return [
+      { p: 'minVisits', t: 'Минимум вечеров с отметкой прихода', s: 'Пока вечеров меньше, тега нет', u: 'виз.', step: 1, lim: L.visitTime.minVisits },
+      { p: 'minShare', t: 'Доля вечеров в одном окне, не меньше', s: 'Иначе гость «приходит когда придётся»', u: '%', step: 5, lim: L.visitTime.minShare },
+      { p: 'hours.morning', t: 'Утро начинается в', s: 'Час прихода по Москве', u: 'ч', step: 1, lim: L.visitTime.hour, hour: true },
+      { p: 'hours.day', t: 'День начинается в', s: '', u: 'ч', step: 1, lim: L.visitTime.hour, hour: true },
+      { p: 'hours.evening', t: 'Вечер начинается в', s: '', u: 'ч', step: 1, lim: L.visitTime.hour, hour: true },
+      { p: 'hours.night', t: 'Ночь начинается в', s: 'Ночь идёт через полночь до утра', u: 'ч', step: 1, lim: L.visitTime.hour, hour: true }];
+    if (k === 'stay') return [
+      { p: 'minVisits', t: 'Минимум вечеров с отметкой «ушёл»', s: 'Пока вечеров меньше, тега нет', u: 'виз.', step: 1, lim: L.stay.minVisits },
+      { p: 'quickMax', t: '«Быстро» — в среднем меньше', s: 'Сколько минут за столом', u: 'мин', step: 15, lim: L.stay.quickMax },
+      { p: 'longMin', t: '«Долго» — в среднем от', s: 'Сколько минут за столом', u: 'мин', step: 15, lim: L.stay.longMin }];
+    if (k === 'favorite') return [{ p: 'minCount', t: 'Вкус брали не меньше', s: 'Сколько раз с кальяном', u: 'раз', step: 1, lim: L.favorite.minCount }];
+    return [];
+  }
+  function minus() { return typeof RV_IC !== 'undefined' && RV_IC.minus ? RV_IC.minus : '−'; }
+  function plus() { return typeof RV_IC !== 'undefined' && RV_IC.plus ? RV_IC.plus : '+'; }
+  function toggleRow(f, title, hint) {
+    return '<div class="sv-line"><div class="sv-lt"><span class="sv-t">' + title + '</span>' + (hint ? '<span class="sv-s">' + hint + '</span>' : '') + '</div>'
+      + '<label class="vn-sw"><input type="checkbox" id="at_' + f + '" onchange="atTog(\'' + f + '\', this.checked)"><i></i></label></div>';
+  }
+  function numRow(f) {
+    return '<div class="sv-line"><div class="sv-lt"><span class="sv-t">' + f.t + '</span>' + (f.s ? '<span class="sv-s">' + f.s + '</span>' : '') + '</div>'
+      + '<div class="nm"><button type="button" class="nmb" onclick="atBump(\'' + f.p + '\',' + (-f.step) + ')" aria-label="Меньше">' + minus() + '</button>'
+      + '<input class="form-input" type="number" inputmode="numeric" id="at_' + f.p.replace('.', '_') + '" min="' + f.lim.min + '" max="' + f.lim.max + '" step="1" oninput="atNum(\'' + f.p + '\', this.value)" aria-label="' + esc(f.t) + '"><span class="rr-u">' + f.u + '</span>'
+      + '<button type="button" class="nmb" onclick="atBump(\'' + f.p + '\',' + f.step + ')" aria-label="Больше">' + plus() + '</button></div></div>';
+  }
+  function swatches(vk, color, def) {
+    var list = [''].concat(at.colors);
+    return list.map(function (c) {
+      var on = (color || '') === c;
+      return '<button type="button" class="tg-swatch ' + (c ? 'tg-c-' + c : 'none') + (on ? ' sel' : '') + '" aria-label="' + (c ? COLOR_NAMES[c] : 'Стандартный цвет') + '" aria-pressed="' + on + '" onclick="atColor(\'' + vk + '\',\'' + c + '\')">'
+        + (c ? (on ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17.5 19 7"/></svg>' : '') : 'авто') + '</button>';
+    }).join('');
+  }
+  function previewCard(k, vk) {
+    var v = cfg[k].variants[vk], c = v.color || DEFC[k + '.' + vk] || '';
+    var icon = k === 'visitTime' ? ((typeof GD_ICON !== 'undefined' && GD_ICON[vk]) || IC.cake) : k === 'stay' ? ((typeof GD_ICON !== 'undefined' && GD_ICON.clock) || IC.cake)
+      : k === 'atRisk' ? IC.risk : k === 'negativeReview' ? IC.negative : k === 'birthday' ? IC.cake : IC.fav;
+    var title = k === 'favorite' ? v.name + ': Мята' : v.name;
+    var detail = SAMPLE[k];
+    if (k === 'visitTime') { var h = cfg.visitTime.hours, w = { morning: [h.morning, h.day], day: [h.day, h.evening], evening: [h.evening, h.night], night: [h.night, h.morning] }[vk]; detail = 'Обычно приходит ' + hh(w[0]) + '–' + hh(w[1]) + ' — 4 из 5 визитов'; }
+    if (k === 'birthday' && vk === 'recent') detail = '3 дня назад';
+    return '<div class="autotag-card ' + CLS[k] + (c ? ' at-col tg-c-' + c : '') + '"><div class="autotag-icon">' + icon + '</div><div><div class="autotag-title">' + esc(title) + '</div>'
+      + '<div class="autotag-detail">' + esc(detail) + '</div>' + (v.hint ? '<div class="autotag-hint">' + esc(v.hint) + '</div>' : '') + '</div></div>';
+  }
+  window.atEdit = function (k) {
+    if (!at || !META[k]) return;
+    cur = k; prev = null;
+    renderEdit();
+    showScreen('autotag-edit');
+    window.scrollTo(0, 0);
+    atPreviewSoon();
+  };
+  function renderEdit() {
+    var k = cur, m = META[k], c = cfg[k];
+    var title = $('atEditTitle'), sub = $('atEditSub'), el = $('atEditContent');
+    if (!el) return;
+    if (title) title.textContent = m.title;
+    if (sub) sub.textContent = m.sub;
+    var h = '<div class="sec">Показ</div><div class="sv-card at-rows" style="margin-bottom:10px">'
+      + toggleRow('enabled', 'Показывать в карточке гостя', esc(m.show))
+      + toggleRow('waiter', 'Показывать официантам', 'Выключите — тег увидят все, кроме официантов')
+      + '</div>';
+    var fs = fields(k);
+    if (fs.length) {
+      h += '<div class="sec">Когда ставится</div><div class="sv-card at-rows" style="margin-bottom:10px">' + (k === 'visitTime' ? '<div class="at-day" id="atDay"></div>' : '') + fs.map(numRow).join('') + '</div>'
+        + '<div class="sr-err" id="atError" style="display:none"></div>';
+    } else {
+      h += '<div class="sr-err" id="atError" style="display:none"></div>';
+    }
+    h += '<div class="note" style="margin:8px 0 0">' + esc(m.note) + (k === 'atRisk' ? ' <button type="button" class="link-btn" onclick="openSegmentRules()">Правила сегментов →</button>' : '') + '</div>';
+    h += '<div class="sec">' + (m.variants.length > 1 ? 'Варианты' : 'Вид в карточке') + '</div>';
+    m.variants.forEach(function (v) {
+      var vk = v[0];
+      h += '<div class="sr-card at-var" id="atv_' + vk + '"><div class="at-vh" id="atvh_' + vk + '"></div>'
+        + '<label class="at-lab" for="at_name_' + vk + '">Название в карточке гостя</label>'
+        + '<input class="form-input" id="at_name_' + vk + '" maxlength="' + at.limits.nameLen + '" autocomplete="off" oninput="atText(\'' + vk + '\',\'name\',this.value)">'
+        + '<div class="at-lab">Цвет</div><div class="tg-swatches" id="atsw_' + vk + '"></div>'
+        + '<label class="at-lab" for="at_hint_' + vk + '">Подсказка для сотрудника <i>— необязательно</i></label>'
+        + '<input class="form-input" id="at_hint_' + vk + '" maxlength="' + at.limits.hintLen + '" autocomplete="off" placeholder="Например: предложите столик у окна" oninput="atText(\'' + vk + '\',\'hint\',this.value)">'
+        + '<div class="at-hc" id="athc_' + vk + '"></div>'
+        + '<div class="at-lab">Так это увидят в карточке</div><div id="atpv_' + vk + '"></div></div>';
+    });
+    if (m.count) h += '<div class="sec">Что получится</div><div class="sr-card at-prev" id="atPrev"></div>';
+    h += '<div class="vn-save" id="atSaveWrap"><button class="btn-cta" id="atSaveBtn" onclick="atSave()">Сохранить</button>'
+      + '<button class="btn-ghost" onclick="atDefaults()">Вернуть стандартные значения</button></div>';
+    el.innerHTML = h;
+    // значения в полях
+    $('at_enabled').checked = !!c.enabled; $('at_waiter').checked = !!c.waiter;
+    fs.forEach(function (f) { $('at_' + f.p.replace('.', '_')).value = getp(c, f.p); });
+    m.variants.forEach(function (v) { $('at_name_' + v[0]).value = c.variants[v[0]].name; $('at_hint_' + v[0]).value = c.variants[v[0]].hint; });
+    refresh();
+  }
+  // всё, что зависит от цифр и цветов, перерисовываем без пересборки формы (поля не теряют фокус)
+  function refresh() {
+    var k = cur, m = META[k], c = cfg[k];
+    m.variants.forEach(function (v) {
+      var vk = v[0], vc = c.variants[vk];
+      var head = $('atvh_' + vk); if (head) head.innerHTML = chip(vc.color, DEFC[k + '.' + vk], v[1] || m.title) + '<span class="at-vn" id="atvn_' + vk + '"></span>';
+      var sw = $('atsw_' + vk); if (sw) sw.innerHTML = swatches(vk, vc.color, DEFC[k + '.' + vk]);
+      var pv = $('atpv_' + vk); if (pv) pv.innerHTML = previewCard(k, vk);
+      var hc = $('athc_' + vk); if (hc) hc.textContent = vc.hint.length + ' / ' + at.limits.hintLen;
+    });
+    var err = validate();
+    var e = $('atError'); if (e) { e.style.display = err ? '' : 'none'; e.textContent = err || ''; }
+    var day = $('atDay'); if (day && !err) day.innerHTML = dayBar();
+    else if (day) day.innerHTML = '';
+    var wrap = $('atSaveWrap'); if (wrap) wrap.classList.toggle('dirty', dirty());
+    var btn = $('atSaveBtn'); if (btn && !saving) btn.disabled = !!err || !dirty();
+    renderCounts();
+  }
+  function dayBar() {
+    var h = cfg.visitTime.hours, segs = [['night', 0, h.morning], ['morning', h.morning, h.day], ['day', h.day, h.evening], ['evening', h.evening, h.night], ['night', h.night, 24]];
+    var names = { morning: 'Утро', day: 'День', evening: 'Вечер', night: 'Ночь' };
+    var bar = segs.map(function (s) {
+      var vc = cfg.visitTime.variants[s[0]], c = vc.color || DEFC['visitTime.' + s[0]];
+      return '<i class="tg-c-' + c + '" style="flex:' + (s[2] - s[1]) + '" title="' + names[s[0]] + ' ' + hh(s[1] % 24) + '–' + hh(s[2] % 24) + '"></i>';
+    }).join('');
+    return '<div class="at-bar">' + bar + '</div><div class="at-bar-l"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div>';
+  }
+  function validate() {
+    var k = cur, c = cfg[k];
+    var fs = fields(k);
+    for (var i = 0; i < fs.length; i++) {
+      var v = getp(c, fs[i].p), l = fs[i].lim;
+      if (typeof v !== 'number' || !isFinite(v) || Math.floor(v) !== v) return fs[i].t + ': нужно целое число';
+      if (v < l.min || v > l.max) return fs[i].t + ': от ' + l.min + ' до ' + l.max;
+    }
+    if (k === 'visitTime') { var h = c.hours; if (!(h.morning < h.day && h.day < h.evening && h.evening < h.night)) return 'Часы окон должны идти по возрастанию: утро, день, вечер, ночь'; }
+    if (k === 'stay' && c.quickMax >= c.longMin) return '«Долго» должно начинаться позже, чем кончается «Быстро»';
+    for (var j = 0; j < META[k].variants.length; j++) { if (!String(c.variants[META[k].variants[j][0]].name).trim()) return 'Название не может быть пустым'; }
+    return '';
+  }
+  function renderCounts() {
+    var k = cur, m = META[k];
+    if (!m.count) return;
+    var counts = prev && prev.counts ? prev.counts : at.counts, cur0 = prev && prev.current ? prev.current : at.counts;
+    var box = $('atPrev');
+    if (box) {
+      var rows = m.variants.map(function (v) {
+        var vk = v[0], vc = cfg[k].variants[vk];
+        var a = countOf(cur0, k, vk), b = countOf(counts, k, vk);
+        var d = a != null && b != null && a !== b ? '<span class="at-d ' + (b > a ? 'up' : 'down') + '">' + (b > a ? '+' : '−') + Math.abs(b - a) + '</span>' : '';
+        return '<div class="at-pr">' + chip(vc.color, DEFC[k + '.' + vk], v[1] || m.title) + '<span class="at-pn">' + (b == null ? '…' : b) + ' ' + plural(b || 0, 'гость', 'гостя', 'гостей') + '</span>' + (a != null && b != null && a !== b ? '<span class="at-pw">было ' + a + '</span>' : '') + d + '</div>';
+      }).join('');
+      var n = counts ? counts.guests : 0;
+      box.innerHTML = rows + '<div class="at-pf">Из ' + n + ' ' + plural(n, 'гостя', 'гостей', 'гостей') + ' в базе. Остальные этот тег не получают.</div>';
+    }
+    m.variants.forEach(function (v) { var el = $('atvn_' + v[0]); var b = countOf(counts, k, v[0]); if (el) el.textContent = b == null ? '' : 'сейчас у ' + b + ' ' + plural(b, 'гостя', 'гостей', 'гостей'); });
+  }
+  function atPreviewSoon() {
+    clearTimeout(prevTimer);
+    if (!at || !META[cur] || !META[cur].count) return;
+    if (!dirty() || validate()) { prev = null; renderCounts(); return; }
+    prevTimer = setTimeout(function () {
+      var my = ++prevSeq;
+      fetch(PROXY_BASE + '/api/admin/autotags/preview', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ config: cfg }) })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) { if (my !== prevSeq || !d) return; prev = d; renderCounts(); })
+        .catch(function () { /* без числа «что получится» — сохранить всё равно можно */ });
+    }, 350);
+  }
+
+  // ── правки в форме ───────────────────────────────────────────────────
+  window.atTog = function (f, v) { if (!cfg || !cur) return; cfg[cur][f] = !!v; refresh(); };
+  window.atNum = function (p, raw) {
+    if (!cfg || !cur) return;
+    var s = String(raw).trim();
+    setp(cfg[cur], p, s === '' ? NaN : Number(s));
+    refresh(); atPreviewSoon();
+  };
+  window.atBump = function (p, step) {
+    if (!cfg || !cur) return;
+    var f = fields(cur).filter(function (x) { return x.p === p; })[0];
+    if (!f) return;
+    var v = getp(cfg[cur], p);
+    if (typeof v !== 'number' || !isFinite(v)) v = f.lim.min;
+    var n = step > 0 ? Math.min(f.lim.max, (Math.floor(v / f.step) + 1) * f.step) : Math.max(f.lim.min, (Math.ceil(v / f.step) - 1) * f.step);
+    if (step === 1 || step === -1) n = Math.min(f.lim.max, Math.max(f.lim.min, v + step));
+    setp(cfg[cur], p, n);
+    var inp = $('at_' + p.replace('.', '_')); if (inp) inp.value = n;
+    refresh(); atPreviewSoon();
+  };
+  window.atText = function (vk, f, val) {
+    if (!cfg || !cur) return;
+    cfg[cur].variants[vk][f] = String(val).replace(/\s+/g, ' ').replace(/^\s+/, '');
+    refresh();
+  };
+  window.atColor = function (vk, color) { if (!cfg || !cur) return; cfg[cur].variants[vk].color = color; refresh(); atPreviewSoon(); };
+  window.atDefaults = function () {
+    if (!cfg || !cur || !at) return;
+    cfg[cur] = clone(at.defaults[cur]);
+    renderEdit(); atPreviewSoon();
+    notify('Стандартные значения подставлены — нажмите «Сохранить»', 'ok');
+  };
+  window.atBack = function () {
+    if (!at || !cfg) { showScreen('autotags'); return; }
+    if (!dirty()) { showScreen('autotags'); renderList(); return; }
+    askConfirm('Выйти без сохранения?\n\nПравки в этом автотеге не сохранятся.', { ok: 'Выйти', cancel: 'Остаться', danger: true }).then(function (yes) {
+      if (!yes || !at) return;
+      cfg = clone(at.config); prev = null;
+      showScreen('autotags'); renderList();
+    });
+  };
+  window.atSave = function () {
+    if (saving || !at || validate()) return;
+    var btn = $('atSaveBtn');
+    saving = true; if (btn) { btn.disabled = true; btn.textContent = 'Сохраняем...'; }
+    var mySave = wipeSeq;
+    tgRequest('PUT', '/api/admin/autotags', { config: cfg }).then(function (d) {
+      if (mySave !== wipeSeq) return; // за это время сотрудник вышел — ответ чужой
+      saving = false;
+      at = d; cfg = clone(d.config); baseJson = JSON.stringify(cfg); prev = null;
+      notify(d.unchanged ? 'Ничего не изменилось' : 'Автотег сохранён — в карточках гостей уже новый', 'ok');
+      showScreen('autotags'); renderList();
+    }).catch(function (e) {
+      if (mySave !== wipeSeq) return;
+      saving = false;
+      if (btn) { btn.textContent = 'Сохранить'; }
+      refresh();
+      notify(typeof tgNetErr === 'function' ? tgNetErr(e) : (e && e.message) || 'Не удалось сохранить');
+    });
+  };
+  // выход из профиля: настройки прошлого сотрудника не остаются
+  window.atWipe = function () { at = null; cfg = null; cur = ''; baseJson = ''; prev = null; loadSeq++; wipeSeq++; prevSeq++; clearTimeout(prevTimer); saving = false; };
 })();
 </script>
 
@@ -22242,7 +22725,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
       { key: 'svc', icon: ic('<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'),
         extra: ['employees', 'employee-form', 'stories-edit', 'surveys-edit', 'survey-form', 'tv', 'tv-room', 'tags-edit', 'tag-form', 'tag-merge', 'audit', 'venue',
-                'birthday-text', 'segment-rules', 'season', 'tips-admin', 'review-rules', 'system-status', 'menu-edit', 'menu-item-form', 'candidates',
+                'birthday-text', 'segment-rules', 'autotags', 'autotag-edit', 'season', 'tips-admin', 'review-rules', 'system-status', 'menu-edit', 'menu-item-form', 'candidates',
                 'checklists-edit', 'checklist-form', 'tobacco'], items: [
         { key: 'service', label: 'Сервис', ok: function () { return serviceItemsFor().length > 0; }, go: function () { openService(); }, screens: ['service'] } ] }
     ];
