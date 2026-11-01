@@ -908,7 +908,12 @@
     /* ТЕГИ (Сервис → Теги): группы карточками, тег — чипом в своём цвете; форма секциями. Плитки .vn-hero/.vn-stat общие с «Режимом работы» */
     .tg2-intro { display: flex; align-items: flex-start; gap: 11px; margin-top: 10px; padding: 12px 14px; border-radius: 14px; background: rgba(var(--fg-rgb),0.04); border: 1px solid var(--border); font-size: 12px; line-height: 1.55; color: var(--text-sub); }
     .tg2-intro svg { flex: 0 0 auto; margin-top: 1px; color: var(--accent); }
-    .tg2-glabel { display: flex; align-items: center; gap: 9px; margin: 24px 0 10px; font-size: 11px; letter-spacing: 0.1px; text-transform: none; color: var(--text-muted); }
+    .tg2-glabel { display: flex; align-items: center; gap: 9px; width: 100%; margin: 10px 0 0; padding: 11px 13px; border: 1px solid var(--border); border-radius: 14px; background: var(--bg-card); font-family: inherit; font-size: 12px; letter-spacing: 0.1px; text-transform: none; color: var(--text-sub); text-align: left; cursor: pointer; }
+    .tg2-glabel .vn-count { margin-right: auto; }
+    .tg2-chev { width: 8px; height: 8px; border: solid var(--text-muted); border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); margin: -3px 3px 0 0; flex: none; transition: transform .15s; }
+    .tg2-grp.open .tg2-chev { transform: rotate(-135deg); margin-top: 3px; }
+    .tg2-grp.open .tg2-glabel { border-color: rgba(var(--ac),0.3); color: var(--text); margin-bottom: 8px; }
+    .tg2-grp:not(.open) > .tg2-card { display: none !important; }
     .tg2-gico { width: 26px; height: 26px; border-radius: 9px; display: flex; align-items: center; justify-content: center; background: var(--accent-dim); color: var(--accent); letter-spacing: 0; }
     .tg2-card { border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); overflow: hidden; }
     .tg2-row { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-top: 1px solid var(--border); cursor: pointer; transition: background .15s; }
@@ -1662,6 +1667,127 @@
     @media (min-width: 700px) {
       .mk-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; align-items: start; }
     }
+    /* Рассылки-конструктор */
+    .mk2-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 4px 0 14px; }
+    .mk2-head-t { font-size: 15px; font-weight: 500; color: var(--text); }
+    .mk2-list { display: grid; gap: 10px; }
+    .mk2-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 14px 15px; cursor: pointer; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+    .mk2-card:active { background: rgba(var(--fg-rgb),0.04); }
+    .mk2-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+    .mk2-card-t { font-size: 14.5px; color: var(--text); line-height: 1.3; overflow-wrap: anywhere; }
+    .mk2-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+    .mk2-when { font-size: 12px; color: var(--text-sub); line-height: 1.45; }
+    .mk2-body { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; white-space: pre-line; overflow-wrap: anywhere; }
+    .mk2-stats { font-size: 12px; color: var(--text-sub); line-height: 1.5; }
+    .mk2-stats b { color: var(--text); font-weight: 500; }
+    .mk2-acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+    .mk2-act { background: transparent; color: var(--text-sub); border: 1px solid rgba(var(--fg-rgb),0.2); border-radius: 100px; padding: 6px 13px; font-family: 'Montserrat', sans-serif; font-size: 12px; cursor: pointer; }
+    .mk2-act:active { background: rgba(var(--fg-rgb),0.06); }
+    .mk2-act.dng { color: var(--c-red2); border-color: rgba(var(--c-red2-rgb),0.4); }
+    .mk2-presets { display: grid; gap: 8px; }
+    .mk2-preset { background: var(--bg-card); border: 1px dashed rgba(var(--fg-rgb),0.2); border-radius: 14px; padding: 12px 14px; cursor: pointer; }
+    .mk2-preset b { display: block; font-size: 13.5px; font-weight: 500; color: var(--text); }
+    .mk2-preset small { display: block; margin-top: 3px; font-size: 11.5px; color: var(--text-muted); line-height: 1.4; }
+    .mk2-preset:active { background: rgba(var(--fg-rgb),0.05); }
+    .mk2-bar { display: flex; align-items: center; gap: 12px; margin: 0 0 12px; }
+    .mk2-steps { display: flex; align-items: center; flex: 1; min-width: 0; }
+    .mk2-st { flex-shrink: 0; }
+    .mk2-stp { display: flex; align-items: center; gap: 9px; background: none; border: none; padding: 6px 2px; cursor: pointer; color: var(--text-muted); font-family: 'Montserrat', sans-serif; font-size: 13px; }
+    .mk2-stp i { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid rgba(var(--fg-rgb),0.28); display: inline-flex; align-items: center; justify-content: center; font-style: normal; font-size: 11px; flex: none; }
+    .mk2-stp.cur { color: var(--text); }
+    .mk2-stp.cur i { border-color: var(--accent); background: var(--accent); color: #1E1004; }
+    .mk2-stp.done i { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+    .mk2-line { flex: 1; height: 1px; background: var(--border); min-width: 14px; margin: 0 8px; }
+    .mk2-wrap { display: block; }
+    .mk2-aside { margin-top: 14px; }
+    .mk2-aside-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 14px; }
+    .mk2-aside-t { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+    .mk2-sum > div { display: flex; gap: 10px; justify-content: space-between; padding: 6px 0; border-top: 1px solid var(--border); font-size: 12.5px; line-height: 1.4; }
+    .mk2-sum > div:first-child { border-top: none; }
+    .mk2-sum span { color: var(--text-muted); flex: none; }
+    .mk2-sum b { color: var(--text); font-weight: 400; text-align: right; overflow-wrap: anywhere; }
+    .mk2-fld { margin-top: 14px; }
+    .mk2-fld:first-child { margin-top: 0; }
+    .mk2-sw { margin-top: 12px; cursor: pointer; }
+    .mk2-dt, .mk2-row { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
+    .mk2-row { margin-top: 0; }
+    .mk2-row select.form-input { flex: 1 1 auto; min-width: 0; }
+    .mk2-row .fld-date { flex: 0 0 150px; width: 150px; }
+    .mk2-days { flex-wrap: nowrap; gap: 6px; }
+    .mk2-days .chip { flex: 1 1 0; min-width: 0; text-align: center; padding: 9px 0; }
+    @media (max-width: 480px) {
+      .mk2-row { flex-wrap: nowrap; gap: 8px; }
+      .mk2-row select.form-input { flex: 1 1 0; font-size: 14px; padding-left: 12px; }
+      .mk2-row .fld-date { flex: 0 0 124px; width: 124px; font-size: 14px; padding-left: 12px; padding-right: 8px; }
+      .mk2-row > span { display: none; }
+    }
+    .mk2-dt .fld-date { flex: 1 1 0; min-width: 0; }
+    .mk2-ro { opacity: 0.72; }
+    .mk2-ro * { pointer-events: none; }
+    .mk2-foot { position: sticky; bottom: 0; z-index: 20; display: flex; gap: 8px; margin: 10px -16px 0; padding: 16px 16px calc(10px + env(safe-area-inset-bottom)); background: linear-gradient(to bottom, rgba(var(--bg-rgb),0) 0%, var(--bg) 40%); }
+    .mk2-foot .btn-cta, .mk2-foot .btn-ghost { margin-top: 0; width: auto; flex: 1 1 0; min-width: 0; padding: 12px 10px; white-space: nowrap; }
+    .mk2-foot .btn-cta { flex: 1.5 1 0; }
+    .mk2-foot .mk2-back { flex: 0 0 auto; padding: 12px 16px; }
+    /* компактные поля шагов */
+    .mk2-hint { font-size: 11.5px; line-height: 1.45; color: var(--text-muted); margin-top: 8px; }
+    .mk2-hint b { color: var(--text-sub); font-weight: 500; }
+    .mk2-seg3 { display: flex; gap: 4px; padding: 3px; border: 1px solid var(--border); border-radius: 100px; background: var(--bg-card); }
+    .mk2-seg3 button { flex: 1 1 0; min-width: 0; border: none; background: transparent; color: var(--text-sub); font-family: 'Montserrat', sans-serif; font-size: 12.5px; padding: 9px 6px; border-radius: 100px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mk2-seg3 button.sel { background: var(--accent-dim); color: var(--accent); box-shadow: inset 0 0 0 1px rgba(var(--ac),0.45); }
+    .mk2-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+    .mk2-chips:first-of-type { margin-top: 0; }
+    .mk2-sc { display: inline-flex; align-items: center; gap: 6px; padding: 7px 10px; font-size: 12px; line-height: 1.2; }
+    .mk2-sc b { font-weight: 500; font-size: 11.5px; color: var(--text-muted); }
+    .mk2-sc.selected b { color: var(--accent); }
+    .mk2-sc.empty:not(.selected) { opacity: 0.6; }
+    .mk2-more { padding: 7px 10px; font-size: 12px; border-style: dashed; color: var(--text-muted); }
+    .mk2-aud { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-top: 8px; font-size: 12.5px; color: var(--text-sub); }
+    .mk2-aud b { color: var(--accent); font-weight: 500; }
+    .mk2-adv { margin-top: 14px; border: 1px solid var(--border); border-radius: 14px; background: var(--bg-card); }
+    .mk2-adv-h { display: flex; align-items: center; gap: 10px; width: 100%; padding: 11px 13px; background: none; border: none; color: var(--text); font-family: 'Montserrat', sans-serif; font-size: 13px; text-align: left; cursor: pointer; }
+    .mk2-adv-h small { flex: 1; min-width: 0; font-size: 11.5px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: right; }
+    .mk2-adv-h i { width: 8px; height: 8px; border: solid var(--text-muted); border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); margin: -3px 2px 0 0; flex: none; transition: transform .15s; }
+    .mk2-adv.open .mk2-adv-h i { transform: rotate(-135deg); margin-top: 3px; }
+    .mk2-adv-b { padding: 0 13px 13px; }
+    .mk2-adv-b .mk2-sw:first-child { margin-top: 0; }
+    .mk2-sub { margin-top: 10px; }
+    .mk2-evs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+    .mk2-ev { display: flex; align-items: center; gap: 9px; padding: 10px 12px; border-radius: 13px; border: 1px solid var(--border); background: var(--bg-card); cursor: pointer; font-size: 13px; line-height: 1.3; color: var(--text); }
+    .mk2-ev .mk-radio { flex: none; }
+    .mk2-ev.sel { border-color: rgba(var(--ac),0.6); background: var(--accent-dim); }
+    .mk2-ev.sel .mk-radio { border-color: var(--accent); }
+    .mk2-ev.sel .mk-radio::after { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: var(--accent); }
+    .mk2-iiko { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-top: 8px; font-size: 11.5px; color: var(--text-muted); opacity: 0.8; }
+    .mk2-cfg { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+    .mk2-cfg label { flex: none; font-size: 12px; color: var(--text-sub); }
+    .mk2-cfg select.form-input { flex: 1 1 auto; min-width: 0; }
+    .mk2-panel .mk-text { height: 170px; }
+    .mk-chip.ghost { background: transparent; border-color: rgba(var(--fg-rgb),0.2); color: var(--text-sub); }
+    .mk-chip:disabled { opacity: 0.45; cursor: default; }
+    .mk-texttools .mk-count { margin-left: auto; }
+    .mk2-pv-t { margin-top: 16px; }
+    .mk2-sumbox + .mk2-pv-t { margin-top: 16px; }
+    .mk2-send { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: center; padding: 9px 0; border-top: 1px solid var(--border); }
+    .mk2-send-n { font-size: 13px; color: var(--text); cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .mk2-send-s { grid-column: 1 / -1; font-size: 11.5px; color: var(--text-muted); line-height: 1.4; }
+    @media (max-width: 560px) { .mk2-stp span { display: none; } .mk2-stp.cur span { display: inline; } .mk2-st.new { display: none; } }
+    @media (max-width: 959px) {
+      .mk2-wrap:not([data-step="3"]) .mk2-aside { display: none; }
+      .mk2-sumbox { display: none; }
+      .mk2-pv-t { margin-top: 0; }
+      .mk2-aside-card { padding: 0; border: none; background: none; }
+      .mk2-wrap[data-step="3"] .mk-text { height: 120px; }
+    }
+    @media (max-width: 420px) { .mk2-seg3 { gap: 2px; } .mk2-seg3 button { font-size: 11.5px; padding: 9px 2px; letter-spacing: -0.1px; } .mk2-ev { padding: 9px 10px; font-size: 12.5px; } .mk2-cfg { flex-wrap: wrap; gap: 6px; } .mk2-cfg select.form-input { flex: 1 1 100%; } }
+    @media (min-width: 640px) { .mk2-presets { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (min-width: 900px) { .mk2-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (min-width: 960px) {
+      .mk2-wrap { display: grid; grid-template-columns: minmax(0, 720px) 340px; grid-template-rows: auto 1fr; column-gap: 34px; align-items: start; }
+      .mk2-main { grid-column: 1; grid-row: 1; }
+      .mk2-aside { grid-column: 2; grid-row: 1 / span 2; margin-top: 0; position: sticky; top: 16px; }
+      .mk2-foot { grid-column: 1; grid-row: 2; margin: 6px 0 0; padding: 14px 0 12px; background: linear-gradient(to bottom, rgba(var(--bg-rgb),0) 0%, var(--bg) 35%); }
+    }
+    @media (min-width: 1500px) { .mk2-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } .mk2-presets { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
     .log-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; }
     .log-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 11px; color: var(--text-muted); margin-bottom: 7px; }
     .log-text { font-size: 12.5px; color: var(--text-sub); line-height: 1.45; white-space: pre-line; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
@@ -2196,6 +2322,17 @@
     .vn-day.off .vn-day-name { color: var(--text-muted); }
     /* Строка дня в одну линию (день · время · полоска · тумблер) — только когда САМ блок недели достаточно широк:
        ширину блока ограничивает колонка экрана, а не окно, поэтому смотрим на блок (container query), а не на ширину окна. */
+    /* Средняя ширина (колонка рядом с закрытыми датами): день · время · тумблер в одну строку, полоска под ней — вся неделя помещается без длинной прокрутки */
+    @container (min-width: 470px) and (max-width: 709.98px) {
+      .vn-day { grid-template-columns: minmax(84px, 112px) minmax(0, 1fr) auto; gap: 8px 12px; padding: 10px 0; }
+      .vn-day-name { grid-column: 1; grid-row: 1; }
+      .vn-times { grid-column: 2; grid-row: 1; gap: 8px; }
+      .vn-swl { grid-column: 3; grid-row: 1; }
+      .vn-swl > span:first-child { display: none; }
+      .vn-track { grid-column: 1 / -1; grid-row: 2; }
+      .vn-offmsg { grid-column: 2; grid-row: 1; padding: 8px 10px; }
+      .vn-time { height: 38px; padding: 0 8px; font-size: 14px; }
+    }
     @container (min-width: 710px) {
       .vn-day { grid-template-columns: minmax(120px, 170px) minmax(290px, 300px) minmax(60px, 1fr) auto; gap: 14px; }
       .vn-day-name, .vn-times, .vn-track, .vn-swl, .vn-offmsg { grid-row: 1; }
@@ -3195,6 +3332,16 @@
       body:has(#deskLeft.role-ok) .grid-2 { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
       /* формы и карточки одной записи не растягиваем: колонка 900px по центру широкого поля (класс col-narrow ставит showScreen) */
       body:has(#deskLeft.role-ok).col-narrow .screen { max-width: var(--formw); margin-left: auto; margin-right: auto; }
+      /* «Новое мероприятие» на широком экране: постер слева, поля справа — вся форма на одном экране без прокрутки */
+      body:has(#deskLeft.role-ok).col-narrow #screen-add-event { max-width: 1040px; }
+      #screen-add-event > div:nth-child(2) { display: grid; grid-template-columns: 290px minmax(0, 1fr) minmax(0, 1fr); column-gap: 14px; align-items: start; }
+      #screen-add-event > div:nth-child(2) > * { grid-column: 2 / -1; min-width: 0; }
+      #screen-add-event > div:nth-child(2) > .form-group { margin-bottom: 12px; }
+      #screen-add-event > div:nth-child(2) > .form-group:nth-child(1) { grid-column: 1; grid-row: 1 / span 6; margin-right: 14px; }
+      #screen-add-event > div:nth-child(2) > .form-group:nth-child(2) { grid-column: 2; grid-row: 1; }
+      #screen-add-event > div:nth-child(2) > .form-group:nth-child(3) { grid-column: 3; grid-row: 1; }
+      #screen-add-event .poster-drop { min-height: 330px; }
+      #screen-add-event .poster-empty .s { font-size: 11px; }
       /* календари на всю ширину делаем низкими (широкие клетки), иначе месяц не помещается на экран по высоте */
       body:has(#deskLeft.role-ok) #screen-schedule .cal-day { aspect-ratio: 2.3 / 1; }
       body:has(#deskLeft.role-ok) #screen-schedule.cal-big .cal-day { aspect-ratio: 1.5 / 1; }
@@ -4743,10 +4890,10 @@ body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-le
 <!-- ADMIN: РАССЫЛКИ -->
 <div class="screen" id="screen-marketing">
   <div class="header">
-    <div class="back-btn" onclick="showScreen('home')">
+    <div class="back-btn" onclick="mkHeaderBack()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
-    <div><h1 style="font-size:14px;letter-spacing:1px;">Рассылки</h1><p>Сегменты · гостевой бот</p></div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Рассылки</h1><p>Конструктор · гостевой бот</p></div>
   </div>
   <div style="padding:0 16px" id="marketingContent"><div class="loading">Загружаю...</div></div>
 </div>
@@ -6279,8 +6426,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     myScheduleEmployeeId = null;
     guestsTableData = [];
     mkData = null;
-    mkSelected = { key: null };
-    mkText = '';
+    mkSegs = null;
+    mkForm = null;
     sgData = null;
     fbData = null;
     dupData = null;
@@ -13636,13 +13783,24 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       const list = tgAdmin.groups[k] || [];
       const presets = list.filter(t => t.preset);
       const manual = list.filter(t => !t.preset);
-      return `<div class="tg2-glabel"><span class="tg2-gico">${TG_ICONS[k] || ''}</span><span>${escHtml(label)}</span><em class="vn-count">${list.length}</em></div>`
+      const open = tgGroupOpen(k);
+      return `<div class="tg2-grp${open ? ' open' : ''}" id="tgGrp_${k}">`
+        + `<button type="button" class="tg2-glabel" aria-expanded="${open}" onclick="tgToggleGroup('${k}')"><span class="tg2-gico">${TG_ICONS[k] || ''}</span><span>${escHtml(label)}</span><em class="vn-count">${list.length}</em><i class="tg2-chev"></i></button>`
         + `<div class="tg2-card">`
         + (presets.map(t => tgRowHtml(t, k, false)).join('') || '<div class="tg2-empty">Готовых вариантов пока нет</div>')
         + (manual.length ? `<div class="tg2-manual">Вписаны вручную в карточках: ${manual.length}</div>${manual.map(t => tgRowHtml(t, k, true)).join('')}` : '')
         + `<button type="button" class="tg2-add" onclick="openTagForm(null,'${k}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Добавить тег</button>`
-        + `</div>`;
+        + `</div></div>`;
     }).join('');
+  }
+  // Разделы тегов сворачиваются: открыт только первый, остальное — одной строкой (так на экране видно все четыре раздела сразу)
+  let tgOpenGroups = null;
+  function tgGroupOpen(k) { if (!tgOpenGroups) tgOpenGroups = {}; return !!tgOpenGroups[k]; }
+  function tgToggleGroup(k) {
+    const on = !tgGroupOpen(k);
+    tgOpenGroups[k] = on;
+    const g = document.getElementById('tgGrp_' + k);
+    if (g) { g.classList.toggle('open', on); const b = g.querySelector('.tg2-glabel'); if (b) b.setAttribute('aria-expanded', String(on)); }
   }
 
   function openTagForm(id, group) {
@@ -17072,107 +17230,272 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     return n > 0 ? '+' + n : String(n);
   }
 
-  // ─── АДМИН: РАССЫЛКИ ───────────────────────────
-  // Сегменты гостей + сообщение от гостевого бота. Сервер сам проверяет окно
-  // отправки (днём), отписки и «Нон-грата»; здесь — выбор, текст и журнал.
-  // Экран по шагам: 1 кому → 2 текст → 3 как увидит гость → 4 отправка, ниже журнал.
+  // ─── АДМИН: РАССЫЛКИ (КОНСТРУКТОР) ───────────────────────────
+  // Как в CosmosResto: список рассылок и конструктор по шагам «Основные детали → Условия → Контент».
+  // Три типа: массовая (одна отправка сегментам — сразу или в назначенное время), маркетинговая и сервисная
+  // (работают сами после события: визит, первый визит, неявка, скоро день рождения, гость попал в сегмент).
+  // Кому можно писать (Telegram, отписка, «Нон-грата»), часы отправки и лимиты проверяет сервер; здесь — настройка,
+  // «что получится» простыми словами и превью сообщения.
 
-  let mkData = null;
-  let mkSelected = { key: null };
-  let mkText = '';
-  let mkGuestsOpen = false;
-  let mkSegGuests = null;      // список гостей выбранного сегмента (для разбивки и превью)
-  let mkSegSeq = 0;
+  let mkData = null;          // /api/admin/mailings: рассылки, события, часы отправки
+  let mkSegs = null;          // /api/admin/marketing/segments: сегменты и теги с числом гостей
+  let mkForm = null;          // рассылка, которую правят сейчас (null — виден список)
+  let mkStep = 1;
+  let mkVisited = new Set([1]);
+  let mkDirty = false;
+  let mkBusy = false;
+  let mkAud = null;           // сколько гостей в выбранных сегментах: { key, total, reachable, reasons, sample }
+  let mkAudSeq = 0, mkAudTimer = 0;
+  let mkTagsAll = false;
+  let mkWatchTimer = 0;
 
-  const MK_REASON = {
-    no_phone: 'нет телефона',
-    no_telegram: 'нет Telegram',
-    opted_out: 'отписался',
-    duplicate: 'тот же Telegram'
+  const MK_KIND = {
+    mass: ['Массовая', 'Одна отправка выбранным сегментам: сразу или в назначенное время.'],
+    marketing: ['Маркетинговая', 'Работает сама после события: благодарность, возврат гостей, акции. Не пишет тем, кто отписался.'],
+    service: ['Сервисная', 'Сообщение по делу после события: спасибо, напоминание. Приходит и отписавшимся.']
   };
-  const MK_REASON_PLURAL = {
-    no_phone: 'без телефона',
-    no_telegram: 'без Telegram',
-    opted_out: 'отписались',
-    duplicate: 'дубль Telegram'
-  };
+  const MK_DELAYS = [[15, '15 минут'], [30, '30 минут'], [45, '45 минут'], [60, '1 час'], [120, '2 часа'], [180, '3 часа'], [360, '6 часов'], [720, '12 часов'], [1440, '1 день'], [2880, '2 дня'], [4320, '3 дня'], [10080, '7 дней']];
+  const MK_DELAY_TEXT = { 15: 'через 15 минут', 30: 'через 30 минут', 45: 'через 45 минут', 60: 'через 1 час', 120: 'через 2 часа', 180: 'через 3 часа', 360: 'через 6 часов', 720: 'через 12 часов', 1440: 'через 1 день', 2880: 'через 2 дня', 4320: 'через 3 дня', 10080: 'через 7 дней' };
+  const MK_WEEK = [[1, 'Пн'], [2, 'Вт'], [3, 'Ср'], [4, 'Чт'], [5, 'Пт'], [6, 'Сб'], [7, 'Вс']];
+  const MK_OFFSETS = [[0, 'в тот же день'], [1, 'на следующий день'], [2, 'через 2 дня'], [3, 'через 3 дня'], [4, 'через 4 дня'], [5, 'через 5 дней'], [6, 'через 6 дней'], [7, 'через неделю'], [14, 'через 2 недели']];
+  const MK_BEFORE = [1, 2, 3, 5, 7, 10, 14];
+  const MK_LIMITS = [[7, '7 дней'], [14, '14 дней'], [30, '30 дней'], [60, '2 месяца'], [90, '3 месяца'], [180, 'полгода'], [365, 'год']];
+  const MK_REASON_PLURAL = { no_phone: 'без телефона', no_telegram: 'без Telegram', opted_out: 'отписались', duplicate: 'дубль Telegram' };
   const MK_PLACEHOLDER = '{имя}, в эту пятницу на Крыше — живой диджей-сет. Забронировать стол можно в приложении.';
+  const MK_ALL_DAYS = [1, 2, 3, 4, 5, 6, 7];
+  const MK_PRESETS = [
+    { title: 'Спасибо за визит', hint: 'На следующий день после визита, в 12:00', form: { kind: 'marketing', trigger: 'visit', delayMode: 'schedule', scheduleCfg: { days: MK_ALL_DAYS, time: '12:00', offsetDays: 1 }, limitOn: true, limitDays: 14,
+      body: '{имя}, спасибо, что были на Крыше! Будем рады видеть вас снова — стол можно забронировать в приложении.' } },
+    { title: 'Вернуть давних гостей', hint: 'Когда гость не был 60 дней и больше', form: { kind: 'marketing', trigger: 'segment_enter', triggerCfg: { segment: { key: 'inactive60' } }, delayMode: 'none', limitOn: true, limitDays: 60,
+      body: '{имя}, давно не виделись! Загляните на Крышу — подберём кальян по вашему вкусу.' } },
+    { title: 'Скоро день рождения', hint: 'За 5 дней до дня рождения, в 12:00', form: { kind: 'marketing', trigger: 'birthday_soon', triggerCfg: { daysBefore: 5 }, delayMode: 'schedule', scheduleCfg: { days: MK_ALL_DAYS, time: '12:00', offsetDays: 0 }, limitOn: true, limitDays: 365,
+      body: '{имя}, через несколько дней у вас день рождения! Отпразднуйте его на Крыше — забронируйте стол заранее.' } },
+    { title: 'Мы вас ждали', hint: 'Бронь отмечена «не пришёл» — через 2 часа', form: { kind: 'service', trigger: 'no_show', delayMode: 'simple', delayMinutes: 120,
+      body: '{имя}, мы вас ждали сегодня на Крыше. Если планы изменились — забронируйте новое время в приложении.' } }
+  ];
 
+  // ── вспомогательное ──
+  async function mkApi(method, path, body) {
+    const res = await fetch(`${PROXY_BASE}${path}${path.includes('?') ? '&' : '?'}pin=${getPin()}`, {
+      method, headers: { 'Content-Type': 'application/json' }, body: body === undefined ? undefined : JSON.stringify(body)
+    });
+    if (res.status === 401) { showScreen('pin'); throw new Error('Войдите заново'); }
+    if (!res.ok) throw new Error(await responseError(res, 'Не удалось выполнить действие'));
+    return res.json().catch(() => ({}));
+  }
+  const mkWin = (kind) => (kind === 'service' ? mkData.serviceHours : mkData.hours);
+  const mkTrig = (key) => (mkData.triggers || []).find(t => t.key === key);
+  function mkSegTitle(s) {
+    if (s.key === 'tag') return (mkSegs.tags || []).find(t => t.key === s.tag)?.label || String(s.tag || '').replace(/^(like|special):/, '');
+    return (mkSegs.segments || []).find(x => x.key === s.key)?.title || s.key;
+  }
+  const mkSegId = (s) => `${s.key}|${s.tag || ''}`;
+  function mkMsk(iso) {
+    const p = Object.fromEntries(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Moscow', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(new Date(iso)).map(x => [x.type, x.value]));
+    return { date: `${p.year}-${p.month}-${p.day}`, time: `${String(Number(p.hour) % 24).padStart(2, '0')}:${p.minute}` };
+  }
+  function mkDt(iso) {
+    return new Date(iso).toLocaleString('ru-RU', { timeZone: 'Europe/Moscow', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+  }
+  function mkAgo(iso) {
+    if (!iso) return '';
+    const m = mkMsk(iso);
+    return `${capFirst(humanDay(iso))}, ${m.time}`;
+  }
+  function mkToday() { return mkMsk(new Date().toISOString()).date; }
+  const mkDaysText = (days) => (!days || days.length === 7 ? 'каждый день' : `по: ${MK_WEEK.filter(d => days.includes(d[0])).map(d => d[1].toLowerCase()).join(', ')}`);
+
+  function mkNewForm(preset) {
+    const f = {
+      id: null, status: 'draft', kind: 'marketing', title: '', extraPriority: false, description: '', segments: [],
+      trigger: 'manual', triggerCfg: {}, delayMode: 'none', delayMinutes: 60, scheduleCfg: { days: MK_ALL_DAYS.slice(), time: '12:00', offsetDays: 1 },
+      sendMode: 'now', sendDate: '', sendTime: '18:00', limitOn: false, limitDays: 30, body: ''
+    };
+    if (preset) Object.assign(f, JSON.parse(JSON.stringify(preset)));
+    return f;
+  }
+  function mkFormFrom(c) {
+    const f = mkNewForm();
+    Object.assign(f, {
+      id: c.id, status: c.status, kind: c.kind, title: c.title, extraPriority: !!c.extraPriority, description: c.description || '',
+      segments: (c.segments || []).map(s => (s.tag ? { key: s.key, tag: s.tag } : { key: s.key })),
+      trigger: c.trigger, triggerCfg: c.triggerCfg || {}, delayMode: c.delayMode, delayMinutes: c.delayMinutes || 60,
+      limitOn: c.limitDays > 0, limitDays: c.limitDays > 0 ? c.limitDays : 30, body: c.body || '', runStats: c.runStats || {}, stats: c.stats || null
+    });
+    if (c.delayMode === 'schedule' && c.scheduleCfg && c.scheduleCfg.days) f.scheduleCfg = { days: c.scheduleCfg.days.slice(), time: c.scheduleCfg.time, offsetDays: c.scheduleCfg.offsetDays || 0 };
+    if (c.sendAt) { const p = mkMsk(c.sendAt); f.sendMode = 'later'; f.sendDate = p.date; f.sendTime = p.time; }
+    return f;
+  }
+  function mkSendAt(f) {
+    if (f.kind !== 'mass' || f.sendMode !== 'later' || !f.sendDate || !f.sendTime) return null;
+    const d = new Date(`${f.sendDate}T${f.sendTime}:00+03:00`);
+    return isNaN(d) ? null : d.toISOString();
+  }
+  function mkPayload(f) {
+    const mass = f.kind === 'mass';
+    return {
+      title: f.title, kind: f.kind, extraPriority: f.kind === 'marketing' && f.extraPriority, description: f.description, segments: f.segments,
+      trigger: mass ? 'manual' : f.trigger, triggerCfg: mass ? {} : f.triggerCfg, delayMode: mass ? 'none' : f.delayMode, delayMinutes: f.delayMinutes, scheduleCfg: f.scheduleCfg,
+      sendAt: mkSendAt(f), limitDays: !mass && f.limitOn ? f.limitDays : 0, body: f.body
+    };
+  }
+  // Чего не хватает на шаге (пустая строка — всё в порядке)
+  function mkStepProblem(f, step) {
+    const win = mkWin(f.kind);
+    if (step === 1) {
+      if (!f.title.trim()) return 'Напишите название рассылки';
+      if (f.kind === 'mass' && !f.segments.length) return 'Выберите, кому отправить';
+    } else if (step === 2) {
+      if (f.kind === 'mass') {
+        if (f.sendMode !== 'later') return '';
+        if (!f.sendDate || !f.sendTime) return 'Выберите дату и время отправки';
+        const h = Number(f.sendTime.split(':')[0]);
+        return h >= win.from && h < win.to ? '' : `Рассылки отправляются с ${win.from}:00 до ${win.to}:00 — выберите время в эти часы`;
+      }
+      const t = mkTrig(f.trigger);
+      if (!t || t.iiko) return 'Выберите событие, после которого отправлять';
+      if (f.trigger === 'segment_enter' && !(f.triggerCfg && f.triggerCfg.segment)) return 'Выберите сегмент, в который должен попасть гость';
+      if (f.delayMode === 'schedule') {
+        const tm = String(f.scheduleCfg.time || '');
+        if (!/^\d{1,2}:\d{2}$/.test(tm)) return 'Укажите время отправки';
+        const h = Number(tm.split(':')[0]);
+        if (h < win.from || h >= win.to) return `Время отправки должно быть с ${win.from}:00 до ${win.to}:00`;
+      }
+    } else if (step === 3) {
+      if (!f.body.trim()) return 'Напишите текст сообщения';
+    }
+    return '';
+  }
+  const mkReadOnly = () => !!mkForm && (mkForm.status === 'active' || mkForm.status === 'finished');
+
+  // Что получится — простыми словами
+  function mkDelayText(f) {
+    if (f.delayMode === 'simple') return MK_DELAY_TEXT[f.delayMinutes] || 'с задержкой';
+    if (f.delayMode === 'schedule') {
+      const o = (MK_OFFSETS.find(x => x[0] === f.scheduleCfg.offsetDays) || MK_OFFSETS[1])[1];
+      return `${o} в ${f.scheduleCfg.time || '12:00'} (${mkDaysText(f.scheduleCfg.days)})`;
+    }
+    return 'сразу';
+  }
+  function mkTrigText(f) {
+    const t = mkTrig(f.trigger);
+    if (!t || t.iiko) return '';
+    let s = t.title.toLowerCase();
+    if (f.trigger === 'birthday_soon') s = `за ${f.triggerCfg.daysBefore || 7} ${ruPlural(f.triggerCfg.daysBefore || 7, 'день', 'дня', 'дней')} до дня рождения`;
+    if (f.trigger === 'segment_enter' && f.triggerCfg.segment) s = `гость попал в сегмент «${mkSegTitle(f.triggerCfg.segment)}»`;
+    return s;
+  }
+  function mkSegsText(f) {
+    return f.segments.length ? f.segments.map(s => `«${mkSegTitle(s)}»`).join(', ') : (f.kind === 'mass' ? 'не выбрано' : 'все гости, с кем случится событие');
+  }
+  function mkStatus(c) {
+    const rs = c.runStats || {};
+    if (c.status === 'draft') return ['Черновик', ''];
+    if (c.status === 'paused') return ['На паузе', 'warn'];
+    if (c.kind === 'mass') {
+      if (c.status === 'active') return ['Запланирована', 'warn'];
+      if (rs.running) return mkData.running ? ['Отправляется', 'warn'] : ['Прервана', 'bad'];
+      if (rs.aborted) return ['Прервана', 'bad'];
+      if (rs.note) return ['Не отправлена', 'bad'];
+      return ['Отправлена', 'good'];
+    }
+    return ['Работает', 'good'];
+  }
+
+  // ── список ──
   async function openMarketing() {
     showScreen('marketing');
     const el = document.getElementById('marketingContent');
-    el.innerHTML = '<div class="loading">Считаю сегменты...</div>';
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
     try {
-      const res = await fetch(`${PROXY_BASE}/api/admin/marketing/segments?pin=${getPin()}`);
-      if (res.status === 401) { showScreen('pin'); return; }
-      if (res.status === 403) { accessDenied(); return; }
-      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить сегменты'));
-      mkData = await res.json();
-      mkGuestsOpen = false;
-      renderMarketing();
+      const [a, b] = await Promise.all([mkApi('GET', '/api/admin/mailings'), mkApi('GET', '/api/admin/marketing/segments')]);
+      mkData = a; mkSegs = b;
+      mkForm = null; mkDirty = false;
+      renderMkList();
       if (can('marketing.log')) loadMarketingLog();
-      if (mkSelected.key) mkLoadSegment();
+      mkWatch();
     } catch (e) {
-      el.innerHTML = errorStateHtml(e.message || 'Не удалось загрузить сегменты', 'openMarketing()');
+      if (activeScreenName() === 'marketing') el.innerHTML = errorStateHtml(e.message || 'Не удалось загрузить рассылки', 'openMarketing()');
     }
   }
-
-  function mkCurrent() {
-    if (!mkData || !mkSelected.key) return null;
-    return mkData.segments.find(s => s.key === mkSelected.key) || null;
+  async function mkReloadList() {
+    try { mkData = await mkApi('GET', '/api/admin/mailings'); } catch (e) { notify(e.message || 'Не удалось обновить список'); }
+    mkForm = null; mkDirty = false;
+    renderMkList();
+    if (can('marketing.log')) loadMarketingLog();
+    mkWatch();
+  }
+  // Пока идёт массовая отправка или на экране список — обновляем раз в 5 секунд (счётчики, статусы)
+  function mkWatch() {
+    clearTimeout(mkWatchTimer);
+    if (activeScreenName() !== 'marketing' || mkForm) return;
+    const busy = !!mkData?.running || (mkData?.campaigns || []).some(c => c.kind === 'mass' && c.runStats && c.runStats.running);
+    if (!busy) return;
+    mkWatchTimer = setTimeout(async () => {
+      if (activeScreenName() !== 'marketing' || mkForm) return;
+      try { mkData = await mkApi('GET', '/api/admin/mailings'); renderMkList(); if (can('marketing.log')) loadMarketingLog(); } catch {}
+      mkWatch();
+    }, 5000);
   }
 
-  function mkSegRow(s) {
-    const sel = mkSelected.key === s.key;
-    return `<div class="mk-seg${sel ? ' selected' : ''}${s.reachable ? '' : ' empty'}${s.group === 'rfm' ? ' rfm-' + escHtml(s.key) : ''}" data-key="${escHtml(s.key)}" onclick="mkSelect('${escJs(s.key)}')">
-      <span class="mk-radio"></span>
-      <div class="mk-seg-main">
-        <div class="mk-seg-title">${s.group === 'rfm' ? '<span class="rfm-dot"></span>' : ''}${escHtml(s.title)}</div>
-        <div class="mk-seg-desc">${escHtml(s.description || '')}</div>
-      </div>
-      <div class="mk-seg-n"><b>${s.reachable}</b><span>из ${s.total}</span></div>
+  function mkWhenLine(c) {
+    if (c.kind === 'mass') {
+      if (c.status === 'active' && c.sendAt) return `Отправим ${mkDt(c.sendAt)}`;
+      if (c.status === 'finished' && c.runStats && c.runStats.at) return `Отправлена ${mkAgo(c.runStats.at).toLowerCase()}`;
+      return c.sendAt ? `Запланировано на ${mkDt(c.sendAt)}` : 'Отправка вручную';
+    }
+    const f = mkFormFrom(c);
+    const t = mkTrigText(f);
+    return t ? `${capFirst(t)} · ${mkDelayText(f)}` : 'Событие не выбрано';
+  }
+  function mkStatsLine(c) {
+    if (c.kind === 'mass') {
+      const rs = c.runStats || {};
+      if (rs.note) return escHtml(rs.note);
+      if (!rs.at) return '';
+      return `Доставлено <b>${rs.sent || 0}</b> из ${rs.total || 0}${rs.failed ? ` · не доставлено ${rs.failed}` : ''}`;
+    }
+    const s = c.stats || { sent: 0, queued: 0, failed: 0, skipped: 0 };
+    if (!s.sent && !s.queued && !s.failed && !s.skipped) return c.status === 'active' ? 'Пока никому не писали — ждём событий' : '';
+    return `Отправлено <b>${s.sent}</b> · в очереди <b>${s.queued}</b>${s.skipped ? ` · пропущено ${s.skipped}` : ''}${s.failed ? ` · ошибок ${s.failed}` : ''}`;
+  }
+  function mkCardHtml(c) {
+    const [label, cls] = mkStatus(c);
+    const id = escJs(c.id);
+    const btn = (t, call, extra) => `<button type="button" class="mk2-act${extra ? ' ' + extra : ''}" onclick="event.stopPropagation();${call}">${t}</button>`;
+    let acts = '';
+    if (c.status === 'active') acts = (c.kind === 'mass' ? btn('Отменить отправку', `mkPause('${id}')`) : btn('Пауза', `mkPause('${id}')`)) + btn('Открыть', `mkOpen('${id}')`) + btn('Копия', `mkDuplicate('${id}')`);
+    else if (c.status === 'finished') acts = btn('Открыть', `mkOpen('${id}')`) + btn('Копия', `mkDuplicate('${id}')`) + btn('Удалить', `mkDelete('${id}')`, 'dng');
+    else acts = btn('Изменить', `mkOpen('${id}')`) + btn('Копия', `mkDuplicate('${id}')`) + btn('Удалить', `mkDelete('${id}')`, 'dng');
+    const stats = mkStatsLine(c);
+    return `<div class="mk2-card" onclick="mkOpen('${id}')">
+      <div class="mk2-card-top"><div class="mk2-card-t">${escHtml(c.title)}</div><span class="pill ${cls}">${escHtml(label)}</span></div>
+      <div class="mk2-meta"><span class="pill">${escHtml(MK_KIND[c.kind][0])}</span>${c.extraPriority ? '<span class="pill">повышенный приоритет</span>' : ''}</div>
+      <div class="mk2-when">${escHtml(mkWhenLine(c))}</div>
+      <div class="mk2-body">${escHtml(c.body || 'Текст ещё не написан')}</div>
+      ${stats ? `<div class="mk2-stats">${stats}</div>` : ''}
+      <div class="mk2-acts">${acts}</div>
     </div>`;
   }
-
-  function renderMarketing() {
+  function renderMkList() {
     const el = document.getElementById('marketingContent');
-    const d = mkData;
-    const rfm = d.segments.filter(s => s.group === 'rfm');
-    const other = d.segments.filter(s => s.group !== 'rfm');
+    if (!el || !mkData) return;
+    const list = mkData.campaigns || [];
     let html = '<div id="mkRunning"></div>';
-    html += '<div class="mk-layout"><div class="mk-col">';
-    html += `<div class="an-step"><b>1</b>Кому</div>
-      <div class="mk-legend">Справа — скольким можно написать в Telegram, из скольких в сегменте</div>
-      <div class="an-group">По визитам</div>
-      <div class="mk-seglist">${rfm.map(mkSegRow).join('')}</div>
-      <div class="an-group">Подборки</div>
-      <div class="mk-seglist">${other.map(mkSegRow).join('')}</div>
-      <div id="mkWho"></div>`;
-    html += '</div><div class="mk-col">';
-    html += `<div class="an-step"><b>2</b>Текст</div>
-      <textarea class="form-input mk-text" id="mkText" maxlength="3500" placeholder="${escHtml(MK_PLACEHOLDER)}" oninput="mkOnText(this.value)">${escHtml(mkText)}</textarea>
-      <div class="mk-texttools">
-        <button type="button" class="mk-chip" onclick="mkInsertName()">+ {имя}</button>
-        <span class="mk-texthint">подставится имя гостя</span>
-        <span class="mk-count" id="mkCount">${mkText.length}/3500</span>
-      </div>
-      <div class="an-step"><b>3</b>Как увидит гость</div>
-      <div class="mk-preview">
-        <div class="mk-bot"><span class="mk-bot-ava">НК</span><span>На Крыше <em>бот</em></span></div>
-        <div class="mk-bubble" id="mkPreview"></div>
-      </div>
-      <div class="an-step"><b>4</b>Отправка</div>
-      <div id="mkTarget"></div>`;
-    html += '</div></div>';
-    if (can('marketing.log')) html += `<div class="sec" style="margin-top:34px">Журнал рассылок</div><div id="mkLog"><div class="loading">Загружаю...</div></div>`;
-    html += `<div class="mk-rules">Сообщение приходит от гостевого бота «На Крыше». Написать можно тем, кто хоть раз открывал гостевое приложение и не отписался (команда /stop). Гостей с тегом «Нон-грата» в рассылки не берём. Отправка — с ${d.hours.from}:00 до ${d.hours.to}:00.</div>`;
+    html += `<div class="mk2-head"><div class="mk2-head-t">Рассылки</div><button type="button" class="btn-new-guest" onclick="mkNew()">+ Новая рассылка</button></div>`;
+    if (!mkData.enabled) html += '<div class="an-help">Автоматические рассылки выключены на сервере (переменная MAILINGS=off): запускаются только массовые.</div>';
+    if (list.length) {
+      html += `<div class="mk2-list">${list.map(mkCardHtml).join('')}</div>`;
+    } else {
+      html += `<div class="empty-state" style="padding:24px 10px 10px">Рассылок пока нет. Начните с готовой заготовки или соберите свою.</div>`;
+    }
+    html += `<div class="sec" style="margin-top:26px">Заготовки</div><div class="mk2-presets">${MK_PRESETS.map((p, i) => `
+      <div class="mk2-preset" onclick="mkNew(${i})"><b>${escHtml(p.title)}</b><small>${escHtml(p.hint)}</small></div>`).join('')}</div>`;
+    if (can('marketing.log')) html += `<div class="sec" style="margin-top:30px">Журнал массовых отправок</div><div id="mkLog"><div class="loading">Загружаю...</div></div>`;
+    html += `<div class="mk-rules">Сообщение приходит от гостевого бота «На Крыше». Пишем тем, кто хоть раз открывал гостевое приложение и не нажал «Не присылать рассылки» (сервисные — и отписавшимся). Гостям с тегом «Нон-грата» не пишем никогда. Маркетинговые рассылки уходят с ${mkData.hours.from}:00 до ${mkData.hours.to}:00, сервисные — с ${mkData.serviceHours.from}:00 до ${mkData.serviceHours.to}:00.</div>`;
     el.innerHTML = html;
     renderMkRunning();
-    renderMkWho();
-    renderMkPreview();
-    renderMkTarget();
   }
-
   function renderMkRunning() {
     const box = document.getElementById('mkRunning');
     if (!box) return;
@@ -17184,181 +17507,474 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     </div>` : '';
   }
 
-  // Под списком сегментов: кого выбрали и почему не всем можно написать
-  function renderMkWho() {
-    const box = document.getElementById('mkWho');
-    if (!box) return;
-    const cur = mkCurrent();
-    if (!cur) { box.innerHTML = ''; return; }
-    let breakdown = '';
-    if (mkSegGuests && mkSegGuests.key === cur.key) {
-      const counts = {};
-      for (const g of mkSegGuests.guests) if (!g.reachable) counts[g.reason] = (counts[g.reason] || 0) + 1;
-      const parts = Object.entries(counts).map(([r, n]) => `<span class="pill">${n} ${escHtml(MK_REASON_PLURAL[r] || r)}</span>`);
-      breakdown = `<div class="mk-breakdown"><span class="pill good">${cur.reachable} в Telegram</span>${parts.join('')}</div>`
-        + (mkSegGuests.partial ? '<div class="note" style="margin-top:4px">Разбивка по первым 300 гостям сегмента</div>' : '');
-    } else if (cur.total) {
-      breakdown = '<div class="note" style="margin-top:6px">Считаю, кому можно написать...</div>';
-    }
-    box.innerHTML = `<div class="mk-who">
-      <div class="mk-who-t">${escHtml(cur.title)}: написать можно <b>${cur.reachable}</b> из ${cur.total}</div>
-      ${breakdown}
-      ${cur.total ? `<button class="link-btn" onclick="mkToggleGuests()">${mkGuestsOpen ? 'Скрыть список' : 'Показать, кто в сегменте'}</button>` : ''}
-      <div id="mkGuests"></div>
-    </div>`;
-    if (mkGuestsOpen) renderMkGuests();
+  // ── действия над списком ──
+  async function mkOpen(id) {
+    const el = document.getElementById('marketingContent');
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const d = await mkApi('GET', `/api/admin/mailings/${encodeURIComponent(id)}`);
+      mkData = { ...mkData, ...d };
+      mkForm = mkFormFrom(d.campaign); mkForm.sends = d.sends || [];
+      mkStep = 1; mkVisited = new Set([1]); mkDirty = false; mkAud = null; mkTagsAll = false;
+      renderMkEdit();
+      mkQueueAudience(true);
+    } catch (e) { notify(e.message || 'Не удалось открыть'); renderMkList(); }
+  }
+  function mkNew(presetIndex) {
+    const p = typeof presetIndex === 'number' ? MK_PRESETS[presetIndex] : null;
+    mkForm = mkNewForm(p ? { ...p.form, title: p.title } : null);
+    mkStep = 1; mkVisited = new Set([1]); mkDirty = !!p; mkAud = null; mkTagsAll = false;
+    renderMkEdit();
+    mkQueueAudience(true);
+    window.scrollTo(0, 0);
+  }
+  async function mkBack() {
+    if (mkDirty && !mkReadOnly() && !(await askConfirm('Выйти без сохранения?\n\nВсё, что вы изменили в этой рассылке, пропадёт.', { ok: 'Выйти', danger: true }))) return;
+    mkForm = null; mkDirty = false;
+    renderMkList();
+    if (can('marketing.log')) loadMarketingLog();
+    mkWatch();
+  }
+  function mkHeaderBack() { if (mkForm) mkBack(); else showScreen('home'); }
+  async function mkDuplicate(id) {
+    try { await mkApi('POST', `/api/admin/mailings/${encodeURIComponent(id)}/duplicate`); notify('Копия создана — она в списке черновиков', 'ok'); await mkReloadList(); } catch (e) { notify(e.message || 'Не удалось сделать копию'); }
+  }
+  async function mkDelete(id) {
+    const c = (mkData.campaigns || []).find(x => x.id === id);
+    if (!await askConfirm(`Удалить рассылку «${c ? c.title : ''}»?\n\nВместе с ней пропадёт и история её отправок.`, { ok: 'Удалить', danger: true })) return;
+    try { await mkApi('DELETE', `/api/admin/mailings/${encodeURIComponent(id)}`); notify('Рассылка удалена', 'ok'); await mkReloadList(); } catch (e) { notify(e.message || 'Не удалось удалить'); }
+  }
+  async function mkPause(id) {
+    const c = (mkData.campaigns || []).find(x => x.id === id) || mkForm;
+    const mass = c && c.kind === 'mass';
+    if (!await askConfirm(mass ? 'Отменить запланированную отправку?\n\nРассылка вернётся в черновики.' : 'Поставить рассылку на паузу?\n\nНовым гостям писать не будем, пока не запустите снова. То, что уже стоит в очереди, дождётся запуска.', { ok: mass ? 'Отменить отправку' : 'Поставить на паузу' })) return;
+    try {
+      await mkApi('POST', `/api/admin/mailings/${encodeURIComponent(id)}/pause`);
+      notify(mass ? 'Отправка отменена' : 'Рассылка на паузе', 'ok');
+      if (mkForm && mkForm.id === id) { await mkOpen(id); } else await mkReloadList();
+    } catch (e) { notify(e.message || 'Не удалось выполнить'); }
+  }
+  async function mkResume(id) {
+    try { await mkApi('POST', `/api/admin/mailings/${encodeURIComponent(id)}/activate`); notify('Рассылка запущена', 'ok'); await mkReloadList(); } catch (e) { notify(e.message || 'Не удалось запустить'); }
   }
 
-  function renderMkGuests() {
-    const box = document.getElementById('mkGuests');
-    if (!box) return;
-    if (!mkSegGuests || mkSegGuests.key !== mkSelected.key) { box.innerHTML = '<div class="loading" style="padding:10px">Загружаю...</div>'; return; }
-    if (mkSegGuests.error) { box.innerHTML = `<div class="autotag-empty">${escHtml(mkSegGuests.error)}</div>`; return; }
-    const guests = mkSegGuests.guests;
-    if (!guests.length) { box.innerHTML = '<div class="autotag-empty">В сегменте никого нет</div>'; return; }
-    box.innerHTML = `<div class="mk-guests">${guests.map(g => `
-      <div class="mk-guest" onclick="openGuestCard('${escJs(g.id)}')">
-        <span class="mk-guest-name">${escHtml(g.name || 'Без имени')}</span>
-        <span class="mk-guest-meta">${g.reachable ? '<span class="pill good">в Telegram</span>' : `<span class="pill">${escHtml(MK_REASON[g.reason] || '')}</span>`}</span>
-      </div>`).join('')}</div>
-      ${mkSegGuests.total > guests.length ? `<div class="note" style="margin-top:6px">Показаны первые ${guests.length} из ${mkSegGuests.total}</div>` : ''}`;
-  }
+  // ── конструктор ──
+  // Каждый шаг умещается примерно на один экран: тип — переключатель в одну строку, сегменты — чипы с числом гостей,
+  // редкие настройки спрятаны в «Дополнительно», кнопки внизу всегда на виду.
+  let mkAdvOpen = null;       // «Дополнительно» раскрыто (null — решим при первой отрисовке: раскрыто, если там уже что-то настроено)
+  let mkTagsOpen = false;     // раскрыт список тегов
+  let mkSegHintId = '';       // сегмент, чьё описание показано под выбором
 
-  // Как сообщение будет выглядеть у гостя: {имя} → имя первого гостя сегмента, которому можно написать
-  function renderMkPreview() {
-    const box = document.getElementById('mkPreview');
-    if (!box) return;
-    const text = mkText.trim();
-    if (!text) { box.innerHTML = '<span class="mk-preview-empty">Здесь появится сообщение — так, как его увидит гость.</span>'; return; }
-    const sample = (mkSegGuests && mkSegGuests.key === mkSelected.key && mkSegGuests.guests.find(g => g.reachable)?.name) || 'Анна';
-    const first = String(sample).trim().split(/\s+/)[0];
-    const shown = text.replace(/\{имя\}/gi, first);
-    box.innerHTML = escHtml(shown).replace(/\n/g, '<br>') + `<div class="mk-bubble-meta">${/\{имя\}/i.test(text) ? `пример для «${escHtml(first)}» · ` : ''}${new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}</div>`;
+  function mkStepsHtml() {
+    const labels = ['Основные детали', 'Условия', 'Контент'];
+    return labels.map((l, i) => {
+      const n = i + 1;
+      const done = n !== mkStep && mkVisited.has(n) && !mkStepProblem(mkForm, n);
+      return `${i ? '<div class="mk2-line"></div>' : ''}<button type="button" class="mk2-stp${n === mkStep ? ' cur' : ''}${done ? ' done' : ''}" onclick="mkGoStep(${n})"><i>${done ? '✓' : n}</i><span>${l}</span></button>`;
+    }).join('');
   }
-
-  function renderMkTarget() {
-    const box = document.getElementById('mkTarget');
-    if (!box) return;
-    const cur = mkCurrent();
-    const d = mkData;
-    const hasText = !!mkText.trim();
-    const running = !!d.running;
-    let reason = '';
-    if (!cur) reason = 'Выберите в шаге 1, кому отправить';
-    else if (!cur.reachable) reason = 'В этом сегменте некому написать в Telegram';
-    else if (!hasText) reason = 'Напишите текст в шаге 2';
-    else if (!d.canSendNow) reason = `Сейчас не отправить: рассылки уходят с ${d.hours.from}:00 до ${d.hours.to}:00`;
-    else if (running) reason = 'Дождитесь окончания текущей рассылки';
-    const canSend = !reason;
-    box.innerHTML = `
-      ${cur ? `<div class="mk-summary"><span>${escHtml(cur.title)}</span><b>${cur.reachable} ${ruPlural(cur.reachable, 'гость', 'гостя', 'гостей')}</b></div>` : ''}
-      <button class="btn-cta mk-send" id="mkSendBtn" ${canSend ? '' : 'disabled'} onclick="mkSend(false)">${cur && cur.reachable ? `Отправить ${cur.reachable} ${ruPlural(cur.reachable, 'гостю', 'гостям', 'гостям')}` : 'Отправить'}</button>
-      ${reason ? `<div class="mk-reason">${escHtml(reason)}</div>` : ''}
-      <button class="btn-ghost mk-test" ${hasText ? '' : 'disabled'} onclick="mkSend(true)">Отправить себе для проверки</button>
-      <div class="mk-reason" style="margin-top:6px">Проверка приходит вам от гостевого бота — в любое время</div>`;
+  function renderMkEdit() {
+    const el = document.getElementById('marketingContent');
+    const f = mkForm;
+    mkAdvOpen = null; mkTagsOpen = false; mkSegHintId = '';
+    const [label, cls] = f.id ? mkStatus({ ...f, runStats: f.runStats || {} }) : ['Новая', ''];
+    el.innerHTML = `
+      <div class="mk2-bar"><div class="mk2-steps" id="mkSteps">${mkStepsHtml()}</div><span class="pill mk2-st${f.id ? '' : ' new'} ${cls}">${escHtml(label)}</span></div>
+      <div class="mk2-wrap" id="mkWrap" data-step="${mkStep}">
+        <div class="mk2-main">
+          ${mkReadOnly() ? `<div class="an-help" style="margin:0 0 12px">${f.kind === 'mass' ? 'Эта рассылка уже отправлена или стоит в расписании.' : 'Рассылка работает.'} Чтобы изменить настройки, ${f.kind === 'mass' ? 'сделайте копию' : 'поставьте её на паузу — или сделайте копию'}.</div>` : ''}
+          <div class="mk2-panel${mkReadOnly() ? ' mk2-ro' : ''}" id="mkPanel"></div>
+          <div id="mkActivity"></div>
+        </div>
+        <div class="mk2-aside"><div class="mk2-aside-card" id="mkAside"></div></div>
+        <div class="mk2-foot" id="mkFoot"></div>
+      </div>`;
+    renderMkPanel(); renderMkFoot(); renderMkAside(); renderMkActivity();
   }
-
-  function mkSelect(key) {
-    mkSelected = { key };
-    mkGuestsOpen = false;
-    document.querySelectorAll('.mk-seg').forEach(x => x.classList.toggle('selected', x.dataset.key === key));
-    renderMkWho();
-    renderMkTarget();
-    mkLoadSegment();
+  function mkGoStep(n) {
+    mkStep = n; mkVisited.add(n);
+    const s = document.getElementById('mkSteps'); if (s) s.innerHTML = mkStepsHtml();
+    const w = document.getElementById('mkWrap'); if (w) w.dataset.step = String(n);
+    renderMkPanel(); renderMkFoot();
+    window.scrollTo(0, 0);
   }
+  // Отметки шагов и «что получится» обновляем на лету, не пересобирая поля (иначе курсор из поля убегает)
+  function mkRefresh() {
+    mkDirty = true;
+    const s = document.getElementById('mkSteps'); if (s) s.innerHTML = mkStepsHtml();
+    renderMkAside();
+  }
+  function mkOnField(name, value) { mkForm[name] = value; mkRefresh(); }
   function mkOnText(v) {
-    mkText = v;
-    const c = document.getElementById('mkCount');
-    if (c) c.textContent = `${v.length}/3500`;
-    renderMkPreview();
-    renderMkTarget();
+    mkForm.body = v; mkDirty = true;
+    const c = document.getElementById('mkCount'); if (c) c.textContent = `${v.length}/3500`;
+    renderMkAside();
+    const s = document.getElementById('mkSteps'); if (s) s.innerHTML = mkStepsHtml();
   }
   function mkInsertName() {
     const ta = document.getElementById('mkText');
     if (!ta) return;
     const start = ta.selectionStart ?? ta.value.length, end = ta.selectionEnd ?? start;
     ta.value = ta.value.slice(0, start) + '{имя}' + ta.value.slice(end);
-    ta.focus();
-    ta.selectionStart = ta.selectionEnd = start + 5;
+    ta.focus(); ta.selectionStart = ta.selectionEnd = start + 5;
     mkOnText(ta.value);
   }
-  function mkToggleGuests() {
-    mkGuestsOpen = !mkGuestsOpen;
-    renderMkWho();
-  }
 
-  // Гости выбранного сегмента: для разбивки «почему не всем», списка и примера имени в превью
-  async function mkLoadSegment() {
-    const key = mkSelected.key;
-    if (!key) return;
-    const seq = ++mkSegSeq;
-    try {
-      const res = await fetch(`${PROXY_BASE}/api/admin/marketing/segment?key=${encodeURIComponent(key)}&pin=${getPin()}`);
-      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить список'));
-      const seg = await res.json();
-      if (seq !== mkSegSeq) return;
-      mkSegGuests = { key, guests: seg.guests || [], total: seg.total || 0, partial: (seg.total || 0) > (seg.guests || []).length };
-    } catch (e) {
-      if (seq !== mkSegSeq) return;
-      mkSegGuests = { key, guests: [], total: 0, error: e.message };
-    }
-    renderMkWho();
-    renderMkPreview();
+  function mkSwitchRow(title, hint, on, call) {
+    return `<div class="ax-row mk2-sw" onclick="${call}"><div>${title}<small>${hint}</small></div><span class="ax-switch${on ? ' on' : ''}"></span></div>`;
   }
+  function mkSelect(id, options, current, onchange) {
+    return `<select class="form-input" id="${id}" onchange="${onchange}">${options.map(([v, l]) => `<option value="${escHtml(String(v))}"${String(v) === String(current) ? ' selected' : ''}>${escHtml(l)}</option>`).join('')}</select>`;
+  }
+  // Переключатель «одно из нескольких» в одну строку (тип рассылки, «сразу / позже», «сразу / с задержкой / по расписанию»)
+  function mkSeg3(items, current, call, label) {
+    return `<div class="mk2-seg3" role="radiogroup" aria-label="${escHtml(label || '')}">${items.map(([v, l]) => `<button type="button" role="radio" aria-checked="${v === current}" class="${v === current ? 'sel' : ''}" onclick="${call}('${v}')">${escHtml(l)}</button>`).join('')}</div>`;
+  }
+  const mkLimitText = (f) => (MK_LIMITS.find(x => x[0] === f.limitDays) || [0, f.limitDays + ' дн.'])[1];
 
-  async function mkSend(test) {
-    const text = (document.getElementById('mkText')?.value || '').trim();
-    if (!text) { notify('Напишите текст сообщения'); return; }
-    const cur = mkCurrent();
-    if (!test) {
-      if (!cur) { notify('Выберите, кому отправить'); return; }
-      const who = `${cur.reachable} ${ruPlural(cur.reachable, 'гостю', 'гостям', 'гостям')}`;
-      if (!await askConfirm(`Отправить сообщение ${who} (сегмент «${cur.title}»)?\n\nОтменить отправку после запуска нельзя.\n\n${text.length > 300 ? text.slice(0, 300) + '…' : text}`, { ok: 'Отправить' })) return;
-    }
-    document.querySelectorAll('#mkTarget button').forEach(b => { b.disabled = true; });
-    try {
-      const res = await fetch(`${PROXY_BASE}/api/admin/marketing/send`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: getPin(), key: mkSelected.key, text, test: !!test })
-      });
-      if (!res.ok) { notify(await responseError(res, 'Не удалось отправить')); return; }
-      if (test) {
-        notify('Проверка отправлена — посмотрите сообщение от гостевого бота в Telegram', 'ok');
-      } else {
-        const data = await res.json().catch(() => ({}));
-        notify('Рассылка запущена. Итог придёт в Telegram и появится в журнале.', 'ok');
-        mkText = '';
-        const ta = document.getElementById('mkText');
-        if (ta) ta.value = '';
-        const c = document.getElementById('mkCount');
-        if (c) c.textContent = '0/3500';
-        if (data.job) { mkData.running = data.job; renderMkRunning(); }
-        renderMkPreview();
-        loadMarketingLog();
-        setTimeout(mkRefreshStatus, 5000);
+  function mkSegChip(s) {
+    const sel = mkForm.segments.some(x => x.key === s.key && !x.tag);
+    const rfm = s.group === 'rfm';
+    return `<div class="chip mk2-sc${rfm ? ' rfm-' + escCls(s.key) : ''}${sel ? ' selected' : ''}${s.reachable ? '' : ' empty'}" data-seg="${escHtml(s.key)}|" title="${escHtml(s.description || '')}" onclick="mkToggleSeg('${escJs(s.key)}', '')">${rfm ? '<i class="rfm-dot"></i>' : ''}${escHtml(s.title)}<b>${s.reachable}</b></div>`;
+  }
+  function mkTagChip(t) {
+    const sel = mkForm.segments.some(x => x.key === 'tag' && x.tag === t.key);
+    return `<div class="chip mk2-sc${sel ? ' selected' : ''}${t.reachable ? '' : ' empty'}" data-seg="tag|${escHtml(t.key)}" onclick="mkToggleSeg('tag', '${escJs(t.key)}')">${escHtml(t.label)}<b>${t.reachable}</b></div>`;
+  }
+  // Строка под чипами: описание последнего выбранного сегмента или подсказка, что значит «не выбрано»
+  function mkSegHintHtml() {
+    const f = mkForm, segs = mkSegs.segments || [], tags = mkSegs.tags || [];
+    if (mkSegHintId && f.segments.some(s => mkSegId(s) === mkSegHintId)) {
+      const [k, tg] = mkSegHintId.split('|');
+      const cur = k === 'tag' ? tags.find(t => t.key === tg) : segs.find(s => s.key === k);
+      if (cur) {
+        const name = cur.title || cur.label || '';
+        const desc = cur.description ? ` — ${cur.description}` : '';
+        return `<b>${escHtml(name)}</b>${escHtml(desc)}`;
       }
-    } catch {
-      notify('Ошибка соединения — проверьте интернет');
-    } finally {
-      renderMkTarget();
     }
+    return f.kind === 'mass'
+      ? 'Выберите один или несколько сегментов. Число рядом — скольким из них можно написать в Telegram.'
+      : 'Не выбрано — пишем всем, с кем случится событие. Выбрано — только тем, кто в этих сегментах.';
+  }
+  const mkAdvIsOpen = (f) => (mkAdvOpen === null ? !!(f.extraPriority || f.limitOn || f.description.trim()) : mkAdvOpen);
+  function mkAdvSummary(f) {
+    const p = [];
+    if (f.kind === 'marketing' && f.extraPriority) p.push('повышенный приоритет');
+    if (f.kind !== 'mass' && f.limitOn) p.push(`не чаще раза в ${mkLimitText(f)}`);
+    if (f.description.trim()) p.push('есть описание');
+    return p.length ? p.join(' · ') : (f.kind === 'mass' ? 'описание для своих' : f.kind === 'marketing' ? 'приоритет, частота, описание' : 'частота, описание');
+  }
+  function mkToggleAdv() { mkAdvOpen = !mkAdvIsOpen(mkForm); renderMkPanel(); }
+  function mkToggleTags() { mkTagsOpen = !mkTagsOpen; renderMkPanel(); }
+
+  function mkStep1Html(f) {
+    const segs = mkSegs.segments || [], rfm = segs.filter(s => s.group === 'rfm'), other = segs.filter(s => s.group !== 'rfm');
+    const tags = mkSegs.tags || [], shown = mkTagsAll ? tags : tags.slice(0, 12);
+    const pickedTags = tags.filter(t => f.segments.some(x => x.key === 'tag' && x.tag === t.key));
+    const gap = mkData.gapHours >= 24 && mkData.gapHours % 24 === 0 ? (mkData.gapHours === 24 ? 'сутки' : `${mkData.gapHours / 24} дн.`) : `${mkData.gapHours} ч`;
+    if (mkAdvOpen === null) mkAdvOpen = mkAdvIsOpen(f);
+    const adv = mkAdvOpen;
+    return `
+      <div class="mk2-fld">${mkSeg3(['mass', 'marketing', 'service'].map(k => [k, MK_KIND[k][0]]), f.kind, 'mkSetKind', 'Тип рассылки')}
+        <div class="mk2-hint">${escHtml(MK_KIND[f.kind][1])}</div></div>
+      <div class="mk2-fld"><label class="form-label" for="mkTitle">Название</label>
+        <input class="form-input" id="mkTitle" maxlength="80" value="${escHtml(f.title)}" placeholder="Например: Спасибо за визит" oninput="mkOnField('title', this.value)"></div>
+      <div class="mk2-fld"><div class="form-label">Кому</div>
+        <div class="mk2-chips">${rfm.map(mkSegChip).join('')}${other.map(mkSegChip).join('')}${tags.length ? `${mkTagsOpen ? '' : pickedTags.map(mkTagChip).join('')}<div class="chip mk2-more" onclick="mkToggleTags()">${mkTagsOpen ? '− Теги' : '+ Теги'}</div>` : ''}</div>
+        ${tags.length && mkTagsOpen ? `<div class="mk2-chips">${shown.map(mkTagChip).join('')}${tags.length > 12 ? `<div class="chip mk2-more" onclick="mkTagsAll=!mkTagsAll;renderMkPanel()">${mkTagsAll ? 'Свернуть' : `Ещё ${tags.length - 12}`}</div>` : ''}</div>` : ''}
+        <div class="mk2-hint" id="mkSegHint">${mkSegHintHtml()}</div>
+        <div id="mkAud"></div>
+      </div>
+      <div class="mk2-adv${adv ? ' open' : ''}">
+        <button type="button" class="mk2-adv-h" onclick="mkToggleAdv()"><span>Дополнительно</span><small>${escHtml(mkAdvSummary(f))}</small><i></i></button>
+        ${adv ? `<div class="mk2-adv-b">
+          ${f.kind === 'marketing' ? mkSwitchRow('Повышенный приоритет', mkData.gapHours > 0 ? `Не ждёт общего правила «не больше одной рекламной рассылки одному гостю в ${gap}». Для важного, например поздравлений.` : 'Общий лимит частоты сейчас отключён на сервере.', f.extraPriority, 'mkToggleExtra()') : ''}
+          ${f.kind !== 'mass' ? mkSwitchRow('Ограничить частоту', 'Один гость получит эту рассылку не чаще, чем раз в выбранный срок', f.limitOn, 'mkToggleLimit()') : ''}
+          ${f.kind !== 'mass' && f.limitOn ? `<div class="mk2-sub">${mkSelect('mkLimit', MK_LIMITS, f.limitDays, "mkForm.limitDays=Number(this.value);mkRefresh()")}</div>` : ''}
+          <div class="mk2-sub"><label class="form-label" for="mkDesc">Описание — для своих, гость его не видит</label>
+            <textarea class="form-input" id="mkDesc" rows="2" maxlength="500" placeholder="Зачем эта рассылка" oninput="mkOnField('description', this.value)" style="height:56px">${escHtml(f.description)}</textarea></div>
+        </div>` : ''}
+      </div>`;
+  }
+  function mkStep2Html(f) {
+    const win = mkWin(f.kind);
+    const hours = `Сообщения уходят с ${win.from}:00 до ${win.to}:00 по времени заведения, ночью — ждут утра.`;
+    if (f.kind === 'mass') {
+      return `
+        <div class="mk2-fld"><div class="form-label">Когда отправить</div>
+          ${mkSeg3([['now', 'Сразу, вручную'], ['later', 'В назначенное время']], f.sendMode, 'mkSetSendMode', 'Когда отправить')}
+          ${f.sendMode === 'later' ? `<div class="mk2-dt">
+            <input type="date" class="form-input fld-date" id="mkDate" min="${mkToday()}" value="${escHtml(f.sendDate)}" onchange="mkForm.sendDate=this.value;mkRefresh()">
+            <input type="time" class="form-input fld-date" id="mkTime" value="${escHtml(f.sendTime)}" onchange="mkForm.sendTime=this.value;mkRefresh()"></div>` : ''}
+          <div class="mk2-hint">${f.sendMode === 'now' ? 'На последнем шаге нажмите «Отправить» — сообщение уйдёт сразу всем выбранным гостям.' : 'Получатели посчитаются в момент отправки: отписавшиеся и «Нон-грата» не получат.'} ${hours}</div>
+        </div>`;
+    }
+    const trigs = mkData.triggers || [], live = trigs.filter(t => !t.iiko), iiko = trigs.filter(t => t.iiko);
+    const cur = mkTrig(f.trigger);
+    let cfg = '';
+    if (f.trigger === 'birthday_soon') {
+      cfg = `<div class="mk2-cfg"><label for="mkBefore">Когда писать</label>${mkSelect('mkBefore', MK_BEFORE.map(n => [n, `за ${n} ${ruPlural(n, 'день', 'дня', 'дней')} до дня рождения`]), f.triggerCfg.daysBefore || 7, "mkForm.triggerCfg={daysBefore:Number(this.value)};mkRefresh()")}</div>`;
+    } else if (f.trigger === 'segment_enter') {
+      const segs = mkSegs.segments || [], tags = mkSegs.tags || [];
+      const sv = f.triggerCfg.segment ? (f.triggerCfg.segment.key === 'tag' ? `tag|${f.triggerCfg.segment.tag}` : f.triggerCfg.segment.key) : '';
+      cfg = `<div class="mk2-cfg"><label for="mkTrigSeg">Какой сегмент</label>
+        <select class="form-input" id="mkTrigSeg" onchange="mkSetTrigSeg(this.value)">
+          <option value=""${sv ? '' : ' selected'}>Выберите сегмент</option>
+          <optgroup label="По визитам">${segs.filter(s => s.group === 'rfm').map(s => `<option value="${escHtml(s.key)}"${sv === s.key ? ' selected' : ''}>${escHtml(s.title)}</option>`).join('')}</optgroup>
+          <optgroup label="Подборки">${segs.filter(s => s.group !== 'rfm').map(s => `<option value="${escHtml(s.key)}"${sv === s.key ? ' selected' : ''}>${escHtml(s.title)}</option>`).join('')}</optgroup>
+          ${tags.length ? `<optgroup label="Теги">${tags.map(t => `<option value="tag|${escHtml(t.key)}"${sv === 'tag|' + t.key ? ' selected' : ''}>${escHtml(t.label)}</option>`).join('')}</optgroup>` : ''}
+        </select></div>
+        <div class="mk2-hint">Тем, кто в сегменте уже сейчас, писать не будем — только тем, кто войдёт в него после запуска.</div>`;
+    }
+    let delay = '';
+    if (f.delayMode === 'simple') {
+      delay = `<div class="mk2-sub">${mkSelect('mkDelay', MK_DELAYS, f.delayMinutes, "mkForm.delayMinutes=Number(this.value);mkRefresh()")}</div>`;
+    } else if (f.delayMode === 'schedule') {
+      delay = `<div class="mk2-sub mk2-sched">
+        <div class="mk2-row">${mkSelect('mkOffset', MK_OFFSETS, f.scheduleCfg.offsetDays, "mkForm.scheduleCfg.offsetDays=Number(this.value);mkRefresh()")}
+          <span>в</span><input type="time" class="form-input fld-date" id="mkSchedTime" value="${escHtml(f.scheduleCfg.time || '12:00')}" onchange="mkForm.scheduleCfg.time=this.value;mkRefresh()"></div>
+        <div class="chip-row an-chips mk2-days" style="margin-top:8px">${MK_WEEK.map(([d, l]) => `<div class="chip${f.scheduleCfg.days.includes(d) ? ' selected' : ''}" onclick="mkToggleDay(${d})">${l}</div>`).join('')}</div></div>`;
+    }
+    return `
+      <div class="mk2-fld"><div class="form-label">Событие</div>
+        <div class="mk2-evs">${live.map(t => `<div class="mk2-ev${f.trigger === t.key ? ' sel' : ''}" onclick="mkSetTrigger('${t.key}')"><span class="mk-radio"></span><span>${escHtml(t.title)}</span></div>`).join('')}</div>
+        <div class="mk2-hint">${cur && !cur.iiko ? escHtml(cur.hint || '') : 'Выберите, после чего писать гостю.'}</div>
+        ${iiko.length ? `<div class="mk2-iiko">После подключения iiko появятся: ${iiko.map(t => escHtml(t.title.toLowerCase())).join(' · ')}</div>` : ''}
+      </div>
+      ${cfg}
+      <div class="mk2-fld"><div class="form-label">Когда отправить после события</div>
+        ${mkSeg3([['none', 'Сразу'], ['simple', 'С задержкой'], ['schedule', 'По расписанию']], f.delayMode, 'mkSetDelayMode', 'Когда отправить после события')}
+        ${delay}
+        <div class="mk2-hint">${hours}</div>
+      </div>`;
+  }
+  function mkStep3Html(f) {
+    return `
+      <div class="mk2-fld"><label class="form-label" for="mkText">Текст сообщения</label>
+        <textarea class="form-input mk-text" id="mkText" maxlength="3500" placeholder="${escHtml(MK_PLACEHOLDER)}" oninput="mkOnText(this.value)">${escHtml(f.body)}</textarea>
+        <div class="mk-texttools">
+          <button type="button" class="mk-chip" title="Подставится имя гостя" onclick="mkInsertName()">+ {имя}</button>
+          <button type="button" class="mk-chip ghost" id="mkTestBtn" title="Придёт вам от гостевого бота — в любое время" onclick="mkTest()">Отправить себе</button>
+          <span class="mk-count" id="mkCount">${f.body.length}/3500</span>
+        </div>
+        <div class="mk2-hint">{имя} заменится именем гостя. «Отправить себе» — проверка придёт вам от гостевого бота в любое время.</div>
+      </div>`;
+  }
+  function renderMkPanel() {
+    const box = document.getElementById('mkPanel');
+    if (!box || !mkForm) return;
+    box.innerHTML = mkStep === 1 ? mkStep1Html(mkForm) : mkStep === 2 ? mkStep2Html(mkForm) : mkStep3Html(mkForm);
+    if (mkStep === 1) renderMkAud();
   }
 
-  // Пока идёт рассылка — обновляем полосу и журнал, пока она не закончится
-  async function mkRefreshStatus() {
-    if (activeScreenName() !== 'marketing') return;
+  // ── выбор в шагах ──
+  function mkSetKind(k) {
+    if (mkReadOnly()) return;
+    mkForm.kind = k;
+    if (k === 'mass') { mkForm.trigger = 'manual'; mkForm.extraPriority = false; }
+    else if (k === 'service') mkForm.extraPriority = false;
+    mkDirty = true; mkAud = null; mkSegHintId = '';
+    renderMkPanel(); mkRefresh(); mkQueueAudience(true); renderMkFoot();
+  }
+  function mkToggleExtra() { if (mkReadOnly()) return; mkAdvOpen = true; mkForm.extraPriority = !mkForm.extraPriority; renderMkPanel(); mkRefresh(); }
+  function mkToggleLimit() { if (mkReadOnly()) return; mkAdvOpen = true; mkForm.limitOn = !mkForm.limitOn; renderMkPanel(); mkRefresh(); }
+  function mkToggleSeg(key, tag) {
+    if (mkReadOnly()) return;
+    const s = key === 'tag' ? { key, tag } : { key };
+    const i = mkForm.segments.findIndex(x => x.key === key && (x.tag || '') === (tag || ''));
+    if (i >= 0) { mkForm.segments.splice(i, 1); if (mkSegHintId === mkSegId(s)) mkSegHintId = ''; }
+    else { mkForm.segments.push(s); mkSegHintId = mkSegId(s); }
+    document.querySelectorAll('#mkPanel [data-seg]').forEach(x => x.classList.toggle('selected', mkForm.segments.some(g => mkSegId(g) === x.dataset.seg)));
+    const h = document.getElementById('mkSegHint'); if (h) h.innerHTML = mkSegHintHtml();
+    // выбранные теги при свёрнутом списке показываются отдельными чипами — их набор поменялся
+    if (key === 'tag' && !mkTagsOpen) renderMkPanel();
+    mkRefresh(); mkQueueAudience(false);
+  }
+  function mkSetSendMode(m) {
+    if (mkReadOnly()) return;
+    mkForm.sendMode = m;
+    if (m === 'later' && !mkForm.sendDate) mkForm.sendDate = mkToday();
+    renderMkPanel(); mkRefresh(); renderMkFoot();
+  }
+  function mkSetTrigger(k) {
+    if (mkReadOnly()) return;
+    mkForm.trigger = k;
+    if (k === 'birthday_soon') mkForm.triggerCfg = { daysBefore: mkForm.triggerCfg.daysBefore || 7 };
+    else if (k === 'segment_enter') mkForm.triggerCfg = mkForm.triggerCfg.segment ? { segment: mkForm.triggerCfg.segment } : {};
+    else mkForm.triggerCfg = {};
+    renderMkPanel(); mkRefresh();
+  }
+  function mkSetTrigSeg(v) {
+    if (!v) mkForm.triggerCfg = {};
+    else if (v.startsWith('tag|')) mkForm.triggerCfg = { segment: { key: 'tag', tag: v.slice(4) } };
+    else mkForm.triggerCfg = { segment: { key: v } };
+    mkRefresh();
+  }
+  function mkSetDelayMode(m) { if (mkReadOnly()) return; mkForm.delayMode = m; renderMkPanel(); mkRefresh(); }
+  function mkToggleDay(d) {
+    if (mkReadOnly()) return;
+    const days = mkForm.scheduleCfg.days, i = days.indexOf(d);
+    if (i >= 0) { if (days.length > 1) days.splice(i, 1); } else days.push(d);
+    days.sort();
+    renderMkPanel(); mkRefresh();
+  }
+
+  // ── получатели ──
+  function mkQueueAudience(now) {
+    clearTimeout(mkAudTimer);
+    if (!mkForm || (mkForm.kind !== 'mass' && !mkForm.segments.length)) { mkAud = null; renderMkAud(); renderMkAside(); return; }
+    const run = async () => {
+      const seq = ++mkAudSeq;
+      const key = mkForm.segments.map(mkSegId).join(',');
+      try {
+        const d = await mkApi('POST', '/api/admin/mailings/audience', { segments: mkForm.segments });
+        if (seq !== mkAudSeq) return;
+        mkAud = { key, ...d };
+      } catch { if (seq !== mkAudSeq) return; mkAud = null; }
+      renderMkAud(); renderMkAside(); renderMkFoot();
+    };
+    if (now) run(); else mkAudTimer = setTimeout(run, 250);
+  }
+  function renderMkAud() {
+    const box = document.getElementById('mkAud');
+    if (!box || !mkForm) return;
+    if (!mkForm.segments.length) { box.innerHTML = ''; return; }
+    if (!mkAud) { box.innerHTML = '<div class="mk2-aud note">Считаю, кому можно написать...</div>'; return; }
+    const parts = Object.entries(mkAud.reasons || {}).map(([r, n]) => `<span class="pill">${n} ${escHtml(MK_REASON_PLURAL[r] || r)}</span>`).join('');
+    box.innerHTML = `<div class="mk2-aud"><span>Написать можно <b>${mkAud.reachable}</b> из ${mkAud.total}</span>${parts}</div>`;
+  }
+
+  // ── «что получится» и превью ──
+  function renderMkAside() {
+    const box = document.getElementById('mkAside');
+    if (!box || !mkForm) return;
+    const f = mkForm;
+    const rows = [['Тип', MK_KIND[f.kind][0] + (f.extraPriority ? ', повышенный приоритет' : '')], ['Кому', mkSegsText(f)]];
+    if (f.kind === 'mass') {
+      rows.push(['Когда', f.sendMode === 'later' ? (mkSendAt(f) ? mkDt(mkSendAt(f)) : 'выберите дату и время') : 'вручную, сразу']);
+      if (mkAud && f.segments.length) rows.push(['Получат', `${mkAud.reachable} из ${mkAud.total}`]);
+    } else {
+      rows.push(['Событие', mkTrigText(f) || 'не выбрано'], ['Когда', mkDelayText(f)]);
+      if (f.limitOn) rows.push(['Частота', `не чаще раза в ${mkLimitText(f)}`]);
+    }
+    const text = f.body.trim();
+    const sample = (mkAud && mkAud.sample) || 'Анна';
+    const first = String(sample).trim().split(/\s+/)[0];
+    const shown = text.replace(/\{имя\}/gi, first);
+    box.innerHTML = `
+      <div class="mk2-sumbox"><div class="mk2-aside-t">Что получится</div>
+        <div class="mk2-sum">${rows.map(([k, v]) => `<div><span>${escHtml(k)}</span><b>${escHtml(v)}</b></div>`).join('')}</div></div>
+      <div class="mk2-aside-t mk2-pv-t">Как увидит гость</div>
+      <div class="mk-preview">
+        <div class="mk-bot"><span class="mk-bot-ava">НК</span><span>На Крыше <em>бот</em></span></div>
+        <div class="mk-bubble">${text ? escHtml(shown).replace(/\n/g, '<br>') + `<div class="mk-bubble-meta">${/\{имя\}/i.test(text) ? `пример для «${escHtml(first)}» · ` : ''}${new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}</div>` : '<span class="mk-preview-empty">Текст появится здесь — так, как его увидит гость.</span>'}</div>
+      </div>`;
+  }
+
+  // ── кнопки внизу (липкая панель: всегда на виду, даже когда шаг длиннее экрана) ──
+  function renderMkFoot() {
+    const box = document.getElementById('mkFoot');
+    if (!box || !mkForm) return;
+    const f = mkForm;
+    if (mkReadOnly()) {
+      box.innerHTML = `${f.status === 'active' ? `<button type="button" class="btn-ghost danger" onclick="mkPause('${escJs(f.id)}')">${f.kind === 'mass' ? 'Отменить отправку' : 'Поставить на паузу'}</button>` : ''}
+        <button type="button" class="btn-ghost" onclick="mkDuplicate('${escJs(f.id)}')">Сделать копию</button>`;
+      return;
+    }
+    let primary;
+    if (mkStep < 3) primary = `<button type="button" class="btn-cta" onclick="mkGoStep(${mkStep + 1})">Далее →</button>`;
+    else if (f.kind === 'mass') primary = f.sendMode === 'later'
+      ? `<button type="button" class="btn-cta" id="mkGo" onclick="mkLaunch()" ${mkBusy ? 'disabled' : ''}>Запланировать</button>`
+      : `<button type="button" class="btn-cta" id="mkGo" onclick="mkLaunch()" ${mkBusy ? 'disabled' : ''}>${mkAud && mkAud.reachable ? `Отправить ${mkAud.reachable} ${ruPlural(mkAud.reachable, 'гостю', 'гостям', 'гостям')}` : 'Отправить'}</button>`;
+    else primary = `<button type="button" class="btn-cta" id="mkGo" onclick="mkLaunch()" ${mkBusy ? 'disabled' : ''}>Запустить</button>`;
+    box.innerHTML = `${mkStep > 1 ? `<button type="button" class="btn-ghost mk2-back" onclick="mkGoStep(${mkStep - 1})">← Назад</button>` : ''}
+      <button type="button" class="btn-ghost" id="mkSaveBtn" title="Сохранить как черновик" onclick="mkSave()" ${mkBusy ? 'disabled' : ''}>Сохранить</button>${primary}`;
+  }
+
+  // Что уже происходило с рассылкой (для запущенных, на паузе и завершённых)
+  function renderMkActivity() {
+    const box = document.getElementById('mkActivity');
+    if (!box || !mkForm || !mkForm.id || mkForm.status === 'draft') return;
+    const f = mkForm;
+    if (f.kind === 'mass') {
+      const rs = f.runStats || {};
+      box.innerHTML = rs.at || rs.note ? `<div class="sec" style="margin-top:26px">Итог отправки</div><div class="log-item"><div class="log-stats">${rs.note ? escHtml(rs.note) : `Доставлено <b>${rs.sent || 0}</b> из ${rs.total || 0}${rs.failed ? ` · не доставлено ${rs.failed}${rs.blocked ? ` (заблокировали бота: ${rs.blocked})` : ''}` : ''}`}</div>${rs.at ? `<div class="note" style="margin-top:4px">${escHtml(mkAgo(rs.at))}</div>` : ''}</div>` : '';
+      return;
+    }
+    const s = f.stats || { sent: 0, queued: 0, failed: 0, skipped: 0 };
+    const label = (x) => x.status === 'sent' ? ['Отправлено', 'good'] : x.status === 'queued' || x.status === 'sending' ? [x.reason === 'gap' ? 'Ждёт: сегодня уже писали' : 'В очереди', 'warn'] : x.status === 'skipped' ? ['Пропущено', ''] : x.status === 'blocked' ? ['Заблокировал бота', 'bad'] : ['Ошибка', 'bad'];
+    const rows = (f.sends || []).map(x => {
+      const [l, c] = label(x);
+      const when = x.sentAt ? mkAgo(x.sentAt) : x.status === 'queued' ? `уйдёт ${mkAgo(x.dueAt).toLowerCase()}` : mkAgo(x.eventAt);
+      return `<div class="mk2-send"><div class="mk2-send-n" onclick="openGuestCard('${escJs(x.guestId)}')">${escHtml(x.name)}</div><span class="pill ${c}">${escHtml(l)}</span>
+        <div class="mk2-send-s">${escHtml(when)}${x.status !== 'sent' && x.status !== 'queued' && x.reasonText ? ' · ' + escHtml(x.reasonText) : ''}</div></div>`;
+    }).join('');
+    box.innerHTML = `<div class="sec" style="margin-top:26px">Что происходит</div>
+      <div class="mk2-stats" style="margin-bottom:10px">Отправлено <b>${s.sent}</b> · в очереди <b>${s.queued}</b> · пропущено <b>${s.skipped}</b> · ошибок <b>${s.failed}</b></div>
+      ${rows || '<div class="autotag-empty">Пока никому не писали — ждём событий</div>'}`;
+  }
+
+  // ── сохранить, проверить, запустить ──
+  async function mkSave(silent) {
+    if (mkBusy) return null;
+    const f = mkForm;
+    if (!f.title.trim()) { notify('Напишите название рассылки'); mkGoStep(1); return null; }
+    mkBusy = true; renderMkFoot();
     try {
-      const res = await fetch(`${PROXY_BASE}/api/admin/marketing/segments?pin=${getPin()}`);
-      if (!res.ok) return;
-      const d = await res.json();
-      mkData.running = d.running;
-      mkData.canSendNow = d.canSendNow;
-      renderMkRunning();
-      renderMkTarget();
-      loadMarketingLog();
-      if (d.running) setTimeout(mkRefreshStatus, 5000);
-    } catch {}
+      const d = await mkApi(f.id ? 'PUT' : 'POST', f.id ? `/api/admin/mailings/${encodeURIComponent(f.id)}` : '/api/admin/mailings', mkPayload(f));
+      f.id = d.campaign.id; f.status = d.campaign.status; mkDirty = false;
+      if (!silent) notify('Сохранено', 'ok');
+      return d.campaign;
+    } catch (e) { notify(e.message || 'Не удалось сохранить'); return null; }
+    finally { mkBusy = false; renderMkFoot(); }
+  }
+  async function mkLaunch() {
+    const f = mkForm;
+    for (const s of [1, 2, 3]) {
+      const p = mkStepProblem(f, s);
+      if (p) { notify(p); if (s !== mkStep) mkGoStep(s); return; }
+    }
+    let ask;
+    if (f.kind === 'mass') {
+      if (f.sendMode === 'later') ask = `Запланировать рассылку «${f.title}» на ${mkDt(mkSendAt(f))}?\n\nПолучатели посчитаются в момент отправки. До этого времени рассылку можно отменить.`;
+      else {
+        if (!mkData.canSendNow) { notify(`Сейчас не отправить: рассылки уходят с ${mkData.hours.from}:00 до ${mkData.hours.to}:00`); return; }
+        if (mkData.running) { notify('Предыдущая рассылка ещё отправляется — дождитесь её окончания'); return; }
+        ask = `Отправить сообщение ${mkAud ? `${mkAud.reachable} ${ruPlural(mkAud.reachable, 'гостю', 'гостям', 'гостям')}` : 'гостям'}?\n\nОтменить отправку после запуска нельзя.\n\n${f.body.length > 300 ? f.body.slice(0, 300) + '…' : f.body}`;
+      }
+    } else {
+      ask = `Запустить рассылку «${f.title}»?\n\nСобытие: ${mkTrigText(f)}. Отправим: ${mkDelayText(f)}. Кому: ${mkSegsText(f)}.${f.trigger === 'segment_enter' ? '\n\nТем, кто в сегменте сейчас, писать не будем.' : ''}\n\nОстановить можно паузой в любой момент.`;
+    }
+    if (!await askConfirm(ask, { ok: f.kind === 'mass' && f.sendMode === 'now' ? 'Отправить' : f.kind === 'mass' ? 'Запланировать' : 'Запустить' })) return;
+    const saved = await mkSave(true);
+    if (!saved) return;
+    mkBusy = true; renderMkFoot();
+    try {
+      if (f.kind === 'mass' && f.sendMode === 'now') {
+        const d = await mkApi('POST', `/api/admin/mailings/${encodeURIComponent(saved.id)}/send-now`, {});
+        notify('Рассылка запущена. Итог придёт в Telegram и появится в журнале.', 'ok');
+        if (d.job) mkData.running = d.job;
+      } else {
+        await mkApi('POST', `/api/admin/mailings/${encodeURIComponent(saved.id)}/activate`, {});
+        notify(f.kind === 'mass' ? 'Рассылка запланирована' : 'Рассылка запущена', 'ok');
+      }
+      mkBusy = false;
+      await mkReloadList();
+    } catch (e) {
+      notify(e.message || 'Не удалось запустить');
+      mkBusy = false; renderMkFoot();
+    }
+  }
+  async function mkTest() {
+    const text = (mkForm.body || '').trim();
+    if (!text) { notify('Напишите текст сообщения'); return; }
+    const b = document.getElementById('mkTestBtn'); if (b) b.disabled = true;
+    try {
+      await mkApi('POST', '/api/admin/marketing/send', { text, test: true });
+      notify('Проверка отправлена — посмотрите сообщение от гостевого бота в Telegram', 'ok');
+    } catch (e) { notify(e.message || 'Не удалось отправить проверку'); }
+    finally { const b2 = document.getElementById('mkTestBtn'); if (b2) b2.disabled = false; }
   }
 
   async function loadMarketingLog() {
@@ -17370,7 +17986,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       const data = await res.json();
       const list = data.broadcasts || [];
       let html = '';
-      if (!list.length) html += '<div class="autotag-empty">Рассылок ещё не было</div>';
+      if (!list.length) html += '<div class="autotag-empty">Массовых рассылок ещё не было</div>';
       html += list.map(b => {
         const pill = b.status === 'Отправлена' ? 'good' : b.status === 'Прервана' ? 'bad' : 'warn';
         const pct = b.total ? Math.round((b.sent || 0) / b.total * 100) : 0;
