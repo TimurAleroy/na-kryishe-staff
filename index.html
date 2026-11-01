@@ -3052,7 +3052,8 @@
       body:has(#deskLeft.role-ok) .gm-actions button { flex: 0 0 auto; min-width: 150px; padding-left: 24px; padding-right: 24px; }
       body:has(#deskLeft.role-ok) .seg { width: fit-content; max-width: 100%; }
       body:has(#deskLeft.role-ok) .seg-btn { flex: 0 0 auto; min-width: 124px; padding-left: 22px; padding-right: 22px; }
-      .desk-panel.role-ok { display: flex; }
+      /* Боковые панели — только на главной (класс desk-home ставит showScreen); на остальных экранах место отдано содержимому */
+      body.desk-home .desk-panel.role-ok { display: flex; }
       /* В разделе «Брони» правая панель прячется, а колонка расширяется на её место: схеме и графику нужна ширина.
          Левый край колонки остаётся там же (левая панель на месте), правый — доходит до края бывшей панели. */
       body.bk-wide #deskRight { display: none; }
@@ -3539,7 +3540,9 @@ html[data-theme="dark"] #screen-enps.has-bg { --ep-rgb: 8,10,14; --ep-ink: 244,2
   html.rail-wide .rail-grp.on > .rail-head > svg:first-child { color: var(--rail-bar); }
   html.rail-wide .rail-grp.open > .rail-head, html.rail-wide .rail-grp.open > .rail-head.on { background: transparent; box-shadow: none; }
   html.rail-wide .rail-grp.open > .rail-head.on::before { display: none; }
-  html.rail-wide .rail-grp > .rail-sub { display: grid; grid-template-rows: 0fr; position: static; padding: 0; visibility: hidden; transition: grid-template-rows .24s ease, visibility 0s linear .24s; }
+  /* display: grid !important — в широкой форме группа раскрывается только кликом. Правила наведения узкой панели (список-подсказка) здесь не нужны:
+     иначе при наведении на соседнюю группу раскрытая схлопывалась, пункты уезжали из-под мыши и всё мигало */
+  html.rail-wide .rail-grp > .rail-sub { display: grid !important; grid-template-rows: 0fr; position: static; padding: 0; visibility: hidden; transition: grid-template-rows .24s ease, visibility 0s linear .24s; }
   html.rail-wide .rail-grp.open > .rail-sub { grid-template-rows: 1fr; visibility: visible; transition: grid-template-rows .24s ease, visibility 0s; }
   html.rail-wide .rail-sub-in { min-height: 0; min-width: 0; overflow: hidden; padding: 0 6px; background: none; border: 0; border-radius: 0; box-shadow: none; }
   html.rail-wide .rail-sub-t { display: none; }
@@ -3547,17 +3550,17 @@ html[data-theme="dark"] #screen-enps.has-bg { --ep-rgb: 8,10,14; --ep-ink: 244,2
   html.rail-wide .rail-sb:hover { color: var(--text); }
   html.rail-wide .rail-sb.on { color: var(--rail-bar); }
   html.rail-wide .rail-sb:last-child { margin-bottom: 8px; }
-  /* пункты группы висят на тонкой линии с точками — видно, что они вложены в группу */
-  html.rail-wide .rail-sub-in { position: relative; }
-  html.rail-wide .rail-sub-in::before { content: ''; position: absolute; left: 22px; top: 0; bottom: 12px; width: 1px; background: rgba(var(--fg-rgb),0.12); }
-  html.rail-wide .rail-sb::after { content: ''; position: absolute; left: 14px; top: 50%; width: 5px; height: 5px; margin-top: -2.5px; border-radius: 50%; background: var(--rail-ic); opacity: .6; transition: background-color .15s ease, opacity .15s ease, transform .15s ease; }
-  html.rail-wide .rail-sb:hover::after { opacity: 1; background: var(--text); }
-  html.rail-wide .rail-sb.on::after { opacity: 1; background: var(--rail-bar); transform: scale(1.5); }
+  /* линии и точек у пунктов группы нет (убраны по просьбе Тимура): пункт отличается цветом текста и плашкой у активного */
 }
 @media (min-width: 1392px) {
   html.rail .desk-panel.left { left: calc(50% - var(--colw) / 2 - var(--dp-gap) - var(--dpw) + var(--railw)); }
   html.rail body:has(#deskLeft.role-ok) { max-width: calc(var(--colw) - var(--railw)); margin-left: calc(50% - var(--colw) / 2 + var(--railw)); margin-right: 0; }
   html.rail body.bk-wide:has(#deskLeft.role-ok) { max-width: calc(var(--colw) + var(--dp-gap) + var(--dpw) - var(--railw)); margin-left: calc(50% - var(--colw) / 2 + var(--railw)); margin-right: 0; }
+}
+@media (min-width: 1392px) {
+  /* Не главная: боковых панелей нет — колонка от меню до правого края окна (потолок 1900px, чтобы строки не растягивались на 4K) */
+  body:not(.desk-home):has(#deskLeft.role-ok) { max-width: min(calc(100% - var(--dp-edge) * 2), 1900px); margin-left: var(--dp-edge); margin-right: 0; }
+  html.rail body:not(.desk-home):has(#deskLeft.role-ok) { max-width: min(calc(100% - var(--railw) - var(--dp-edge) * 2), 1900px); margin-left: calc(var(--railw) + var(--dp-edge)); margin-right: 0; }
 }
 /* Плитки главной убраны: все разделы теперь в левой панели. Поиск, «Новый гость» и кнопки смены остаются; середина свободна */
 @media (min-width: 1060px) {
@@ -3598,9 +3601,9 @@ select[aria-expanded="true"] { border-color: rgba(var(--ac), 0.55) !important; b
 <style id="hd-css">
 /* Главный дашборд (середина главной): показатели за период с динамикой к прошлому, график визитов, сегменты, дни недели, прогноз, вкусы.
    Раскладка по ширине самого блока (container query), поэтому одинаково работает в середине компьютера и на телефоне. */
-.hd { container: hd / inline-size; margin: 26px 0 10px; }
+.hd { container: hd / inline-size; margin: 4px 0 10px; }
 .hd[hidden] { display: none; }
-.hd-head { display: flex; align-items: center; justify-content: space-between; gap: 10px 14px; flex-wrap: wrap; margin-bottom: 12px; }
+.hd-head { display: flex; align-items: center; justify-content: flex-end; gap: 10px 14px; flex-wrap: wrap; margin-bottom: 12px; }
 .hd-title { font-size: 15px; font-weight: 500; color: var(--text); }
 .hd-sub { margin-top: 3px; font-size: 11.5px; color: var(--text-muted); }
 .hd-ctl { display: flex; align-items: center; gap: 8px; }
@@ -3635,6 +3638,16 @@ select[aria-expanded="true"] { border-color: rgba(var(--ac), 0.55) !important; b
 
 .hd-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; margin-top: 10px; }
 @container hd (min-width: 640px) { .hd-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* панели: телефон — столбиком; от 640 — по две; от 1000 — график и сегменты в первой строке, три панели во второй */
+.hd-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; margin-top: 10px; }
+@container hd (min-width: 640px) { .hd-main { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hd-main .p-chart { grid-column: 1 / -1; } }
+@container hd (min-width: 1000px) {
+  .hd-main { grid-template-columns: repeat(12, minmax(0, 1fr)); grid-auto-flow: dense; }
+  .hd-main .p-chart { grid-column: span 8; }
+  .hd-main .p-seg, .hd-main .p-wd, .hd-main .p-fc, .hd-main .p-fl { grid-column: span 4; }
+  .hd-area { height: 210px; } .hd-y { height: 220px; }
+}
+@container hd (min-width: 1400px) { .hd-kpis { grid-template-columns: repeat(8, minmax(0, 1fr)); } }
 .hd-panel { position: relative; min-width: 0; padding: 14px 15px 15px; border-radius: 16px; border: 1px solid var(--border); background: linear-gradient(160deg, rgba(var(--ac),0.07), rgba(var(--ac),0) 55%), var(--bg-card); }
 .hd-panel.click { cursor: pointer; transition: border-color .15s ease; }
 .hd-panel.click:hover { border-color: rgba(var(--ac),0.4); }
@@ -3701,6 +3714,90 @@ select[aria-expanded="true"] { border-color: rgba(var(--ac), 0.55) !important; b
 .hd-r > b small { display: inline; margin-left: 7px; font-size: 10.5px; font-weight: 400; color: var(--text-muted); }
 .hd-rows.fl .hd-r { grid-template-columns: minmax(96px, 42%) minmax(0, 1fr) auto; }
 </style>
+<style id="bk-css">
+/* ─── «Брони» на широком экране (виджеты по бокам только на главной — колонка шире) ─── */
+#bookingsContent { container: bk / inline-size; }
+.bk-toolbar { display: block; }
+@container bk (min-width: 900px) {
+  .bk-toolbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+  .bk-toolbar .bk-views { margin: 12px 0 0; flex: none; }
+  .bk-dateblk { width: min(580px, 100%); }
+  .bk-dateblk .hz-datebar { margin: 8px 0 2px; }
+  .bk-dateblk .hz-summary { margin-bottom: 0; }
+  /* «Отметьте прошлые брони»: строки в несколько колонок, а не на всю ширину */
+  .rc-box { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); }
+  .rc-box > .rc-head { grid-column: 1 / -1; }
+}
+@container bk (min-width: 1100px) { #bookingsViewBody > .booking-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@container bk (min-width: 1700px) { #bookingsViewBody > .booking-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+/* схема: слева зал, справа колонка с временем, режимами и ожидающими бронями */
+.hz-split { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 18px; align-items: start; }
+.hz-split > .hz-main { grid-column: 1; grid-row: 1; min-width: 0; }
+.hz-split > .hz-side { grid-column: 2; grid-row: 1; position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow-y: auto; padding: 14px 14px 12px; border-radius: 16px; border: 1px solid var(--border); background: linear-gradient(160deg, rgba(var(--ac),0.06), rgba(var(--ac),0) 55%), var(--bg-card); }
+.hz-side .hz-times { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; overflow: visible; padding: 0 0 4px; }
+.hz-side .hz-time { text-align: center; padding: 7px 0; }
+.hz-side .hz-times .hz-time.now { position: static; box-shadow: none; grid-column: 1 / -1; }
+.hz-side .hz-timehint { margin: 6px 2px 0; }
+.hz-side .hz-modes { display: flex; width: 100%; margin-top: 14px; }
+.hz-side .hz-modes { overflow: hidden; width: 100% !important; max-width: 100%; }
+.hz-side .hz-modes .seg-btn { flex: 1 1 0 !important; min-width: 0 !important; justify-content: center; padding-left: 6px !important; padding-right: 6px !important; gap: 4px; } /* !important: общее правило десктопа для .seg-btn (min-width 124px) сильнее */
+.hz-side .hz-modes .seg-btn svg { display: none; }
+.hz-side .hz-wait-box { margin: 14px 0 0; }
+</style>
+<style id="sf-css">
+/* Поиск по сегментам: кнопка «Фильтры» под строкой поиска, выбранные сегменты чипами, панель выбора и список гостей */
+.search-under { flex-wrap: wrap; }
+.btn-filters { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; background: transparent; color: var(--text-sub); border: 1px solid var(--border); border-radius: 100px; padding: 7px 13px; font-family: 'Montserrat', sans-serif; font-size: 12.5px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: background-color .15s ease, border-color .15s ease, color .15s ease; }
+@media (hover: hover) { .btn-filters:hover { color: var(--text); border-color: rgba(var(--ac),0.4); } }
+.btn-filters.on { color: var(--accent-hi); border-color: rgba(var(--ac),0.45); background: rgba(var(--ac),0.1); }
+.btn-filters i { display: inline-grid; place-items: center; min-width: 17px; height: 17px; padding: 0 5px; box-sizing: border-box; border-radius: 100px; background: var(--accent); color: var(--bg); font-style: normal; font-size: 10.5px; font-weight: 600; line-height: 1; }
+.btn-filters[hidden], .btn-filters i[hidden] { display: none; }
+.btn-filters svg { flex: none; }
+
+.sf-applied { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 2px 0 8px; }
+.sf-applied[hidden] { display: none; }
+.sf-chip { display: inline-flex; align-items: center; gap: 4px; padding: 0 6px 0 0; border: 0; border-radius: 100px; background: transparent; cursor: pointer; font: inherit; color: var(--text-muted); }
+.sf-chip .rfm-pill { font-size: 11px; letter-spacing: 0.1px; padding: 4px 6px 4px 11px; }
+.sf-chip svg { flex: none; opacity: .7; }
+.sf-chip:hover svg { opacity: 1; }
+.sf-clear { border: 0; background: transparent; padding: 4px 6px; font: inherit; font-size: 11.5px; color: var(--text-muted); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.sf-clear:hover { color: var(--text); }
+
+.sf-panel { margin: 0 0 10px; padding: 12px 12px 10px; max-width: 540px; border-radius: 16px; border: 1px solid var(--border); background: linear-gradient(160deg, rgba(var(--ac),0.06), rgba(var(--ac),0) 55%), var(--bg-card); }
+.sf-panel[hidden] { display: none; }
+.sf-ph { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 0 4px 8px; }
+.sf-ph b { font-size: 12.5px; font-weight: 500; color: var(--text); }
+.sf-ph span { font-size: 11px; color: var(--text-muted); }
+.sf-list { display: flex; flex-direction: column; gap: 2px; }
+.sf-opt { display: grid; grid-template-columns: 18px auto minmax(0, 1fr) auto; align-items: center; gap: 10px; width: 100%; padding: 8px 8px; border: 0; border-radius: 12px; background: transparent; font: inherit; color: inherit; text-align: left; cursor: pointer; }
+@media (hover: hover) { .sf-opt:hover { background: rgba(var(--fg-rgb),0.04); } }
+.sf-opt:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.sf-opt.on { background: rgba(var(--ac),0.08); }
+.sf-chk { width: 18px; height: 18px; border-radius: 6px; border: 1.5px solid rgba(var(--fg-rgb),0.28); display: grid; place-items: center; transition: background-color .12s ease, border-color .12s ease; }
+.sf-chk svg { opacity: 0; }
+.sf-opt.on .sf-chk { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.sf-opt.on .sf-chk svg { opacity: 1; }
+.sf-opt .rfm-pill { margin: 0; justify-self: start; }
+.sf-d { min-width: 0; font-size: 11.5px; line-height: 1.35; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sf-n { min-width: 26px; text-align: right; font-size: 12.5px; font-weight: 500; font-variant-numeric: tabular-nums; color: var(--text-sub); }
+.rfm-pill.rfm-vip { --seg: var(--accent-hi); --seg-bg: rgba(var(--ac),0.14); --seg-bd: rgba(var(--ac),0.4); }
+.sf-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 4px 0; }
+.sf-foot button { border: 0; background: transparent; font: inherit; font-size: 12px; color: var(--text-muted); cursor: pointer; padding: 6px 4px; }
+.sf-foot button:hover { color: var(--text); }
+.sf-foot .sf-done { color: var(--accent-hi); font-weight: 500; }
+@media (max-width: 520px) { .sf-d { display: none; } .sf-opt { grid-template-columns: 18px minmax(0, 1fr) auto; } }
+
+.sf-more { display: block; width: 100%; margin: 10px 0 0; }
+/* список гостей сегмента: нет телефона и тегов (их список сегмента не отдаёт) — столбцы: гость, последний визит, визитов за год */
+#searchResults.rs-table.rs-seg { --rs-cols: minmax(0, 1fr) 150px 110px 16px; }
+@container (min-width: 780px) {
+  #searchResults.rs-table.rs-seg .rc-phone, #searchResults.rs-table.rs-seg .rc-tags { display: none; }
+}
+.sf-sum { grid-column: 1 / -1; padding: 0 4px 2px; font-size: 12px; color: var(--text-muted); }
+/* телефон: подсказка под полем занимает свою строку, «Фильтры» и «Новый гость» рядом ниже */
+@media (max-width: 520px) { .search-under.sf-on .search-hint { flex: 1 0 100%; } .search-under.sf-on { gap: 8px 10px; } }
+</style>
+
 <style id="cosmos-skin">
 /* ═══ ОБЩИЙ ВИД В СТИЛЕ COSMOS ═══════════════════════════════════════════════════════
    Шрифт Montserrat, подписи обычным регистром (не ЗАГЛАВНЫМИ), капсульные кнопки, спокойные поля ввода.
@@ -3918,11 +4015,17 @@ html.rail-wide .rail-row .rail-btn { font-size: 13px; }
     </div>
     <div class="search-under" id="homeSearchUnder">
       <span class="search-hint" id="searchHint">Можно ввести 4 последние цифры номера</span>
+      <button type="button" class="btn-filters" id="sfBtn" style="display:none" aria-expanded="false" aria-controls="sfPanel" onclick="sfToggle()" title="Искать по сегментам гостей">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></svg>
+        Фильтры<i id="sfCount" hidden></i>
+      </button>
       <button type="button" class="btn-new-guest" id="homeNewGuestBtn" onclick="openNewGuest()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Новый гость
       </button>
     </div>
+    <div class="sf-applied" id="sfApplied" hidden></div>
+    <div class="sf-panel" id="sfPanel" hidden></div>
 
     <div id="resultsSection" style="display:none;">
       <div class="sec">Результаты</div>
@@ -3930,9 +4033,18 @@ html.rail-wide .rail-row .rail-btn { font-size: 13px; }
     </div>
 
     <div class="grid-2" id="quickActionsGrid" style="margin-top:18px"></div>
-
-    <div class="hd" id="homeDash" hidden></div>
   </div>
+</div>
+
+<!-- ДАШБОРД (отдельная вкладка): показатели за период, график визитов, сегменты, дни недели, прогноз, вкусы -->
+<div class="screen" id="screen-dashboard">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('home')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Дашборд</h1><p id="hdSub">Показатели за период</p></div>
+  </div>
+  <div style="padding:0 16px"><div class="hd" id="homeDash"></div></div>
 </div>
 
 <!-- BIRTHDAYS -->
@@ -3993,14 +4105,14 @@ html.rail-wide .rail-row .rail-btn { font-size: 13px; }
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
     <div><h1 style="font-size:14px;letter-spacing:1px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="vertical-align:-2px;margin-right:5px;display:inline-block"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><path d="M8 14l2 2 4-4"/></svg>Брони</h1></div>
-  </div>
-  <div style="padding:0 16px">
-    <div style="display:flex;justify-content:flex-end;margin:4px 0 8px;" id="bkAddRow">
+    <div style="display:none;margin-left:auto" id="bkAddRow">
       <button type="button" class="btn-new-guest" onclick="openAddBooking()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Записать бронь
       </button>
     </div>
+  </div>
+  <div style="padding:0 16px">
     <div id="bookingsContent"><div class="loading">Загружаю...</div></div>
   </div>
 </div>
@@ -5818,6 +5930,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     currentPerms = new Set();
     permsSig = '';
     tagCatalog = null; tagCatalogSig = ''; tagCatalogAt = 0;
+    try { if (window.sfWipe) sfWipe(); } catch {} // выбранные сегменты и загруженные списки гостей прошлого сотрудника
 
     bookingsListData = [];
     bookingsPastData = [];
@@ -6080,6 +6193,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       stoplist: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="9"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
       bookings: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><path d="M8 14l2 2 4-4"/></svg>',
       marketing: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M3 10v4h4l6 5V5L7 10H3z"/><path d="M16.5 8.5a5 5 0 010 7"/><path d="M19 6a8.5 8.5 0 010 12"/></svg>',
+      dashboard: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>',
       analytics: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>',
       feedback: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M21 12a8 8 0 01-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1121 12z"/></svg>',
       segments: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/><path d="M3 17.5l9 5 9-5" opacity="0.55"/></svg>',
@@ -6149,6 +6263,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (searchUnder) searchUnder.style.display = can('guests.view') || can('guests.create') ? '' : 'none';
     const searchHint = document.getElementById('searchHint');
     if (searchHint) searchHint.style.visibility = can('guests.view') ? '' : 'hidden';
+    if (window.sfSync) sfSync(); // «Фильтры» (поиск по сегментам) — по правам «Сегменты» / «VIP-гости»
 
     // «Внимание» — то, что открывают постоянно за смену
     let attentionCards = '';
@@ -6167,6 +6282,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
     if (can('events.manage')) marketingRows += qrow(icons.events, 'Афиша', 'Мероприятия', "openEvents()");
     if (can('marketing.send')) marketingRows += qrow(icons.marketing, 'Рассылки', 'Через бота', "openMarketing()");
+    if (can('analytics.view')) analyticsRows += qrow(icons.dashboard, 'Дашборд', 'Показатели за период', "openDashboard()");
     if (can('analytics.view')) analyticsRows += qrow(icons.analytics, 'Аналитика', 'Сравнение периодов', "openAnalytics()");
     if (can('analytics.view')) analyticsRows += qrow(icons.forecast, 'Прогноз', 'Загрузка на неделю', "openForecast()");
     if (can('segments.view')) analyticsRows += qrow(icons.segments, 'Сегменты', 'Чемпионы → потерянные', "openSegments()");
@@ -8299,7 +8415,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (!el) return;
     // схему оставили открытой на ночь — утром начинаем с сегодняшнего дня и текущего времени
     if (!hallDate || hallDate < venueNow().day) { hallDate = venueNow().day; hallTime = null; }
-    const tabs = reconHtml() + segControl([['list', 'Список'], ['timeline', 'График'], ['plan', 'Схема']], bookingsView, 'setBookingsView', 'bk-views');
+    const recon = reconHtml();
+    const viewTabs = segControl([['list', 'Список'], ['timeline', 'График'], ['plan', 'Схема']], bookingsView, 'setBookingsView', 'bk-views');
+    const tabs = recon + '<div class="bk-toolbar">' + viewTabs + '</div>'; // на широком экране вкладки слева, дата и сводка дня справа
     bkWaitShown = bookingsWaitSig(bookingsListData);
     // раздел броней открыт — «опаздывает» и «отменил гость» считаются увиденными: точка гаснет, сообщение не повторится
     if (document.getElementById('screen-bookings')?.classList.contains('active')) setTimeout(markBookingEventsSeen, 0);
@@ -8315,13 +8433,14 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const noTable = day.filter(x => !x.b.table && !x.left).length; // кто уже ушёл, стола не ждёт
     const pending = day.filter(x => x.b.status === 'pending').length;
     const dayRange = venueDayRange(hallDate);
-    el.innerHTML = `${tabs}
+    el.innerHTML = `${recon}<div class="bk-toolbar">${viewTabs}<div class="bk-dateblk">
       <div class="hz-datebar">
         ${bkWorker() ? `<button class="hz-nav" ${hallDate <= minDay ? 'disabled' : ''} onclick="shiftHallDate(-1)">‹</button>` : ''}
         <div class="hz-date">${escHtml(hallDateLabel(hallDate))}</div>
         ${bkWorker() ? `<button class="hz-nav" onclick="shiftHallDate(1)">›</button>` : ''}
       </div>
       <div class="hz-summary">Броней: ${day.length} · гостей: ${guests}${pending ? ` · <span style="color:var(--c-amber)">ждут подтверждения: ${pending}</span>` : ''}${noTable ? ` · без стола: ${noTable}` : ''}${venueCfg && !dayRange.closed ? ` · работаем ${hhmm(dayRange.open)}–${hhmm(dayRange.close)}` : ''}</div>
+      </div></div>
       ${dayRange.closed ? `<div class="hz-closed">${escHtml(dayRange.closed)}. Гости на этот день бронировать не могут.</div>` : ''}
       <div id="bookingsViewBody"></div>`;
     if (bookingsView === 'timeline') renderTimeline();
@@ -8670,6 +8789,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // Если справа остаётся место для террасы (масштаб не меньше HALL_SIDE_P_MIN — не мельче, чем на телефоне), терраса стоит третьей колонкой
   // рядом с ВИП-комнатами в том же масштабе (под ней балкон — низ колонки вровень с залом), вкладки не нужны (side). Не хватает места — терраса на своей вкладке, как раньше.
   const HALL_WIDE_MIN = 620, HALL_PLAN_GAP = 12, HALL_P_MAX = 1.6, HALL_SIDE_P_MIN = 1.0;
+  // Широкая схема: зал слева, справа колонка (шкала времени, режимы, «Ждут стола»). Ширина колонки — и в CSS (.hz-split)
+  const HALL_SPLIT_MIN = 1280, HALL_SIDE_W = 340, HALL_SIDE_GAP = 18;
   function layoutHallPlan(containerPx, wantTerr) {
     const cw = Math.max(1, containerPx || 0);
     const wide = cw >= HALL_WIDE_MIN;
@@ -8706,7 +8827,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     hallLastWidth = body.clientWidth; // перерисовка по resize — только если ширина реально поменялась
     const terrCount = items.filter(it => it.table && it.table.zone === 'terrace').length; // броней дня на столах террасы
     // терраса рядом с залом — если есть место; закрытую террасу без броней в этот день на плане не рисуем (она остаётся на вкладке)
-    const lay = layoutHallPlan(body.clientWidth - 14, terraceOn() || terrCount > 0);
+    const split = body.clientWidth >= HALL_SPLIT_MIN;
+    const lay = layoutHallPlan(body.clientWidth - 14 - (split ? HALL_SIDE_W + HALL_SIDE_GAP : 0), terraceOn() || terrCount > 0);
     const { zone, balcZone, vipZone, terrZone } = lay;
     // выбранный стол остался на другой вкладке (например, после смены дня) — снимаем выбор; когда зал и терраса рядом, вкладок нет
     if (!lay.side) { const selTb = HALL_TABLES.find(x => x.key === hallSelectedTable); if (selTb && hallAreaOf(selTb) !== hallArea) hallSelectedTable = null; }
@@ -8799,13 +8921,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       ['hall', 'Общий зал'],
       ['terrace', `Терраса${terrClosed ? ' · закрыта' : ''}${terrCount ? ` <small title="броней на террасе в этот день">${terrCount}</small>` : ''}`]
     ], hallArea, 'setHallArea', 'seg-sm hz-areas');
-    body.innerHTML = `
-      ${timesHtml}
-      ${modes}
-      ${waitHtml}
-      ${seatBar}
-      ${areaTabs}
-      ${(() => {
+    const planHtml = (() => {
         const head = (z, short) => `<div class="hz-zonehead"><span>${escHtml(z.title)}</span><span class="note">${short ? '' : `в ${hhmm(t)} `}занято ${busyOf(z)} из ${z.tables.length}</span></div>`;
         const terrNote = terrClosed ? '<div class="hz-closed-note">Терраса выключена в «Сервис → Режим работы»: гости её не бронируют, записать на её столы нельзя. Столы с бронями остались активными.</div>' : '';
         // зал, ВИП и терраса в один ряд: все три колонки в одном масштабе и в одном времени;
@@ -8832,8 +8948,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
           ${head(balcZone)}<div class="hz-wrap">${balcSvg}</div>
           ${head(vipZone)}<div class="hz-wrap">${vipSvg}</div>
         </div>`;
-      })()}
-      <div class="hz-legend">
+      })();
+    const tailHtml = `<div class="hz-legend">
         <span class="lg-h">Цвет:</span>
         <span><i class="lg confirmed"></i>подтверждена</span>
         <span><i class="lg pending"></i>ждёт подтверждения</span>
@@ -8851,6 +8967,10 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
           <span class="note">${it.b.table ? escHtml(it.b.table) : 'стол не назначен'}</span>
         </div>`).join('')}` : ''}
       ${renderUntimedList()}`;
+    body.classList.toggle('hz-split-on', split);
+    body.innerHTML = split
+      ? `<div class="hz-split"><aside class="hz-side">${timesHtml}${modes}${waitHtml}</aside><div class="hz-main">${seatBar}${areaTabs}${planHtml}${tailHtml}</div></div>`
+      : `${timesHtml}${modes}${waitHtml}${seatBar}${areaTabs}${planHtml}${tailHtml}`;
 
     const sel = document.querySelector('#hzTimes .hz-time.selected');
     if (sel) sel.parentElement.scrollLeft = Math.max(0, sel.offsetLeft - sel.parentElement.clientWidth / 2 + sel.clientWidth / 2);
@@ -18644,7 +18764,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'tobacco', 'tips-mine', 'tips-admin', 'xr', 'xr-edit', 'xr-tpl'];
+  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'tobacco', 'tips-mine', 'tips-admin', 'xr', 'xr-edit', 'xr-tpl', 'dashboard'];
   var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'segment-rules', 'season', 'tips-mine', 'tips-admin', 'xr-edit', 'xr-tpl', 'review-rules', 'venue', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'tobacco'];
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
@@ -18659,6 +18779,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     screens.forEach(s => document.getElementById('screen-' + s)?.classList.remove('active'));
     document.getElementById('screen-' + name)?.classList.add('active');
     document.body.classList.toggle('bk-wide', name === 'bookings'); // на широком экране «Брони» занимают и место правой панели
+    document.body.classList.toggle('desk-home', name === 'home');   // боковые панели (дата, смена, афиша…) — только на главной
     // На широком экране всё занимает всю ширину, кроме форм и карточек одной записи: у них поля в 1200px бессмысленны,
     // они остаются колонкой 900px по центру.
     document.body.classList.toggle('col-narrow', NARROW_SCREENS.indexOf(name) >= 0);
@@ -18671,10 +18792,10 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     if (name === 'home' || name === 'bookings' || name === 'add-booking') loadVenueConfig(); // закрытые даты и терраса — свежие
     if (name === 'home') {
       loadDeskPanels();
-      try { loadHomeDash(); } catch (e) { /* дашборд не должен ломать главную */ }
       // точки на карточках — свежие при каждом возврате (не чаще раза в 20 с)
       if (prev && prev !== 'pin' && Date.now() - quickStatusAt > 20000) refreshQuickActionStatus();
     }
+    if (name === 'dashboard') { try { loadDashboard(); } catch (e) { console.warn('dashboard:', e); } }
     if (name === 'service' && prev && prev !== 'service' && prev !== 'pin') { renderService(); loadServiceBadges(); }
     if (name === 'booking-detail' && prev && prev !== 'booking-detail') renderBookingDetail();
     if (name === 'bookings') {
@@ -18815,6 +18936,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     if (!input) return;
     input.value = '';
     updateSearchHint();
+    if (window.sfOnClear && sfOnClear()) { input.focus(); return; } // выбраны сегменты: вместо пустого экрана — их полный список
     const results = document.getElementById('searchResults');
     if (results) results.innerHTML = '';
     const section = document.getElementById('resultsSection');
@@ -18835,8 +18957,9 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     }[c.kind] || (c.digits.length < 4
       ? 'Номер: 4 последние цифры или целиком'
       : `Номер: 4 последние цифры или целиком — сейчас ${c.digits.length}`);
-    el.textContent = text;
-    el.classList.toggle('on', c.kind !== 'empty');
+    el.textContent = (window.sfHint && sfHint(c)) || text;
+    el.classList.toggle('on', c.kind !== 'empty' || !!(window.sfHint && sfHint(c)));
+    if (window.sfOnInput) sfOnInput();
   }
 
   // Поиск не выполнился (нет связи, сбой сервера, нет доступа): отдельное сообщение с «Повторить» —
@@ -18887,13 +19010,13 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       + (g.tagsMore ? `<span class="rs-more">+${Number(g.tagsMore)}</span>` : '');
     const visitsN = Number(g.visitsTotal) || 0;
     const ago = g.lastVisit ? rsAgo(g.daysSince) : '';
-    const meta = rich && visitsN ? [ago ? `Был ${ago}` : '', `${visitsN} ${ruPlural(visitsN, 'визит', 'визита', 'визитов')}`].filter(Boolean).join(' · ') : '';
+    const meta = rich && (visitsN || g.vyear) ? [ago ? `Был ${ago}` : '', visitsN ? `${visitsN} ${ruPlural(visitsN, 'визит', 'визита', 'визитов')}${g.vyear ? ' за год' : ''}` : ''].filter(Boolean).join(' · ') : '';
     const mobile = (meta || tagsHtml) ? `<div class="rs-m">${meta ? `<div class="rs-meta">${meta}</div>` : ''}${tagsHtml ? `<div class="rs-tags">${tagsHtml}</div>` : ''}</div>` : '';
     const cells = rich ? `
       <div class="rc rc-phone">${last4 ? '···' + last4 : ''}</div>
       <div class="rc rc-tags"><div class="rs-tags">${tagsHtml}</div></div>
       <div class="rc rc-last">${g.lastVisit ? `<b>${escHtml(rsDate(g.lastVisit))}</b><span>${escHtml(ago)}</span>` : '<span>—</span>'}</div>
-      <div class="rc rc-vis">${visitsN ? `<b>${visitsN}</b><span>${ruPlural(visitsN, 'визит', 'визита', 'визитов')}</span>` : '<span>—</span>'}</div>` : '';
+      <div class="rc rc-vis">${visitsN ? `<b>${visitsN}</b><span>${g.vyear ? 'за год' : ruPlural(visitsN, 'визит', 'визита', 'визитов')}</span>` : '<span>—</span>'}</div>` : '';
     return `<div class="result-item" role="button" tabindex="0" onclick="openGuestCard('${escJs(g.id)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
       <div class="rs-who">
         <div class="result-avatar">${escHtml((raw || '?').charAt(0).toUpperCase())}</div>
@@ -18935,6 +19058,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   }
 
   async function doSearch() {
+    if (window.sfOnSearch && sfOnSearch()) return; // выбраны сегменты: имя ищем среди них
     const c = classifySearch(document.getElementById('searchInput').value);
     const resultsEl = document.getElementById('searchResults');
     if (c.kind === 'last4') return runLast4Search(c.digits, resultsEl);
@@ -21543,7 +21667,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   ];
   var WD = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
   var REFRESH_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-3-6.7"/><path d="M21 4v5h-5"/></svg>';
-  var state = { period: 30, data: null, at: 0, seq: 0, who: '', seen: false, io: null, chart: null };
+  var state = { period: 30, data: null, at: 0, seq: 0, who: '', chart: null };
   var gradSeq = 0;
   try { var saved = parseInt(localStorage.getItem('jv-hd-period'), 10); if (PERIODS.indexOf(saved) >= 0) state.period = saved; } catch (e) { /* без хранилища */ }
 
@@ -21568,8 +21692,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   function ensureFrame(el) {
     if (el.getAttribute('data-built')) return;
     el.setAttribute('data-built', '1');
-    el.innerHTML = '<div class="hd-head"><div><div class="hd-title">Дашборд</div><div class="hd-sub" id="hdSub">&nbsp;</div></div>'
-      + '<div class="hd-ctl"><div class="hd-seg" id="hdSeg" role="group" aria-label="Период"></div>'
+    el.innerHTML = '<div class="hd-head"><div class="hd-ctl"><div class="hd-seg" id="hdSeg" role="group" aria-label="Период"></div>'
       + '<button type="button" class="hd-ref" onclick="hdRefresh()" title="Обновить" aria-label="Обновить">' + REFRESH_SVG + '</button></div></div>'
       + '<div id="hdBody"><div class="hd-note">Считаю…</div></div>';
     renderSeg();
@@ -21761,11 +21884,6 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     }).join('') + '</div></div>';
   }
 
-  function grid(panels) {
-    var p = panels.filter(Boolean);
-    return p.length ? '<div class="hd-grid' + (p.length > 1 ? ' two' : '') + '">' + p.join('') + '</div>' : '';
-  }
-
   function render() {
     var d = state.data, body = document.getElementById('hdBody'), el = root();
     if (!d || !body || !el || el.hidden) return;
@@ -21775,9 +21893,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     var failed = KPI.every(function (k) { return !d.ok[k.m]; });
     if (failed) { body.innerHTML = '<div class="hd-note err">Не удалось загрузить показатели. <a href="#" onclick="hdRefresh();return false" style="color:inherit;text-decoration:underline">Повторить</a></div>'; return; }
     body.innerHTML = '<div class="hd-kpis">' + KPI.map(function (k) { return kpiHtml(k, d); }).join('') + '</div>'
-      + '<div class="hd-grid">' + chartPanel(d) + '</div>'
-      + grid([segmentsPanel(d), weekdayPanel(d)])
-      + grid([forecastPanel(d), flavorsPanel(d)]);
+      + '<div class="hd-main">' + [[chartPanel(d), 'p-chart'], [segmentsPanel(d), 'p-seg'], [weekdayPanel(d), 'p-wd'], [forecastPanel(d), 'p-fc'], [flavorsPanel(d), 'p-fl']]
+        .filter(function (x) { return x[0]; }).map(function (x) { return x[0].replace('class="hd-panel', 'class="hd-panel ' + x[1]); }).join('') + '</div>';
   }
 
   // ── действия
@@ -21817,25 +21934,241 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     tip.style.left = Math.max(0, left + 14 + w > rect.width ? left - w - 14 : left + 14) + 'px';
   };
 
-  // Точка входа: вызывается при каждом открытии главной. На телефоне считаем, только когда блок подъехал к экрану
-  window.loadHomeDash = function () {
+  // Вкладка «Дашборд»: вызывается при каждом открытии (данные живут минуту — повторное открытие не гоняет сервер)
+  window.openDashboard = function () { showScreen('dashboard'); };
+  window.loadDashboard = function () {
     var el = root();
     if (!el) return;
-    if (typeof can !== 'function' || !can('analytics.view')) { el.hidden = true; return; }
-    el.hidden = false;
+    if (typeof can !== 'function' || !can('analytics.view')) { el.innerHTML = '<div class="hd-note">Нет доступа к показателям.</div>'; el.removeAttribute('data-built'); return; }
     ensureFrame(el);
-    if (window.innerWidth < 1060 && !state.seen && 'IntersectionObserver' in window) {
-      if (state.io) return;
-      state.io = new IntersectionObserver(function (es) {
-        if (!es.some(function (e) { return e.isIntersecting; })) return;
-        state.io.disconnect(); state.io = null; state.seen = true; load(false);
-      }, { rootMargin: '300px' });
-      state.io.observe(el);
-      return;
-    }
-    state.seen = true;
     load(false);
   };
+})();
+</script>
+
+<script id="sf-js">
+/* ═══ ПОИСК ПО СЕГМЕНТАМ (главная) ═══════════════════════════════════════════
+   Кнопка «Фильтры» под строкой поиска, как в Cosmos: выбираете один или несколько сегментов (Чемпионы … Потерянные, «Без визитов», VIP) —
+   ниже список этих гостей, в поле можно набрать имя, чтобы сузить. Номер телефона ищется по всем гостям, как и раньше.
+   Берёт готовое: /api/staff/guest-list?filter=<сегмент> (право «Сегменты», VIP — «VIP-гости») и /api/admin/segments (только числа в подсказках).
+   Сервер не менялся. Крючки в основном коде: doSearch → sfOnSearch, clearSearch → sfOnClear, updateSearchHint → sfHint/sfOnInput,
+   построение главной → sfSync, выход → sfWipe. */
+(function () {
+  var sel = [];                 // выбранные ключи в порядке выбора
+  var panelOpen = false;
+  var lists = {};               // ключ → { at, rows }
+  var counts = null, countsAt = 0, countsBusy = false;
+  var seq = 0, timer = 0, page = 80, lastQ = '';
+  var CHECK = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17.5 19 7"/></svg>';
+  var CROSS = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>';
+
+  function $(id) { return document.getElementById(id); }
+  function canSeg() { return typeof can === 'function' && can('segments.view'); }
+  function canVip() { return typeof can === 'function' && can('guests.vip_list'); }
+  function allowed() { return typeof can === 'function' && can('guests.view') && (canSeg() || canVip()); }
+  function norm(s) { return String(s == null ? '' : s).toLowerCase().replace(/ё/g, 'е'); }
+
+  function options() {
+    var out = [];
+    if (canSeg()) {
+      SEGMENTS_UI.forEach(function (s) { out.push({ key: s.key, name: s.name, desc: s.description }); });
+      out.push({ key: 'none', name: 'Без визитов', desc: 'Карточка есть, визитов ещё нет' });
+    }
+    if (canVip()) out.push({ key: 'vip', name: '★ VIP', desc: 'Гости с тегом VIP' });
+    return out;
+  }
+  function nameOf(key) { var o = options().filter(function (x) { return x.key === key; })[0]; return o ? o.name : key; }
+  function pill(key) {
+    if (key === 'vip') return '<span class="rfm-pill rfm-vip">★ VIP</span>';
+    if (key === 'none') return '<span class="rfm-pill rfm-none">Без визитов</span>';
+    var s = SEGMENTS_UI.filter(function (x) { return x.key === key; })[0];
+    return segmentPillHtml(key, s ? s.name : key);
+  }
+  function countOf(key) {
+    if (lists[key]) return lists[key].rows.length;
+    if (counts && counts[key] != null) return counts[key];
+    return null;
+  }
+
+  // ── кнопка и чипы ────────────────────────────────────────────
+  function renderButton() {
+    var b = $('sfBtn');
+    if (!b) return;
+    b.style.display = allowed() ? '' : 'none';
+    var u = $('homeSearchUnder'); if (u) u.classList.toggle('sf-on', allowed());
+    b.classList.toggle('on', sel.length > 0 || panelOpen);
+    b.setAttribute('aria-expanded', panelOpen ? 'true' : 'false');
+    var n = $('sfCount');
+    if (n) { n.hidden = !sel.length; n.textContent = String(sel.length); }
+  }
+  function renderApplied() {
+    var el = $('sfApplied');
+    if (!el) return;
+    if (!sel.length) { el.hidden = true; el.innerHTML = ''; return; }
+    el.hidden = false;
+    el.innerHTML = sel.map(function (k) {
+      return '<button type="button" class="sf-chip" title="Убрать из выбора" aria-label="Убрать: ' + escHtml(nameOf(k)) + '" onclick="sfToggleKey(\'' + escJs(k) + '\')">' + pill(k) + CROSS + '</button>';
+    }).join('') + (sel.length > 1 ? '<button type="button" class="sf-clear" onclick="sfReset()">Сбросить</button>' : '');
+  }
+  function renderPanel() {
+    var el = $('sfPanel');
+    if (!el) return;
+    el.hidden = !panelOpen;
+    if (!panelOpen) return;
+    el.innerHTML = '<div class="sf-ph"><b>Сегмент гостей</b><span>можно выбрать несколько</span></div><div class="sf-list" role="group" aria-label="Сегменты">'
+      + options().map(function (o) {
+        var on = sel.indexOf(o.key) >= 0, c = countOf(o.key);
+        return '<button type="button" class="sf-opt' + (on ? ' on' : '') + '" aria-pressed="' + on + '" onclick="sfToggleKey(\'' + escJs(o.key) + '\')">'
+          + '<span class="sf-chk">' + CHECK + '</span>' + pill(o.key) + '<span class="sf-d">' + escHtml(o.desc) + '</span><b class="sf-n">' + (c == null ? '' : c) + '</b></button>';
+      }).join('')
+      + '</div><div class="sf-foot"><button type="button" onclick="sfReset()"' + (sel.length ? '' : ' disabled style="opacity:.4;cursor:default"') + '>Сбросить</button><button type="button" class="sf-done" onclick="sfToggle()">Готово</button></div>';
+  }
+  function renderAll() { renderButton(); renderApplied(); renderPanel(); }
+
+  function loadCounts() {
+    if (!canSeg() || countsBusy || (counts && Date.now() - countsAt < 60000)) return;
+    countsBusy = true;
+    fetch(PROXY_BASE + '/api/admin/segments?pin=' + getPin()).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+      countsBusy = false;
+      if (!d || !d.segments) return;
+      counts = {}; countsAt = Date.now();
+      d.segments.forEach(function (s) { counts[s.key] = s.end; });
+      if (d.none) counts.none = d.none.end;
+      if (panelOpen) renderPanel();
+    }).catch(function () { countsBusy = false; });
+  }
+
+  window.sfToggle = function () {
+    panelOpen = !panelOpen;
+    renderAll();
+    if (panelOpen) loadCounts();
+  };
+  window.sfToggleKey = function (key) {
+    var i = sel.indexOf(key);
+    if (i >= 0) sel.splice(i, 1); else if (allowedKey(key)) sel.push(key);
+    page = 80;
+    renderAll();
+    run(false);
+  };
+  window.sfReset = function () { sel = []; page = 80; renderAll(); run(false); };
+  window.sfMore = function () { page += 80; run(true); };
+  function allowedKey(k) { return k === 'vip' ? canVip() : canSeg(); }
+
+  // ── выбор → список ────────────────────────────────────────────
+  function inputEl() { return $('searchInput'); }
+  function queryKind() {
+    var q = String((inputEl() && inputEl().value) || '').trim();
+    if (!q) return { kind: 'empty', q: '' };
+    if (/[A-Za-zА-Яа-яЁё]/.test(q)) return { kind: 'name', q: q };
+    return { kind: 'digits', q: q };
+  }
+  function headingEl() { var s = $('resultsSection'); return s ? s.querySelector('.sec') : null; }
+  function leave() {
+    var r = $('searchResults'); if (r) r.classList.remove('rs-seg');
+    var h = headingEl(); if (h) h.textContent = 'Результаты';
+  }
+  function fetchList(key, force) {
+    var c = lists[key];
+    if (c && !force && Date.now() - c.at < 60000) return Promise.resolve(c.rows);
+    return fetch(PROXY_BASE + '/api/staff/guest-list?filter=' + encodeURIComponent(key) + '&pin=' + getPin()).then(function (res) {
+      if (res.status === 401) { showScreen('pin'); throw new Error('auth'); }
+      if (!res.ok) return responseError(res, 'Не удалось загрузить список').then(function (m) { throw new Error(m); });
+      return res.json();
+    }).then(function (d) {
+      lists[key] = { at: Date.now(), rows: d.guests || [] };
+      return lists[key].rows;
+    });
+  }
+  function rowFor(g) {
+    return { id: g.id, name: g.name, vip: g.vip, segmentKey: g.segmentKey, segment: g.segment, lastVisit: g.lastVisit, daysSince: g.daysSince, visitsTotal: g.visitsYear, vyear: true };
+  }
+
+  function run(quiet) {
+    var out = $('searchResults');
+    if (!out) return;
+    if (!sel.length) {
+      if (out.classList.contains('rs-seg')) { out.innerHTML = ''; var sec = $('resultsSection'); if (sec) sec.style.display = 'none'; }
+      leave();
+      return;
+    }
+    var qk = queryKind();
+    if (qk.kind === 'digits') return;           // номер ищет обычный поиск (кнопка «Найти»)
+    var my = ++seq, keys = sel.slice();
+    showResultsSection();
+    var allCached = keys.every(function (k) { return lists[k] && Date.now() - lists[k].at < 60000; });
+    if (!quiet && !allCached) out.innerHTML = '<div class="loading">Загружаю гостей...</div>';
+    Promise.all(keys.map(function (k) { return fetchList(k, false); })).then(function () {
+      if (my !== seq) return;
+      draw(keys, qk.q);
+    }).catch(function (e) {
+      if (my !== seq || (e && e.message === 'auth')) return;
+      out.classList.remove('rs-table', 'rs-seg');
+      out.innerHTML = searchFailedHtml(e && e.message, 'sfRun()');
+    });
+  }
+  function draw(keys, q) {
+    var out = $('searchResults'); if (!out) return;
+    var seen = {}, rows = [];
+    keys.forEach(function (k) {
+      lists[k].rows.forEach(function (g) { if (!seen[g.id]) { seen[g.id] = 1; rows.push(g); } });
+    });
+    rows.sort(function (a, b) { return String(b.lastVisit || '').localeCompare(String(a.lastVisit || '')) || String(a.name || '').localeCompare(String(b.name || ''), 'ru'); });
+    var total = rows.length;
+    var words = norm(q).split(/\s+/).filter(Boolean);
+    if (words.length) rows = rows.filter(function (g) { var n = norm(g.name); return words.every(function (w) { return n.indexOf(w) >= 0; }); });
+    var h = headingEl();
+    if (h) h.textContent = 'Гости · ' + keys.map(nameOf).join(', ');
+    out.classList.add('rs-table', 'rs-seg');
+    if (!rows.length) {
+      out.classList.remove('rs-table');
+      out.innerHTML = '<div class="empty-state">' + (words.length ? 'Среди выбранных сегментов никого с таким именем нет.' : 'В выбранных сегментах пока никого нет.') + '</div>';
+      return;
+    }
+    var shownRows = rows.slice(0, page);
+    var sum = '<div class="sf-sum">' + (words.length ? 'Найдено ' + rows.length + ' из ' + total : 'Гостей: ' + total) + '</div>';
+    var head = '<div class="rs-head"><span>Гость</span><span>Последний визит</span><span>Визитов за год</span><span></span></div>';
+    var more = rows.length > shownRows.length ? '<button type="button" class="btn-ghost sf-more" onclick="sfMore()">Показать ещё ' + Math.min(80, rows.length - shownRows.length) + '</button>' : '';
+    out.innerHTML = sum + head + shownRows.map(function (g) { return guestResultHtml(rowFor(g), q); }).join('') + more;
+  }
+  window.sfRun = function () { run(false); };
+
+  // ── крючки основного кода ─────────────────────────────────────
+  // «Найти» / Enter: при выбранных сегментах и имени (или пустом поле) показываем сегменты; номер — обычный поиск по всем
+  window.sfOnSearch = function () {
+    if (!sel.length) return false;
+    var qk = queryKind();
+    if (qk.kind === 'digits') { leave(); return false; }
+    clearTimeout(timer);
+    run(false);
+    return true;
+  };
+  // Крестик/Esc в поле: при выбранных сегментах возвращаем полный список сегментов вместо пустого экрана
+  window.sfOnClear = function () {
+    if (!sel.length) return false;
+    clearTimeout(timer);
+    run(true);
+    return true;
+  };
+  window.sfHint = function (c) {
+    if (!sel.length) return null;
+    if (c.kind === 'empty') return 'Выбраны сегменты — имя сузит список';
+    if (c.kind === 'name') return 'Ищем по имени среди выбранных сегментов';
+    return 'Номер ищем среди всех гостей — «Найти»';
+  };
+  // Каждое нажатие в поле: список сегментов сужается сразу (данные уже загружены — запросов нет)
+  window.sfOnInput = function () {
+    if (!sel.length) return;
+    var q = (inputEl() && inputEl().value) || '';
+    if (q === lastQ) return;
+    lastQ = q;
+    clearTimeout(timer);
+    timer = setTimeout(function () { run(true); }, 140);
+  };
+  window.sfSync = function () { renderAll(); };
+  window.sfWipe = function () { sel = []; lists = {}; counts = null; countsAt = 0; panelOpen = false; seq++; clearTimeout(timer); lastQ = ''; try { renderAll(); } catch (e) {} };
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && panelOpen && document.activeElement && document.activeElement.closest && document.activeElement.closest('#sfPanel')) { panelOpen = false; renderAll(); var b = $('sfBtn'); if (b) b.focus(); }
+  });
 })();
 </script>
 
@@ -21869,6 +22202,10 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       { key: 'book', top: true, primary: true, icon: ic('<rect x="3" y="4.5" width="18" height="16.5" rx="2.5"/><path d="M8 2.5v4M16 2.5v4M3 10h18"/><path d="M8 14.5h3M13 14.5h3M8 17.5h3"/>'),
         add: { label: 'Новая бронь', ok: perm('bookings.create'), go: function () { openAddBooking(); } }, items: [
         { key: 'bookings', label: 'Бронирование', ok: perm('bookings.view'), go: function () { openBookings(); }, screens: ['bookings', 'booking-detail', 'add-booking'], dot: 'qdotBookings' } ] },
+
+      // Дашборд — отдельная вкладка: показатели за период (виден тем, у кого есть аналитика)
+      { key: 'dash', top: true, icon: ic('<rect x="3" y="3" width="7" height="9" rx="1.6"/><rect x="14" y="3" width="7" height="5" rx="1.6"/><rect x="14" y="12" width="7" height="9" rx="1.6"/><rect x="3" y="16" width="7" height="5" rx="1.6"/>'), items: [
+        { key: 'dashboard', label: 'Дашборд', ok: perm('analytics.view'), go: function () { openDashboard(); }, screens: ['dashboard'] } ] },
 
       { key: 'attn', title: 'Внимание', icon: ic('<path d="M6 17V11a6 6 0 0 1 12 0v6l1.5 2h-15z"/><path d="M10 21h4"/>'), items: [
         { key: 'messages', label: 'Обращения', ok: perm('messages.view'), go: function () { openMessages(); }, screens: ['messages'], dot: 'qdotMessages' },
