@@ -22149,36 +22149,6 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   // ─── SEARCH ────────────────────────────────────
 
-  // Имя гость мог назвать неточно или не полностью — предлагаем поискать по телефону
-  // Единый вид карточки-подсказки "гость есть в общей базе, но карточки нет"
-  // Если бронировал 3+ раза — подсвечиваем: явный сигнал что пора завести карточку
-  function renderGeneralGuestCard(g) {
-    // имя приходит из гостевого приложения (его вводит сам гость) — экранируем и для JS, и для HTML
-    const nameEsc = escJs(g.name || '');
-    const phoneEsc = escJs(g.phone || '');
-    const isFrequent = (g.bookingsCount || 0) >= 3;
-
-    const borderColor = isFrequent ? 'rgba(var(--ac),0.7)' : 'rgba(var(--ac),0.35)';
-    const glow = isFrequent ? 'box-shadow: 0 0 16px rgba(var(--ac),0.25);' : '';
-
-    const badge = isFrequent
-      ? `<div style="display:inline-flex;align-items:center;gap:5px;background:var(--accent);color:var(--bg);font-size:10px;letter-spacing:0.5px;text-transform:uppercase;border-radius:100px;padding:4px 10px;margin-bottom:8px;">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l2.5 6.5L21 9l-5.5 4.5L17 21l-5-3.5L7 21l1.5-7.5L3 9l6.5-0.5z"/></svg>
-          Стоит завести карточку
-        </div>`
-      : '';
-
-    return `
-      <div style="background:var(--accent-dim);border:1px solid ${borderColor};${glow}border-radius:14px;padding:16px;margin-bottom:8px;">
-        ${badge}
-        <div style="font-size:14px;color:var(--text);margin-bottom:4px;">${escHtml(g.name || '')}</div>
-        <div style="font-size:12px;color:var(--text-sub);margin-bottom:12px;">
-          Бронировал${g.bookingsCount ? ' · ' + g.bookingsCount + ' раз' : ''} через приложение${g.phone ? ' · ' + escHtml(g.phone) : ''}.<br>В карточке гостей его пока нет.
-        </div>
-        <button class="btn-cta" onclick="openNewGuest('${nameEsc}','${phoneEsc}')">Создать карточку</button>
-      </div>`;
-  }
-
   // Имя не нашлось — подсказываем искать по номеру в той же строке поиска
   function notFoundWithPhoneFallback() {
     return `
@@ -22217,13 +22187,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
         return;
       }
 
-      if (data.inGeneralDb) {
-        resultsEl.innerHTML = renderGeneralGuestCard(data);
-        return;
-      }
-
       const phoneEsc = escJs(phone);
-      resultsEl.innerHTML = `<div class="empty-state">Гостя с этим номером нет ни в карточках, ни в бронях.</div>
+      resultsEl.innerHTML = `<div class="empty-state">Гостя с этим номером у нас ещё нет.</div>
         <button class="btn-cta" onclick="openNewGuest('', '${phoneEsc}')">Создать карточку с этим номером</button>`;
     } catch {
       resultsEl.innerHTML = searchFailedHtml('', 'doSearch()');
@@ -22239,7 +22204,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   // Одна строка поиска: что ввели, то и ищем.
   //  • есть буквы — поиск по имени и фамилии;
   //  • только цифры (пробелы, +, скобки, дефисы не мешают):
-  //    4 цифры — по последним 4 цифрам номера в обеих базах,
+  //    4 цифры — по последним 4 цифрам номера,
   //    10–11 цифр — по номеру целиком,
   //    другое количество — подсказываем, сколько цифр нужно.
   function classifySearch(raw) {
@@ -22372,8 +22337,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
         return;
       }
 
-      const cardRows = matches.filter(g => g.source === 'card');
-      resultsEl.innerHTML = guestResultsHtml(cardRows, '', resultsEl) + matches.filter(g => g.source !== 'card').map(g => renderGeneralGuestCard(g)).join('');
+      resultsEl.innerHTML = guestResultsHtml(matches, '', resultsEl);
     } catch {
       resultsEl.innerHTML = searchFailedHtml('', 'doSearch()');
     }
@@ -22405,21 +22369,9 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       if (!Array.isArray(results)) { resultsEl.innerHTML = searchFailedHtml('', 'doSearch()'); return; }
 
       if (!results.length) {
-        resultsEl.innerHTML = '<div class="loading">Проверяю по броням в приложении...</div>';
-        try {
-          const genRes = await fetch(`${PROXY_BASE}/api/staff/check-general?name=${encodeURIComponent(name)}&pin=${getPin()}`);
-          // вторая проверка не прошла — «не найден» сказать нельзя: гость может быть в бронях
-          if (!genRes.ok) { resultsEl.innerHTML = searchFailedHtml('', 'doSearch()'); return; }
-          const genResults = await genRes.json();
-
-          if (genResults.length) {
-            resultsEl.innerHTML = genResults.map(g => renderGeneralGuestCard(g)).join('') + notFoundWithPhoneFallback();
-          } else {
-            resultsEl.innerHTML = `<div class="empty-state">Гость «${escHtml(name)}» не найден.<br>Можно создать новую карточку.</div>` + notFoundWithPhoneFallback();
-          }
-        } catch {
-          resultsEl.innerHTML = searchFailedHtml('', 'doSearch()');
-        }
+        // Гость и карточка — одно и то же: кто хоть раз попал в базу (бронь, сайт, приложение), тот находится здесь.
+        // Не нашёлся — значит у нас его ещё нет, и «Новый гость» заведёт его впервые.
+        resultsEl.innerHTML = `<div class="empty-state">Гость «${escHtml(name)}» не найден.<br>Если он у нас впервые, нажмите «Новый гость».</div>` + notFoundWithPhoneFallback();
         return;
       }
 
