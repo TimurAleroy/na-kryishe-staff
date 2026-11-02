@@ -3950,11 +3950,6 @@ html[data-theme="dark"] #screen-enps.has-bg { --ep-rgb: 8,10,14; --ep-ink: 244,2
 .rail-btn:active { transform: scale(.96); }
 .rail-btn:focus-visible, .rail-sb:focus-visible, .rail-toggle:focus-visible { outline: 2px solid rgba(var(--ac),0.7); outline-offset: 2px; }
 .rail-btn.on { background: linear-gradient(135deg, rgba(var(--ac),0.34), rgba(var(--ac),0.16)); box-shadow: inset 0 0 0 1px rgba(var(--ac),0.24); color: var(--text); }
-/* «Бронирование»: всегда на мягкой цветной плашке — главный пункт, с ним работают чаще всего */
-.rail-btn.rail-primary { background: linear-gradient(135deg, rgba(var(--ac),0.22), rgba(var(--ac),0.07)); box-shadow: inset 0 0 0 1px rgba(var(--ac),0.3); color: var(--text); }
-.rail-btn.rail-primary > svg:first-child { color: var(--rail-bar); }
-.rail-btn.rail-primary:hover { background: linear-gradient(135deg, rgba(var(--ac),0.32), rgba(var(--ac),0.12)); }
-.rail-btn.rail-primary.on { background: linear-gradient(135deg, rgba(var(--ac),0.52), rgba(var(--ac),0.22)); box-shadow: inset 0 0 0 1px rgba(var(--ac),0.5), 0 6px 18px rgba(var(--ac),0.2); }
 .rail-btn.on::before { content: ''; position: absolute; left: -13px; top: 13px; width: 3px; height: 20px; border-radius: 0 3px 3px 0; background: var(--rail-bar); }
 .rail-lbl, .rail-chev { display: none; }
 .rail-dot { display: none; position: absolute; top: 8px; right: 8px; width: 9px; height: 9px; border-radius: 50%; background: var(--c-gold); border: 2px solid var(--bg); box-sizing: border-box; }
@@ -25882,7 +25877,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
         { key: 'home', label: 'Главная', ok: T, go: function () { showScreen('home'); }, screens: ['home'] } ] },
 
       // Бронирование — самый частый раздел: отдельным пунктом сверху, с кнопкой «+» для новой брони
-      { key: 'book', top: true, primary: true, icon: ic('<rect x="3" y="4.5" width="18" height="16.5" rx="2.5"/><path d="M8 2.5v4M16 2.5v4M3 10h18"/><path d="M8 14.5h3M13 14.5h3M8 17.5h3"/>'),
+      { key: 'book', top: true, icon: ic('<rect x="3" y="4.5" width="18" height="16.5" rx="2.5"/><path d="M8 2.5v4M16 2.5v4M3 10h18"/><path d="M8 14.5h3M13 14.5h3M8 17.5h3"/>'),
         add: { label: 'Новая бронь', ok: perm('bookings.create'), go: function () { openAddBooking(); } }, items: [
         { key: 'bookings', label: 'Бронирование', ok: perm('bookings.view'), go: function () { openBookings(); }, screens: ['bookings', 'booking-detail', 'add-booking'], dot: 'qdotBookings' } ] },
 
@@ -25970,7 +25965,6 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       if (v.length === 1) {
         var b = btn({ key: v[0].key, label: v[0].label, go: v[0].go }, i, g.icon);
         b.classList.add('rail-link');
-        if (g.primary) b.classList.add('rail-primary');
         b.dataset.gkey = g.key;
         addDot(b, ids);
         if (g.add && safe(g.add.ok)) {
