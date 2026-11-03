@@ -6213,7 +6213,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function fallbackPerms(jobRole) {
     const base = ['guests.view', 'guests.create', 'guests.edit', 'tags.use', 'visits.record', 'guests.birthdays', 'guests.vip_list', 'shift.mark', 'schedule.view', 'menu.view', 'problems.view', 'problems.report', 'problems.work_own_role'];
     const own = { 'Бармен': ['menu.stoplist_drinks', 'tips.view'], 'Повар': ['menu.stoplist_food'], 'КМ': ['menu.stoplist_hookah', 'tobacco.manage', 'tips.view'], 'Официант': ['tips.view'] }[jobRole] || [];
-    const admin = ['shifts.review', 'briefing.view', 'tobacco.manage', 'tips.view', 'tips.manage', 'ext_reviews.manage', 'stories.manage', 'tv.manage', 'standards.manage', 'checklists.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage', 'messages.view'];
+    const admin = ['shifts.review', 'briefing.view', 'tobacco.manage', 'tips.view', 'tips.manage', 'ext_reviews.manage', 'stories.manage', 'tv.manage', 'standards.manage', 'checklists.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage', 'messages.view', 'guests.history'];
     const owner = ['surveys.manage', 'tags.manage', 'audit.view', 'settings.manage', 'founder_tasks.create', 'marketing.send', 'marketing.log', 'analytics.view', 'segments.view', 'feedback.view', 'guests.table', 'candidates.view'];
     if (jobRole === 'Основатель') return base.concat(admin, owner);
     if (jobRole === 'Администратор') return base.concat(admin);
@@ -23293,8 +23293,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       <div class="sec">Последние визиты</div>
       <div class="gd-visits">${visitsHtml}</div>
 
-      <div class="sec">История изменений</div>
-      ${renderHistory(guest)}
+      ${can('guests.history') ? `<div class="sec">История изменений</div>
+      ${renderHistory(guest)}` : ''}
       ${can('guests.delete') ? `<button type="button" class="btn-ghost danger" style="margin-top:22px" onclick="deleteGuestCard()">Удалить карточку гостя</button>
       <div class="note" style="margin-top:6px">Карточка пропадёт из поиска, списков и рассылок. Визиты и брони останутся в аналитике.</div>` : ''}
     `;
