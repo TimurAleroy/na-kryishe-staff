@@ -12349,6 +12349,13 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     return `<div class="sv-hero ${lvl}"><div class="sv-hero-ico">${SYS_IC[lvl]}</div><div class="sv-hero-body"><div class="sv-hero-k">Состояние системы</div><div class="sv-hero-t">${title}</div><div class="sv-hero-s">${sub}</div>${pills ? `<div class="sv-pills">${pills}</div>` : ''}</div></div>`;
   }
   // Строки экрана «Состояние» из ответа сервера: [{ name, rows: [{ ic, st: ok|warn|bad, t, s }] }]
+  // Размер в человеческом виде: 1,4 ГБ · 38 МБ · 640 КБ
+  function sysBytes(n) {
+    n = Number(n) || 0;
+    if (n >= 1073741824) return (n / 1073741824).toFixed(1).replace('.', ',') + ' ГБ';
+    if (n >= 1048576) return Math.round(n / 1048576) + ' МБ';
+    return Math.max(1, Math.round(n / 1024)) + ' КБ';
+  }
   function sysBuildGroups(d) {
       const groups = [
         { name: 'Серверы и база', ic: 'server', rows: [] },
@@ -12358,9 +12365,33 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       const add = (g, ic, st, t, s) => groups[g].rows.push({ ic, st, t, s });
       if (d.database.ok) add(0, 'db', 'ok', 'База данных', `Работает · ответ ${d.database.ms} мс${d.database.migration ? ' · версия ' + d.database.migration.replace(/\.sql$/, '') : ''}`);
       else add(0, 'db', 'bad', 'База данных', `Не отвечает: ${d.database.error || 'неизвестная ошибка'}`);
+      // версия схемы: коду нужна не ниже указанной (старее — выкладка прошла не по порядку)
+      if (d.schema && d.schema.state === 'behind') {
+        const v = x => String(x || '').replace(/\.sql$/, '');
+        add(0, 'db', 'warn', 'Схема базы', `База отстаёт от кода: в ней версия ${v(d.schema.actual)}, серверу нужна ${v(d.schema.required)}. Перезапустите сервис jarvis на Amvera — он применит недостающее. Пока этого нет, часть функций может отвечать ошибкой`);
+      } else if (d.schema && d.schema.state === 'unknown') add(0, 'db', 'warn', 'Схема базы', 'Не удалось прочитать версию схемы базы');
       add(0, 'server', 'ok', 'Сервер сотрудников', `Работает · без перезапуска ${ssUptime(d.staffServer.uptimeSec)} · сотрудников с доступом: ${d.staffServer.employees}`);
       if (d.guestServer.ok) add(0, 'globe', d.guestServer.db === false ? 'bad' : 'ok', 'Гостевой сервер', d.guestServer.db === false ? 'Работает, но без связи с базой' : `Работает · ответ ${d.guestServer.ms} мс`);
       else add(0, 'globe', 'bad', 'Гостевой сервер', `Не отвечает: ${d.guestServer.error || 'неизвестная ошибка'}. Гости не смогут забронировать`);
+      // место: база, фото и видео (лежат в самой базе и входят в каждую копию), журнал действий; ничего не стирается само
+      if (d.storage) {
+        const st = d.storage, w = st.warn || [];
+        const parts = [`База ${sysBytes(st.dbBytes)}`, `фото и видео ${sysBytes(st.mediaBytes)} (${st.mediaCount})`,
+          `журнал действий: ${Number(st.auditRows).toLocaleString('ru-RU')} записей${st.auditOldest ? ', с ' + new Date(st.auditOldest).toLocaleDateString('ru-RU') : ''}`];
+        const hints = [];
+        if (w.includes('db')) hints.push('база выросла больше обычного: проверьте место на тарифе базы и размер копий');
+        if (w.includes('audit_rows') || w.includes('audit_age')) hints.push('журнал давно не чистился: решите, сколько его хранить (сервер сам ничего не стирает)');
+        add(0, 'db', w.length ? 'warn' : 'ok', 'Место в базе', parts.join(' · ') + (hints.length ? '. ' + hints.join('; ') : ''));
+      }
+      // ключ связи двух серверов (рассылки, подтверждение броней и ответы гостям идут по нему); «неизвестно» молчит: гостевой сервер и так отмечен выше
+      if (d.guestKey && d.guestKey.state === 'ok') add(0, 'globe', 'ok', 'Связь серверов', 'Ключ связи с гостевым сервером совпадает');
+      else if (d.guestKey && d.guestKey.state === 'mismatch') add(0, 'globe', 'bad', 'Связь серверов', 'Ключ INTERNAL_ADMIN_KEY на сервере сотрудников и на гостевом сервере разный: подтверждение броней, рассылки и ответы гостям не пройдут. Задайте одинаковое значение в обоих приложениях на Amvera и перезапустите их');
+      // настройки сервера: названия переменных, которых не хватает или которые указывают не туда (значений здесь нет)
+      if (d.config) {
+        const cp = d.config.problems || [];
+        if (!cp.length) add(0, 'server', 'ok', 'Настройки сервера', 'Все нужные переменные заданы');
+        else add(0, 'server', cp.some(p => p.level === 'bad') ? 'bad' : 'warn', 'Настройки сервера', cp.map(p => `${p.key}: ${p.text}`).join('. '));
+      }
       if (d.staffBot.ok) {
         const trouble = d.staffBot.lastError ? `Telegram сообщает об ошибке: ${d.staffBot.lastError}` : (d.staffBot.pending > 20 ? `Скопились необработанные сообщения: ${d.staffBot.pending}` : '');
         add(1, 'bot', trouble || !d.staffBot.webhookSet ? 'warn' : 'ok', 'Бот сотрудников', `@${d.staffBot.username} · ${trouble || (d.staffBot.webhookSet ? 'принимает сообщения' : 'не подключён к серверу (вебхук не задан)')}`);
@@ -12395,8 +12426,13 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
         }
       }
       if (d.backup.lastAt) {
-        const ageDays = (Date.now() - new Date(d.backup.lastAt)) / 86400000;
-        add(2, 'backup', ageDays > 2 ? 'warn' : 'ok', 'Резервная копия базы', `Последняя: ${fmtDateTime(d.backup.lastAt)} (${timeAgo(d.backup.lastAt)})${ageDays > 2 ? ' — давно, проверьте' : ''}`);
+        // срок и размеры считает сервер (backup.warnHours, backup.info); если сервер старее приложения, считаем сами
+        const limit = d.backup.warnHours || 36;
+        const hrs = typeof d.backup.ageHours === 'number' ? d.backup.ageHours : (Date.now() - new Date(d.backup.lastAt)) / 3600000;
+        const old = hrs > limit;
+        const bi = d.backup.info || {};
+        const extra = [bi.size ? 'копия ' + sysBytes(bi.size) : '', bi.copies ? 'хранится копий: ' + bi.copies : ''].filter(Boolean);
+        add(2, 'backup', old ? 'warn' : 'ok', 'Резервная копия базы', `Последняя: ${fmtDateTime(d.backup.lastAt)} (${timeAgo(d.backup.lastAt)})${extra.length ? ' · ' + extra.join(' · ') : ''}${old ? ` — старше ${limit} ч, проверьте задачу копирования на Amvera` : ''}`);
       } else {
         add(2, 'backup', 'warn', 'Резервная копия базы', 'Нет данных. Автоматические копии ещё не настроены — это нужно сделать до открытия бара');
       }
