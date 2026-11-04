@@ -813,7 +813,7 @@
     .gd-note-t { font-size: 13.5px; line-height: 1.5; color: var(--text); white-space: pre-line; overflow-wrap: anywhere; max-height: 9em; overflow: auto; }
     .gd-lcard { position: relative; overflow: hidden; isolation: isolate; display: flex; align-items: stretch; justify-content: space-between; gap: 10px; flex: none; width: 208px; height: 128px; box-sizing: border-box; padding: 12px; border-radius: 14px; border: 1px solid rgba(240,223,192,0.22); background: linear-gradient(135deg, #34190c 0%, #20120A 58%, #1a0e07 100%); color: #F4E2D1; box-shadow: 0 10px 22px rgba(0,0,0,0.28); }
     .gd-lcard::before { content: ''; position: absolute; top: -35%; left: -18%; width: 80%; height: 120%; background: radial-gradient(circle, rgba(184,115,51,0.32), transparent 72%); z-index: -1; }
-    /* карта окрашивается по уровню: Bronze — тёмная бронзовая, Silver — серебро, Gold — золото (как у гостя в приложении) */
+    /* карта окрашивается по уровню: Bronze — тёмная бронзовая, Silver — серебро, Gold — золото, Platinum — графит с жемчужным блеском (как у гостя в приложении) */
     .gd-lcard.lv-silver, .gd-lcard.lv-gold { box-shadow: 0 10px 22px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.55); }
     .gd-lcard.lv-silver::after, .gd-lcard.lv-gold::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(115deg, transparent 36%, rgba(255,255,255,0.38) 46%, transparent 56%); }
     .gd-lcard.lv-silver { border-color: rgba(255,255,255,0.7); color: #1d2126; background: linear-gradient(135deg, #eef0f3 0%, #c4c9d1 34%, #e6e9ee 52%, #a3aab6 100%); }
@@ -826,6 +826,15 @@
     .gd-lcard.lv-gold .gd-lcard-lv { color: #6b4a0e; }
     .gd-lcard.lv-silver .gd-lcard-qr, .gd-lcard.lv-gold .gd-lcard-qr { box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
     .gd-lcard.lv-silver .gd-lcard-qr rect { fill: #f8f9fb; } .gd-lcard.lv-silver .gd-lcard-qr path { fill: #1a1d22; }
+    /* Platinum — тёмный графит с жемчужным отблеском и светлой кромкой: выглядит дороже серебра */
+    .gd-lcard.lv-platinum { border-color: rgba(232,234,240,0.6); color: #ECEEF2; box-shadow: 0 10px 22px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.4);
+      background: linear-gradient(135deg, #454b57 0%, #20242b 38%, #343a45 56%, #101216 100%); }
+    .gd-lcard.lv-platinum::before { background: radial-gradient(circle, rgba(226,232,246,0.42), transparent 72%); }
+    .gd-lcard.lv-platinum::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(115deg, transparent 34%, rgba(255,255,255,0.2) 46%, transparent 58%); }
+    .gd-lcard.lv-platinum img { filter: brightness(0) invert(1) opacity(0.9); }
+    .gd-lcard.lv-platinum .gd-lcard-lv { color: #D9DDE6; }
+    .gd-lcard.lv-platinum .gd-lcard-qr { box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+    .gd-lcard.lv-platinum .gd-lcard-qr rect { fill: #eceef3; } .gd-lcard.lv-platinum .gd-lcard-qr path { fill: #12141a; }
     .gd-lcard.lv-gold .gd-lcard-qr rect { fill: #fff8e3; } .gd-lcard.lv-gold .gd-lcard-qr path { fill: #2a1a05; }
     .gd-lcard-body { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; }
     .gd-lcard img { flex: none; align-self: flex-start; height: 76px; width: auto; }
@@ -1148,7 +1157,7 @@
     .sr-delta.down { color: var(--c-yellow); background: rgba(var(--c-yellow-rgb),0.1); border-color: rgba(var(--c-yellow-rgb),0.38); }
     .sr-delta { display: block; width: max-content; margin-left: auto; }
     /* уровни карты: цвет точки и названия уровня (--seg берут .rfm-dot и .sr-seg-t b) */
-    .lv-bronze { --seg: #CD8B55; } .lv-silver { --seg: #C9CED6; } .lv-gold { --seg: #E6C15A; }
+    .lv-bronze { --seg: #CD8B55; } .lv-silver { --seg: #C9CED6; } .lv-gold { --seg: #E6C15A; } .lv-platinum { --seg: #E4E7EE; }
     #clvContent .sr-step input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
     #clvContent .sr-step input[type="number"]::-webkit-inner-spin-button, #clvContent .sr-step input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     .clv-sel { width: 100%; height: 44px; padding: 0 12px; font-size: 15px; }
@@ -5631,7 +5640,7 @@ body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-le
     <div class="back-btn" onclick="showScreen('service')">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
-    <div><h1 style="font-size:14px;letter-spacing:1px;">Уровни карты</h1><p>Сколько гость тратит, чтобы получить Silver и Gold</p></div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Уровни карты</h1><p>Сколько гость тратит, чтобы получить Silver, Gold и Platinum</p></div>
   </div>
   <div style="padding:0 16px">
     <div id="clvContent" style="margin-top:6px"><div class="loading">Загружаю...</div></div>
@@ -6817,7 +6826,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'Логины, роли и права', fn: 'openEmployees()' });
     if (can('candidates.view')) list.push({ group: G.team, icon: 'candidates', short: 'кандидаты', title: 'Кандидаты', sub: 'Отклики на вакансии', fn: 'openCandidates()' });
     if (can('settings.manage')) list.push({ group: G.guests, icon: 'segments', short: 'правила сегментов', title: 'Правила сегментов', sub: 'Границы: дни и визиты', fn: 'openSegmentRules()' });
-    if (can('settings.manage')) list.push({ group: G.guests, icon: 'cardlevels', short: 'уровни карты', title: 'Уровни карты', sub: 'Silver и Gold: сколько гость тратит', fn: 'openCardLevels()' });
+    if (can('settings.manage')) list.push({ group: G.guests, icon: 'cardlevels', short: 'уровни карты', title: 'Уровни карты', sub: 'Silver, Gold и Platinum: сколько гость тратит', fn: 'openCardLevels()' });
     if (can('settings.manage')) list.push({ group: G.guests, icon: 'autotags', short: 'автотеги', title: 'Автотеги', sub: 'Что система отмечает в карточке гостя сама: пороги, цвета, кому показывать', fn: 'openAutotags()' });
     if (can('settings.manage')) list.push({ group: G.content, icon: 'season', short: 'сезоны', title: 'Сезоны', sub: 'Снег, сердечки, розы, Хэллоуин: в приложении и на ТВ', fn: 'openSeason()' });
     if (can('settings.manage')) list.push({ group: G.system, icon: 'reviews', short: 'отзывы', title: 'Просьбы об отзыве', sub: 'Когда и кому бот пишет', fn: 'openReviewRules()' });
@@ -12939,18 +12948,20 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     }
   }
 
-  // ─── СЕРВИС → ГОСТИ: УРОВНИ КАРТЫ (Bronze / Silver / Gold по тратам, правила — как у сегментов) ───
+  // ─── СЕРВИС → ГОСТИ: УРОВНИ КАРТЫ (Bronze / Silver / Gold / Platinum по тратам, правила — как у сегментов) ───
   var clv = null;            // ответ сервера: правила, пределы, уровни, сколько карт на каждом
   var clvPreview = null;     // расчёт «что получится» для цифр на экране, пока не сохранены
   var clvPreviewSeq = 0, clvPreviewTimer = null;
   const CLV_FIELDS = [
     ['silverFrom', 'Silver — от', 'Сколько гость тратит за период, чтобы получить уровень Silver', '₽', 5000],
-    ['goldFrom', 'Gold — от', 'Сколько гость тратит за период, чтобы получить уровень Gold', '₽', 10000]
+    ['goldFrom', 'Gold — от', 'Сколько гость тратит за период, чтобы получить уровень Gold', '₽', 10000],
+    ['platinumFrom', 'Platinum — от', 'Сколько гость тратит за период, чтобы получить высший уровень Platinum', '₽', 10000]
   ];
   const CLV_DISC = [
     ['bronzeDiscount', 'Bronze', 'Скидка гостям уровня Bronze. 0 — скидки нет, гость её не увидит', '%', 1],
     ['silverDiscount', 'Silver', 'Скидка гостям уровня Silver', '%', 1],
-    ['goldDiscount', 'Gold', 'Скидка гостям уровня Gold', '%', 1]
+    ['goldDiscount', 'Gold', 'Скидка гостям уровня Gold', '%', 1],
+    ['platinumDiscount', 'Platinum', 'Скидка гостям уровня Platinum', '%', 1]
   ];
   const CLV_ALL = CLV_FIELDS.concat(CLV_DISC);
   const CLV_WINDOWS = [[0, 'за всё время'], [90, 'за последние 90 дней'], [180, 'за последние 180 дней'], [365, 'за последний год'], [730, 'за последние 2 года'], [1095, 'за последние 3 года']];
@@ -13028,18 +13039,20 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   }
   // та же проверка, что на сервере — чтобы подсказать сразу, не дожидаясь ответа
   function clvCheck(r) {
-    const names = { silverFrom: '«Silver»', goldFrom: '«Gold»', bronzeDiscount: 'Скидка «Bronze»', silverDiscount: 'Скидка «Silver»', goldDiscount: 'Скидка «Gold»' };
+    const names = { silverFrom: '«Silver»', goldFrom: '«Gold»', platinumFrom: '«Platinum»', bronzeDiscount: 'Скидка «Bronze»', silverDiscount: 'Скидка «Silver»', goldDiscount: 'Скидка «Gold»', platinumDiscount: 'Скидка «Platinum»' };
     for (const [k] of CLV_ALL) {
       if (isNaN(r[k])) return `${names[k]}: впишите целое число`;
       const lim = clv.limits[k];
       if (r[k] < lim.min || r[k] > lim.max) return /Discount$/.test(k) ? `${names[k]}: от ${lim.min} до ${lim.max} %` : `${names[k]}: от ${clvRub(lim.min)} до ${clvRub(lim.max)}`;
     }
     if (r.goldFrom <= r.silverFrom) return 'Для «Gold» нужна сумма больше, чем для «Silver»';
+    if (r.platinumFrom <= r.goldFrom) return 'Для «Platinum» нужна сумма больше, чем для «Gold»';
     if (r.silverDiscount < r.bronzeDiscount) return 'Скидка «Silver» не может быть меньше, чем у «Bronze»';
     if (r.goldDiscount < r.silverDiscount) return 'Скидка «Gold» не может быть меньше, чем у «Silver»';
+    if (r.platinumDiscount < r.goldDiscount) return 'Скидка «Platinum» не может быть меньше, чем у «Gold»';
     return '';
   }
-  const clvDirty = r => ['silverFrom', 'goldFrom', 'windowDays', 'bronzeDiscount', 'silverDiscount', 'goldDiscount'].some(k => r[k] !== (clv.rules[k] || 0));
+  const clvDirty = r => ['silverFrom', 'goldFrom', 'platinumFrom', 'windowDays', 'bronzeDiscount', 'silverDiscount', 'goldDiscount', 'platinumDiscount'].some(k => r[k] !== (clv.rules[k] || 0));
   function clvChanged() {
     if (!clv) return;
     const r = clvRead(), err = clvCheck(r), dirty = clvDirty(r);
@@ -23513,6 +23526,7 @@ function qrPlateSvg(text) {
       <div class="gd-lc-rows">
         ${c.levelLabel ? `<div class="lv-${escCls(c.level)}"><span>Уровень</span><b><i class="gd-lv"></i>${escHtml(c.levelLabel)}</b>
           ${c.levelManual ? `<small>назначен вручную · по тратам: ${escHtml(c.levelAutoLabel || '')}</small>` : ''}
+          ${c.levelManual && c.levelReason ? `<small class="gd-lv-why">Причина: ${escHtml(c.levelReason)}${c.levelSetBy || c.levelSetAt ? `<br>${escHtml(c.levelSetBy || '')}${c.levelSetBy && c.levelSetAt ? ', ' : ''}${c.levelSetAt ? escHtml(day(c.levelSetAt)) : ''}` : ''}</small>` : ''}
           ${can('settings.manage') ? `<button type="button" class="link-btn gd-lv-edit" onclick="changeCardLevel()">Изменить уровень</button>` : ''}</div>
         <div><span>Скидка</span><b>${c.discount > 0 ? escHtml(c.discount) + '%' : 'нет'}</b></div>
         ${c.spendHidden ? '' : `<div><span>Траты ${escHtml(c.spentWindow || '')}</span><b>${escHtml(clvRub(c.spent || 0))}</b></div>`}` : ''}
@@ -23529,12 +23543,23 @@ function qrPlateSvg(text) {
     const c = currentGuest && currentGuest.loyaltyCard;
     if (!c || !c.issued) return;
     if (!needPerm('settings.manage', 'менять уровень карты')) return;
-    const opts = [`По тратам (сейчас ${c.levelAutoLabel || 'Bronze'})`, 'Bronze', 'Silver', 'Gold'];
+    const opts = [`По тратам (сейчас ${c.levelAutoLabel || 'Bronze'})`, 'Bronze', 'Silver', 'Gold', 'Platinum'];
     const pick = await askChoice(`Уровень карты гостя\n\nСейчас: ${c.levelLabel}${c.levelManual ? ', назначен вручную' : ', по тратам'}. Назначенный уровень действует, пока вы не вернёте расчёт по тратам.`, opts);
     if (!pick) return;
     const level = pick === opts[0] ? 'auto' : pick.toLowerCase();
+    // Причина обязательна: через месяц по ней понятно, почему гость на этом уровне (она остаётся в журнале действий)
+    let reason = '';
+    for (;;) {
+      const v = await askText(level === 'auto' ? 'Почему возвращаем расчёт по тратам?' : `Почему гостю назначается ${pick}?`,
+        { ok: 'Сохранить', placeholder: level === 'auto' ? 'Например: договорённость закончилась' : 'Например: партнёр заведения, друг дома, компенсация', required: true, value: reason, hint: 'От 3 до 200 знаков. Причину видят основатель и администратор в журнале и в карточке гостя.' });
+      if (v === null) return;
+      reason = String(v).replace(/\s+/g, ' ').trim();
+      if (reason.length < 3) { notify('Напишите причину хотя бы в несколько слов'); continue; }
+      if (reason.length > 200) { notify('Причина длиннее 200 знаков — сократите'); continue; }
+      break;
+    }
     try {
-      const d = await tgRequest('PUT', `/api/staff/guest/${currentGuest.id}/card-level`, { level });
+      const d = await tgRequest('PUT', `/api/staff/guest/${currentGuest.id}/card-level`, { level, reason });
       currentGuest.loyaltyCard = d.loyaltyCard;
       renderGuestCard(currentGuest);
       notify(level === 'auto' ? 'Уровень снова считается по тратам' : `Уровень ${pick} назначен`);
