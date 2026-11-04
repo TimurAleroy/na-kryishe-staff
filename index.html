@@ -6326,7 +6326,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function fallbackPerms(jobRole) {
     const base = ['guests.view', 'guests.create', 'guests.edit', 'tags.use', 'visits.record', 'guests.birthdays', 'guests.vip_list', 'shift.mark', 'schedule.view', 'menu.view', 'problems.view', 'problems.report', 'problems.work_own_role'];
     const own = { 'Бармен': ['menu.stoplist_drinks', 'tips.view'], 'Повар': ['menu.stoplist_food'], 'КМ': ['menu.stoplist_hookah', 'tobacco.manage', 'tips.view'], 'Официант': ['tips.view'] }[jobRole] || [];
-    const admin = ['shifts.review', 'briefing.view', 'tobacco.manage', 'tips.view', 'tips.manage', 'ext_reviews.manage', 'stories.manage', 'tv.manage', 'standards.manage', 'checklists.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage', 'messages.view', 'guests.history'];
+    const admin = ['guests.spend', 'shifts.review', 'briefing.view', 'tobacco.manage', 'tips.view', 'tips.manage', 'ext_reviews.manage', 'stories.manage', 'tv.manage', 'standards.manage', 'checklists.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage', 'messages.view', 'guests.history'];
     const owner = ['surveys.manage', 'tags.manage', 'audit.view', 'settings.manage', 'founder_tasks.create', 'marketing.send', 'marketing.log', 'analytics.view', 'segments.view', 'feedback.view', 'guests.table', 'candidates.view'];
     if (jobRole === 'Основатель') return base.concat(admin, owner);
     if (jobRole === 'Администратор') return base.concat(admin);
@@ -23515,7 +23515,7 @@ function qrPlateSvg(text) {
           ${c.levelManual ? `<small>назначен вручную · по тратам: ${escHtml(c.levelAutoLabel || '')}</small>` : ''}
           ${can('settings.manage') ? `<button type="button" class="link-btn gd-lv-edit" onclick="changeCardLevel()">Изменить уровень</button>` : ''}</div>
         <div><span>Скидка</span><b>${c.discount > 0 ? escHtml(c.discount) + '%' : 'нет'}</b></div>
-        <div><span>Траты ${escHtml(c.spentWindow || '')}</span><b>${escHtml(clvRub(c.spent || 0))}</b></div>` : ''}
+        ${c.spendHidden ? '' : `<div><span>Траты ${escHtml(c.spentWindow || '')}</span><b>${escHtml(clvRub(c.spent || 0))}</b></div>`}` : ''}
         <div><span>Оформлена</span><b>${escHtml(day(c.issuedAt))}</b></div>
         <div><span>Откуда пришёл</span><b>${escHtml(c.sourceLabel || '')}</b></div>
         <div><span>Согласие на данные</span><b>${escHtml(day(c.consentPdAt))}${c.consentPdVer ? ' · ред. ' + escHtml(c.consentPdVer) : ''}</b></div>
@@ -23530,7 +23530,7 @@ function qrPlateSvg(text) {
     if (!c || !c.issued) return;
     if (!needPerm('settings.manage', 'менять уровень карты')) return;
     const opts = [`По тратам (сейчас ${c.levelAutoLabel || 'Bronze'})`, 'Bronze', 'Silver', 'Gold'];
-    const pick = await askChoice(`Уровень карты гостя\\n\\nСейчас: ${c.levelLabel}${c.levelManual ? ', назначен вручную' : ', по тратам'}. Назначенный уровень действует, пока вы не вернёте расчёт по тратам.`, opts);
+    const pick = await askChoice(`Уровень карты гостя\n\nСейчас: ${c.levelLabel}${c.levelManual ? ', назначен вручную' : ', по тратам'}. Назначенный уровень действует, пока вы не вернёте расчёт по тратам.`, opts);
     if (!pick) return;
     const level = pick === opts[0] ? 'auto' : pick.toLowerCase();
     try {
