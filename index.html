@@ -798,6 +798,21 @@
     .gd-mini-grid { order: 2; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
     .gd-p-ind { order: 3; container: gdind / inline-size; }
     .gd-p-chart { order: 4; }
+    /* плитка «Карта гостя» в шапке дашборда: справа от имени (как «Карта лояльности» у Cosmos), на телефоне — под именем */
+    .gd-lc { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 20px; margin: 10px 0 4px; }
+    .gd-lcard { position: relative; overflow: hidden; isolation: isolate; display: flex; align-items: stretch; justify-content: space-between; gap: 10px; flex: none; width: 196px; height: 122px; box-sizing: border-box; padding: 12px; border-radius: 14px; border: 1px solid rgba(240,223,192,0.22); background: linear-gradient(135deg, #34190c 0%, #20120A 58%, #1a0e07 100%); color: #F4E2D1; box-shadow: 0 10px 22px rgba(0,0,0,0.28); }
+    .gd-lcard::before { content: ''; position: absolute; top: -35%; left: -18%; width: 80%; height: 120%; background: radial-gradient(circle, rgba(184,115,51,0.32), transparent 72%); z-index: -1; }
+    .gd-lcard-body { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; }
+    .gd-lcard small { font-size: 9.5px; letter-spacing: 1.6px; text-transform: uppercase; color: rgba(244,226,209,0.62); }
+    .gd-lcard b { font-size: 13px; font-weight: 500; letter-spacing: 1px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .gd-lcard img { flex: none; align-self: center; height: 100%; width: auto; }
+    .gd-lc-rows { flex: 1 1 210px; min-width: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 18px; }
+    .gd-lc-rows span { display: block; font-size: 11px; color: var(--text-muted); }
+    .gd-lc-rows b { display: block; margin-top: 1px; font-size: 12.5px; font-weight: 400; color: var(--text); overflow-wrap: anywhere; }
+    .gd-lc.empty { flex-direction: column; justify-content: center; gap: 8px; min-height: 84px; text-align: center; }
+    .gd-lc-none { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: var(--text-sub); }
+    .gd-lc-none svg { flex: none; color: var(--text-muted); }
+    .gd-lc-note { max-width: 420px; margin: 0 auto; font-size: 12px; line-height: 1.45; color: var(--text-muted); }
     .gd-p-tags .tag-group-label:first-child { margin-top: 0; }
 
     /* кольцо посещений */
@@ -4480,6 +4495,8 @@ body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-le
   .gd-top { display: grid; grid-template-columns: minmax(380px, 5fr) minmax(0, 7fr); grid-template-rows: auto 1fr; column-gap: 18px; align-items: start; }
   .gd-ta { grid-column: 1; grid-row: 1; min-width: 0; }
   .gd-board { grid-column: 2; grid-row: 1 / span 2; margin: 0; }
+  .gd-top:has(> .gd-lc) > .gd-board { grid-row: 2; }
+  .gd-lc { grid-column: 2; grid-row: 1; align-self: stretch; align-content: center; margin: 0 0 10px; }
   .gd-tc { grid-column: 1; grid-row: 2; min-width: 0; }
   .gd-tc > .sec:first-child { margin-top: 10px; }
   .gd-visits { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 10px; align-items: start; }
@@ -23243,6 +23260,36 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     </div>`;
   }
 
+  // Карта гостя (как «карта лояльности» в шапке дашборда у Cosmos): карточка с номером и сведения об оформлении.
+  // Оформляет гость сам в приложении; здесь только показ. Пока миграция 049 не применена (ready: false), плитки нет.
+  const GD_CARD_LOGO = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPsAAAIwCAMAAAB3HO3KAAAAkFBMVEUAAAD768z57uXk0bazoIz29bF0Z1+xsWr66cq1tbXItZ6JdGf56cqlYmH//3+wnYlnUEdtODeHcmT/AADztbPLt6DHs52diXl5Y1luZzOhjHutmob//wCbiHfZyK3/f39ONzJaRD3l0rd/AH8/LSkA//8AAH8AAP8Af38A/wB/f79/v79//3+//7//AP//fwBgYyqnAAAAMHRSTlMA/gz63QQlA2EE6q2pBwKmXw5TAQaNYZ2VD9hrAWCZAlVRaAJEAQIBAgEEBAIEAQLRHcXxAAANQElEQVR42u3d6YKqOhYF4JBIKLBSgOKhLMuazr235+73f7uGGnRvZAYx4lr/zoDymUAGhghxuXhCL4LvJEKKW0pmV853JOywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDbp/dS/yvJEmfzWUiv7f3B9ldlPu0+bj7ya8epS7kYfM7KZ672s3BvhP+9HbnkKD7xq64O24vxUPXrdPDxovsT5NHXc4uyZcr/Q/vhuxS7I4bO6FIbsoeELvSRt+MXYuV47CCd2/GLsWC2QOh/34jdqO1w7OfvIm/lF2KsGAPbsUekz7dT1ZC34Rdkn7NsX8jb+RcF5zYVSS3N2D35N45zdPEBX8Z+wMp9uVhF1Q87RF/EbsWEfnaxaX6Nxex035NSvp3av7nOi22x3quab9+Kf2Z233SrwnZeC6Ye7lL+q2RNvSPq7WZtd0n/Zq8IyvZn5M522N6gO/EP7PDn/RvI+HN2O6R41t99mbouGbKju30dk2KPf1s0LU+Nvfqfbr+zeR2j/RrHK11cfoqnW62enI7r+Du9+9x7N5P2LGd2v4qDT2xfZexjBUpeG+m9oQU+7FBk+xvtZylXWtSwjvx05HRtOCXwszS7ool7ddsj38fTj9xN7Gd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';
+  function gdCardHtml(guest) {
+    const c = guest.loyaltyCard;
+    if (!c || !c.ready) return '';
+    const day = (iso) => iso ? new Date(iso).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Moscow' }).replace(/\s?г\.$/, '') : '';
+    if (!c.issued) {
+      const note = c.phoneVerified === true ? 'Номер подтверждён через Telegram: гость может оформить карту сам в приложении.'
+        : c.phoneVerified === false ? 'Номер ещё не подтверждён через Telegram: без этого карту не оформить.' : '';
+      return `<div class="gd-panel gd-lc empty">
+        <div class="gd-lc-none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4"/></svg>Нет карты гостя</div>
+        ${note ? `<div class="gd-lc-note">${escHtml(note)}</div>` : ''}
+      </div>`;
+    }
+    const mk = c.marketing === true ? 'Согласен' : c.marketing === false ? 'Отказался' : 'Не указано';
+    return `<div class="gd-panel gd-lc">
+      <div class="gd-lcard" role="img" aria-label="Карта гостя, номер ${escHtml(c.number)}">
+        <div class="gd-lcard-body"><small>Карта гостя</small><b>№ ${escHtml(c.number)}</b></div>
+        <img src="${GD_CARD_LOGO}" alt="">
+      </div>
+      <div class="gd-lc-rows">
+        <div><span>Оформлена</span><b>${escHtml(day(c.issuedAt))}</b></div>
+        <div><span>Откуда пришёл</span><b>${escHtml(c.sourceLabel || '')}</b></div>
+        <div><span>Согласие на данные</span><b>${escHtml(day(c.consentPdAt))}${c.consentPdVer ? ' · ред. ' + escHtml(c.consentPdVer) : ''}</b></div>
+        <div><span>Рассылки в Telegram</span><b>${mk}</b></div>
+      </div>
+    </div>`;
+  }
+
   // Теги — отдельная панель (раньше прятались в раскрывающемся блоке)
   function gdTagsHtml(guest, tagCount) {
     return `<div class="gd-panel gd-p-tags">
@@ -23335,6 +23382,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       ${renderAlertStrip(guest)}
       ${renderHints(guest)}
       </div>
+
+      ${gdCardHtml(guest)}
 
       <div class="gd-board">
         <div class="gd-left">
