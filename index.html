@@ -811,12 +811,30 @@
     .gd-note-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; font-size: 11px; color: var(--text-muted); }
     .gd-note-h svg { flex: none; }
     .gd-note-t { font-size: 13.5px; line-height: 1.5; color: var(--text); white-space: pre-line; overflow-wrap: anywhere; max-height: 9em; overflow: auto; }
-    .gd-lcard { position: relative; overflow: hidden; isolation: isolate; display: flex; align-items: stretch; justify-content: space-between; gap: 10px; flex: none; width: 196px; height: 122px; box-sizing: border-box; padding: 12px; border-radius: 14px; border: 1px solid rgba(240,223,192,0.22); background: linear-gradient(135deg, #34190c 0%, #20120A 58%, #1a0e07 100%); color: #F4E2D1; box-shadow: 0 10px 22px rgba(0,0,0,0.28); }
+    .gd-lcard { position: relative; overflow: hidden; isolation: isolate; display: flex; align-items: stretch; justify-content: space-between; gap: 10px; flex: none; width: 208px; height: 128px; box-sizing: border-box; padding: 12px; border-radius: 14px; border: 1px solid rgba(240,223,192,0.22); background: linear-gradient(135deg, #34190c 0%, #20120A 58%, #1a0e07 100%); color: #F4E2D1; box-shadow: 0 10px 22px rgba(0,0,0,0.28); }
     .gd-lcard::before { content: ''; position: absolute; top: -35%; left: -18%; width: 80%; height: 120%; background: radial-gradient(circle, rgba(184,115,51,0.32), transparent 72%); z-index: -1; }
+    /* карта окрашивается по уровню: Bronze — тёмная бронзовая, Silver — серебро, Gold — золото (как у гостя в приложении) */
+    .gd-lcard.lv-silver, .gd-lcard.lv-gold { box-shadow: 0 10px 22px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.55); }
+    .gd-lcard.lv-silver::after, .gd-lcard.lv-gold::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(115deg, transparent 36%, rgba(255,255,255,0.38) 46%, transparent 56%); }
+    .gd-lcard.lv-silver { border-color: rgba(255,255,255,0.7); color: #1d2126; background: linear-gradient(135deg, #eef0f3 0%, #c4c9d1 34%, #e6e9ee 52%, #a3aab6 100%); }
+    .gd-lcard.lv-silver::before { background: radial-gradient(circle, rgba(255,255,255,0.8), transparent 72%); }
+    .gd-lcard.lv-gold { border-color: rgba(255,246,210,0.75); color: #2b1d06; background: linear-gradient(135deg, #f9eab4 0%, #ddb34c 36%, #f4da8c 54%, #b88a2d 100%); }
+    .gd-lcard.lv-gold::before { background: radial-gradient(circle, rgba(255,250,225,0.85), transparent 72%); }
+    .gd-lcard.lv-silver img { filter: brightness(0) opacity(0.8); }
+    .gd-lcard.lv-gold img { filter: brightness(0) opacity(0.78); }
+    .gd-lcard.lv-silver .gd-lcard-lv { color: #4b525d; }
+    .gd-lcard.lv-gold .gd-lcard-lv { color: #6b4a0e; }
+    .gd-lcard.lv-silver .gd-lcard-qr, .gd-lcard.lv-gold .gd-lcard-qr { box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+    .gd-lcard.lv-silver .gd-lcard-qr rect { fill: #f8f9fb; } .gd-lcard.lv-silver .gd-lcard-qr path { fill: #1a1d22; }
+    .gd-lcard.lv-gold .gd-lcard-qr rect { fill: #fff8e3; } .gd-lcard.lv-gold .gd-lcard-qr path { fill: #2a1a05; }
     .gd-lcard-body { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; }
-    .gd-lcard small { font-size: 9.5px; letter-spacing: 1.6px; text-transform: uppercase; color: rgba(244,226,209,0.62); }
-    .gd-lcard b { font-size: 13px; font-weight: 500; letter-spacing: 1px; font-variant-numeric: tabular-nums; white-space: nowrap; }
-    .gd-lcard img { flex: none; align-self: center; height: 100%; width: auto; }
+    .gd-lcard img { flex: none; align-self: flex-start; height: 76px; width: auto; }
+    .gd-lcard-qr { flex: none; align-self: center; width: 100px; height: 100px; border-radius: 8px; overflow: hidden; line-height: 0; }
+    .gd-lcard-qr svg { width: 100%; height: 100%; display: block; }
+    .gd-lcard-lv { font-size: 10.5px; font-weight: 500; letter-spacing: 1.4px; text-transform: uppercase; color: var(--seg); line-height: 1; }
+    .gd-lc-rows small { display: block; margin-top: 2px; font-size: 11px; line-height: 1.4; color: var(--text-muted); }
+    .gd-lv-edit { display: block; margin: 4px 0 0; padding: 0; font-size: 12px; text-align: left; }
+    .gd-lv { display: inline-block; width: 8px; height: 8px; margin-right: 7px; border-radius: 50%; background: var(--seg); vertical-align: 1px; }
     .gd-lc-rows { flex: 1 1 210px; min-width: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 18px; }
     .gd-lc-rows span { display: block; font-size: 11px; color: var(--text-muted); }
     .gd-lc-rows b { display: block; margin-top: 1px; font-size: 12.5px; font-weight: 400; color: var(--text); overflow-wrap: anywhere; }
@@ -1129,6 +1147,13 @@
     .sr-delta.up { color: var(--c-green); background: rgba(var(--c-green-rgb),0.1); border-color: rgba(var(--c-green-rgb),0.35); }
     .sr-delta.down { color: var(--c-yellow); background: rgba(var(--c-yellow-rgb),0.1); border-color: rgba(var(--c-yellow-rgb),0.38); }
     .sr-delta { display: block; width: max-content; margin-left: auto; }
+    /* уровни карты: цвет точки и названия уровня (--seg берут .rfm-dot и .sr-seg-t b) */
+    .lv-bronze { --seg: #CD8B55; } .lv-silver { --seg: #C9CED6; } .lv-gold { --seg: #E6C15A; }
+    #clvContent .sr-step input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+    #clvContent .sr-step input[type="number"]::-webkit-inner-spin-button, #clvContent .sr-step input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    .clv-sel { width: 100%; height: 44px; padding: 0 12px; font-size: 15px; }
+    .clv-note { margin: 0 0 10px; padding: 12px 14px; border-radius: 14px; background: var(--accent-dim); border: 1px solid rgba(var(--ac),0.3); font-size: 12.5px; line-height: 1.5; color: var(--text-sub); }
+    @media (min-width: 700px) { #clvContent { max-width: 640px; } #clvContent .sr-step input.form-input { flex: 0 0 140px; } #clvContent .sr-step select.clv-sel { flex: 0 0 auto; width: 260px; } }
 
     /* СЕРВИС: общие кирпичи экранов настроек (Состояние, Сезоны, Просьбы об отзыве, Поздравления, Журнал) */
     .sv-hero { display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 16px; background: linear-gradient(155deg, rgba(var(--ac),0.2), rgba(var(--ac),0.05)); border: 1px solid rgba(var(--ac),0.32); }
@@ -5601,6 +5626,19 @@ body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-le
   </div>
 </div>
 
+<div class="screen" id="screen-card-levels">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('service')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Уровни карты</h1><p>Сколько гость тратит, чтобы получить Silver и Gold</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div id="clvContent" style="margin-top:6px"><div class="loading">Загружаю...</div></div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
 <!-- АВТОТЕГИ: список (Сервис → Автотеги, только основатель) и форма настройки одного -->
 <div class="screen" id="screen-autotags">
   <div class="header">
@@ -6779,6 +6817,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'Логины, роли и права', fn: 'openEmployees()' });
     if (can('candidates.view')) list.push({ group: G.team, icon: 'candidates', short: 'кандидаты', title: 'Кандидаты', sub: 'Отклики на вакансии', fn: 'openCandidates()' });
     if (can('settings.manage')) list.push({ group: G.guests, icon: 'segments', short: 'правила сегментов', title: 'Правила сегментов', sub: 'Границы: дни и визиты', fn: 'openSegmentRules()' });
+    if (can('settings.manage')) list.push({ group: G.guests, icon: 'cardlevels', short: 'уровни карты', title: 'Уровни карты', sub: 'Silver и Gold: сколько гость тратит', fn: 'openCardLevels()' });
     if (can('settings.manage')) list.push({ group: G.guests, icon: 'autotags', short: 'автотеги', title: 'Автотеги', sub: 'Что система отмечает в карточке гостя сама: пороги, цвета, кому показывать', fn: 'openAutotags()' });
     if (can('settings.manage')) list.push({ group: G.content, icon: 'season', short: 'сезоны', title: 'Сезоны', sub: 'Снег, сердечки, розы, Хэллоуин: в приложении и на ТВ', fn: 'openSeason()' });
     if (can('settings.manage')) list.push({ group: G.system, icon: 'reviews', short: 'отзывы', title: 'Просьбы об отзыве', sub: 'Когда и кому бот пишет', fn: 'openReviewRules()' });
@@ -6939,6 +6978,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       dashboard: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>',
       analytics: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>',
       feedback: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M21 12a8 8 0 01-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1121 12z"/></svg>',
+      cardlevels: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 10h18"/><path d="M7 15h4" opacity="0.6"/></svg>',
       segments: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/><path d="M3 17.5l9 5 9-5" opacity="0.55"/></svg>',
       duplicates: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2"/></svg>',
       menu: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h11a3 3 0 013 3v15H8a3 3 0 01-3-3V3z"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="12" y2="16"/></svg>',
@@ -12893,6 +12933,170 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       srPreview = null;
       renderSegmentRules();
       notify('Правила сохранены — сегменты пересчитаны');
+    } catch (e) {
+      btn.disabled = false; btn.textContent = 'Сохранить';
+      notify(tgNetErr(e));
+    }
+  }
+
+  // ─── СЕРВИС → ГОСТИ: УРОВНИ КАРТЫ (Bronze / Silver / Gold по тратам, правила — как у сегментов) ───
+  var clv = null;            // ответ сервера: правила, пределы, уровни, сколько карт на каждом
+  var clvPreview = null;     // расчёт «что получится» для цифр на экране, пока не сохранены
+  var clvPreviewSeq = 0, clvPreviewTimer = null;
+  const CLV_FIELDS = [
+    ['silverFrom', 'Silver — от', 'Сколько гость тратит за период, чтобы получить уровень Silver', '₽', 5000],
+    ['goldFrom', 'Gold — от', 'Сколько гость тратит за период, чтобы получить уровень Gold', '₽', 10000]
+  ];
+  const CLV_DISC = [
+    ['bronzeDiscount', 'Bronze', 'Скидка гостям уровня Bronze. 0 — скидки нет, гость её не увидит', '%', 1],
+    ['silverDiscount', 'Silver', 'Скидка гостям уровня Silver', '%', 1],
+    ['goldDiscount', 'Gold', 'Скидка гостям уровня Gold', '%', 1]
+  ];
+  const CLV_ALL = CLV_FIELDS.concat(CLV_DISC);
+  const CLV_WINDOWS = [[0, 'за всё время'], [90, 'за последние 90 дней'], [180, 'за последние 180 дней'], [365, 'за последний год'], [730, 'за последние 2 года'], [1095, 'за последние 3 года']];
+  const clvRub = n => `${Math.round(n).toLocaleString('ru-RU').replace(/[  ]/g, ' ')} ₽`;
+  function openCardLevels() {
+    if (!needPerm('settings.manage', 'менять уровни карты')) return;
+    showScreen('card-levels');
+    loadCardLevels();
+  }
+  async function loadCardLevels() {
+    const el = document.getElementById('clvContent');
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    clvPreview = null;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/card-levels?pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить уровни карты'));
+      clv = await res.json();
+      renderCardLevels();
+    } catch (e) {
+      el.innerHTML = errorStateHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером', 'loadCardLevels()');
+    }
+  }
+  function renderCardLevels() {
+    const el = document.getElementById('clvContent');
+    const meta = clv.meta && clv.meta.updatedAt ? `Последняя правка: ${fmtDateTime(clv.meta.updatedAt)}${clv.meta.updatedBy ? ', ' + escHtml(clv.meta.updatedBy) : ''}` : 'Пока стоят значения по умолчанию';
+    const field = ([key, title, hint, unit]) => {
+      const lim = clv.limits[key] || {};
+      return `<div class="sr-field"><div class="sr-ft"><span class="rr-t">${title}</span><span class="rr-h">${hint}</span></div>
+        <div class="sr-step"><button type="button" class="sr-b" onclick="clvBump('${key}', -1)" aria-label="Меньше"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
+          <input class="form-input" type="number" inputmode="numeric" id="clv_${key}" min="${lim.min}" max="${lim.max}" step="1" oninput="clvChanged()" aria-label="${escHtml(title)}"><span class="rr-u">${unit}</span>
+          <button type="button" class="sr-b" onclick="clvBump('${key}', 1)" aria-label="Больше"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button></div></div>`;
+    };
+    const wins = CLV_WINDOWS.slice();
+    if (!wins.some(w => w[0] === clv.rules.windowDays)) wins.push([clv.rules.windowDays, `за последние ${clv.rules.windowDays} дн.`]);
+    const winField = `<div class="sr-field"><div class="sr-ft"><span class="rr-t">За какой период считать траты</span><span class="rr-h">Обычно год: гость остаётся на уровне, пока тратит. «За всё время» — уровень со временем только растёт</span></div>
+      <div class="sr-step"><select class="form-input clv-sel" id="clv_windowDays" onchange="clvChanged()" aria-label="Период">${wins.map(w => `<option value="${w[0]}">${escHtml(w[1])}</option>`).join('')}</select></div></div>`;
+    const noSpend = clv.counts && !clv.counts.hasSpend
+      ? '<div class="clv-note">Траты пока не приходят: iiko не подключён. Поэтому у всех карт сейчас Bronze. Когда чеки с привязанным гостем начнут приходить, уровни пересчитаются сами по этим границам.</div>' : '';
+    el.innerHTML = noSpend
+      + '<div class="sec">Границы</div>'
+      + '<div class="sr-card"><div class="sr-ctitle">Траты гостя за период</div>' + `<div class="rr-h" style="margin-top:4px">Bronze получает каждая оформленная карта. Дальше уровень растёт с тратами.</div>` + CLV_FIELDS.map(field).join('') + winField + '</div>'
+      + '<div class="sec">Скидка</div>'
+      + '<div class="sr-card"><div class="sr-ctitle">Процент скидки по уровням</div>' + `<div class="rr-h" style="margin-top:4px">Гость видит свою скидку на карте в приложении, сотрудники — в карточке гостя. Пока iiko не подключён, скидку в чеке применяют вручную.</div>` + CLV_DISC.map(field).join('') + '</div>'
+      + '<div class="sr-err" id="clvError" style="display:none"></div>'
+      + '<div class="sec">Что получится</div><div class="sr-card sr-prev" id="clvPreview"></div>'
+      + `<div class="note" style="margin-top:10px">Уровень считается сам по тратам из закрытых чеков. После сохранения все карты пересчитаются по новым границам; гостям ничего не отправляется. Уровень видят гость в своём приложении и сотрудники в карточке гостя. ${meta}.</div>`
+      + '<div class="vn-save" id="clvSaveWrap"><button class="btn-cta" id="clvSaveBtn" onclick="saveCardLevels()">Сохранить</button>'
+      + '<button class="btn-ghost" onclick="clvFill(clv.defaults, \'Стандартные значения подставлены — нажмите «Сохранить»\')">Вернуть стандартные значения</button></div>';
+    clvFill(clv.rules);
+  }
+  function clvBump(key, dir) {
+    if (!clv) return;
+    const el = document.getElementById('clv_' + key), lim = clv.limits[key] || {};
+    const step = (CLV_ALL.find(f => f[0] === key) || [])[4] || 1000;
+    const cur = /^\d+$/.test(el.value.trim()) ? Number(el.value.trim()) : clv.rules[key];
+    el.value = Math.min(lim.max, Math.max(lim.min, cur + dir * step));
+    clvChanged();
+  }
+  function clvFill(rules, msg) {
+    if (!clv || !rules) return;
+    CLV_ALL.forEach(([k]) => { document.getElementById('clv_' + k).value = rules[k] || 0; });
+    const w = document.getElementById('clv_windowDays');
+    if (![...w.options].some(o => Number(o.value) === rules.windowDays)) w.add(new Option(`за последние ${rules.windowDays} дн.`, rules.windowDays));
+    w.value = String(rules.windowDays);
+    clvChanged();
+    if (msg) notify(msg);
+  }
+  function clvRead() {
+    const o = {};
+    CLV_ALL.forEach(([k]) => { const v = document.getElementById('clv_' + k).value.trim(); o[k] = /^\d+$/.test(v) ? Number(v) : NaN; });
+    o.windowDays = Number(document.getElementById('clv_windowDays').value);
+    return o;
+  }
+  // та же проверка, что на сервере — чтобы подсказать сразу, не дожидаясь ответа
+  function clvCheck(r) {
+    const names = { silverFrom: '«Silver»', goldFrom: '«Gold»', bronzeDiscount: 'Скидка «Bronze»', silverDiscount: 'Скидка «Silver»', goldDiscount: 'Скидка «Gold»' };
+    for (const [k] of CLV_ALL) {
+      if (isNaN(r[k])) return `${names[k]}: впишите целое число`;
+      const lim = clv.limits[k];
+      if (r[k] < lim.min || r[k] > lim.max) return /Discount$/.test(k) ? `${names[k]}: от ${lim.min} до ${lim.max} %` : `${names[k]}: от ${clvRub(lim.min)} до ${clvRub(lim.max)}`;
+    }
+    if (r.goldFrom <= r.silverFrom) return 'Для «Gold» нужна сумма больше, чем для «Silver»';
+    if (r.silverDiscount < r.bronzeDiscount) return 'Скидка «Silver» не может быть меньше, чем у «Bronze»';
+    if (r.goldDiscount < r.silverDiscount) return 'Скидка «Gold» не может быть меньше, чем у «Silver»';
+    return '';
+  }
+  const clvDirty = r => ['silverFrom', 'goldFrom', 'windowDays', 'bronzeDiscount', 'silverDiscount', 'goldDiscount'].some(k => r[k] !== (clv.rules[k] || 0));
+  function clvChanged() {
+    if (!clv) return;
+    const r = clvRead(), err = clvCheck(r), dirty = clvDirty(r);
+    const wrap = document.getElementById('clvSaveWrap');
+    if (wrap) wrap.classList.toggle('dirty', dirty && !err);
+    const eb = document.getElementById('clvError');
+    eb.style.display = err ? '' : 'none';
+    eb.textContent = err;
+    const btn = document.getElementById('clvSaveBtn');
+    btn.disabled = !!err || !dirty;
+    btn.textContent = dirty ? 'Сохранить' : 'Нет изменений';
+    clearTimeout(clvPreviewTimer);
+    if (err) { clvPreview = null; clvRenderPreview('Исправьте цифры — тогда здесь появится расчёт.'); return; }
+    if (!dirty) { clvPreview = null; clvRenderPreview(); return; }
+    clvRenderPreview('Считаю...');
+    const seq = ++clvPreviewSeq;
+    clvPreviewTimer = setTimeout(async () => {
+      try {
+        const d = await tgRequest('POST', '/api/admin/card-levels/preview', { rules: r });
+        if (seq !== clvPreviewSeq) return;
+        clvPreview = d;
+        clvRenderPreview();
+      } catch (e) {
+        if (seq === clvPreviewSeq) clvRenderPreview(tgNetErr(e));
+      }
+    }, 350);
+  }
+  function clvRenderPreview(msg) {
+    const box = document.getElementById('clvPreview');
+    if (!box) return;
+    if (msg) { box.innerHTML = `<div class="sr-msg">${escHtml(msg)}</div>`; return; }
+    const p = clvPreview;
+    const levels = p ? p.levels : clv.levels;
+    const now = p ? p.current : clv.counts;
+    const next = p ? p.counts : null;
+    const shown = next || now;
+    const dist = shown.total ? `<div class="sr-dist">${levels.map(x => (shown[x.key] || 0) ? `<i class="lv-${escCls(x.key)}" style="flex:${shown[x.key]}" title="${escHtml(x.name)}: ${shown[x.key]}"></i>` : '').join('')}</div>` : '';
+    box.innerHTML = dist + levels.map(x => {
+      const a = now[x.key] || 0, b = next ? (next[x.key] || 0) : a, diff = b - a;
+      const val = next && a !== b ? `${a} → <b>${b}</b>` : `<b>${a}</b>`;
+      const chip = next && diff ? `<em class="sr-delta ${diff > 0 ? 'up' : 'down'}">${diff > 0 ? '+' : '−'}${Math.abs(diff)}</em>` : '';
+      return `<div class="sr-seg lv-${escCls(x.key)}"><i class="rfm-dot"></i><div class="sr-seg-t"><b>${escHtml(x.name)}</b><span>${escHtml(x.description)}</span></div><div class="sr-seg-n"><span>${val}</span>${chip}</div></div>`;
+    }).join('') + `<div class="sr-msg" style="padding:10px 0 0">Карт всего: ${shown.total || 0}</div>`;
+  }
+  async function saveCardLevels() {
+    const btn = document.getElementById('clvSaveBtn');
+    if (btn.disabled) return;
+    const r = clvRead();
+    if (clvCheck(r) || !clvDirty(r)) return;
+    const moved = clvPreview ? clv.levels.filter(x => (clvPreview.current[x.key] || 0) !== (clvPreview.counts[x.key] || 0)).map(x => `${x.name}: ${clvPreview.current[x.key] || 0} → ${clvPreview.counts[x.key] || 0}`) : [];
+    if (!await askConfirm(`Сохранить новые границы уровней?\n\n${moved.length ? moved.join('\n') : 'Число карт на уровнях не изменится.'}\n\nУровни и скидки пересчитаются у всех карт: их увидят гости в приложении и сотрудники в карточке гостя.`, { ok: 'Сохранить' })) return;
+    btn.disabled = true; btn.textContent = 'Сохраняем...';
+    try {
+      clv = await tgRequest('PUT', '/api/admin/card-levels', { rules: r });
+      clvPreview = null;
+      renderCardLevels();
+      notify('Границы сохранены — уровни пересчитаны');
     } catch (e) {
       btn.disabled = false; btn.textContent = 'Сохранить';
       notify(tgNetErr(e));
@@ -22211,7 +22415,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'svforms', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'tobacco', 'tips-mine', 'tips-admin', 'xr', 'xr-edit', 'xr-tpl', 'dashboard', 'autotags', 'autotag-edit'];
+  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'svforms', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'card-levels', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'tobacco', 'tips-mine', 'tips-admin', 'xr', 'xr-edit', 'xr-tpl', 'dashboard', 'autotags', 'autotag-edit'];
   var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'tips-mine', 'tips-admin', 'xr-edit', 'xr-tpl', 'autotag-edit', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklist-form'];
   // «card» остаётся в списке: на узком окне это колонка; на широком её растягивает правило «#screen-card» в wide-css, а две колонки включает container-запрос
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
@@ -23274,6 +23478,19 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   // Карта гостя (как «карта лояльности» в шапке дашборда у Cosmos): карточка с номером и сведения об оформлении.
   // Оформляет гость сам в приложении; здесь только показ. Пока миграция 049 не применена (ready: false), плитки нет.
+/* QR-код рисуется в самой странице, без сети. Библиотека qrcode-generator 1.4.4, (c) 2009 Kazuhiko Arase, лицензия MIT (http://www.opensource.org/licenses/mit-license.php). QR Code — зарегистрированный знак DENSO WAVE INCORPORATED. */
+const QRLib = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],f={},c=function(t,r){o=function(t){for(var r=new Array(t),e=0;e<t;e+=1){r[e]=new Array(t);for(var n=0;n<t;n+=1)r[e][n]=null}return r}(i=4*e+17),l(0,0),l(i-7,0),l(0,i-7),s(),h(),d(t,r),e>=7&&v(t),null==a&&(a=p(e,n,u)),w(a,r)},l=function(t,r){for(var e=-1;e<=7;e+=1)if(!(t+e<=-1||i<=t+e))for(var n=-1;n<=7;n+=1)r+n<=-1||i<=r+n||(o[t+e][r+n]=0<=e&&e<=6&&(0==n||6==n)||0<=n&&n<=6&&(0==e||6==e)||2<=e&&e<=4&&2<=n&&n<=4)},h=function(){for(var t=8;t<i-8;t+=1)null==o[t][6]&&(o[t][6]=t%2==0);for(var r=8;r<i-8;r+=1)null==o[6][r]&&(o[6][r]=r%2==0)},s=function(){for(var t=B.getPatternPosition(e),r=0;r<t.length;r+=1)for(var n=0;n<t.length;n+=1){var i=t[r],a=t[n];if(null==o[i][a])for(var u=-2;u<=2;u+=1)for(var f=-2;f<=2;f+=1)o[i+u][a+f]=-2==u||2==u||-2==f||2==f||0==u&&0==f}},v=function(t){for(var r=B.getBCHTypeNumber(e),n=0;n<18;n+=1){var a=!t&&1==(r>>n&1);o[Math.floor(n/3)][n%3+i-8-3]=a}for(n=0;n<18;n+=1){a=!t&&1==(r>>n&1);o[n%3+i-8-3][Math.floor(n/3)]=a}},d=function(t,r){for(var e=n<<3|r,a=B.getBCHTypeInfo(e),u=0;u<15;u+=1){var f=!t&&1==(a>>u&1);u<6?o[u][8]=f:u<8?o[u+1][8]=f:o[i-15+u][8]=f}for(u=0;u<15;u+=1){f=!t&&1==(a>>u&1);u<8?o[8][i-u-1]=f:u<9?o[8][15-u-1+1]=f:o[8][15-u-1]=f}o[i-8][8]=!t},w=function(t,r){for(var e=-1,n=i-1,a=7,u=0,f=B.getMaskFunction(r),c=i-1;c>0;c-=2)for(6==c&&(c-=1);;){for(var g=0;g<2;g+=1)if(null==o[n][c-g]){var l=!1;u<t.length&&(l=1==(t[u]>>>a&1)),f(n,c-g)&&(l=!l),o[n][c-g]=l,-1==(a-=1)&&(u+=1,a=7)}if((n+=e)<0||i<=n){n-=e,e=-e;break}}},p=function(t,r,e){for(var n=A.getRSBlocks(t,r),o=b(),i=0;i<e.length;i+=1){var a=e[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var u=0;for(i=0;i<n.length;i+=1)u+=n[i].dataCount;if(o.getLengthInBits()>8*u)throw"code length overflow. ("+o.getLengthInBits()+">"+8*u+")";for(o.getLengthInBits()+4<=8*u&&o.put(0,4);o.getLengthInBits()%8!=0;)o.putBit(!1);for(;!(o.getLengthInBits()>=8*u||(o.put(236,8),o.getLengthInBits()>=8*u));)o.put(17,8);return function(t,r){for(var e=0,n=0,o=0,i=new Array(r.length),a=new Array(r.length),u=0;u<r.length;u+=1){var f=r[u].dataCount,c=r[u].totalCount-f;n=Math.max(n,f),o=Math.max(o,c),i[u]=new Array(f);for(var g=0;g<i[u].length;g+=1)i[u][g]=255&t.getBuffer()[g+e];e+=f;var l=B.getErrorCorrectPolynomial(c),h=k(i[u],l.getLength()-1).mod(l);for(a[u]=new Array(l.getLength()-1),g=0;g<a[u].length;g+=1){var s=g+h.getLength()-a[u].length;a[u][g]=s>=0?h.getAt(s):0}}var v=0;for(g=0;g<r.length;g+=1)v+=r[g].totalCount;var d=new Array(v),w=0;for(g=0;g<n;g+=1)for(u=0;u<r.length;u+=1)g<i[u].length&&(d[w]=i[u][g],w+=1);for(g=0;g<o;g+=1)for(u=0;u<r.length;u+=1)g<a[u].length&&(d[w]=a[u][g],w+=1);return d}(o,n)};f.addData=function(t,r){var e=null;switch(r=r||"Byte"){case"Numeric":e=M(t);break;case"Alphanumeric":e=x(t);break;case"Byte":e=m(t);break;case"Kanji":e=L(t);break;default:throw"mode:"+r}u.push(e),a=null},f.isDark=function(t,r){if(t<0||i<=t||r<0||i<=r)throw t+","+r;return o[t][r]},f.getModuleCount=function(){return i},f.make=function(){if(e<1){for(var t=1;t<40;t++){for(var r=A.getRSBlocks(t,n),o=b(),i=0;i<u.length;i++){var a=u[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var g=0;for(i=0;i<r.length;i++)g+=r[i].dataCount;if(o.getLengthInBits()<=8*g)break}e=t}c(!1,function(){for(var t=0,r=0,e=0;e<8;e+=1){c(!0,e);var n=B.getLostPoint(f);(0==e||t>n)&&(t=n,r=e)}return r}())},f.createTableTag=function(t,r){t=t||2;var e="";e+='<table style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: "+(r=void 0===r?4*t:r)+"px;",e+='">',e+="<tbody>";for(var n=0;n<f.getModuleCount();n+=1){e+="<tr>";for(var o=0;o<f.getModuleCount();o+=1)e+='<td style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: 0px;",e+=" width: "+t+"px;",e+=" height: "+t+"px;",e+=" background-color: ",e+=f.isDark(n,o)?"#000000":"#ffffff",e+=";",e+='"/>';e+="</tr>"}return e+="</tbody>",e+="</table>"},f.createSvgTag=function(t,r,e,n){var o={};"object"==typeof arguments[0]&&(t=(o=arguments[0]).cellSize,r=o.margin,e=o.alt,n=o.title),t=t||2,r=void 0===r?4*t:r,(e="string"==typeof e?{text:e}:e||{}).text=e.text||null,e.id=e.text?e.id||"qrcode-description":null,(n="string"==typeof n?{text:n}:n||{}).text=n.text||null,n.id=n.text?n.id||"qrcode-title":null;var i,a,u,c,g=f.getModuleCount()*t+2*r,l="";for(c="l"+t+",0 0,"+t+" -"+t+",0 0,-"+t+"z ",l+='<svg version="1.1" xmlns="http://www.w3.org/2000/svg"',l+=o.scalable?"":' width="'+g+'px" height="'+g+'px"',l+=' viewBox="0 0 '+g+" "+g+'" ',l+=' preserveAspectRatio="xMinYMin meet"',l+=n.text||e.text?' role="img" aria-labelledby="'+y([n.id,e.id].join(" ").trim())+'"':"",l+=">",l+=n.text?'<title id="'+y(n.id)+'">'+y(n.text)+"</title>":"",l+=e.text?'<description id="'+y(e.id)+'">'+y(e.text)+"</description>":"",l+='<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>',l+='<path d="',a=0;a<f.getModuleCount();a+=1)for(u=a*t+r,i=0;i<f.getModuleCount();i+=1)f.isDark(a,i)&&(l+="M"+(i*t+r)+","+u+c);return l+='" stroke="transparent" fill="black"/>',l+="</svg>"},f.createDataURL=function(t,r){t=t||2,r=void 0===r?4*t:r;var e=f.getModuleCount()*t+2*r,n=r,o=e-r;return I(e,e,function(r,e){if(n<=r&&r<o&&n<=e&&e<o){var i=Math.floor((r-n)/t),a=Math.floor((e-n)/t);return f.isDark(a,i)?0:1}return 1})},f.createImgTag=function(t,r,e){t=t||2,r=void 0===r?4*t:r;var n=f.getModuleCount()*t+2*r,o="";return o+="<img",o+=' src="',o+=f.createDataURL(t,r),o+='"',o+=' width="',o+=n,o+='"',o+=' height="',o+=n,o+='"',e&&(o+=' alt="',o+=y(e),o+='"'),o+="/>"};var y=function(t){for(var r="",e=0;e<t.length;e+=1){var n=t.charAt(e);switch(n){case"<":r+="&lt;";break;case">":r+="&gt;";break;case"&":r+="&amp;";break;case'"':r+="&quot;";break;default:r+=n}}return r};return f.createASCII=function(t,r){if((t=t||1)<2)return function(t){t=void 0===t?2:t;var r,e,n,o,i,a=1*f.getModuleCount()+2*t,u=t,c=a-t,g={"██":"█","█ ":"▀"," █":"▄","  ":" "},l={"██":"▀","█ ":"▀"," █":" ","  ":" "},h="";for(r=0;r<a;r+=2){for(n=Math.floor((r-u)/1),o=Math.floor((r+1-u)/1),e=0;e<a;e+=1)i="█",u<=e&&e<c&&u<=r&&r<c&&f.isDark(n,Math.floor((e-u)/1))&&(i=" "),u<=e&&e<c&&u<=r+1&&r+1<c&&f.isDark(o,Math.floor((e-u)/1))?i+=" ":i+="█",h+=t<1&&r+1>=c?l[i]:g[i];h+="\n"}return a%2&&t>0?h.substring(0,h.length-a-1)+Array(a+1).join("▀"):h.substring(0,h.length-1)}(r);t-=1,r=void 0===r?2*t:r;var e,n,o,i,a=f.getModuleCount()*t+2*r,u=r,c=a-r,g=Array(t+1).join("██"),l=Array(t+1).join("  "),h="",s="";for(e=0;e<a;e+=1){for(o=Math.floor((e-u)/t),s="",n=0;n<a;n+=1)i=1,u<=n&&n<c&&u<=e&&e<c&&f.isDark(o,Math.floor((n-u)/t))&&(i=0),s+=i?g:l;for(o=0;o<t;o+=1)h+=s+"\n"}return h.substring(0,h.length-1)},f.renderTo2dContext=function(t,r){r=r||2;for(var e=f.getModuleCount(),n=0;n<e;n++)for(var o=0;o<e;o++)t.fillStyle=f.isDark(n,o)?"black":"white",t.fillRect(n*r,o*r,r,r)},f};t.stringToBytes=(t.stringToBytesFuncs={default:function(t){for(var r=[],e=0;e<t.length;e+=1){var n=t.charCodeAt(e);r.push(255&n)}return r}}).default,t.createStringToBytes=function(t,r){var e=function(){for(var e=S(t),n=function(){var t=e.read();if(-1==t)throw"eof";return t},o=0,i={};;){var a=e.read();if(-1==a)break;var u=n(),f=n()<<8|n();i[String.fromCharCode(a<<8|u)]=f,o+=1}if(o!=r)throw o+" != "+r;return i}(),n="?".charCodeAt(0);return function(t){for(var r=[],o=0;o<t.length;o+=1){var i=t.charCodeAt(o);if(i<128)r.push(i);else{var a=e[t.charAt(o)];"number"==typeof a?(255&a)==a?r.push(a):(r.push(a>>>8),r.push(255&a)):r.push(n)}}return r}};var r,e,n,o,i,a=1,u=2,f=4,c=8,g={L:1,M:0,Q:3,H:2},l=0,h=1,s=2,v=3,d=4,w=5,p=6,y=7,B=(r=[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],e=1335,n=7973,i=function(t){for(var r=0;0!=t;)r+=1,t>>>=1;return r},(o={}).getBCHTypeInfo=function(t){for(var r=t<<10;i(r)-i(e)>=0;)r^=e<<i(r)-i(e);return 21522^(t<<10|r)},o.getBCHTypeNumber=function(t){for(var r=t<<12;i(r)-i(n)>=0;)r^=n<<i(r)-i(n);return t<<12|r},o.getPatternPosition=function(t){return r[t-1]},o.getMaskFunction=function(t){switch(t){case l:return function(t,r){return(t+r)%2==0};case h:return function(t,r){return t%2==0};case s:return function(t,r){return r%3==0};case v:return function(t,r){return(t+r)%3==0};case d:return function(t,r){return(Math.floor(t/2)+Math.floor(r/3))%2==0};case w:return function(t,r){return t*r%2+t*r%3==0};case p:return function(t,r){return(t*r%2+t*r%3)%2==0};case y:return function(t,r){return(t*r%3+(t+r)%2)%2==0};default:throw"bad maskPattern:"+t}},o.getErrorCorrectPolynomial=function(t){for(var r=k([1],0),e=0;e<t;e+=1)r=r.multiply(k([1,C.gexp(e)],0));return r},o.getLengthInBits=function(t,r){if(1<=r&&r<10)switch(t){case a:return 10;case u:return 9;case f:case c:return 8;default:throw"mode:"+t}else if(r<27)switch(t){case a:return 12;case u:return 11;case f:return 16;case c:return 10;default:throw"mode:"+t}else{if(!(r<41))throw"type:"+r;switch(t){case a:return 14;case u:return 13;case f:return 16;case c:return 12;default:throw"mode:"+t}}},o.getLostPoint=function(t){for(var r=t.getModuleCount(),e=0,n=0;n<r;n+=1)for(var o=0;o<r;o+=1){for(var i=0,a=t.isDark(n,o),u=-1;u<=1;u+=1)if(!(n+u<0||r<=n+u))for(var f=-1;f<=1;f+=1)o+f<0||r<=o+f||0==u&&0==f||a==t.isDark(n+u,o+f)&&(i+=1);i>5&&(e+=3+i-5)}for(n=0;n<r-1;n+=1)for(o=0;o<r-1;o+=1){var c=0;t.isDark(n,o)&&(c+=1),t.isDark(n+1,o)&&(c+=1),t.isDark(n,o+1)&&(c+=1),t.isDark(n+1,o+1)&&(c+=1),0!=c&&4!=c||(e+=3)}for(n=0;n<r;n+=1)for(o=0;o<r-6;o+=1)t.isDark(n,o)&&!t.isDark(n,o+1)&&t.isDark(n,o+2)&&t.isDark(n,o+3)&&t.isDark(n,o+4)&&!t.isDark(n,o+5)&&t.isDark(n,o+6)&&(e+=40);for(o=0;o<r;o+=1)for(n=0;n<r-6;n+=1)t.isDark(n,o)&&!t.isDark(n+1,o)&&t.isDark(n+2,o)&&t.isDark(n+3,o)&&t.isDark(n+4,o)&&!t.isDark(n+5,o)&&t.isDark(n+6,o)&&(e+=40);var g=0;for(o=0;o<r;o+=1)for(n=0;n<r;n+=1)t.isDark(n,o)&&(g+=1);return e+=Math.abs(100*g/r/r-50)/5*10},o),C=function(){for(var t=new Array(256),r=new Array(256),e=0;e<8;e+=1)t[e]=1<<e;for(e=8;e<256;e+=1)t[e]=t[e-4]^t[e-5]^t[e-6]^t[e-8];for(e=0;e<255;e+=1)r[t[e]]=e;var n={glog:function(t){if(t<1)throw"glog("+t+")";return r[t]},gexp:function(r){for(;r<0;)r+=255;for(;r>=256;)r-=255;return t[r]}};return n}();function k(t,r){if(void 0===t.length)throw t.length+"/"+r;var e=function(){for(var e=0;e<t.length&&0==t[e];)e+=1;for(var n=new Array(t.length-e+r),o=0;o<t.length-e;o+=1)n[o]=t[o+e];return n}(),n={getAt:function(t){return e[t]},getLength:function(){return e.length},multiply:function(t){for(var r=new Array(n.getLength()+t.getLength()-1),e=0;e<n.getLength();e+=1)for(var o=0;o<t.getLength();o+=1)r[e+o]^=C.gexp(C.glog(n.getAt(e))+C.glog(t.getAt(o)));return k(r,0)},mod:function(t){if(n.getLength()-t.getLength()<0)return n;for(var r=C.glog(n.getAt(0))-C.glog(t.getAt(0)),e=new Array(n.getLength()),o=0;o<n.getLength();o+=1)e[o]=n.getAt(o);for(o=0;o<t.getLength();o+=1)e[o]^=C.gexp(C.glog(t.getAt(o))+r);return k(e,0).mod(t)}};return n}var A=function(){var t=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12,7,37,13],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],r=function(t,r){var e={};return e.totalCount=t,e.dataCount=r,e},e={};return e.getRSBlocks=function(e,n){var o=function(r,e){switch(e){case g.L:return t[4*(r-1)+0];case g.M:return t[4*(r-1)+1];case g.Q:return t[4*(r-1)+2];case g.H:return t[4*(r-1)+3];default:return}}(e,n);if(void 0===o)throw"bad rs block @ typeNumber:"+e+"/errorCorrectionLevel:"+n;for(var i=o.length/3,a=[],u=0;u<i;u+=1)for(var f=o[3*u+0],c=o[3*u+1],l=o[3*u+2],h=0;h<f;h+=1)a.push(r(c,l));return a},e}(),b=function(){var t=[],r=0,e={getBuffer:function(){return t},getAt:function(r){var e=Math.floor(r/8);return 1==(t[e]>>>7-r%8&1)},put:function(t,r){for(var n=0;n<r;n+=1)e.putBit(1==(t>>>r-n-1&1))},getLengthInBits:function(){return r},putBit:function(e){var n=Math.floor(r/8);t.length<=n&&t.push(0),e&&(t[n]|=128>>>r%8),r+=1}};return e},M=function(t){var r=a,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+2<r.length;)t.put(o(r.substring(n,n+3)),10),n+=3;n<r.length&&(r.length-n==1?t.put(o(r.substring(n,n+1)),4):r.length-n==2&&t.put(o(r.substring(n,n+2)),7))}},o=function(t){for(var r=0,e=0;e<t.length;e+=1)r=10*r+i(t.charAt(e));return r},i=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);throw"illegal char :"+t};return n},x=function(t){var r=u,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+1<r.length;)t.put(45*o(r.charAt(n))+o(r.charAt(n+1)),11),n+=2;n<r.length&&t.put(o(r.charAt(n)),6)}},o=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);if("A"<=t&&t<="Z")return t.charCodeAt(0)-"A".charCodeAt(0)+10;switch(t){case" ":return 36;case"$":return 37;case"%":return 38;case"*":return 39;case"+":return 40;case"-":return 41;case".":return 42;case"/":return 43;case":":return 44;default:throw"illegal char :"+t}};return n},m=function(r){var e=f,n=t.stringToBytes(r),o={getMode:function(){return e},getLength:function(t){return n.length},write:function(t){for(var r=0;r<n.length;r+=1)t.put(n[r],8)}};return o},L=function(r){var e=c,n=t.stringToBytesFuncs.SJIS;if(!n)throw"sjis not supported.";!function(){var t=n("友");if(2!=t.length||38726!=(t[0]<<8|t[1]))throw"sjis not supported."}();var o=n(r),i={getMode:function(){return e},getLength:function(t){return~~(o.length/2)},write:function(t){for(var r=o,e=0;e+1<r.length;){var n=(255&r[e])<<8|255&r[e+1];if(33088<=n&&n<=40956)n-=33088;else{if(!(57408<=n&&n<=60351))throw"illegal char at "+(e+1)+"/"+n;n-=49472}n=192*(n>>>8&255)+(255&n),t.put(n,13),e+=2}if(e<r.length)throw"illegal char at "+(e+1)}};return i},D=function(){var t=[],r={writeByte:function(r){t.push(255&r)},writeShort:function(t){r.writeByte(t),r.writeByte(t>>>8)},writeBytes:function(t,e,n){e=e||0,n=n||t.length;for(var o=0;o<n;o+=1)r.writeByte(t[o+e])},writeString:function(t){for(var e=0;e<t.length;e+=1)r.writeByte(t.charCodeAt(e))},toByteArray:function(){return t},toString:function(){var r="";r+="[";for(var e=0;e<t.length;e+=1)e>0&&(r+=","),r+=t[e];return r+="]"}};return r},S=function(t){var r=t,e=0,n=0,o=0,i={read:function(){for(;o<8;){if(e>=r.length){if(0==o)return-1;throw"unexpected end of file./"+o}var t=r.charAt(e);if(e+=1,"="==t)return o=0,-1;t.match(/^\s$/)||(n=n<<6|a(t.charCodeAt(0)),o+=6)}var i=n>>>o-8&255;return o-=8,i}},a=function(t){if(65<=t&&t<=90)return t-65;if(97<=t&&t<=122)return t-97+26;if(48<=t&&t<=57)return t-48+52;if(43==t)return 62;if(47==t)return 63;throw"c:"+t};return i},I=function(t,r,e){for(var n=function(t,r){var e=t,n=r,o=new Array(t*r),i={setPixel:function(t,r,n){o[r*e+t]=n},write:function(t){t.writeString("GIF87a"),t.writeShort(e),t.writeShort(n),t.writeByte(128),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(255),t.writeByte(255),t.writeByte(255),t.writeString(","),t.writeShort(0),t.writeShort(0),t.writeShort(e),t.writeShort(n),t.writeByte(0);var r=a(2);t.writeByte(2);for(var o=0;r.length-o>255;)t.writeByte(255),t.writeBytes(r,o,255),o+=255;t.writeByte(r.length-o),t.writeBytes(r,o,r.length-o),t.writeByte(0),t.writeString(";")}},a=function(t){for(var r=1<<t,e=1+(1<<t),n=t+1,i=u(),a=0;a<r;a+=1)i.add(String.fromCharCode(a));i.add(String.fromCharCode(r)),i.add(String.fromCharCode(e));var f,c,g,l=D(),h=(f=l,c=0,g=0,{write:function(t,r){if(t>>>r!=0)throw"length over";for(;c+r>=8;)f.writeByte(255&(t<<c|g)),r-=8-c,t>>>=8-c,g=0,c=0;g|=t<<c,c+=r},flush:function(){c>0&&f.writeByte(g)}});h.write(r,n);var s=0,v=String.fromCharCode(o[s]);for(s+=1;s<o.length;){var d=String.fromCharCode(o[s]);s+=1,i.contains(v+d)?v+=d:(h.write(i.indexOf(v),n),i.size()<4095&&(i.size()==1<<n&&(n+=1),i.add(v+d)),v=d)}return h.write(i.indexOf(v),n),h.write(e,n),h.flush(),l.toByteArray()},u=function(){var t={},r=0,e={add:function(n){if(e.contains(n))throw"dup key:"+n;t[n]=r,r+=1},size:function(){return r},indexOf:function(r){return t[r]},contains:function(r){return void 0!==t[r]}};return e};return i}(t,r),o=0;o<r;o+=1)for(var i=0;i<t;i+=1)n.setPixel(i,o,e(i,o));var a=D();n.write(a);for(var u=function(){var t=0,r=0,e=0,n="",o={},i=function(t){n+=String.fromCharCode(a(63&t))},a=function(t){if(t<0);else{if(t<26)return 65+t;if(t<52)return t-26+97;if(t<62)return t-52+48;if(62==t)return 43;if(63==t)return 47}throw"n:"+t};return o.writeByte=function(n){for(t=t<<8|255&n,r+=8,e+=1;r>=6;)i(t>>>r-6),r-=6},o.flush=function(){if(r>0&&(i(t<<6-r),t=0,r=0),e%3!=0)for(var o=3-e%3,a=0;a<o;a+=1)n+="="},o.toString=function(){return n},o}(),f=a.toByteArray(),c=0;c<f.length;c+=1)u.writeByte(f[c]);return u.flush(),"data:image/gif;base64,"+u};return t}();qrcode.stringToBytesFuncs["UTF-8"]=function(t){return function(t){for(var r=[],e=0;e<t.length;e++){var n=t.charCodeAt(e);n<128?r.push(n):n<2048?r.push(192|n>>6,128|63&n):n<55296||n>=57344?r.push(224|n>>12,128|n>>6&63,128|63&n):(e++,n=65536+((1023&n)<<10|1023&t.charCodeAt(e)),r.push(240|n>>18,128|n>>12&63,128|n>>6&63,128|63&n))}return r}(t)};
+return qrcode; })();
+// QR из текста: тёмные модули на светлой плашке с полем в 2 модуля (так читается любым сканером, в том числе кассовым). Возвращает готовую картинку svg.
+function qrPlateSvg(text) {
+  try {
+    const q = QRLib(0, 'M'); q.addData(String(text)); q.make();
+    const n = q.getModuleCount(); let d = '';
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += 'M' + c + ' ' + r + 'h1v1h-1z';
+    return '<svg viewBox="-2 -2 ' + (n + 4) + ' ' + (n + 4) + '" shape-rendering="crispEdges" role="img" aria-label="QR-код карты" xmlns="http://www.w3.org/2000/svg"><rect x="-2" y="-2" width="' + (n + 4) + '" height="' + (n + 4) + '" fill="#F4E2D1"/><path d="' + d + '" fill="#1E1004"/></svg>';
+  } catch (e) { return ''; }
+}
+
   const GD_CARD_LOGO = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPsAAAIwCAMAAAB3HO3KAAAAkFBMVEUAAAD768z57uXk0bazoIz29bF0Z1+xsWr66cq1tbXItZ6JdGf56cqlYmH//3+wnYlnUEdtODeHcmT/AADztbPLt6DHs52diXl5Y1luZzOhjHutmob//wCbiHfZyK3/f39ONzJaRD3l0rd/AH8/LSkA//8AAH8AAP8Af38A/wB/f79/v79//3+//7//AP//fwBgYyqnAAAAMHRSTlMA/gz63QQlA2EE6q2pBwKmXw5TAQaNYZ2VD9hrAWCZAlVRaAJEAQIBAgEEBAIEAQLRHcXxAAANQElEQVR42u3d6YKqOhYF4JBIKLBSgOKhLMuazr235+73f7uGGnRvZAYx4lr/zoDymUAGhghxuXhCL4LvJEKKW0pmV853JOywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDDjvssMMOO+ywww477LDDbp/dS/yvJEmfzWUiv7f3B9ldlPu0+bj7ya8epS7kYfM7KZ672s3BvhP+9HbnkKD7xq64O24vxUPXrdPDxovsT5NHXc4uyZcr/Q/vhuxS7I4bO6FIbsoeELvSRt+MXYuV47CCd2/GLsWC2QOh/34jdqO1w7OfvIm/lF2KsGAPbsUekz7dT1ZC34Rdkn7NsX8jb+RcF5zYVSS3N2D35N45zdPEBX8Z+wMp9uVhF1Q87RF/EbsWEfnaxaX6Nxex035NSvp3av7nOi22x3quab9+Kf2Z233SrwnZeC6Ye7lL+q2RNvSPq7WZtd0n/Zq8IyvZn5M522N6gO/EP7PDn/RvI+HN2O6R41t99mbouGbKju30dk2KPf1s0LU+Nvfqfbr+zeR2j/RrHK11cfoqnW62enI7r+Du9+9x7N5P2LGd2v4qDT2xfZexjBUpeG+m9oQU+7FBk+xvtZylXWtSwjvx05HRtOCXwszS7ool7ddsj38fTj9xN7Gd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';
   function gdCardHtml(guest) {
     const c = guest.loyaltyCard;
@@ -23289,17 +23506,41 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     }
     const mk = c.marketing === true ? 'Согласен' : c.marketing === false ? 'Отказался' : 'Не указано';
     return `<div class="gd-panel gd-lc">
-      <div class="gd-lcard" role="img" aria-label="Карта гостя, номер ${escHtml(c.number)}">
-        <div class="gd-lcard-body"><small>Карта гостя</small><b>№ ${escHtml(c.number)}</b></div>
-        <img src="${GD_CARD_LOGO}" alt="">
+      <div class="gd-lcard${c.level ? ' lv-' + escCls(c.level) : ''}" role="img" aria-label="Карта гостя${c.levelLabel ? ', уровень ' + escHtml(c.levelLabel) : ''}, QR-код">
+        <div class="gd-lcard-body"><img src="${GD_CARD_LOGO}" alt="">${c.levelLabel ? `<span class="gd-lcard-lv">${escHtml(c.levelLabel)}</span>` : ''}</div>
+        <div class="gd-lcard-qr">${qrPlateSvg(String(c.number || '').replace(/\D/g, ''))}</div>
       </div>
       <div class="gd-lc-rows">
+        ${c.levelLabel ? `<div class="lv-${escCls(c.level)}"><span>Уровень</span><b><i class="gd-lv"></i>${escHtml(c.levelLabel)}</b>
+          ${c.levelManual ? `<small>назначен вручную · по тратам: ${escHtml(c.levelAutoLabel || '')}</small>` : ''}
+          ${can('settings.manage') ? `<button type="button" class="link-btn gd-lv-edit" onclick="changeCardLevel()">Изменить уровень</button>` : ''}</div>
+        <div><span>Скидка</span><b>${c.discount > 0 ? escHtml(c.discount) + '%' : 'нет'}</b></div>
+        <div><span>Траты ${escHtml(c.spentWindow || '')}</span><b>${escHtml(clvRub(c.spent || 0))}</b></div>` : ''}
         <div><span>Оформлена</span><b>${escHtml(day(c.issuedAt))}</b></div>
         <div><span>Откуда пришёл</span><b>${escHtml(c.sourceLabel || '')}</b></div>
         <div><span>Согласие на данные</span><b>${escHtml(day(c.consentPdAt))}${c.consentPdVer ? ' · ред. ' + escHtml(c.consentPdVer) : ''}</b></div>
         <div><span>Рассылки в Telegram</span><b>${mk}</b></div>
       </div>
     </div>`;
+  }
+
+  // Основатель назначает гостю уровень карты вручную или возвращает расчёт по тратам (право settings.manage)
+  async function changeCardLevel() {
+    const c = currentGuest && currentGuest.loyaltyCard;
+    if (!c || !c.issued) return;
+    if (!needPerm('settings.manage', 'менять уровень карты')) return;
+    const opts = [`По тратам (сейчас ${c.levelAutoLabel || 'Bronze'})`, 'Bronze', 'Silver', 'Gold'];
+    const pick = await askChoice(`Уровень карты гостя\\n\\nСейчас: ${c.levelLabel}${c.levelManual ? ', назначен вручную' : ', по тратам'}. Назначенный уровень действует, пока вы не вернёте расчёт по тратам.`, opts);
+    if (!pick) return;
+    const level = pick === opts[0] ? 'auto' : pick.toLowerCase();
+    try {
+      const d = await tgRequest('PUT', `/api/staff/guest/${currentGuest.id}/card-level`, { level });
+      currentGuest.loyaltyCard = d.loyaltyCard;
+      renderGuestCard(currentGuest);
+      notify(level === 'auto' ? 'Уровень снова считается по тратам' : `Уровень ${pick} назначен`);
+    } catch (e) {
+      notify(tgNetErr(e));
+    }
   }
 
   // «Важно для гостя» плиткой в шапке (у Cosmos: «+ Добавить заметку и предпочтения»). Правка — тем же окном, что и раньше.
@@ -26097,7 +26338,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
       { key: 'svc', icon: ic('<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'),
         extra: ['employees', 'employee-form', 'stories-edit', 'surveys-edit', 'survey-form', 'tv', 'tv-room', 'tags-edit', 'tag-form', 'tag-merge', 'audit', 'venue',
-                'birthday-text', 'segment-rules', 'autotags', 'autotag-edit', 'season', 'tips-admin', 'review-rules', 'system-status', 'menu-edit', 'menu-item-form', 'candidates',
+                'birthday-text', 'segment-rules', 'card-levels', 'autotags', 'autotag-edit', 'season', 'tips-admin', 'review-rules', 'system-status', 'menu-edit', 'menu-item-form', 'candidates',
                 'checklists-edit', 'checklist-form', 'tobacco'], items: [
         { key: 'service', label: 'Сервис', ok: function () { return serviceItemsFor().length > 0; }, go: function () { openService(); }, screens: ['service'] } ] }
     ];
