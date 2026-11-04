@@ -1408,6 +1408,68 @@
     .bd-tok { flex: 0 0 auto; white-space: nowrap; padding: 8px 14px; border-radius: 100px; border: 1px solid rgba(var(--ac),0.55); background: rgba(var(--ac),0.1); color: var(--accent); font-family: 'Montserrat', sans-serif; font-size: 12.5px; font-weight: 600; cursor: pointer; }
     .bd-tok:active { background: rgba(var(--ac),0.26); }
     .bd-tokh { font-size: 11.5px; color: var(--text-muted); }
+    /* Тексты приложения гостя («Сервис» → «Тексты приложения») */
+
+    /* ── «Сайт» в Сервисе: блоки главной страницы, надписи, фото и видео с ретушью ── */
+    .sx-row { display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 8px; padding: 14px 14px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text); text-align: left; cursor: pointer; font-family: inherit; }
+    .sx-row:active { background: var(--bg-card-hover, var(--bg-card)); }
+    .sx-row-main { flex: 1; min-width: 0; }
+    .sx-row-t { font-size: 15px; font-weight: 500; }
+    .sx-row-s { margin-top: 3px; font-size: 12px; line-height: 1.4; color: var(--text-muted); }
+    .sx-row-m { flex: 0 0 auto; font-size: 11.5px; color: var(--text-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .sx-row-m.on { color: var(--accent); }
+    .sx-row svg { flex: 0 0 auto; color: var(--text-muted); }
+    .sx-lead { margin: 6px 2px 4px; font-size: 12.5px; line-height: 1.55; color: var(--text-sub); }
+    .sx-fl { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 6px; min-height: 18px; }
+    .sx-hint { font-size: 11.5px; line-height: 1.4; color: var(--text-muted); }
+    .sx-link { flex: 0 0 auto; padding: 2px 0; border: 0; background: none; color: var(--accent); font-size: 11.5px; font-family: inherit; cursor: pointer; }
+    .sx-field textarea.form-input { display: block; width: 100%; min-height: 78px; resize: vertical; line-height: 1.5; }
+    .sx-m { margin-top: 10px; padding: 12px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); }
+    .sx-mh { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .sx-mt { font-size: 13.5px; color: var(--text); }
+    .sx-mb { flex: 0 0 auto; font-size: 11px; color: var(--text-muted); }
+    .sx-mb.on { color: var(--accent); }
+    .sx-pv { position: relative; margin-top: 10px; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; background: #140a03; border: 1px solid var(--border); touch-action: pan-y; }
+    .sx-pv.pick { cursor: crosshair; touch-action: none; }
+    .sx-pv-m { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; transform-origin: center; }
+    .sx-pv-v { position: absolute; inset: 0; pointer-events: none; }
+    .sx-pv-e { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 0 14px; text-align: center; font-size: 12px; line-height: 1.5; color: var(--text-muted); background: repeating-linear-gradient(135deg, rgba(255,255,255,.03) 0 10px, transparent 10px 20px); }
+    .sx-pv-dot { position: absolute; width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.55), 0 1px 6px rgba(0,0,0,.5); pointer-events: none; }
+    .sx-pv-dot::after { content: ''; position: absolute; inset: 5px; border-radius: 50%; background: #fff; }
+    .sx-m .poster-actions { margin-top: 10px; }
+    .sx-m .poster-actions .btn-primary { flex: 1; min-width: 0; padding: 12px 8px; white-space: normal; line-height: 1.25; }
+    .sx-m .tv-rg:first-of-type { margin-top: 8px; }
+    .sx-m .tv-rg { padding-left: 2px; padding-right: 2px; }
+    .sx-pk { margin: 6px 2px 0; font-size: 11.5px; line-height: 1.45; color: var(--text-muted); }
+    .sx-reset { margin-top: 12px; }
+    .ac-item { margin-top: 10px; padding: 12px 12px 12px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); }
+    .ac-item.off { opacity: 0.6; }
+    .ac-ih { display: flex; align-items: center; gap: 4px; }
+    .ac-n { flex: 0 0 22px; font-size: 12px; color: var(--text-muted); text-align: center; font-variant-numeric: tabular-nums; }
+    .ac-ih .form-input { flex: 1; min-width: 0; padding: 10px 12px; font-size: 14px; }
+    .ac-item .ac-q { display: block; width: 100%; margin-top: 8px; padding: 10px 12px; font-size: 14px; }
+    .ac-item textarea.form-input { display: block; width: 100%; margin-top: 8px; min-height: 96px; resize: vertical; line-height: 1.5; font-size: 14px; }
+    .ac-if { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 10px; margin-top: 8px; }
+    .ac-toks { display: flex; flex-wrap: wrap; gap: 6px; }
+    .ac-toks .bd-tok { padding: 6px 11px; font-size: 11.5px; }
+    .ac-cnt { font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .ac-hid { margin: 0 0 0 4px; font-size: 11px; color: var(--c-amber); }
+    .ac-pv { margin-top: 8px; padding: 18px 14px 6px; border-radius: 16px; background: var(--bg); border: 1px dashed var(--border); }
+    .ac-pv-slogan { font-family: 'Jost', 'Montserrat', sans-serif; font-size: 22px; font-weight: 400; letter-spacing: 1.5px; text-transform: uppercase; text-align: center; line-height: 1.25; color: var(--text); margin: 0 4px 14px; word-break: break-word; }
+    .ac-pv-logo { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 22px 16px; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border); text-align: center; }
+    .ac-pv-mark { width: 54px; height: 54px; border-radius: 14px; border: 1px dashed var(--border); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--text-muted); }
+    .ac-pv-tag { font-size: 12.5px; line-height: 1.6; color: var(--text-sub); }
+    .ac-pv-p { margin: 14px 4px 0; font-size: 13.5px; line-height: 1.7; color: var(--text-sub); word-break: break-word; }
+    .ac-pv-faqt { margin: 0 2px 10px; font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted); }
+    .ac-pv-fi { margin-bottom: 8px; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border); overflow: hidden; }
+    .ac-pv-fq { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; font-size: 13.5px; color: var(--text); cursor: pointer; }
+    .ac-pv-fq i { font-style: normal; color: var(--text-muted); font-size: 18px; transition: transform 0.2s; }
+    .ac-pv-fi.open .ac-pv-fq i { transform: rotate(90deg); }
+    .ac-pv-fa { display: none; padding: 12px 14px 14px; border-top: 1px solid var(--border); font-size: 12.5px; line-height: 1.6; color: var(--text-sub); word-break: break-word; }
+    .ac-pv-fi.open .ac-pv-fa { display: block; }
+    .ac-pv-fa b { color: var(--text); font-weight: 600; }
+    .ac-pv-btn { display: inline-block; margin: 2px 0; padding: 9px 14px; border-radius: 100px; border: 1px solid rgba(var(--ac),0.55); background: rgba(var(--ac),0.1); color: var(--accent); font-size: 12px; font-weight: 600; }
+    .ac-pv-empty { padding: 14px 4px 18px; font-size: 12.5px; color: var(--text-muted); text-align: center; }
     .bd-tg { border-radius: 16px; overflow: hidden; border: 1px solid var(--border); background: var(--bg-deep3); }
     .bd-tgh { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg-card); border-bottom: 1px solid var(--border); }
     .bd-ava { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: linear-gradient(145deg, var(--accent-hi), var(--accent-lo-b)); color: var(--on-grad); font-family: 'Montserrat', sans-serif; font-size: 13px; letter-spacing: 0.5px; }
@@ -4223,11 +4285,12 @@ select[aria-expanded="true"] { border-color: rgba(var(--ac), 0.55) !important; b
 @container hd (min-width: 640px) { .hd-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 /* панели: телефон — столбиком; от 640 — по две; от 1000 — график и сегменты в первой строке, три панели во второй */
 .hd-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; margin-top: 10px; }
-@container hd (min-width: 640px) { .hd-main { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hd-main .p-chart { grid-column: 1 / -1; } }
+@container hd (min-width: 640px) { .hd-main { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hd-main .p-chart, .hd-main .p-en { grid-column: 1 / -1; } }
 @container hd (min-width: 1000px) {
   .hd-main { grid-template-columns: repeat(12, minmax(0, 1fr)); grid-auto-flow: dense; }
   .hd-main .p-chart { grid-column: span 8; }
   .hd-main .p-seg, .hd-main .p-wd, .hd-main .p-fc, .hd-main .p-fl { grid-column: span 4; }
+  .hd-main .p-en { grid-column: span 12; }
   .hd-area { height: 210px; } .hd-y { height: 220px; }
 }
 @container hd (min-width: 1400px) { .hd-kpis { grid-template-columns: repeat(8, minmax(0, 1fr)); } }
@@ -4296,6 +4359,37 @@ select[aria-expanded="true"] { border-color: rgba(var(--ac), 0.55) !important; b
 .hd-r > b { min-width: 30px; font-weight: 500; font-size: 12.5px; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .hd-r > b small { display: inline; margin-left: 7px; font-size: 10.5px; font-weight: 400; color: var(--text-muted); }
 .hd-rows.fl .hd-r { grid-template-columns: minmax(96px, 42%) minmax(0, 1fr) auto; }
+
+/* eNPS команды: итог последнего закрытого месяца, его состав и шесть месяцев по порядку */
+.hd-en { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; align-items: center; }
+@container hd (min-width: 640px) { .hd-en { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 28px; } }
+.hd-en-v { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; font-size: 34px; line-height: 1.05; font-weight: 500; color: var(--text); font-variant-numeric: tabular-nums; }
+.hd-en-v small { font-size: 12px; font-weight: 400; color: var(--text-muted); }
+.hd-en-bar { display: flex; gap: 3px; height: 10px; margin: 16px 0 10px; }
+.hd-en-bar i { display: block; min-width: 4px; border-radius: 100px; }
+.hd-en-bar .pr, .hd-en-leg .pr i { background: var(--c-green); }
+.hd-en-bar .pa, .hd-en-leg .pa i { background: rgba(var(--fg-rgb),0.3); }
+.hd-en-bar .de, .hd-en-leg .de i { background: var(--c-red2); }
+.hd-en-leg { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 11.5px; color: var(--text-muted); }
+.hd-en-leg span { display: inline-flex; align-items: center; gap: 6px; }
+.hd-en-leg i { width: 8px; height: 8px; border-radius: 50%; }
+.hd-en-leg b { color: var(--text); font-weight: 500; font-variant-numeric: tabular-nums; }
+.hd-en-m { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+.hd-en-c { display: flex; flex-direction: column; align-items: center; min-width: 0; }
+.hd-en-c .p, .hd-en-c .n { display: flex; flex-direction: column; align-items: center; width: 100%; height: 50px; }
+.hd-en-c .p { justify-content: flex-end; border-bottom: 1px solid rgba(var(--fg-rgb),0.14); }
+.hd-en-c .n { justify-content: flex-start; }
+.hd-en-m:not(.neg) .hd-en-c .p { height: 84px; }
+.hd-en-m:not(.neg) .hd-en-c .n { height: 0; }
+.hd-en-c em { font-style: normal; font-size: 11px; line-height: 14px; color: var(--text-sub); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hd-en-c i { display: block; width: 100%; max-width: 34px; border-radius: 8px 8px 3px 3px; background: rgba(var(--ac),0.3); }
+.hd-en-c .n i { border-radius: 3px 3px 8px 8px; background: rgba(var(--c-red-rgb),0.45); }
+.hd-en-c.top i { background: linear-gradient(180deg, var(--accent-hi), var(--accent-lo)); }
+.hd-en-c.top .n i { background: var(--c-red2); }
+.hd-en-c.top em { color: var(--text); }
+.hd-en-c.none em, .hd-en-c.cur em { color: var(--text-muted); }
+.hd-en-c.cur em { font-size: 10.5px; }
+.hd-en-c > span { margin-top: 7px; font-size: 11px; color: var(--text-muted); }
 </style>
 <style id="bk-css">
 /* ─── «Брони» на широком экране (виджеты по бокам только на главной — колонка шире) ─── */
@@ -5622,6 +5716,34 @@ body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-le
   </div>
 </div>
 
+<div class="screen" id="screen-app-content">
+  <div class="header">
+    <div class="back-btn" onclick="acBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Тексты приложения</h1><p>«О заведении» и «Вопросы» у гостя</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div class="chip-row" style="margin:14px 0 4px" id="acTabs"></div>
+    <div id="appContentContent" style="margin-top:6px"><div class="loading">Загружаю...</div></div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<div class="screen" id="screen-site">
+  <div class="header">
+    <div class="back-btn" onclick="sxBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 id="sxH1" style="font-size:14px;letter-spacing:1px;">Сайт</h1><p id="sxH2">Надписи, фото и видео на главной странице</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div id="siteContent" style="margin-top:6px"><div class="loading">Загружаю...</div></div>
+    <div style="height:16px"></div>
+  </div>
+  <input type="file" id="sxFile" style="display:none" onchange="sxFileChosen(this.files[0]); this.value='';">
+</div>
+
 <div class="screen" id="screen-segment-rules">
   <div class="header">
     <div class="back-btn" onclick="srBack()">
@@ -6816,6 +6938,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const list = [];
     if (can('menu.manage')) list.push({ group: G.content, icon: 'menu', short: 'меню', title: 'Меню', sub: 'Позиции, цены, фото', fn: 'openMenuEdit()' });
     if (can('stories.manage')) list.push({ group: G.content, icon: 'stories', short: 'сторис', title: 'Сторис', sub: 'Фото бара и ВИП-комнат', fn: 'openStoriesEdit()' });
+    if (can('content.manage')) list.push({ group: G.content, icon: 'appcontent', short: 'тексты приложения', title: 'Тексты приложения', sub: '«О заведении» и «Вопросы» в приложении гостя', fn: 'openAppContent()' });
+    if (can('site.manage')) list.push({ group: G.content, icon: 'site', short: 'сайт', title: 'Сайт', sub: 'Надписи, фото, видео и контакты на сайте', fn: 'openSite()' });
     if (can('surveys.manage')) list.push({ group: G.content, icon: 'surveys', short: 'отзыв гостя', title: 'Оформление отзыва', sub: 'Отзыв гостя и опрос команды: фон, тексты', fn: 'openSurveysEdit()' });
     if (can('tv.manage')) list.push({ group: G.content, icon: 'tv', short: 'тв-экраны', title: 'ТВ-экраны', sub: 'ВИП-комнаты и терраса: приветствие, фон, сообщения', fn: 'openTv()' });
     if (can('checklists.manage')) list.push({ group: G.team, icon: 'checklists', short: 'чек-листы', title: 'Чек-листы', sub: 'Открытие и закрытие смены', fn: 'openChecklistsEdit()' });
@@ -7014,6 +7138,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     icons.briefing = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h9M4 12h9M4 18h5"/><path d="M16 13l2.2 2.2L22 10.5"/></svg>';
     icons.venue = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>';
     icons.tips = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 17V7h3.2a2.7 2.7 0 010 5.4H10M8.5 14.6h5.2"/></svg>';
+    icons.appcontent = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7.5V5h15v2.5"/><path d="M12 5v14"/><path d="M9 19h6"/></svg>';
+    icons.site = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.6 4 5.6 4 9s-1.4 6.4-4 9c-2.6-2.6-4-5.6-4-9s1.4-6.4 4-9z"/></svg>';
     icons.extreviews = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.5s-6.5-5.4-6.5-11a6.5 6.5 0 0113 0c0 5.6-6.5 11-6.5 11z"/><polygon points="12 6.8 13.1 9.1 15.6 9.4 13.8 11.1 14.3 13.6 12 12.4 9.7 13.6 10.2 11.1 8.4 9.4 10.9 9.1"/></svg>';
     homeIcons = icons;
     // Что показывать — решают права сотрудника (основатель выдаёт их галочками на экране «Сотрудники»)
@@ -8416,6 +8542,537 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const bb = document.getElementById('bdSaveBtn');
       if (bb) { bb.disabled = false; bb.textContent = 'Сохранить'; }
     }
+  }
+
+  // ─── ТЕКСТЫ ПРИЛОЖЕНИЯ ГОСТЯ: «О заведении» и «Вопросы» («Сервис» → «Тексты приложения») ───────────
+  // Гость читает эти два экрана в своём приложении. Здесь основатель пишет их сам: слоган, подпись под логотипом, абзацы,
+  // вопросы и ответы (порядок, «спрятать», удалить). Внизу — предпросмотр так, как увидит гость. Сохраняется по вкладкам.
+  var ac = null;
+  const AC_LIM = { slogan: 60, tagline: 200, paragraph: 1200, paragraphs: 8, faqTitle: 60, question: 120, answer: 1800, items: 40 };
+  const AC_EYE = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.8"/></svg>';
+  const AC_EYE_OFF = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 5.7A10.6 10.6 0 0112 5.5c6.4 0 10 6.5 10 6.5a17 17 0 01-3.2 4M6.5 7.6C3.9 9.4 2 12 2 12s3.6 6.5 10 6.5c1.4 0 2.7-.3 3.8-.8"/><path d="M9.9 9.9a3 3 0 004.2 4.2"/></svg>';
+  function acCopy(section, d) {
+    if (section === 'about') return { slogan: d.about.slogan, tagline: d.about.tagline, paragraphs: d.about.paragraphs.slice() };
+    return { title: d.faq.title, items: d.faq.items.map(x => ({ id: x.id, q: x.q, a: x.a, off: !!x.off })) };
+  }
+  async function openAppContent() {
+    showScreen('app-content');
+    ac = null;
+    document.getElementById('acTabs').innerHTML = '';
+    const el = document.getElementById('appContentContent');
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/content?pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить тексты'));
+      const d = await res.json();
+      if (!d || !d.about || !d.faq) throw new Error('Не удалось загрузить тексты');
+      ac = { data: d, tab: 'about', about: acCopy('about', d), faq: acCopy('faq', d), open: new Set(), busy: false };
+      acRender();
+    } catch (e) {
+      el.innerHTML = errorStateHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером', 'openAppContent()');
+    }
+  }
+  function acDirtyOf(section) {
+    if (!ac) return false;
+    return JSON.stringify(ac[section]) !== JSON.stringify(acCopy(section, ac.data));
+  }
+  async function acBack() {
+    if (ac && (acDirtyOf('about') || acDirtyOf('faq'))) {
+      if (!await askConfirm('Выйти без сохранения?\n\nИзменения в текстах пропадут.', { ok: 'Выйти', cancel: 'Остаться', danger: true })) return;
+    }
+    ac = null;
+    showScreen('service');
+  }
+  function acTab(t) { if (!ac || ac.tab === t) return; ac.tab = t; acRender(); }
+  function acRender() {
+    const el = document.getElementById('appContentContent');
+    if (!el || !ac) return;
+    document.getElementById('acTabs').innerHTML = [['about', 'О заведении'], ['faq', 'Вопросы']].map(([k, n]) =>
+      `<div class="chip${ac.tab === k ? ' selected' : ''}" role="button" tabindex="0" onclick="acTab('${k}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();acTab('${k}')}">${n}${acDirtyOf(k) ? ' •' : ''}</div>`).join('');
+    const same = !ac.data.saved ? '<div class="poster-note">Пока вы ничего не меняли: гость видит стандартные тексты. После сохранения он увидит ваши.</div>' : '';
+    el.innerHTML = (ac.tab === 'about' ? acAboutHtml() : acFaqHtml()) + same
+      + `<div class="sv-gl">Как увидит гость</div><div class="ac-pv" id="acPrev"></div>`
+      + `<div class="ckf-tools" style="margin-top:12px"><button type="button" class="ckf-tool" onclick="acReset()">Вернуть тексты как были в приложении</button></div>`
+      + `<div class="vn-save" id="acSaveWrap"><button class="btn-cta" id="acSaveBtn" onclick="acSave()">Сохранить</button></div>`;
+    acPreview();
+  }
+  // Подпись над полем: название слева, «сколько знаков осталось» справа
+  function acField(label, inner, cntId) {
+    return `<div class="bd-field"><div class="bd-fh"><span class="bd-fk">${label}</span>${cntId ? `<span class="bd-cnt" id="${cntId}"></span>` : ''}</div>${inner}</div>`;
+  }
+  function acAboutHtml() {
+    const a = ac.about;
+    const paras = a.paragraphs.map((p, i) =>
+      `<div class="ac-item"><div class="ac-ih"><span class="ac-n">${i + 1}</span><span class="bd-fk" style="flex:1">Абзац</span>`
+      + `<button type="button" class="ckf-b" aria-label="Выше" ${i === 0 ? 'disabled' : ''} onclick="acParaMove(${i},-1)">↑</button>`
+      + `<button type="button" class="ckf-b" aria-label="Ниже" ${i === a.paragraphs.length - 1 ? 'disabled' : ''} onclick="acParaMove(${i},1)">↓</button>`
+      + `<button type="button" class="ckf-b" aria-label="Удалить абзац" onclick="acParaDel(${i})">×</button></div>`
+      + `<textarea class="form-input" id="acPara${i}" rows="4" maxlength="${AC_LIM.paragraph}" placeholder="Текст абзаца" oninput="acParaIn(${i},this)">${escHtml(p)}</textarea>`
+      + `<div class="ac-if"><span class="ac-cnt" id="acParaCnt${i}"></span><span class="ac-toks"><button type="button" class="bd-tok" onclick="acTok('acPara${i}','**жирный**')">+ жирный</button></span></div></div>`).join('');
+    return acField('Слоган — крупно, над логотипом', `<input class="form-input" id="acSlogan" maxlength="${AC_LIM.slogan}" value="${escHtml(a.slogan)}" placeholder="Добро пожаловать домой" oninput="acAboutIn()">`, 'acSloganCnt')
+      + acField('Подпись под логотипом — до двух строк', `<textarea class="form-input" id="acTagline" rows="2" style="min-height:64px" maxlength="${AC_LIM.tagline}" placeholder="Каждая строка — с новой строки" oninput="acAboutIn()">${escHtml(a.tagline)}</textarea>`, 'acTagCnt')
+      + `<div class="sv-gl">Абзацы под логотипом</div>` + (paras || '<div class="ac-pv-empty">Абзацев нет — под логотипом будет пусто.</div>')
+      + (a.paragraphs.length < AC_LIM.paragraphs ? `<button type="button" class="ckf-add" onclick="acParaAdd()">+ Добавить абзац</button>` : '');
+  }
+  function acFaqHtml() {
+    const f = ac.faq;
+    const items = f.items.map((x, i) =>
+      `<div class="ac-item${x.off ? ' off' : ''}"><div class="ac-ih"><span class="ac-n">${i + 1}</span><span class="bd-fk" style="flex:1">${x.off ? 'Вопрос · спрятан от гостей' : 'Вопрос'}</span>`
+      + `<button type="button" class="ckf-b" aria-label="Выше" ${i === 0 ? 'disabled' : ''} onclick="acFaqMove(${i},-1)">↑</button>`
+      + `<button type="button" class="ckf-b" aria-label="Ниже" ${i === f.items.length - 1 ? 'disabled' : ''} onclick="acFaqMove(${i},1)">↓</button>`
+      + `<button type="button" class="ckf-b" aria-label="${x.off ? 'Показать гостям' : 'Спрятать от гостей'}" title="${x.off ? 'Спрятан от гостей — нажмите, чтобы показать' : 'Показан гостям — нажмите, чтобы спрятать'}" onclick="acFaqOff(${i})">${x.off ? AC_EYE_OFF : AC_EYE}</button>`
+      + `<button type="button" class="ckf-b" aria-label="Удалить вопрос" onclick="acFaqDel(${i})">×</button></div>`
+      + `<input class="form-input ac-q" id="acQ${i}" maxlength="${AC_LIM.question}" autocomplete="off" value="${escHtml(x.q)}" placeholder="Вопрос гостя" aria-label="Вопрос ${i + 1}" oninput="acFaqIn(${i})">`
+      + `<textarea class="form-input" id="acA${i}" rows="4" maxlength="${AC_LIM.answer}" placeholder="Ответ" aria-label="Ответ ${i + 1}" oninput="acFaqIn(${i})">${escHtml(x.a)}</textarea>`
+      + `<div class="ac-if"><span class="ac-cnt" id="acACnt${i}"></span><span class="ac-toks">`
+      + `<button type="button" class="bd-tok" onclick="acTok('acA${i}','**жирный**')">+ жирный</button>`
+      + `<button type="button" class="bd-tok" onclick="acTok('acA${i}','{часы}')">+ часы работы</button>`
+      + `<button type="button" class="bd-tok" onclick="acTok('acA${i}','{иконка}')">+ кнопка «на главный экран»</button></span></div></div>`).join('');
+    return acField('Заголовок раздела', `<input class="form-input" id="acFaqTitle" maxlength="${AC_LIM.faqTitle}" value="${escHtml(f.title)}" placeholder="Часто задаваемые вопросы" oninput="acFaqTitleIn()">`, 'acFaqTitleCnt')
+      + `<div class="sv-gl">Вопросы и ответы</div>` + (items || '<div class="ac-pv-empty">Вопросов нет — раздел будет пустым.</div>')
+      + (f.items.length < AC_LIM.items ? `<button type="button" class="ckf-add" onclick="acFaqAdd()">+ Добавить вопрос</button>` : '')
+      + `<div class="sv-tip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><div>Слово между двумя звёздочками с каждой стороны станет жирным (<b>**так**</b>), кнопка «+ жирный» ставит их сама. Метка <b>{часы}</b> сама подставит режим работы из «Режима работы», <b>{иконка}</b> покажет гостю кнопку «Добавить на главный экран» (только там, где Telegram это умеет). Глазок прячет вопрос от гостей, не стирая его.</div></div>`;
+  }
+  // Предпросмотр: тот же разбор разметки, что и в приложении гостя
+  function acRich(t) {
+    let h = escHtml(String(t || ''));
+    h = h.replace(/\*\*([^*\n]+?)\*\*/g, '<b>$1</b>');
+    h = h.replace(/\{часы\}/g, 'Ежедневно с 13:00 до 01:00.');
+    h = h.replace(/\{иконка\}/g, '<span class="ac-pv-btn">Добавить на главный экран</span>');
+    return h.replace(/\n/g, '<br>');
+  }
+  function acPreview() {
+    if (!ac) return;
+    const el = document.getElementById('acPrev');
+    const cnt = (id, v, max) => { const c = document.getElementById(id); if (c) c.textContent = `${v.length} / ${max}`; };
+    if (ac.tab === 'about') {
+      const a = ac.about;
+      cnt('acSloganCnt', a.slogan, AC_LIM.slogan); cnt('acTagCnt', a.tagline, AC_LIM.tagline);
+      a.paragraphs.forEach((p, i) => cnt('acParaCnt' + i, p, AC_LIM.paragraph));
+      const paras = a.paragraphs.filter(p => p.trim());
+      el.innerHTML = (a.slogan.trim() ? `<div class="ac-pv-slogan">${escHtml(a.slogan.trim())}</div>` : '')
+        + `<div class="ac-pv-logo"><div class="ac-pv-mark">лого</div>${a.tagline.trim() ? `<div class="ac-pv-tag">${acRich(a.tagline.trim())}</div>` : ''}</div>`
+        + paras.map(p => `<div class="ac-pv-p">${acRich(p.trim())}</div>`).join('') + '<div style="height:12px"></div>';
+    } else {
+      const f = ac.faq;
+      cnt('acFaqTitleCnt', f.title, AC_LIM.faqTitle);
+      f.items.forEach((x, i) => cnt('acACnt' + i, x.a, AC_LIM.answer));
+      const shown = f.items.map((x, i) => ({ x, i })).filter(r => !r.x.off && r.x.q.trim() && r.x.a.trim());
+      const hidden = f.items.filter(x => x.off).length;
+      el.innerHTML = (f.title.trim() ? `<div class="ac-pv-faqt">${escHtml(f.title.trim())}</div>` : '')
+        + (shown.length ? shown.map(r => `<div class="ac-pv-fi${ac.open.has(r.x.id || ('i' + r.i)) ? ' open' : ''}"><div class="ac-pv-fq" onclick="acPrevToggle(${r.i})"><span>${escHtml(r.x.q.trim())}</span><i>›</i></div><div class="ac-pv-fa">${acRich(r.x.a.trim())}</div></div>`).join('') : '<div class="ac-pv-empty">Гостю показывать нечего.</div>')
+        + (hidden ? `<div class="ac-hid">Спрятано от гостей: ${hidden}</div>` : '') + '<div style="height:12px"></div>';
+    }
+    acDirtyPaint();
+  }
+  function acPrevToggle(i) {
+    const x = ac.faq.items[i]; if (!x) return;
+    const k = x.id || ('i' + i);
+    if (ac.open.has(k)) ac.open.delete(k); else ac.open.add(k);
+    acPreview();
+  }
+  function acDirtyPaint() {
+    const wrap = document.getElementById('acSaveWrap');
+    if (wrap) wrap.classList.toggle('dirty', acDirtyOf(ac.tab));
+    document.querySelectorAll('#acTabs .chip').forEach((c, i) => {
+      const k = i === 0 ? 'about' : 'faq', t = i === 0 ? 'О заведении' : 'Вопросы';
+      c.textContent = t + (acDirtyOf(k) ? ' •' : '');
+    });
+  }
+  // «О заведении»
+  function acAboutIn() {
+    ac.about.slogan = document.getElementById('acSlogan').value;
+    ac.about.tagline = document.getElementById('acTagline').value;
+    acPreview();
+  }
+  function acParaIn(i, ta) { ac.about.paragraphs[i] = ta.value; acPreview(); }
+  function acParaAdd() { ac.about.paragraphs.push(''); acRender(); const t = document.getElementById('acPara' + (ac.about.paragraphs.length - 1)); if (t) t.focus(); }
+  async function acParaDel(i) {
+    const p = ac.about.paragraphs[i];
+    if (p && p.trim() && !await askConfirm('Удалить абзац?', { ok: 'Удалить', cancel: 'Оставить', danger: true })) return;
+    ac.about.paragraphs.splice(i, 1); acRender();
+  }
+  function acParaMove(i, d) {
+    const l = ac.about.paragraphs, j = i + d;
+    if (j < 0 || j >= l.length) return;
+    [l[i], l[j]] = [l[j], l[i]]; acRender();
+  }
+  // «Вопросы»
+  function acFaqTitleIn() { ac.faq.title = document.getElementById('acFaqTitle').value; acPreview(); }
+  function acFaqIn(i) {
+    const x = ac.faq.items[i]; if (!x) return;
+    x.q = document.getElementById('acQ' + i).value; x.a = document.getElementById('acA' + i).value;
+    acPreview();
+  }
+  function acFaqAdd() {
+    ac.faq.items.push({ id: '', q: '', a: '', off: false });
+    acRender();
+    const q = document.getElementById('acQ' + (ac.faq.items.length - 1)); if (q) q.focus();
+  }
+  async function acFaqDel(i) {
+    const x = ac.faq.items[i]; if (!x) return;
+    if ((x.q.trim() || x.a.trim()) && !await askConfirm(`Удалить вопрос${x.q.trim() ? ' «' + x.q.trim().slice(0, 60) + '»' : ''}?\n\nПока не нажмёте «Сохранить», гость его ещё видит. Если вопрос может пригодиться позже — лучше спрятать глазком.`, { ok: 'Удалить', cancel: 'Оставить', danger: true })) return;
+    ac.faq.items.splice(i, 1); acRender();
+  }
+  function acFaqMove(i, d) {
+    const l = ac.faq.items, j = i + d;
+    if (j < 0 || j >= l.length) return;
+    [l[i], l[j]] = [l[j], l[i]]; acRender();
+  }
+  function acFaqOff(i) { const x = ac.faq.items[i]; if (!x) return; x.off = !x.off; acRender(); }
+  // Метка в текст ответа или абзаца на место курсора
+  function acTok(id, tok) {
+    const ta = document.getElementById(id);
+    if (!ta) return;
+    const a = ta.selectionStart ?? ta.value.length, b = ta.selectionEnd ?? a;
+    let ins = tok;
+    if (tok === '**жирный**' && b > a) ins = '**' + ta.value.slice(a, b) + '**';   // выделенное слово становится жирным
+    if (ta.value.length - (b - a) + ins.length > (ta.maxLength > 0 ? ta.maxLength : 5000)) { notify('Текст слишком длинный'); return; }
+    ta.value = ta.value.slice(0, a) + ins + ta.value.slice(b);
+    ta.focus();
+    if (tok === '**жирный**' && b === a) { ta.selectionStart = a + 2; ta.selectionEnd = a + 8; } else ta.selectionStart = ta.selectionEnd = a + ins.length;
+    ta.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  function acPayload(section) {
+    if (section === 'about') {
+      const a = ac.about;
+      return { slogan: a.slogan.trim(), tagline: a.tagline.trim(), paragraphs: a.paragraphs.map(p => p.trim()).filter(Boolean) };
+    }
+    return { title: ac.faq.title.trim(), items: ac.faq.items.filter(x => x.q.trim() || x.a.trim()).map(x => ({ ...(x.id ? { id: x.id } : {}), q: x.q.trim(), a: x.a.trim(), off: !!x.off })) };
+  }
+  async function acSave() {
+    if (!ac || ac.busy) return;
+    const sec = ac.tab, btn = document.getElementById('acSaveBtn');
+    ac.busy = true; if (btn) { btn.disabled = true; btn.textContent = 'Сохраняем...'; }
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/content?pin=${getPin()}`, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ [sec]: acPayload(sec), version: ac.data.version })
+      });
+      if (res.status === 401) { showScreen('pin'); return; }
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 409) { showToast(data.error || 'Тексты уже изменил другой сотрудник', true); ac.busy = false; openAppContent(); return; }
+      if (!res.ok) { showToast(data.error || 'Не сохранилось — попробуйте ещё раз', true); return; }
+      ac.data = data;
+      ac[sec] = acCopy(sec, data);               // из ответа сервера: пустые строки убраны, у новых вопросов появились номера
+      ac.open = new Set();
+      showToast(sec === 'about' ? 'Сохранено — «О заведении» обновится у гостей' : 'Сохранено — вопросы обновятся у гостей');
+      acRender();
+    } catch {
+      showToast('Нет связи — не сохранилось', true);
+    } finally {
+      if (ac) ac.busy = false;
+      const b = document.getElementById('acSaveBtn');
+      if (b) { b.disabled = false; b.textContent = 'Сохранить'; }
+    }
+  }
+  async function acReset() {
+    if (!ac) return;
+    const sec = ac.tab, name = sec === 'about' ? 'О заведении' : 'Вопросы';
+    if (!await askConfirm(`Вернуть «${name}» как было в приложении?\n\nВаши тексты в этом разделе пропадут, у гостей снова будут стандартные.`, { ok: 'Вернуть', cancel: 'Отмена', danger: true })) return;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/content/reset?pin=${getPin()}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ section: sec })
+      });
+      if (res.status === 401) { showScreen('pin'); return; }
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) { showToast(data.error || 'Не получилось вернуть тексты', true); return; }
+      ac.data = data; ac[sec] = acCopy(sec, data); ac.open = new Set();
+      showToast(`«${name}» — как было`);
+      acRender();
+    } catch { showToast('Нет связи — не получилось', true); }
+  }
+
+
+  // ─── САЙТ: надписи, телефон и адрес, фото и видео блоков главной страницы («Сервис» → «Сайт») ───────────
+  // Список блоков → внутри блока надписи и места под фото/видео. Фото и видео загружаются сразу (как только выбрали файл),
+  // надписи и ретушь (яркость, затемнение, размытие, точка кадра) уходят кнопкой «Сохранить». Сайт берёт всё у гостевого сервера
+  // при каждом заходе; что здесь не менялось, на сайте остаётся стандартным.
+  var sx = null;
+  const SX_VIDEO_MAX_BYTES = 40 * 1024 * 1024, SX_VIDEO_MAX_SEC = 60;
+  const SX_CHEV = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+  const sxNorm = (v) => String(v == null ? '' : v).replace(/[  ]/g, ' ').replace(/\s+/g, ' ').trim();
+  const sxEl = (id) => document.getElementById(id);
+  const sxBlock = (id) => sx && sx.data.blocks.find(b => b.id === id);
+  function sxLoadBlock(b) {                                   // копия значений блока для правки
+    sx.tx = {}; sx.tn = {};
+    b.texts.forEach(t => { sx.tx[t.key] = t.value; });
+    b.media.forEach(m => { if (m.item) sx.tn[m.key] = { blur: m.item.blur, bright: m.item.bright, veil: m.item.veil, fx: m.item.fx, fy: m.item.fy }; });
+  }
+  async function openSite() {
+    showScreen('site');
+    sx = null;
+    sxEl('sxH1').textContent = 'Сайт'; sxEl('sxH2').textContent = 'Надписи, фото и видео на главной странице';
+    const el = sxEl('siteContent');
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/site?pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить настройки сайта'));
+      const d = await res.json();
+      if (!d || !Array.isArray(d.blocks)) throw new Error('Не удалось загрузить настройки сайта');
+      sx = { data: d, open: null, tx: {}, tn: {}, busy: false };
+      sxRender();
+    } catch (e) {
+      el.innerHTML = errorStateHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером', 'openSite()');
+    }
+  }
+  function sxDirty() {
+    if (!sx || !sx.open) return false;
+    const b = sxBlock(sx.open);
+    if (!b) return false;
+    for (const t of b.texts) if (sxNorm(sx.tx[t.key]) !== sxNorm(t.value)) return true;
+    for (const m of b.media) {
+      if (!m.item) continue;
+      const a = sx.tn[m.key] || {};
+      for (const k of ['blur', 'bright', 'veil', 'fx', 'fy']) if (Number(a[k]) !== Number(m.item[k])) return true;
+    }
+    return false;
+  }
+  async function sxBack() {
+    if (sx && sx.open) {
+      if (sxDirty() && !await askConfirm('Выйти без сохранения?\n\nИзменения в этом блоке пропадут.', { ok: 'Выйти', cancel: 'Остаться', danger: true })) return;
+      sx.open = null; sxRender(); window.scrollTo(0, 0);
+      return;
+    }
+    sx = null;
+    showScreen('service');
+  }
+  function sxOpen(id) {
+    const b = sxBlock(id);
+    if (!b) return;
+    sx.open = id; sxLoadBlock(b); sxRender(); window.scrollTo(0, 0);
+  }
+  function sxRender() {
+    const el = sxEl('siteContent');
+    if (!el || !sx) return;
+    if (!sx.open) { sxEl('sxH1').textContent = 'Сайт'; sxEl('sxH2').textContent = 'Надписи, фото и видео на главной странице'; el.innerHTML = sxListHtml(); return; }
+    const b = sxBlock(sx.open);
+    if (!b) { sx.open = null; return sxRender(); }
+    sxEl('sxH1').textContent = b.title; sxEl('sxH2').textContent = 'Блок сайта';
+    el.innerHTML = sxBlockHtml(b);
+    b.texts.forEach(sxTextPaint);
+    b.media.forEach(m => { if (m.item) sxPaint(m.key); });
+    sxDirtyPaint();
+  }
+  function sxListHtml() {
+    const d = sx.data;
+    const rows = d.blocks.map(b => {
+      const n = b.texts.filter(t => t.custom).length + b.media.filter(m => m.item).length;
+      return `<button type="button" class="sx-row" onclick="sxOpen('${b.id}')"><div class="sx-row-main"><div class="sx-row-t">${escHtml(b.title)}</div><div class="sx-row-s">${escHtml(b.sub)}</div></div><div class="sx-row-m${n ? ' on' : ''}">${n ? 'своё: ' + n : 'стандарт'}</div>${SX_CHEV}</button>`;
+    }).join('');
+    return `<div class="sx-lead">Это главная страница сайта. Выберите блок: поменяйте надписи, поставьте своё фото или видео, подберите яркость и затемнение. Что не меняли, остаётся таким, как задумано в дизайне. Гости увидят изменения при следующем заходе на сайт.</div>${rows}`
+      + (d.saved ? '' : '<div class="poster-note" style="margin-top:10px">Пока вы ничего не меняли: на сайте стандартные надписи и фотографии.</div>');
+  }
+  function sxFieldHtml(t) {
+    const long = t.max > 100;
+    const attrs = `id="sxT-${t.key}" data-k="${t.key}" maxlength="${t.max}" oninput="sxTextIn(this)" autocomplete="off"`;
+    const val = escHtml(sx.tx[t.key] != null ? sx.tx[t.key] : t.value);
+    const input = long ? `<textarea class="form-input" rows="3" ${attrs}>${val}</textarea>` : `<input class="form-input" ${t.phone ? 'type="tel" inputmode="tel" ' : 'type="text" '}${attrs} value="${val}">`;
+    const hint = t.rich ? '<span class="sx-hint">Жирным выделяется так: **слово**</span>' : `<span class="sx-hint" id="sxH-${t.key}"></span>`;
+    return `<div class="bd-field sx-field"><div class="bd-fh"><span class="bd-fk">${escHtml(t.label)}</span><span class="bd-cnt" id="sxC-${t.key}"></span></div>${input}`
+      + `<div class="sx-fl">${hint}<span id="sxD-${t.key}"></span></div></div>`;
+  }
+  function sxMediaHtml(m) {
+    const it = m.item;
+    const rng = (k, label, min, max, step, l, r) => `<div class="tv-rg"><div class="tv-rg-h"><span>${label}</span><b id="sxV-${m.key}-${k}"></b></div><input type="range" class="sv-range" id="sxR-${m.key}-${k}" min="${min}" max="${max}" step="${step}" value="${(sx.tn[m.key] || {})[k]}" oninput="sxTune('${m.key}')"><div class="sv-range-l"><span>${l}</span><span>${r}</span></div></div>`;
+    const media = it ? (it.type === 'video' ? `<video class="sx-pv-m" id="sxM-${m.key}" src="${escHtml(it.url)}" muted loop playsinline autoplay></video>` : `<img class="sx-pv-m" id="sxM-${m.key}" src="${escHtml(it.url)}" alt="">`) : '';
+    const empty = it ? '' : `<div class="sx-pv-e">Сейчас здесь стандартная картинка сайта. Загрузите своё — оно встанет на это место.</div>`;
+    const pick = it ? ' pick' : '';
+    return `<div class="sx-m" id="sxMB-${m.key}"><div class="sx-mh"><span class="sx-mt">${escHtml(m.label)}</span><span class="sx-mb${it ? ' on' : ''}">${it ? (it.type === 'video' ? 'своё видео' : 'своё фото') : 'стандартное'}</span></div>`
+      + `<div class="sx-pv${pick}" id="sxP-${m.key}"${it ? ` onpointerdown="sxPick(event,'${m.key}')" onpointermove="sxPick(event,'${m.key}')"` : ''}>${media}${empty}<div class="sx-pv-v" id="sxVe-${m.key}"></div>${it ? `<div class="sx-pv-dot" id="sxDot-${m.key}"></div>` : ''}</div>`
+      + (it ? `<div class="sx-pk">Нажмите на картинку: эта точка останется в кадре, когда блок будет обрезан по размеру</div>` : '')
+      + `<div class="poster-note" id="sxN-${m.key}"></div>`
+      + `<div class="poster-actions"><button type="button" class="btn-primary" onclick="sxChoose('${m.key}')">${it ? 'Заменить' : (m.video ? 'Загрузить фото или видео' : 'Загрузить фото')}</button>${it ? `<button type="button" class="btn-primary tv-rm" onclick="sxRemove('${m.key}')">Стандартное</button>` : ''}</div>`
+      + (it ? rng('bright', 'Яркость', 50, 130, 5, 'темнее', 'ярче') + rng('veil', 'Затемнение', 0, 80, 1, 'светлее', 'темнее') + rng('blur', 'Размытие', 0, 20, 1, 'чётко', 'сильно размыто') : '')
+      + `</div>`;
+  }
+  function sxBlockHtml(b) {
+    const hasMedia = b.media.length > 0;
+    const videoNote = b.media.some(m => m.video) ? `Видео — до ${SX_VIDEO_MAX_SEC} секунд и 40 МБ, без звука: сервер сам сожмёт его и сделает плавную петлю, загрузка займёт до минуты.${sx.data.video ? '' : ' Сейчас сжатие недоступно: видео сохранится как есть и на телефоне может грузиться дольше.'} ` : '';
+    return (b.texts.length ? `<div class="sv-gl">Надписи</div><div class="sx-texts">${b.texts.map(sxFieldHtml).join('')}</div>` : '')
+      + (hasMedia ? `<div class="sv-gl">Фото и видео</div><div class="sx-lead" style="margin-top:0">${videoNote}Фото загружается сразу, как только вы его выбрали. Яркость и затемнение сохраняются кнопкой «Сохранить».</div>${b.media.map(sxMediaHtml).join('')}` : '')
+      + `<div class="ckf-tools sx-reset"><button type="button" class="ckf-tool" onclick="sxReset()">Вернуть этот блок как был</button></div>`
+      + `<div class="vn-save" id="sxSaveWrap"><button class="btn-cta" id="sxSaveBtn" onclick="sxSave()">Сохранить</button></div>`;
+  }
+  // Подписи «сколько знаков» и «вернуть стандартную» расставляются после вставки разметки (sxRender)
+  function sxTextPaint(t) {
+    const v = sx.tx[t.key] != null ? sx.tx[t.key] : t.value;
+    const c = sxEl('sxC-' + t.key); if (c) c.textContent = `${v.length} / ${t.max}`;
+    const d = sxEl('sxD-' + t.key);
+    const same = sxNorm(v) === sxNorm(t.def);
+    if (d) d.innerHTML = same ? '' : `<button type="button" class="sx-link" onclick="sxTextDefault('${t.key}')">Вернуть стандартную</button>`;
+    const h = sxEl('sxH-' + t.key);
+    if (h) h.textContent = same ? 'Стандартная надпись' : (t.def.length > 70 ? 'Стандарт: «' + t.def.slice(0, 68) + '…»' : 'Стандарт: «' + t.def + '»');
+  }
+  function sxTextIn(inp) {
+    const k = inp.getAttribute('data-k');
+    sx.tx[k] = inp.value;
+    const t = sxBlock(sx.open).texts.find(x => x.key === k);
+    if (t) sxTextPaint(t);
+    sxDirtyPaint();
+  }
+  function sxTextDefault(k) {
+    const t = sxBlock(sx.open).texts.find(x => x.key === k);
+    if (!t) return;
+    sx.tx[k] = t.def;
+    const inp = sxEl('sxT-' + k); if (inp) inp.value = t.def;
+    sxTextPaint(t); sxDirtyPaint();
+  }
+  function sxDirtyPaint() { const w = sxEl('sxSaveWrap'); if (w) w.classList.toggle('dirty', sxDirty()); }
+  // Предпросмотр картинки: яркость, размытие и затемнение — так же, как на сайте
+  function sxPaint(slot) {
+    const a = sx.tn[slot]; if (!a) return;
+    const box = sxEl('sxP-' + slot), med = sxEl('sxM-' + slot), veil = sxEl('sxVe-' + slot), dot = sxEl('sxDot-' + slot);
+    if (!box || !med) return;
+    const w = box.clientWidth || 320;
+    const f = [];
+    if (Number(a.bright) !== 100) f.push(`brightness(${a.bright / 100})`);
+    if (Number(a.blur)) f.push(`blur(${(a.blur * w / 1000).toFixed(2)}px)`);
+    med.style.filter = f.length ? f.join(' ') : 'none';
+    med.style.transform = a.blur ? `scale(${(1 + a.blur * 2.2 / 600).toFixed(3)})` : '';
+    med.style.objectPosition = `${a.fx}% ${a.fy}%`;
+    if (veil) veil.style.background = a.veil ? `rgba(14,8,3,${a.veil / 100})` : 'none';
+    if (dot) { dot.style.left = a.fx + '%'; dot.style.top = a.fy + '%'; }
+    [['bright', '%'], ['veil', '%'], ['blur', ' px']].forEach(([k, u]) => { const v = sxEl(`sxV-${slot}-${k}`), r = sxEl(`sxR-${slot}-${k}`); if (v) v.textContent = k === 'blur' && !a.blur ? 'без размытия' : a[k] + u; if (r) rangeFill(r); });
+  }
+  function sxTune(slot) {
+    const a = sx.tn[slot]; if (!a) return;
+    ['bright', 'veil', 'blur'].forEach(k => { const r = sxEl(`sxR-${slot}-${k}`); if (r) a[k] = Number(r.value); });
+    sxPaint(slot); sxDirtyPaint();
+  }
+  function sxPick(ev, slot) {
+    if (ev.type === 'pointermove' && !(ev.buttons & 1)) return;   // тянем только с нажатой кнопкой или пальцем
+    const a = sx.tn[slot], box = sxEl('sxP-' + slot); if (!a || !box) return;
+    const r = box.getBoundingClientRect();
+    a.fx = Math.round(Math.min(100, Math.max(0, (ev.clientX - r.left) / r.width * 100)));
+    a.fy = Math.round(Math.min(100, Math.max(0, (ev.clientY - r.top) / r.height * 100)));
+    try { box.setPointerCapture(ev.pointerId); } catch {}
+    sxPaint(slot); sxDirtyPaint();
+  }
+  function sxNote(slot, text, warn) { const n = sxEl('sxN-' + slot); if (n) { n.textContent = text || ''; n.classList.toggle('warn', !!warn); } }
+  function sxChoose(slot) {
+    if (!sx || sx.busy) return;
+    const m = sxBlock(sx.open).media.find(x => x.key === slot); if (!m) return;
+    const f = sxEl('sxFile');
+    f.accept = m.video ? 'video/mp4,video/quicktime,video/webm,image/*' : 'image/*';
+    sx.pickSlot = slot; f.click();
+  }
+  async function sxFileChosen(file) {
+    if (!file || !sx || !sx.pickSlot) return;
+    const slot = sx.pickSlot;
+    const m = sxBlock(sx.open).media.find(x => x.key === slot); if (!m) return;
+    sxNote(slot, '');
+    if (isVideoFile(file)) {
+      if (!m.video) { sxNote(slot, 'Сюда подойдёт только фото. Видео можно поставить на главный экран и на большие блоки', true); return; }
+      if (file.size > SX_VIDEO_MAX_BYTES) { sxNote(slot, `Видео ${(file.size / 1024 / 1024).toFixed(1)} МБ — нужно не больше 40 МБ. Сожмите или обрежьте.`, true); return; }
+      sxNote(slot, 'Проверяю видео…');
+      const url = URL.createObjectURL(file);
+      const info = await new Promise(resolve => {
+        const v = document.createElement('video'); v.preload = 'metadata'; v.muted = true;
+        const t = setTimeout(() => resolve(null), 8000);
+        v.onloadedmetadata = () => { clearTimeout(t); resolve({ sec: v.duration, w: v.videoWidth }); };
+        v.onerror = () => { clearTimeout(t); resolve(null); };
+        v.src = url;
+      });
+      URL.revokeObjectURL(url);
+      if (!info || !isFinite(info.sec) || !info.w) { sxNote(slot, 'Не получилось открыть это видео. Нужен MP4 (H.264) или MOV с телефона.', true); return; }
+      if (info.sec > SX_VIDEO_MAX_SEC + 0.5) { sxNote(slot, `Видео ${Math.round(info.sec)} сек — нужно не длиннее ${SX_VIDEO_MAX_SEC}. Обрежьте его.`, true); return; }
+      const ext = ((file.name || '').match(/\.(\w+)$/) || [])[1];
+      const mime = /^video\//.test(file.type || '') ? file.type : (ext && ext.toLowerCase() === 'webm' ? 'video/webm' : ext && ext.toLowerCase() === 'mov' ? 'video/quicktime' : 'video/mp4');
+      return sxUpload(slot, file, mime, true);
+    }
+    if (file.type && !file.type.startsWith('image/')) { sxNote(slot, m.video ? 'Нужно видео (MP4) или фото (JPG, PNG)' : 'Нужно фото (JPG, PNG)', true); return; }
+    sxNote(slot, 'Готовлю фото…');
+    try {
+      const { blob } = await compressPoster(file, 2000);
+      return sxUpload(slot, blob, 'image/jpeg', false);
+    } catch { sxNote(slot, 'Не получилось открыть это фото. Сохраните его как JPG или PNG и выберите снова.', true); }
+  }
+  // После загрузки/удаления сервер возвращает все блоки заново. Надписи и ретушь, которые человек уже набрал, остаются как были.
+  function sxTake(data, slot) {
+    sx.data = data;
+    const b = sxBlock(sx.open); if (!b) return;
+    const m = b.media.find(x => x.key === slot);
+    if (m && m.item) sx.tn[slot] = { blur: m.item.blur, bright: m.item.bright, veil: m.item.veil, fx: m.item.fx, fy: m.item.fy };
+    else if (m) delete sx.tn[slot];
+  }
+  async function sxUpload(slot, blob, mime, isVideo) {
+    sx.busy = true;
+    sxNote(slot, isVideo ? 'Загружаю видео. Сервер сожмёт его и сделает плавную петлю — это до минуты, не закрывайте экран' : 'Загружаю фото…');
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/site/media/${encodeURIComponent(slot)}?pin=${getPin()}&v=${encodeURIComponent(sx.data.version)}`, { method: 'POST', headers: { 'Content-Type': mime }, body: blob });
+      if (res.status === 401) { showScreen('pin'); return; }
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 409) { showToast(data.error || 'Сайт только что изменил другой сотрудник', true); sx.busy = false; openSite(); return; }
+      if (!res.ok) { sxNote(slot, data.error || 'Не загрузилось — попробуйте ещё раз', true); return; }
+      sxTake(data, slot);
+      sxRender();
+      showToast(isVideo ? 'Видео загружено — гости увидят его при следующем заходе' : 'Фото загружено — гости увидят его при следующем заходе');
+      if (data.note) sxNote(slot, data.note, true);
+    } catch { sxNote(slot, 'Нет связи — файл не загрузился', true); }
+    finally { if (sx) sx.busy = false; }
+  }
+  async function sxRemove(slot) {
+    if (!sx || sx.busy) return;
+    if (!await askConfirm('Вернуть стандартное фото на это место?\n\nВаш файл будет удалён.', { ok: 'Вернуть', danger: true })) return;
+    sx.busy = true;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/site/media/${encodeURIComponent(slot)}?pin=${getPin()}&v=${encodeURIComponent(sx.data.version)}`, { method: 'DELETE' });
+      if (res.status === 401) { showScreen('pin'); return; }
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 409) { showToast(data.error || 'Сайт только что изменил другой сотрудник', true); sx.busy = false; openSite(); return; }
+      if (!res.ok) { showToast(data.error || 'Не получилось убрать — попробуйте ещё раз', true); return; }
+      sxTake(data, slot); sxRender();
+      showToast('Вернулось стандартное фото');
+    } catch { showToast('Нет связи — не получилось', true); }
+    finally { if (sx) sx.busy = false; }
+  }
+  async function sxSave() {
+    if (!sx || !sx.open || sx.busy) return;
+    const b = sxBlock(sx.open), btn = sxEl('sxSaveBtn');
+    const texts = {}; b.texts.forEach(t => { texts[t.key] = sx.tx[t.key] != null ? sx.tx[t.key] : t.value; });
+    const media = {}; b.media.forEach(m => { if (m.item && sx.tn[m.key]) media[m.key] = sx.tn[m.key]; });
+    sx.busy = true; if (btn) { btn.disabled = true; btn.textContent = 'Сохраняем...'; }
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/site?pin=${getPin()}`, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ version: sx.data.version, texts, ...(Object.keys(media).length ? { media } : {}) })
+      });
+      if (res.status === 401) { showScreen('pin'); return; }
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 409) { showToast(data.error || 'Сайт только что изменил другой сотрудник', true); sx.busy = false; openSite(); return; }
+      if (!res.ok) { showToast(data.error || 'Не сохранилось — попробуйте ещё раз', true); return; }
+      sx.data = data;
+      const nb = sxBlock(sx.open); if (nb) sxLoadBlock(nb);
+      showToast('Сохранено — гости увидят при следующем заходе на сайт');
+      sxRender();
+    } catch { showToast('Нет связи — не сохранилось', true); }
+    finally {
+      if (sx) sx.busy = false;
+      const bb = sxEl('sxSaveBtn'); if (bb) { bb.disabled = false; bb.textContent = 'Сохранить'; }
+    }
+  }
+  async function sxReset() {
+    if (!sx || !sx.open || sx.busy) return;
+    const b = sxBlock(sx.open);
+    if (!await askConfirm(`Вернуть блок «${b.title}» как был?\n\nВаши надписи и фото в этом блоке пропадут, на сайте снова будут стандартные.`, { ok: 'Вернуть', danger: true })) return;
+    sx.busy = true;
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/site/reset/${encodeURIComponent(sx.open)}?pin=${getPin()}&v=${encodeURIComponent(sx.data.version)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+      if (res.status === 401) { showScreen('pin'); return; }
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 409) { showToast(data.error || 'Сайт только что изменил другой сотрудник', true); sx.busy = false; openSite(); return; }
+      if (!res.ok) { showToast(data.error || 'Не получилось вернуть блок', true); return; }
+      sx.data = data;
+      const nb = sxBlock(sx.open); if (nb) sxLoadBlock(nb);
+      showToast(`Блок «${b.title}» — как был`);
+      sxRender();
+    } catch { showToast('Нет связи — не получилось', true); }
+    finally { if (sx) sx.busy = false; }
   }
 
   // ─── АДМИН: ПРОБЛЕМЫ ───────────────────────────
@@ -22428,8 +23085,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'svforms', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'card-levels', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'tobacco', 'tips-mine', 'tips-admin', 'xr', 'xr-edit', 'xr-tpl', 'dashboard', 'autotags', 'autotag-edit'];
-  var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'tips-mine', 'tips-admin', 'xr-edit', 'xr-tpl', 'autotag-edit', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklist-form'];
+  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'svforms', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'card-levels', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'app-content', 'site', 'tobacco', 'tips-mine', 'tips-admin', 'xr', 'xr-edit', 'xr-tpl', 'dashboard', 'autotags', 'autotag-edit'];
+  var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'app-content', 'site', 'tips-mine', 'tips-admin', 'xr-edit', 'xr-tpl', 'autotag-edit', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklist-form'];
   // «card» остаётся в списке: на узком окне это колонка; на широком её растягивает правило «#screen-card» в wide-css, а две колонки включает container-запрос
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
@@ -25406,6 +26063,8 @@ function qrPlateSvg(text) {
   function esc(s) { return escHtml(String(s == null ? '' : s)); }
   function num(v) { return String(v).replace('.', ','); }
   function fmtDay(iso) { return new Date(iso + 'T12:00:00').toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }).replace('.', ''); }
+  // eNPS опрашивают раз в месяц, поэтому панель не зависит от выбранного периода: всегда шесть месяцев, считая текущий
+  function enpsFrom() { var t = venueDayStr(), d = new Date(Date.UTC(+t.slice(0, 4), +t.slice(5, 7) - 1 - 5, 1)); return d.toISOString().slice(0, 10); }
   function range() { var to = venueDayStr(); return { from: shiftDateStr(to, -(state.period - 1)), to: to }; }
   function who() { try { return typeof authToken !== 'undefined' ? String(authToken || '') : ''; } catch (e) { return ''; } }
   // 25 секунд на запрос: при зависшей связи значки «считаю…» не висят вечно — панель покажет «не загрузилось» с повтором
@@ -25454,6 +26113,7 @@ function qrPlateSvg(text) {
     var seats = 0;
     try { seats = fcSeats(); } catch (e) { seats = 0; }
     jobs.forecast = getJson('/api/admin/forecast?days=7' + (seats ? '&seats=' + seats : ''));
+    jobs.enps = getJson('/api/admin/analytics?' + new URLSearchParams({ metric: 'enps', group: 'month', compare: 'none', from: enpsFrom(), to: venueDayStr() }).toString());
     var names = Object.keys(jobs);
     Promise.allSettled(names.map(function (n) { return jobs[n]; })).then(function (res) {
       if (seq !== state.seq) return;
@@ -25625,6 +26285,46 @@ function qrPlateSvg(text) {
     }).join('') + '</div></div>';
   }
 
+  function enpsSigned(v) { return (v > 0 ? '+' : v < 0 ? '\u2212' : '') + Math.abs(v); }
+  function enpsPanel(d) {
+    var head = function (sub) { return '<div class="hd-ph"><span class="hd-pt">eNPS команды</span><em class="hd-pe">' + esc(sub) + '</em></div>'; };
+    var e = d.ok.enps;
+    if (!e) return d.err.enps ? '<div class="hd-panel p-en">' + head('опрос раз в месяц') + '<div class="hd-note err">Не удалось загрузить. <a href="#" onclick="hdRefresh();return false" style="color:inherit;text-decoration:underline">Повторить</a></div></div>' : '';
+    var b = e.buckets || [];
+    var have = b.filter(function (x) { return x.value != null; });
+    if (!have.length) {
+      return '<div class="hd-panel p-en click" onclick="hdOpenEnps()" title="Открыть в аналитике">' + head('опрос раз в месяц')
+        + '<div class="hd-note">Первый результат появится, когда закончится месяц и в нём ответят не меньше ' + (e.enpsMinAnswers || 3) + ' человек. Идущий месяц не показываем: при небольшой команде по цифрам можно вычислить автора анонимного ответа.</div></div>';
+    }
+    var last = have[have.length - 1], prev = have.length > 1 ? have[have.length - 2] : null;
+    var pill = '';
+    if (prev && last.value !== prev.value) {
+      var up = last.value > prev.value;
+      pill = '<span class="hd-d ' + (up ? 'good' : 'bad') + '">' + (up ? '↗ ' : '↘ ') + Math.abs(last.value - prev.value) + '</span><span>к ' + esc(prev.label) + '</span>';
+    } else if (prev) pill = '<span>как в ' + esc(prev.label) + '</span>';
+    var pr = last.promoters || 0, pa = last.passives || 0, de = last.detractors || 0;
+    var bar = [['pr', pr], ['pa', pa], ['de', de]].filter(function (x) { return x[1] > 0; }).map(function (x) { return '<i class="' + x[0] + '" style="flex:' + x[1] + ' 1 0"></i>'; }).join('');
+    var hasNeg = have.some(function (x) { return x.value < 0; }), scale = hasNeg ? 34 : 68;   // без отрицательных месяцев нижней половины нет, столбцы выше
+    var cols = b.map(function (x) {
+      var v = x.value, isLast = x === last, cur = v == null && x === b[b.length - 1] && x.start >= venueDayStr().slice(0, 8) + '01';
+      var m = esc(String(x.label || '').split(' ')[0]);
+      var up = '', dn = '', cls = isLast ? ' top' : '';
+      if (v == null) { up = '<em>' + (cur ? 'идёт' : '—') + '</em>'; cls = cur ? ' cur' : ' none'; }
+      else {
+        var h = Math.max(3, Math.round(Math.abs(v) / 100 * scale));
+        if (v >= 0) up = '<em>' + enpsSigned(v) + '</em>' + (v > 0 ? '<i style="height:' + h + 'px"></i>' : '');
+        else dn = '<i style="height:' + h + 'px"></i><em>' + enpsSigned(v) + '</em>';
+      }
+      var tip = v == null ? (cur ? 'Месяц ещё идёт: результат появится после его окончания' : 'Мало ответов или опроса не было') : esc(x.label) + ': ' + enpsSigned(v) + (x.count ? ' · ответов ' + x.count : '');
+      return '<div class="hd-en-c' + cls + '" title="' + tip + '"><div class="p">' + up + '</div><div class="n">' + dn + '</div><span>' + m + '</span></div>';
+    }).join('');
+    return '<div class="hd-panel p-en click" onclick="hdOpenEnps()" title="Открыть в аналитике">' + head('за ' + last.label)
+      + '<div class="hd-en"><div><div class="hd-en-v">' + enpsSigned(last.value) + '</div><div class="hd-k-s" style="margin-top:8px">' + pill + '</div>'
+      + (bar ? '<div class="hd-en-bar">' + bar + '</div><div class="hd-en-leg"><span class="pr"><i></i>Рекомендуют <b>' + pr + '</b></span><span class="pa"><i></i>Нейтральны <b>' + pa + '</b></span><span class="de"><i></i>Не рекомендуют <b>' + de + '</b></span></div>' : '')
+      + '</div><div class="hd-en-m' + (hasNeg ? ' neg' : '') + '">' + cols + '</div></div>'
+      + '<div class="hd-foot"><span>Ответили <b>' + (last.count || 0) + '</b>. Опрос анонимный: показываем только закончившиеся месяцы, где ответили не меньше ' + (e.enpsMinAnswers || 3) + ' человек.</span></div></div>';
+  }
+
   function render() {
     var d = state.data, body = document.getElementById('hdBody'), el = root();
     if (!d || !body || !el) return;
@@ -25634,7 +26334,7 @@ function qrPlateSvg(text) {
     var failed = KPI.every(function (k) { return !d.ok[k.m]; });
     if (failed) { body.innerHTML = '<div class="hd-note err">Не удалось загрузить показатели. <a href="#" onclick="hdRefresh();return false" style="color:inherit;text-decoration:underline">Повторить</a></div>'; return; }
     body.innerHTML = '<div class="hd-kpis">' + KPI.map(function (k) { return kpiHtml(k, d); }).join('') + '</div>'
-      + '<div class="hd-main">' + [[chartPanel(d), 'p-chart'], [segmentsPanel(d), 'p-seg'], [weekdayPanel(d), 'p-wd'], [forecastPanel(d), 'p-fc'], [flavorsPanel(d), 'p-fl']]
+      + '<div class="hd-main">' + [[chartPanel(d), 'p-chart'], [segmentsPanel(d), 'p-seg'], [weekdayPanel(d), 'p-wd'], [forecastPanel(d), 'p-fc'], [flavorsPanel(d), 'p-fl'], [enpsPanel(d), 'p-en']]
         .filter(function (x) { return x[0]; }).map(function (x) { return x[0].replace('class="hd-panel', 'class="hd-panel ' + x[1]); }).join('') + '</div>';
   }
 
@@ -25650,6 +26350,11 @@ function qrPlateSvg(text) {
   window.hdOpen = function (m) {
     var period = String(state.period);
     anFresh({ series: [axNewSeriesRaw(m, AX_COLORS[0])], period: period, group: axGroupFor(period, axRangeFor(period)) });
+    openAnalytics();
+  };
+  // eNPS в аналитике: те же шесть месяцев, что на панели
+  window.hdOpenEnps = function () {
+    anFresh({ series: [axNewSeriesRaw('enps', AX_COLORS[0])], period: 'custom', from: enpsFrom(), to: venueDayStr(), group: 'month' });
     openAnalytics();
   };
   window.hdLeave = function (area) {
@@ -26364,7 +27069,7 @@ function qrPlateSvg(text) {
       { key: 'svc', icon: ic('<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'),
         extra: ['employees', 'employee-form', 'stories-edit', 'surveys-edit', 'survey-form', 'tv', 'tv-room', 'tags-edit', 'tag-form', 'tag-merge', 'audit', 'venue',
                 'birthday-text', 'segment-rules', 'card-levels', 'autotags', 'autotag-edit', 'season', 'tips-admin', 'review-rules', 'system-status', 'menu-edit', 'menu-item-form', 'candidates',
-                'checklists-edit', 'checklist-form', 'tobacco'], items: [
+                'checklists-edit', 'checklist-form', 'tobacco', 'app-content', 'site'], items: [
         { key: 'service', label: 'Сервис', ok: function () { return serviceItemsFor().length > 0; }, go: function () { openService(); }, screens: ['service'] } ] }
     ];
     var LOGOUT = { key: 'logout', label: 'Выйти', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
