@@ -799,7 +799,18 @@
     .gd-p-ind { order: 3; container: gdind / inline-size; }
     .gd-p-chart { order: 4; }
     /* плитка «Карта гостя» в шапке дашборда: справа от имени (как «Карта лояльности» у Cosmos), на телефоне — под именем */
-    .gd-lc { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 20px; margin: 10px 0 4px; }
+    .gd-tiles { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; margin: 10px 0 4px; }
+    .gd-lc { display: flex; flex-wrap: wrap; align-items: center; align-content: center; gap: 14px 20px; margin: 0; }
+    .gd-note { display: flex; flex-direction: column; justify-content: center; min-height: 84px; }
+    .gd-note.edit { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .gd-note.edit:hover { background: var(--bg-card-hover, var(--bg-card)); }
+    .gd-note-add { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 54px; padding: 0; border: 0; background: none; font: inherit; font-size: 12.5px; color: var(--text-sub); cursor: pointer; }
+    .gd-note-add svg { color: var(--text-muted); }
+    .gd-note.edit:hover .gd-note-add { color: var(--text); }
+    .gd-note-none { text-align: center; font-size: 12.5px; color: var(--text-muted); }
+    .gd-note-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; font-size: 11px; color: var(--text-muted); }
+    .gd-note-h svg { flex: none; }
+    .gd-note-t { font-size: 13.5px; line-height: 1.5; color: var(--text); white-space: pre-line; overflow-wrap: anywhere; max-height: 9em; overflow: auto; }
     .gd-lcard { position: relative; overflow: hidden; isolation: isolate; display: flex; align-items: stretch; justify-content: space-between; gap: 10px; flex: none; width: 196px; height: 122px; box-sizing: border-box; padding: 12px; border-radius: 14px; border: 1px solid rgba(240,223,192,0.22); background: linear-gradient(135deg, #34190c 0%, #20120A 58%, #1a0e07 100%); color: #F4E2D1; box-shadow: 0 10px 22px rgba(0,0,0,0.28); }
     .gd-lcard::before { content: ''; position: absolute; top: -35%; left: -18%; width: 80%; height: 120%; background: radial-gradient(circle, rgba(184,115,51,0.32), transparent 72%); z-index: -1; }
     .gd-lcard-body { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; }
@@ -4495,8 +4506,9 @@ body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-le
   .gd-top { display: grid; grid-template-columns: minmax(380px, 5fr) minmax(0, 7fr); grid-template-rows: auto 1fr; column-gap: 18px; align-items: start; }
   .gd-ta { grid-column: 1; grid-row: 1; min-width: 0; }
   .gd-board { grid-column: 2; grid-row: 1 / span 2; margin: 0; }
-  .gd-top:has(> .gd-lc) > .gd-board { grid-row: 2; }
-  .gd-lc { grid-column: 2; grid-row: 1; align-self: stretch; align-content: center; margin: 0 0 10px; }
+  .gd-top:has(> .gd-tiles) > .gd-board { grid-row: 2; }
+  .gd-tiles { grid-column: 2; grid-row: 1; align-self: stretch; margin: 0 0 10px; }
+  .gd-tiles:has(> .gd-lc) { grid-template-columns: minmax(0, 4fr) minmax(0, 6fr); }
   .gd-tc { grid-column: 1; grid-row: 2; min-width: 0; }
   .gd-tc > .sec:first-child { margin-top: 10px; }
   .gd-visits { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 10px; align-items: start; }
@@ -23290,6 +23302,23 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     </div>`;
   }
 
+  // «Важно для гостя» плиткой в шапке (у Cosmos: «+ Добавить заметку и предпочтения»). Правка — тем же окном, что и раньше.
+  function gdNoteHtml(guest, canEdit) {
+    const PLUS = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+    const PEN = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+    const open = canEdit ? ` onclick="openEditField('important','Что важно для гостя')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openEditField('important','Что важно для гостя')}"` : '';
+    const text = String(guest.important || '').trim();
+    if (!text) {
+      return `<div class="gd-panel gd-note${canEdit ? ' edit' : ''}"${open}>${canEdit
+        ? `<div class="gd-note-add">${PLUS}Добавить заметку и предпочтения</div>`
+        : '<div class="gd-note-none">Заметок и предпочтений нет</div>'}</div>`;
+    }
+    return `<div class="gd-panel gd-note${canEdit ? ' edit' : ''}"${open}>
+      <div class="gd-note-h"><span>Важно для гостя</span>${canEdit ? PEN : ''}</div>
+      <div class="gd-note-t">${escHtml(text)}</div>
+    </div>`;
+  }
+
   // Теги — отдельная панель (раньше прятались в раскрывающемся блоке)
   function gdTagsHtml(guest, tagCount) {
     return `<div class="gd-panel gd-p-tags">
@@ -23383,7 +23412,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       ${renderHints(guest)}
       </div>
 
-      ${gdCardHtml(guest)}
+      <div class="gd-tiles">${gdNoteHtml(guest, canEdit)}${gdCardHtml(guest)}</div>
 
       <div class="gd-board">
         <div class="gd-left">
@@ -23428,12 +23457,6 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
           <div class="info-row-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="18" x2="14" y2="18"/></svg></div>
           <div style="flex:1;min-width:0;"><div class="info-row-label">Телефон</div><div class="info-row-value">${guest.phone ? escHtml(fmtPhoneRu(guest.phone)) : 'Не указан'}</div></div>
           ${guest.phone ? `<button type="button" class="copy-btn" onclick="event.stopPropagation();copyPhone('${escJs(guest.phone)}')" title="Скопировать номер">${COPY_ICON}Копировать</button>` : ''}
-          <div class="info-row-edit">${canEdit ? editIcon : ''}</div>
-        </div>
-
-        <div class="info-row gd-wide"${canEdit ? ` onclick="openEditField('important','Что важно для гостя')"` : ''}>
-          <div class="info-row-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 3l1.3 5.7L19 10l-5.7 1.3L12 17l-1.3-5.7L5 10l5.7-1.3L12 3z"/></svg></div>
-          <div style="min-width:0"><div class="info-row-label">Важно для гостя</div><div class="info-row-value" style="white-space:pre-line">${guest.important ? escHtml(guest.important) : 'Не указано'}</div></div>
           <div class="info-row-edit">${canEdit ? editIcon : ''}</div>
         </div>
       </div>
