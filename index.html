@@ -4147,6 +4147,17 @@ html[data-theme="dark"] #screen-enps.has-bg { --ep-rgb: 8,10,14; --ep-ink: 244,2
 .rail-sb.on { background: rgba(var(--ac),0.2); color: var(--rail-bar); font-weight: 600; }
 .rail-st { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .rail-sb .rail-dot { position: static; flex: none; margin-left: auto; }
+/* «Сервис»: 12 пунктов в четырёх группах. Просвет между группами без подписей; число у пункта (новые отклики) — золотая плашка;
+   стрелка › у папок: клик открывает страницу папки справа, пункт без стрелки сразу открывает свой раздел */
+.rail-gap { height: 5px; }
+.rail-n { flex: none; min-width: 18px; height: 18px; padding: 0 5px; box-sizing: border-box; border-radius: 9px; background: var(--c-gold); color: var(--on-solid); font: 700 11px/18px 'Montserrat', sans-serif; text-align: center; }
+.rail-sb .go { flex: none; width: 12px; height: 12px; opacity: 0.5; }
+.rail-sb.on .go { opacity: 0.9; }
+/* Узкая форма: список «Сервиса» высокий (около 520px) — его нижний край ставим по иконке, чтобы он не уходил за низ окна,
+   и ограничиваем по высоте окна (прокручивается, если окно совсем низкое) */
+.rail-grp[data-gkey="svc"] > .rail-sub { top: auto; bottom: -6px; }
+.rail-grp[data-gkey="svc"] .rail-sub-in { max-height: calc(100vh - 24px); overflow-y: auto; scrollbar-width: none; }
+.rail-grp[data-gkey="svc"] .rail-sub-in::-webkit-scrollbar { width: 0; height: 0; }
 
 /* Сворачиваемая форма не нужна на узком окне: там всегда иконки */
 @media (min-width: 1440px) {
@@ -4195,6 +4206,15 @@ html[data-theme="dark"] #screen-enps.has-bg { --ep-rgb: 8,10,14; --ep-ink: 244,2
   html.rail-wide .rail-sb:hover { color: var(--text); }
   html.rail-wide .rail-sb.on { color: var(--rail-bar); }
   html.rail-wide .rail-sb:last-child { margin-bottom: 8px; }
+  html.rail-wide .rail-gap { height: 7px; }
+  html.rail-wide .rail-grp[data-gkey="svc"] .rail-sub-in { max-height: none; overflow: hidden; }
+  /* «Сервис»: длинные названия («Чек-листы и стандарты», «Журнал и состояние») в 180px не помещаются в одну строку — переносятся на вторую */
+  html.rail-wide .rail-grp[data-gkey="svc"] .rail-sb { height: auto; min-height: 36px; padding-top: 6px; padding-bottom: 6px; padding-right: 10px; white-space: normal; line-height: 1.25; }
+  html.rail-wide .rail-grp[data-gkey="svc"] .rail-st { overflow: visible; }
+  /* список длиннее окна: прокручивается без полоски, сверху и снизу лёгкое затухание, пока есть что листать (классы ставит скрипт) */
+  html.rail-wide .rail-main.scrolled { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 26px); mask-image: linear-gradient(to bottom, transparent 0, #000 26px); }
+  html.rail-wide .rail-main.more { -webkit-mask-image: linear-gradient(to top, transparent 0, #000 26px); mask-image: linear-gradient(to top, transparent 0, #000 26px); }
+  html.rail-wide .rail-main.scrolled.more { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 26px, #000 calc(100% - 26px), transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, #000 26px, #000 calc(100% - 26px), transparent 100%); }
   /* линии и точек у пунктов группы нет (убраны по просьбе Тимура): пункт отличается цветом текста и плашкой у активного */
 }
 @media (min-width: 1392px) {
@@ -7042,12 +7062,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       try {
         const res = await fetch(`${PROXY_BASE}/api/staff/service-badges?pin=${getPin()}`);
         if (!res.ok) return;
-        const next = await res.json();
-        if (JSON.stringify(next) === JSON.stringify(svcBadges)) return; // ничего нового — ничего не трогаем
-        svcBadges = next;
-        if (document.getElementById('screen-service')?.classList.contains('active')) {
-          if (!patchServiceBadges()) renderService();
-        }
+        svcBadgesApply(await res.json());   // ничего нового — ничего не трогаем
       } catch { /* без плашек плитки работают как обычно */ }
       finally { svcBadgesBusy = null; }
     })();
@@ -7147,10 +7162,85 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     renderService();
     window.scrollTo(0, 0);
   }
-  // «Назад» на экране «Сервис»: из папки — к плиткам, с плиток — на главный
+  // На компьютере у «Сервиса» плиток нет: он раскрывается в левой панели (см. #rail-js), а экран «Сервис» остаётся только как
+  // страница папки со строками. Признак — панель на экране, в ней есть группа «Сервис» и окно шире 1060px; нет панели
+  // (телефон, Telegram, сбой панели) — всё как раньше, плитками.
+  function svcDeskMode() {
+    try {
+      return document.documentElement.classList.contains('rail') && window.matchMedia('(min-width: 1060px)').matches &&
+        !!document.querySelector('#deskRail [data-gkey="svc"]');
+    } catch (e) { return false; }
+  }
+  // «Назад» на экране «Сервис»: из папки — к плиткам, с плиток — на главный. На компьютере плиток нет — из папки сразу на главный.
   function svcBack() {
-    if (svcFolder) { svcFolder = null; renderService(); window.scrollTo(0, 0); loadServiceBadges(); return; }
+    if (svcFolder) {
+      if (svcDeskMode()) { showScreen('home'); return; }
+      svcFolder = null; renderService(); window.scrollTo(0, 0); loadServiceBadges(); return;
+    }
     showScreen('home');
+  }
+
+  // Левая панель: пункты группы «Сервис» — те же 12 пунктов верхнего уровня, что были плитками (по группам, с просветом между ними).
+  // Пункт-папка открывает страницу папки, одиночный — сразу свой раздел. Какой пункт подсветить, решает match(экран): свой раздел,
+  // любой раздел внутри папки или страница этой папки. «Стандарты» из «Сервиса» и «Стандарты» из «Смены» — один экран редактора,
+  // различаем по тому, откуда его открыли (stdEditFrom).
+  var SVC_SCREENS = {
+    menu: ['menu-edit', 'menu-item-form'], appcontent: ['app-content'], stories: ['stories-edit'], season: ['season'], site: ['site'],
+    tv: ['tv', 'tv-room'], tags: ['tags-edit', 'tag-form', 'tag-merge'], autotags: ['autotags', 'autotag-edit'], segments: ['segment-rules'],
+    cardlevels: ['card-levels'], birthday: ['birthday-text'], reviews: ['review-rules'], surveys: ['surveys-edit', 'survey-form'],
+    venue: ['venue'], checklists: ['checklists-edit', 'checklist-form'], standards: [], tobacco: ['tobacco'], tips: ['tips-admin'],
+    team: ['employees', 'employee-form'], candidates: ['candidates'], audit: ['audit'], status: ['system-status']
+  };
+  function svcRailGo(e) {
+    if (e.kind === 'folder') {
+      svcFolder = e.id;
+      renderService();
+      showScreen('service');
+      window.scrollTo(0, 0);
+      loadServiceBadges();
+      return;
+    }
+    svcFolder = null;        // одиночный раздел: «назад» из него — на главный, а не в чужую папку
+    (new Function(e.fn))();
+  }
+  function svcRailItems() {
+    let entries = [];
+    try { entries = serviceEntriesFor(); } catch (e) { return []; }
+    const out = [];
+    let prevGroup = null;
+    entries.forEach(e => {
+      const b = svcEntryBadge(e);
+      const leaves = e.kind === 'folder' ? e.rows.map(r => r.icon) : [e.icon];
+      out.push({
+        key: 'svc-' + e.svc,
+        label: e.title,
+        folder: e.kind === 'folder',
+        gap: prevGroup !== null && e.group !== prevGroup,
+        n: b ? Number(b.n) || 0 : 0,
+        ok: () => true,
+        screens: [],
+        go: () => svcRailGo(e),
+        match: cur => {
+          if (leaves.some(l => (SVC_SCREENS[l] || []).indexOf(cur) >= 0)) return true;
+          if (leaves.indexOf('standards') >= 0 && (cur === 'standards-edit' || cur === 'standard-form') && stdEditFrom === 'service') return true;
+          return e.kind === 'folder' && cur === 'service' && svcFolder === e.id;
+        }
+      });
+      prevGroup = e.group;
+    });
+    return out;
+  }
+  // Плашки «Сервиса» (новые отклики, меню без фото) приходят с сервера один раз при входе на главную; панель слева перерисует
+  // число сама. Сравниваем с прежними: нового нет — ничего не трогаем.
+  function svcBadgesApply(next) {
+    if (!next || typeof next !== 'object') return false;
+    if (JSON.stringify(next) === JSON.stringify(svcBadges)) return false;
+    svcBadges = next;
+    if (document.getElementById('screen-service')?.classList.contains('active')) {
+      if (!patchServiceBadges()) renderService();
+    }
+    try { if (window.railRefresh) window.railRefresh(); } catch (e) { /* панель обновится при следующем переходе */ }
+    return true;
   }
 
   function applyRoleUI() {
@@ -7428,13 +7518,15 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       } catch {}
     })());
 
-    if (can('guests.merge') || can('ext_reviews.manage')) jobs.push((async () => {
+    // Один запрос плашек на всё: точка «Дубли», «Внешние отзывы» и числа у пунктов «Сервиса» в левой панели (новые отклики, меню без фото)
+    if (can('guests.merge') || can('ext_reviews.manage') || serviceItemsFor().length) jobs.push((async () => {
       try {
         const res = await fetch(`${PROXY_BASE}/api/staff/service-badges?pin=${getPin()}`);
         if (res.ok) {
           const b = await res.json();
           if (can('guests.merge')) setQuickActionDot('qdotDuplicates', (b.duplicates || 0) > 0);
           if (can('ext_reviews.manage')) xrHomeSet(b.extReviews, b.extReviewsOverdue);
+          svcBadgesApply(b);
         }
       } catch {}
     })());
@@ -23182,6 +23274,9 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
   }
 
   function showScreen(name, opts = {}) {
+    // На компьютере у «Сервиса» плиток нет (он в левой панели): «Сервис» без открытой папки — это возврат на главный,
+    // например «назад» из раздела, который открыли прямо из панели.
+    if (name === 'service' && svcDeskMode() && !svcFolderEntry()) name = 'home';
     const prev = activeScreenName();
     if (prev) screenScroll[prev] = window.scrollY;
     screens.forEach(s => document.getElementById('screen-' + s)?.classList.remove('active'));
@@ -27153,21 +27248,26 @@ function qrPlateSvg(text) {
         { key: 'feedback', label: 'Обратная связь', ok: perm('feedback.view'), go: function () { openFeedback(); }, screens: ['feedback', 'enps'] },
         { key: 'xr', label: 'Внешние отзывы', ok: perm('ext_reviews.manage'), go: function () { openExtReviews(); }, screens: ['xr', 'xr-edit', 'xr-tpl'] } ] },
 
-      { key: 'svc', icon: ic('<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'),
-        extra: ['employees', 'employee-form', 'stories-edit', 'surveys-edit', 'survey-form', 'tv', 'tv-room', 'tags-edit', 'tag-form', 'tag-merge', 'audit', 'venue',
+      // Сервис — раскрывается списком из 12 пунктов (папки открывают страницу со строками). Пункты собирает приложение (svcRailItems)
+      // из тех же правил, что раньше строили плитки; extra — экраны внутри «Сервиса», на которых группа остаётся подсвеченной.
+      { key: 'svc', title: 'Сервис', icon: ic('<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'),
+        dyn: function () { return typeof svcRailItems === 'function' ? svcRailItems() : []; },
+        extra: ['service', 'employees', 'employee-form', 'stories-edit', 'surveys-edit', 'survey-form', 'tv', 'tv-room', 'tags-edit', 'tag-form', 'tag-merge', 'audit', 'venue',
                 'birthday-text', 'segment-rules', 'card-levels', 'autotags', 'autotag-edit', 'season', 'tips-admin', 'review-rules', 'system-status', 'menu-edit', 'menu-item-form', 'candidates',
-                'checklists-edit', 'checklist-form', 'tobacco', 'app-content', 'site'], items: [
-        { key: 'service', label: 'Сервис', ok: function () { return serviceItemsFor().length > 0; }, go: function () { openService(); }, screens: ['service'] } ] }
+                'checklists-edit', 'checklist-form', 'tobacco', 'app-content', 'site'], items: [] }
     ];
+    // Пункты группы: у «Сервиса» они зависят от прав и плашек и собираются каждый раз заново, у остальных — готовый список
+    function itemsOf(g) { return g.dyn ? g.dyn() : g.items; }
     var LOGOUT = { key: 'logout', label: 'Выйти', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
       go: function () { logout(); }, screens: [] };
     var THEME = { key: 'theme', label: 'Оформление', icon: ic('<circle cx="12" cy="12" r="9"/><path d="M12 3v18a9 9 0 0 0 0-18z" fill="currentColor" stroke="none"/>'),
       go: function () { openThemeSheet(); }, screens: [] };
     var ACCESS = { key: 'access', label: 'Мой вход', icon: ic('<circle cx="8" cy="15" r="4"/><path d="M10.8 12.2L20 3"/><path d="M17 6l3 3"/><path d="M14 9l2 2"/>'),
       go: function () { openAccess(); }, screens: ['access'] };
-    var sig = '', cur = '', lastG = '', openKey = '', dots = [];
+    var sig = '', cur = '', lastG = '', openKey = '', revealedKey = '', dots = [];
 
     function safe(fn) { try { return !!fn(); } catch (e) { return false; } }
+    function safeMatch(it, scr) { try { return !!it.match(scr); } catch (e) { return false; } }
     function run(go) { try { go(); } catch (e) { try { console.warn('rail:', e); } catch (e2) { /* без журнала */ } } }
     function el(tag, cls) { var n = document.createElement(tag); if (cls) n.className = cls; return n; }
     function readPref() { try { var v = localStorage.getItem(KEY); return v === 'icons' ? 'icons' : (v === 'wide' ? 'wide' : ''); } catch (e) { return ''; } }
@@ -27217,6 +27317,7 @@ function qrPlateSvg(text) {
       }
       var w = el('div', 'rail-grp');
       w.dataset.gkey = g.key;
+      if (openKey === g.key) w.classList.add('open');   // перерисовка панели (права, плашки) не должна заново «раскрывать» уже открытую группу
       var h = el('button', 'rail-btn rail-head');
       h.type = 'button';
       h.setAttribute('aria-label', g.title);
@@ -27236,13 +27337,18 @@ function qrPlateSvg(text) {
       var t = el('div', 'rail-sub-t');
       t.textContent = g.title;
       inn.appendChild(t);
+      // число у пунктов (новые отклики, меню без фото): на заголовке группы — золотая точка, пока в ней есть что разобрать
+      if (v.some(function (it) { return it.n > 0; })) { var nd = el('span', 'rail-dot on'); h.appendChild(nd); }
       v.forEach(function (it) {
+        if (it.gap) inn.appendChild(el('div', 'rail-gap'));   // просвет между смысловыми группами пунктов (у «Сервиса»)
         var sb = el('button', 'rail-sb');
         sb.type = 'button';
         sb.dataset.key = it.key;
         var tx = el('span', 'rail-st');
         tx.textContent = it.label;
         sb.appendChild(tx);
+        if (it.n > 0) { var nb = el('span', 'rail-n'); nb.textContent = String(it.n); sb.appendChild(nb); }
+        if (it.folder) { sb.classList.add('fold'); sb.insertAdjacentHTML('beforeend', '<svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>'); }
         if (it.dot) addDot(sb, [it.dot]);
         sb.addEventListener('click', function () {
           run(it.go);
@@ -27281,7 +27387,9 @@ function qrPlateSvg(text) {
       var gk = '', ik = '';
       GROUPS.forEach(function (g) {
         if (g.extra && g.extra.indexOf(cur) >= 0) gk = g.key;
-        g.items.forEach(function (it) { if (it.screens.indexOf(cur) >= 0) { gk = g.key; ik = it.key; } });
+        itemsOf(g).forEach(function (it) {
+          if (it.screens.indexOf(cur) >= 0 || (it.match && safeMatch(it, cur))) { gk = g.key; ik = it.key; }
+        });
       });
       // перешли в другую группу — раскрываем её (закрытая вручную группа остаётся закрытой, пока человек не уйдёт из неё и не вернётся)
       if (gk !== lastG) {
@@ -27310,6 +27418,14 @@ function qrPlateSvg(text) {
         b.classList.toggle('on', on);
         if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
       });
+      // группа раскрылась (сама или по клику): через время анимации подъезжаем к ней и обновляем затухание
+      if (!openKey) revealedKey = '';
+      else if (openKey !== revealedKey) {
+        revealedKey = openKey;
+        var ow = nav.querySelector('.rail-grp[data-gkey="' + openKey + '"]');
+        setTimeout(function () { reveal(ow); fade(); }, 280);
+      }
+      setTimeout(fade, 300);
     }
 
     function syncDots() {
@@ -27322,12 +27438,15 @@ function qrPlateSvg(text) {
     function build() {
       var vis = [];
       GROUPS.forEach(function (g) {
-        var v = g.items.filter(function (it) { return safe(it.ok); });
+        var v = itemsOf(g).filter(function (it) { return safe(it.ok); });
         if (v.length) vis.push({ g: g, v: v });
       });
-      var s = vis.map(function (x) { return x.g.key + ':' + x.v.map(function (it) { return it.key; }).join('+') + (x.g.add && safe(x.g.add.ok) ? '+' : ''); }).join(',');
+      // в подпись входят и числа у пунктов («Команда» · 3): изменились — панель перерисуется
+      var s = vis.map(function (x) { return x.g.key + ':' + x.v.map(function (it) { return it.key + (it.n > 0 ? '#' + it.n : ''); }).join('+') + (x.g.add && safe(x.g.add.ok) ? '+' : ''); }).join(',');
       if (s === sig) return;
       sig = s;
+      var oldMain = nav.querySelector('.rail-main');
+      var keepScroll = oldMain ? oldMain.scrollTop : 0;   // перерисовка не должна сбрасывать прокрутку списка
       nav.textContent = '';
       dots = [];
       var top = el('div', 'rail-top');
@@ -27350,24 +27469,55 @@ function qrPlateSvg(text) {
       nav.appendChild(top);
       nav.appendChild(main);
       nav.appendChild(foot);
+      main.addEventListener('scroll', fade, { passive: true });
       syncDots();
       mark();
+      if (keepScroll) main.scrollTop = keepScroll;
+      fade();
+    }
+
+    // Список в панели длиннее окна (у «Сервиса» 12 пунктов): сверху и снизу — лёгкое затухание, пока есть что прокручивать.
+    // Полоски прокрутки нет — листается колёсиком или жестом.
+    function fade() {
+      var m = nav.querySelector('.rail-main');
+      if (!m) return;
+      m.classList.toggle('scrolled', m.scrollTop > 2);
+      m.classList.toggle('more', m.scrollHeight - m.clientHeight - m.scrollTop > 2);
+    }
+    // Открытая группа должна быть видна целиком, если окно позволяет: после раскрытия подъезжаем к ней
+    function reveal(w) {
+      var m = nav.querySelector('.rail-main');
+      if (!m || !w || !wideOn()) return;
+      var r = w.getBoundingClientRect(), mr = m.getBoundingClientRect();
+      var d = 0;
+      if (r.bottom > mr.bottom) d = r.bottom - mr.bottom + 8;
+      if (r.top - d < mr.top + 30) d = r.top - mr.top - 30;
+      if (!d) return;
+      try { m.scrollBy({ top: d, behavior: 'smooth' }); } catch (e) { m.scrollTop += d; }
     }
 
     // Форма панели: по умолчанию широкая (на экране уже 1440px действует только она, ниже — всегда иконки); свернул — помним
     root.classList.toggle('rail-wide', readPref() !== 'icons');
 
     // Экран сменился: на входе панели нет, на остальных — есть, подсвечен свой раздел
-    var watch = new MutationObserver(function () {
+    function onScreen() {
       var elm = document.querySelector('.screen.active');
       var name = elm ? elm.id.replace(/^screen-/, '') : '';
       if (!name) return;
-      if (name === 'pin') { root.classList.remove('rail'); sig = ''; lastG = ''; openKey = ''; return; }
+      if (name === 'pin') { root.classList.remove('rail'); sig = ''; lastG = ''; openKey = ''; revealedKey = ''; return; }
       root.classList.add('rail');
       build();
       mark(name);
-    });
+    }
+    var watch = new MutationObserver(onScreen);
     document.querySelectorAll('.screen').forEach(function (s) { watch.observe(s, { attributes: true, attributeFilter: ['class'] }); });
+    // Страница при открытии разбирается долго: ответ «кто я» иногда приходит раньше, чем дошло до этого места, и приложение уже
+    // открыло главную — тогда смены экрана панель не видела, класс rail не ставился, и плитки главной оставались на экране
+    // (а панели не было) до перезагрузки. Поэтому сразу сверяемся с тем, что на экране сейчас.
+    onScreen();
+    // внешний вызов: числа у пунктов «Сервиса» пришли позже панели
+    window.railRefresh = function () { try { if (root.classList.contains('rail')) build(); } catch (e) { /* без обновления */ } };
+    window.addEventListener('resize', function () { fade(); });
 
     // Плитки главной пересобрались или на них зажглась / погасла точка — повторяем на панели
     var grid = document.getElementById('quickActionsGrid');
