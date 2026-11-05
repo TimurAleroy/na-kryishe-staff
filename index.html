@@ -3672,8 +3672,8 @@
       body:has(#deskLeft.role-ok) { max-width: var(--colw); }
       /* плитки главной и «Сервиса» занимают всю ширину колонки: на 900px — три в ряд, шире — четыре и больше */
       body:has(#deskLeft.role-ok) .grid-2 { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
-      /* формы и карточки одной записи не растягиваем: колонка 900px по центру широкого поля (класс col-narrow ставит showScreen) */
-      body:has(#deskLeft.role-ok).col-narrow .screen { max-width: var(--formw); margin-left: auto; margin-right: auto; }
+      /* формы и карточки одной записи не растягиваем: колонка --formw у ЛЕВОГО края поля, не по центру (класс col-narrow ставит showScreen) */
+      body:has(#deskLeft.role-ok).col-narrow .screen { max-width: var(--formw); margin-left: 0; margin-right: 0; }
       /* «Новое мероприятие» на широком экране: постер слева, поля справа — вся форма на одном экране без прокрутки */
       body:has(#deskLeft.role-ok).col-narrow #screen-add-event { max-width: 1040px; }
       #screen-add-event > div:nth-child(2) { display: grid; grid-template-columns: 290px minmax(0, 1fr) minmax(0, 1fr); column-gap: 14px; align-items: start; }
@@ -4226,6 +4226,11 @@ html[data-theme="dark"] #screen-enps.has-bg { --ep-rgb: 8,10,14; --ep-ink: 244,2
   /* Не главная: боковых панелей нет — колонка от меню до правого края окна (потолок 1900px, чтобы строки не растягивались на 4K) */
   body:not(.desk-home):has(#deskLeft.role-ok) { max-width: min(calc(100% - var(--dp-edge) * 2), 1900px); margin-left: var(--dp-edge); margin-right: 0; }
   html.rail body:not(.desk-home):has(#deskLeft.role-ok) { max-width: min(calc(100% - var(--railw) - var(--dp-edge) * 2), 1900px); margin-left: calc(var(--railw) + var(--dp-edge)); margin-right: 0; }
+}
+/* С панелью слева колонка стоит рядом с панелью, а не по центру окна. У администратора на 1392 и шире это же делают правила выше
+   (у них специфичность выше, они перекрывают это), здесь — окна 1060–1391 и сотрудники без боковых панелей */
+@media (min-width: 1060px) {
+  html.rail body { margin-left: calc(var(--railw) + var(--dp-edge)); margin-right: 0; max-width: min(900px, calc(100% - var(--railw) - var(--dp-edge) * 2)); }
 }
 /* Плитки главной убраны: все разделы теперь в левой панели. Поиск, «Новый гость» и кнопки смены остаются; середина свободна */
 @media (min-width: 1060px) {
@@ -23287,7 +23292,9 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     // На широком экране всё занимает всю ширину, кроме форм и карточек одной записи: у них поля в 1200px бессмысленны,
     // они остаются колонкой 900px по центру.
     if (name === 'home') svcFolder = null;   // с главного «Сервис» снова открывается плитками
-    document.body.classList.toggle('col-narrow', NARROW_SCREENS.indexOf(name) >= 0);
+    // Страница папки «Сервиса» (список строк) тоже колонка, и узкой она должна быть с первого кадра: раньше класс ставился
+    // только когда с сервера приходили плашки, и страница сначала растягивалась на всю ширину, потом сжималась.
+    document.body.classList.toggle('col-narrow', NARROW_SCREENS.indexOf(name) >= 0 || (name === 'service' && typeof svcFolderEntry === 'function' && !!svcFolderEntry()));
     if (name === 'home' || name === 'service') fitTileGrids();   // экран только что стал видимым — теперь у плиток есть ширина
     if (name === 'pin' && prev !== 'pin' && !opts.keepAuth) authEnter(); // вход истёк или вышли: экран входа
     window.scrollTo(0, opts.restoreScroll ? (screenScroll[name] || 0) : 0);
