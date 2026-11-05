@@ -1442,6 +1442,17 @@
     .sx-m .tv-rg { padding-left: 2px; padding-right: 2px; }
     .sx-pk { margin: 6px 2px 0; font-size: 11.5px; line-height: 1.45; color: var(--text-muted); }
     .sx-reset { margin-top: 12px; }
+    .sx-pv-w { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: soft-light; display: none; }
+    .sx-rt { margin-top: 10px; border-top: 1px solid var(--border); }
+    .sx-rt > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 2px 4px; cursor: pointer; font-size: 14px; color: var(--text); -webkit-user-select: none; user-select: none; }
+    .sx-rt > summary::-webkit-details-marker { display: none; }
+    .sx-rt > summary .sx-rt-s { display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--text-muted); }
+    .sx-rt > summary .sx-rt-s.on { color: var(--accent); }
+    .sx-rt > summary .sx-rt-s svg { transition: transform .2s; }
+    .sx-rt[open] > summary .sx-rt-s svg { transform: rotate(90deg); }
+    .sx-rt-pr { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 2px; }
+    .sx-rt-pr .bd-tok { padding: 6px 11px; font-size: 11.5px; }
+    .sx-rt-rs { margin: 10px 0 2px; display: flex; justify-content: flex-end; }
     .ac-item { margin-top: 10px; padding: 12px 12px 12px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); }
     .ac-item.off { opacity: 0.6; }
     .ac-ih { display: flex; align-items: center; gap: 4px; }
@@ -6939,7 +6950,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('menu.manage')) list.push({ group: G.content, icon: 'menu', short: 'меню', title: 'Меню', sub: 'Позиции, цены, фото', fn: 'openMenuEdit()' });
     if (can('stories.manage')) list.push({ group: G.content, icon: 'stories', short: 'сторис', title: 'Сторис', sub: 'Фото бара и ВИП-комнат', fn: 'openStoriesEdit()' });
     if (can('content.manage')) list.push({ group: G.content, icon: 'appcontent', short: 'тексты приложения', title: 'Тексты приложения', sub: '«О заведении» и «Вопросы» в приложении гостя', fn: 'openAppContent()' });
-    if (can('site.manage')) list.push({ group: G.content, icon: 'site', short: 'сайт', title: 'Сайт', sub: 'Надписи, фото, видео и контакты на сайте', fn: 'openSite()' });
+    if (can('site.manage')) list.push({ group: G.content, icon: 'site', short: 'сайт', title: 'Сайт', sub: 'Надписи, фото, видео, ретушь и контакты на сайте', fn: 'openSite()' });
     if (can('surveys.manage')) list.push({ group: G.content, icon: 'surveys', short: 'отзыв гостя', title: 'Оформление отзыва', sub: 'Отзыв гостя и опрос команды: фон, тексты', fn: 'openSurveysEdit()' });
     if (can('tv.manage')) list.push({ group: G.content, icon: 'tv', short: 'тв-экраны', title: 'ТВ-экраны', sub: 'ВИП-комнаты и терраса: приветствие, фон, сообщения', fn: 'openTv()' });
     if (can('checklists.manage')) list.push({ group: G.team, icon: 'checklists', short: 'чек-листы', title: 'Чек-листы', sub: 'Открытие и закрытие смены', fn: 'openChecklistsEdit()' });
@@ -8799,8 +8810,25 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function sxLoadBlock(b) {                                   // копия значений блока для правки
     sx.tx = {}; sx.tn = {};
     b.texts.forEach(t => { sx.tx[t.key] = t.value; });
-    b.media.forEach(m => { if (m.item) sx.tn[m.key] = { blur: m.item.blur, bright: m.item.bright, veil: m.item.veil, fx: m.item.fx, fy: m.item.fy }; });
+    b.media.forEach(m => { sx.tn[m.key] = sxTuneOf(m); });
   }
+  // Ретушь, которая сейчас действует на месте: у своего фото — его, у стандартной картинки — её (по умолчанию «как есть»)
+  const SX_TUNE_KEYS = ['blur', 'bright', 'contrast', 'sat', 'warm', 'veil', 'fx', 'fy'];
+  function sxTuneOf(m) {
+    const src = m.item || m.std || {}, o = {};
+    SX_TUNE_KEYS.forEach(k => { o[k] = src[k] !== undefined ? src[k] : (k === 'fx' || k === 'fy' ? 50 : ({ blur: 0, bright: 100, contrast: 100, sat: 100, warm: 0, veil: 0 })[k]); });
+    return o;
+  }
+  // Есть ли на месте ретушь (всё, кроме точки кадра): тогда подпись «настроена»
+  const sxRetouched = (a) => !!a && (Number(a.blur) !== 0 || Number(a.bright) !== 100 || Number(a.contrast) !== 100 || Number(a.sat) !== 100 || Number(a.warm) !== 0 || Number(a.veil) !== 0);
+  // Готовые стили: значения подобраны под тёмный фон сайта с белым текстом
+  const SX_PRESETS = [
+    { id: 'none', label: 'Как есть', v: { blur: 0, bright: 100, contrast: 100, sat: 100, warm: 0, veil: 0 } },
+    { id: 'warm', label: 'Тёплый вечер', v: { blur: 0, bright: 100, contrast: 108, sat: 110, warm: 24, veil: 8 } },
+    { id: 'text', label: 'Под текст', v: { blur: 6, bright: 90, contrast: 100, sat: 95, warm: 8, veil: 35 } },
+    { id: 'film', label: 'Кино', v: { blur: 0, bright: 95, contrast: 125, sat: 85, warm: 12, veil: 15 } },
+    { id: 'bw', label: 'Чёрно-белое', v: { blur: 0, bright: 100, contrast: 118, sat: 0, warm: 0, veil: 10 } }
+  ];
   async function openSite() {
     showScreen('site');
     sx = null;
@@ -8826,9 +8854,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (!b) return false;
     for (const t of b.texts) if (sxNorm(sx.tx[t.key]) !== sxNorm(t.value)) return true;
     for (const m of b.media) {
-      if (!m.item) continue;
-      const a = sx.tn[m.key] || {};
-      for (const k of ['blur', 'bright', 'veil', 'fx', 'fy']) if (Number(a[k]) !== Number(m.item[k])) return true;
+      const a = sx.tn[m.key] || {}, base = sxTuneOf(m);
+      for (const k of SX_TUNE_KEYS) if (Number(a[k]) !== Number(base[k])) return true;
     }
     return false;
   }
@@ -8855,16 +8882,16 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     sxEl('sxH1').textContent = b.title; sxEl('sxH2').textContent = 'Блок сайта';
     el.innerHTML = sxBlockHtml(b);
     b.texts.forEach(sxTextPaint);
-    b.media.forEach(m => { if (m.item) sxPaint(m.key); });
+    b.media.forEach(m => sxPaint(m.key));
     sxDirtyPaint();
   }
   function sxListHtml() {
     const d = sx.data;
     const rows = d.blocks.map(b => {
-      const n = b.texts.filter(t => t.custom).length + b.media.filter(m => m.item).length;
+      const n = b.texts.filter(t => t.custom).length + b.media.filter(m => m.item || (m.std && m.std.custom)).length;
       return `<button type="button" class="sx-row" onclick="sxOpen('${b.id}')"><div class="sx-row-main"><div class="sx-row-t">${escHtml(b.title)}</div><div class="sx-row-s">${escHtml(b.sub)}</div></div><div class="sx-row-m${n ? ' on' : ''}">${n ? 'своё: ' + n : 'стандарт'}</div>${SX_CHEV}</button>`;
     }).join('');
-    return `<div class="sx-lead">Это главная страница сайта. Выберите блок: поменяйте надписи, поставьте своё фото или видео, подберите яркость и затемнение. Что не меняли, остаётся таким, как задумано в дизайне. Гости увидят изменения при следующем заходе на сайт.</div>${rows}`
+    return `<div class="sx-lead">Это главная страница сайта. Выберите блок: поменяйте надписи, поставьте своё фото или видео, настройте ретушь (яркость, контраст, цвет, затемнение). Что не меняли, остаётся таким, как задумано в дизайне. Гости увидят изменения при следующем заходе на сайт.</div>${rows}`
       + (d.saved ? '' : '<div class="poster-note" style="margin-top:10px">Пока вы ничего не меняли: на сайте стандартные надписи и фотографии.</div>');
   }
   function sxFieldHtml(t) {
@@ -8877,24 +8904,30 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       + `<div class="sx-fl">${hint}<span id="sxD-${t.key}"></span></div></div>`;
   }
   function sxMediaHtml(m) {
-    const it = m.item;
-    const rng = (k, label, min, max, step, l, r) => `<div class="tv-rg"><div class="tv-rg-h"><span>${label}</span><b id="sxV-${m.key}-${k}"></b></div><input type="range" class="sv-range" id="sxR-${m.key}-${k}" min="${min}" max="${max}" step="${step}" value="${(sx.tn[m.key] || {})[k]}" oninput="sxTune('${m.key}')"><div class="sv-range-l"><span>${l}</span><span>${r}</span></div></div>`;
-    const media = it ? (it.type === 'video' ? `<video class="sx-pv-m" id="sxM-${m.key}" src="${escHtml(it.url)}" muted loop playsinline autoplay></video>` : `<img class="sx-pv-m" id="sxM-${m.key}" src="${escHtml(it.url)}" alt="">`) : '';
-    const empty = it ? '' : `<div class="sx-pv-e">Сейчас здесь стандартная картинка сайта. Загрузите своё — оно встанет на это место.</div>`;
-    const pick = it ? ' pick' : '';
+    const it = m.item, st = m.std, a = sx.tn[m.key] || sxTuneOf(m);
+    const rng = (k, label, min, max, step, l, r) => `<div class="tv-rg"><div class="tv-rg-h"><span>${label}</span><b id="sxV-${m.key}-${k}"></b></div><input type="range" class="sv-range" id="sxR-${m.key}-${k}" min="${min}" max="${max}" step="${step}" value="${a[k]}" oninput="sxTune('${m.key}')"><div class="sv-range-l"><span>${l}</span><span>${r}</span></div></div>`;
+    // что показываем в просмотре: своё фото или видео, а если своего нет — стандартная картинка сайта (её ретушь тоже настраивается)
+    const src = it ? it.url : (st && st.url) || '';
+    const media = it && it.type === 'video' ? `<video class="sx-pv-m" id="sxM-${m.key}" src="${escHtml(src)}" muted loop playsinline autoplay></video>` : (src ? `<img class="sx-pv-m" id="sxM-${m.key}" src="${escHtml(src)}" alt="">` : '');
+    const pr = SX_PRESETS.map(p => `<button type="button" class="bd-tok" onclick="sxPreset('${m.key}','${p.id}')">${p.label}</button>`).join('');
+    const open = sx.rtOpen && sx.rtOpen[m.key] ? ' open' : '';
     return `<div class="sx-m" id="sxMB-${m.key}"><div class="sx-mh"><span class="sx-mt">${escHtml(m.label)}</span><span class="sx-mb${it ? ' on' : ''}">${it ? (it.type === 'video' ? 'своё видео' : 'своё фото') : 'стандартное'}</span></div>`
-      + `<div class="sx-pv${pick}" id="sxP-${m.key}"${it ? ` onpointerdown="sxPick(event,'${m.key}')" onpointermove="sxPick(event,'${m.key}')"` : ''}>${media}${empty}<div class="sx-pv-v" id="sxVe-${m.key}"></div>${it ? `<div class="sx-pv-dot" id="sxDot-${m.key}"></div>` : ''}</div>`
-      + (it ? `<div class="sx-pk">Нажмите на картинку: эта точка останется в кадре, когда блок будет обрезан по размеру</div>` : '')
+      + `<div class="sx-pv pick" id="sxP-${m.key}" onpointerdown="sxPick(event,'${m.key}')" onpointermove="sxPick(event,'${m.key}')">${media}<div class="sx-pv-w" id="sxWm-${m.key}"></div><div class="sx-pv-v" id="sxVe-${m.key}"></div><div class="sx-pv-dot" id="sxDot-${m.key}"></div></div>`
+      + `<div class="sx-pk">Нажмите на картинку: эта точка останется в кадре, когда блок будет обрезан по размеру</div>`
       + `<div class="poster-note" id="sxN-${m.key}"></div>`
-      + `<div class="poster-actions"><button type="button" class="btn-primary" onclick="sxChoose('${m.key}')">${it ? 'Заменить' : (m.video ? 'Загрузить фото или видео' : 'Загрузить фото')}</button>${it ? `<button type="button" class="btn-primary tv-rm" onclick="sxRemove('${m.key}')">Стандартное</button>` : ''}</div>`
-      + (it ? rng('bright', 'Яркость', 50, 130, 5, 'темнее', 'ярче') + rng('veil', 'Затемнение', 0, 80, 1, 'светлее', 'темнее') + rng('blur', 'Размытие', 0, 20, 1, 'чётко', 'сильно размыто') : '')
+      + `<div class="poster-actions"><button type="button" class="btn-primary" onclick="sxChoose('${m.key}')">${it ? 'Заменить' : (m.video ? 'Загрузить своё фото или видео' : 'Загрузить своё фото')}</button>${it ? `<button type="button" class="btn-primary tv-rm" onclick="sxRemove('${m.key}')">Стандартное</button>` : ''}</div>`
+      + `<details class="sx-rt" id="sxRt-${m.key}"${open} ontoggle="sxRtToggle('${m.key}', this.open)"><summary><span>Ретушь</span><span class="sx-rt-s" id="sxRs-${m.key}"><span id="sxRst-${m.key}"></span>${SX_CHEV}</span></summary>`
+      + `<div class="sx-rt-pr">${pr}</div>`
+      + rng('bright', 'Яркость', 50, 130, 5, 'темнее', 'ярче') + rng('contrast', 'Контраст', 60, 150, 5, 'мягче', 'резче') + rng('sat', 'Насыщенность', 0, 200, 5, 'чёрно-белое', 'ярче цвета')
+      + rng('warm', 'Тёплота', -40, 40, 2, 'холоднее', 'теплее') + rng('veil', 'Затемнение', 0, 80, 1, 'светлее', 'темнее') + rng('blur', 'Размытие', 0, 20, 1, 'чётко', 'сильно размыто')
+      + `<div class="sx-rt-rs"><button type="button" class="sx-link" onclick="sxPreset('${m.key}','none')">Сбросить ретушь</button></div></details>`
       + `</div>`;
   }
   function sxBlockHtml(b) {
     const hasMedia = b.media.length > 0;
     const videoNote = b.media.some(m => m.video) ? `Видео — до ${SX_VIDEO_MAX_SEC} секунд и 40 МБ, без звука: сервер сам сожмёт его и сделает плавную петлю, загрузка займёт до минуты.${sx.data.video ? '' : ' Сейчас сжатие недоступно: видео сохранится как есть и на телефоне может грузиться дольше.'} ` : '';
     return (b.texts.length ? `<div class="sv-gl">Надписи</div><div class="sx-texts">${b.texts.map(sxFieldHtml).join('')}</div>` : '')
-      + (hasMedia ? `<div class="sv-gl">Фото и видео</div><div class="sx-lead" style="margin-top:0">${videoNote}Фото загружается сразу, как только вы его выбрали. Яркость и затемнение сохраняются кнопкой «Сохранить».</div>${b.media.map(sxMediaHtml).join('')}` : '')
+      + (hasMedia ? `<div class="sv-gl">Фото и видео</div><div class="sx-lead" style="margin-top:0">${videoNote}Своё фото загружается сразу, как выбрали. Ретушь есть и у стандартных картинок, свои загружать не нужно; она сохраняется кнопкой «Сохранить».</div>${b.media.map(sxMediaHtml).join('')}` : '')
       + `<div class="ckf-tools sx-reset"><button type="button" class="ckf-tool" onclick="sxReset()">Вернуть этот блок как был</button></div>`
       + `<div class="vn-save" id="sxSaveWrap"><button class="btn-cta" id="sxSaveBtn" onclick="sxSave()">Сохранить</button></div>`;
   }
@@ -8926,24 +8959,45 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // Предпросмотр картинки: яркость, размытие и затемнение — так же, как на сайте
   function sxPaint(slot) {
     const a = sx.tn[slot]; if (!a) return;
-    const box = sxEl('sxP-' + slot), med = sxEl('sxM-' + slot), veil = sxEl('sxVe-' + slot), dot = sxEl('sxDot-' + slot);
-    if (!box || !med) return;
+    const box = sxEl('sxP-' + slot), med = sxEl('sxM-' + slot), veil = sxEl('sxVe-' + slot), dot = sxEl('sxDot-' + slot), wm = sxEl('sxWm-' + slot);
+    if (!box) return;
     const w = box.clientWidth || 320;
-    const f = [];
-    if (Number(a.bright) !== 100) f.push(`brightness(${a.bright / 100})`);
-    if (Number(a.blur)) f.push(`blur(${(a.blur * w / 1000).toFixed(2)}px)`);
-    med.style.filter = f.length ? f.join(' ') : 'none';
-    med.style.transform = a.blur ? `scale(${(1 + a.blur * 2.2 / 600).toFixed(3)})` : '';
-    med.style.objectPosition = `${a.fx}% ${a.fy}%`;
+    if (med) {
+      const f = [];
+      if (Number(a.bright) !== 100) f.push(`brightness(${a.bright / 100})`);
+      if (Number(a.contrast) !== 100) f.push(`contrast(${a.contrast / 100})`);
+      if (Number(a.sat) !== 100) f.push(`saturate(${a.sat / 100})`);
+      if (Number(a.blur)) f.push(`blur(${(a.blur * w / 1000).toFixed(2)}px)`);
+      med.style.filter = f.length ? f.join(' ') : 'none';
+      med.style.transform = a.blur ? `scale(${(1 + a.blur * 2.2 / 600).toFixed(3)})` : '';
+      med.style.objectPosition = `${a.fx}% ${a.fy}%`;
+    }
+    // тёплота: янтарный (плюс) или холодный (минус) слой поверх кадра, под затемнением — как на сайте
+    if (wm) { const t = Number(a.warm) || 0; wm.style.display = t ? 'block' : 'none'; wm.style.background = t > 0 ? 'rgb(255,140,40)' : 'rgb(60,130,255)'; wm.style.opacity = (Math.abs(t) / 40 * 0.55).toFixed(3); }
     if (veil) veil.style.background = a.veil ? `rgba(14,8,3,${a.veil / 100})` : 'none';
     if (dot) { dot.style.left = a.fx + '%'; dot.style.top = a.fy + '%'; }
-    [['bright', '%'], ['veil', '%'], ['blur', ' px']].forEach(([k, u]) => { const v = sxEl(`sxV-${slot}-${k}`), r = sxEl(`sxR-${slot}-${k}`); if (v) v.textContent = k === 'blur' && !a.blur ? 'без размытия' : a[k] + u; if (r) rangeFill(r); });
+    [['bright', '%'], ['contrast', '%'], ['sat', '%'], ['warm', ''], ['veil', '%'], ['blur', ' px']].forEach(([k, u]) => {
+      const v = sxEl(`sxV-${slot}-${k}`), r = sxEl(`sxR-${slot}-${k}`);
+      if (v) v.textContent = k === 'blur' && !a.blur ? 'без размытия' : (k === 'warm' ? (a.warm > 0 ? 'теплее +' + a.warm : a.warm < 0 ? 'холоднее ' + a.warm : 'без оттенка') : a[k] + u);
+      if (r) rangeFill(r);
+    });
+    const on = sxRetouched(a), st = sxEl('sxRst-' + slot), sm = sxEl('sxRs-' + slot);
+    if (st) st.textContent = on ? 'настроена' : 'без ретуши';
+    if (sm) sm.classList.toggle('on', on);
   }
   function sxTune(slot) {
     const a = sx.tn[slot]; if (!a) return;
-    ['bright', 'veil', 'blur'].forEach(k => { const r = sxEl(`sxR-${slot}-${k}`); if (r) a[k] = Number(r.value); });
+    ['bright', 'contrast', 'sat', 'warm', 'veil', 'blur'].forEach(k => { const r = sxEl(`sxR-${slot}-${k}`); if (r) a[k] = Number(r.value); });
     sxPaint(slot); sxDirtyPaint();
   }
+  // Готовый стиль или «Сбросить ретушь»: ползунки встают на значения стиля, точка кадра остаётся своя
+  function sxPreset(slot, id) {
+    const a = sx.tn[slot], p = SX_PRESETS.find(x => x.id === id); if (!a || !p) return;
+    Object.assign(a, p.v);
+    Object.keys(p.v).forEach(k => { const r = sxEl(`sxR-${slot}-${k}`); if (r) r.value = a[k]; });
+    sxPaint(slot); sxDirtyPaint();
+  }
+  function sxRtToggle(slot, open) { if (!sx) return; (sx.rtOpen = sx.rtOpen || {})[slot] = !!open; }
   function sxPick(ev, slot) {
     if (ev.type === 'pointermove' && !(ev.buttons & 1)) return;   // тянем только с нажатой кнопкой или пальцем
     const a = sx.tn[slot], box = sxEl('sxP-' + slot); if (!a || !box) return;
@@ -8997,8 +9051,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     sx.data = data;
     const b = sxBlock(sx.open); if (!b) return;
     const m = b.media.find(x => x.key === slot);
-    if (m && m.item) sx.tn[slot] = { blur: m.item.blur, bright: m.item.bright, veil: m.item.veil, fx: m.item.fx, fy: m.item.fy };
-    else if (m) delete sx.tn[slot];
+    if (m) sx.tn[slot] = sxTuneOf(m);
   }
   async function sxUpload(slot, blob, mime, isVideo) {
     sx.busy = true;
@@ -9035,7 +9088,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (!sx || !sx.open || sx.busy) return;
     const b = sxBlock(sx.open), btn = sxEl('sxSaveBtn');
     const texts = {}; b.texts.forEach(t => { texts[t.key] = sx.tx[t.key] != null ? sx.tx[t.key] : t.value; });
-    const media = {}; b.media.forEach(m => { if (m.item && sx.tn[m.key]) media[m.key] = sx.tn[m.key]; });
+    const media = {}; b.media.forEach(m => { if (sx.tn[m.key]) media[m.key] = sx.tn[m.key]; });
     sx.busy = true; if (btn) { btn.disabled = true; btn.textContent = 'Сохраняем...'; }
     try {
       const res = await fetch(`${PROXY_BASE}/api/admin/site?pin=${getPin()}`, {
