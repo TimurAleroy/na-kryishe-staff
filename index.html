@@ -1418,6 +1418,7 @@
     .sx-row-s { margin-top: 3px; font-size: 12px; line-height: 1.4; color: var(--text-muted); }
     .sx-row-m { flex: 0 0 auto; font-size: 11.5px; color: var(--text-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
     .sx-row-m.on { color: var(--accent); }
+    .sx-row-s.warn { color: var(--c-gold); }
     .sx-row svg { flex: 0 0 auto; color: var(--text-muted); }
     .sx-lead { margin: 6px 2px 4px; font-size: 12.5px; line-height: 1.55; color: var(--text-sub); }
     .sx-fl { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 6px; min-height: 18px; }
@@ -5457,10 +5458,10 @@ body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-le
 <!-- СЕРВИС: редкие разделы управления (меню, дубли, сотрудники, кандидаты) — отдельный экран, чтобы не загромождать главный -->
 <div class="screen" id="screen-service">
   <div class="header">
-    <div class="back-btn" onclick="showScreen('home')">
+    <div class="back-btn" onclick="svcBack()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
-    <div><h1 style="font-size:14px;letter-spacing:1px;">Сервис</h1><p>Меню, гости, команда</p></div>
+    <div><h1 id="svcH1" style="font-size:14px;letter-spacing:1px;">Сервис</h1><p id="svcH2">Контент, гости, заведение, команда</p></div>
   </div>
   <div style="padding:0 16px"><div id="serviceContent" style="margin-top:14px"></div></div>
 </div>
@@ -6942,34 +6943,72 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
   var homeIcons = {};
 
-  // Что лежит в «Сервисе» у этого сотрудника: меню, дубли, сотрудники (только основатель), кандидаты
-  // Инструменты «Сервиса» по группам: что видят гости / гости / команда / система
+  // «Сервис»: плоский список разделов (у каждого своё право доступа) и раскладка из него в экран.
+  // Одиночные разделы — плитки, родственные — папки: плитка открывает список строк, строка — прежний экран раздела.
+  // Сами разделы и права не менялись: если в папке у сотрудника открыт один раздел, на экране стоит плитка этого раздела.
+  var SVC_FOLDERS = [
+    { id: 'app',    icon: 'appcontent', title: 'Приложение гостя',      short: 'приложение гостя',      lead: 'Что гость видит в своём приложении',          rows: ['appcontent', 'stories', 'season'] },
+    { id: 'rules',  icon: 'tags',       title: 'Правила гостей',        short: 'правила гостей',        lead: 'Теги, сегменты и уровни карты гостей',       rows: ['tags', 'autotags', 'segments', 'cardlevels'] },
+    { id: 'bot',    icon: 'reviews',    title: 'Бот и отзывы',          short: 'бот и отзывы',          lead: 'Что бот пишет гостям и как выглядит отзыв',  rows: ['birthday', 'reviews', 'surveys'] },
+    { id: 'checks', icon: 'checklists', title: 'Чек-листы и стандарты', short: 'чек-листы и стандарты', lead: 'Как проходит смена и как работает зал',      rows: ['checklists', 'standards'] },
+    { id: 'team',   icon: 'team',       title: 'Команда',               short: 'команда',               lead: 'Сотрудники и отклики на вакансии',           rows: ['team', 'candidates'] },
+    { id: 'log',    icon: 'audit',      title: 'Журнал и состояние',    short: 'журнал и состояние',    lead: 'Что менялось и как себя чувствует система',  rows: ['audit', 'status'] }
+  ];
+  var SVC_LAYOUT = [
+    ['Контент для гостей', ['menu', 'f:app', 'site', 'tv']],
+    ['Гости', ['f:rules', 'f:bot']],
+    ['Заведение', ['venue', 'f:checks', 'tobacco', 'tips']],
+    ['Команда и система', ['f:team', 'f:log']]
+  ];
   function serviceItemsFor() {
-    const G = { content: 'Контент для гостей', guests: 'Гости', team: 'Команда', system: 'Система' };
     const list = [];
-    if (can('menu.manage')) list.push({ group: G.content, icon: 'menu', short: 'меню', title: 'Меню', sub: 'Позиции, цены, фото', fn: 'openMenuEdit()' });
-    if (can('stories.manage')) list.push({ group: G.content, icon: 'stories', short: 'сторис', title: 'Сторис', sub: 'Фото бара и ВИП-комнат', fn: 'openStoriesEdit()' });
-    if (can('content.manage')) list.push({ group: G.content, icon: 'appcontent', short: 'тексты приложения', title: 'Тексты приложения', sub: '«О заведении» и «Вопросы» в приложении гостя', fn: 'openAppContent()' });
-    if (can('site.manage')) list.push({ group: G.content, icon: 'site', short: 'сайт', title: 'Сайт', sub: 'Надписи, фото, видео, ретушь и контакты на сайте', fn: 'openSite()' });
-    if (can('surveys.manage')) list.push({ group: G.content, icon: 'surveys', short: 'отзыв гостя', title: 'Оформление отзыва', sub: 'Отзыв гостя и опрос команды: фон, тексты', fn: 'openSurveysEdit()' });
-    if (can('tv.manage')) list.push({ group: G.content, icon: 'tv', short: 'тв-экраны', title: 'ТВ-экраны', sub: 'ВИП-комнаты и терраса: приветствие, фон, сообщения', fn: 'openTv()' });
-    if (can('checklists.manage')) list.push({ group: G.team, icon: 'checklists', short: 'чек-листы', title: 'Чек-листы', sub: 'Открытие и закрытие смены', fn: 'openChecklistsEdit()' });
-    if (can('tobacco.manage')) list.push({ group: G.team, icon: 'tobacco', short: 'табак', title: 'Табак', sub: 'Вкусы, остатки табака и углей', fn: 'openTobacco()' });
-    if (can('tips.manage')) list.push({ group: G.team, icon: 'tips', short: 'чаевые', title: 'Чаевые', sub: 'Отчёт, суммы, кто принимает, QR', fn: 'openTipsAdmin()' });
-    if (can('standards.manage')) list.push({ group: G.team, icon: 'standards', short: 'стандарты', title: 'Стандарты', sub: 'Правила сервиса, тесты, кто прочитал', fn: "openStandardsEdit('service')" });
-    if (can('tags.manage')) list.push({ group: G.guests, icon: 'tags', short: 'теги', title: 'Теги', sub: 'Список, цвета, подсказки', fn: 'openTagsEdit()' });
-    if (currentJobRole === 'Основатель') list.push({ group: G.team, icon: 'team', short: 'сотрудники', title: 'Сотрудники', sub: 'Логины, роли и права', fn: 'openEmployees()' });
-    if (can('candidates.view')) list.push({ group: G.team, icon: 'candidates', short: 'кандидаты', title: 'Кандидаты', sub: 'Отклики на вакансии', fn: 'openCandidates()' });
-    if (can('settings.manage')) list.push({ group: G.guests, icon: 'segments', short: 'правила сегментов', title: 'Правила сегментов', sub: 'Границы: дни и визиты', fn: 'openSegmentRules()' });
-    if (can('settings.manage')) list.push({ group: G.guests, icon: 'cardlevels', short: 'уровни карты', title: 'Уровни карты', sub: 'Silver, Gold и Platinum: сколько гость тратит', fn: 'openCardLevels()' });
-    if (can('settings.manage')) list.push({ group: G.guests, icon: 'autotags', short: 'автотеги', title: 'Автотеги', sub: 'Что система отмечает в карточке гостя сама: пороги, цвета, кому показывать', fn: 'openAutotags()' });
-    if (can('settings.manage')) list.push({ group: G.content, icon: 'season', short: 'сезоны', title: 'Сезоны', sub: 'Снег, сердечки, розы, Хэллоуин: в приложении и на ТВ', fn: 'openSeason()' });
-    if (can('settings.manage')) list.push({ group: G.system, icon: 'reviews', short: 'отзывы', title: 'Просьбы об отзыве', sub: 'Когда и кому бот пишет', fn: 'openReviewRules()' });
-    if (can('settings.manage') || can('events.manage')) list.push({ group: G.system, icon: 'venue', short: 'режим работы', title: 'Режим работы', sub: 'Часы, закрытые даты, терраса', fn: 'openVenue()' });
-    if (can('settings.manage') || can('marketing.send')) list.push({ group: G.guests, icon: 'birthday', short: 'поздравления', title: 'Поздравления', sub: 'Что бот пишет именинникам', fn: 'openBirthdayText()' });
-    if (can('audit.view')) list.push({ group: G.system, icon: 'audit', short: 'журнал', title: 'Журнал', sub: 'Кто и что менял', fn: 'openAudit()' });
-    if (currentJobRole === 'Основатель') list.push({ group: G.system, icon: 'status', short: 'состояние', title: 'Состояние', sub: 'База, боты, копии', fn: 'openSystemStatus()' });
+    const add = (icon, short, title, sub, fn) => list.push({ icon, short, title, sub, fn });
+    if (can('menu.manage')) add('menu', 'меню', 'Меню', 'Позиции, цены, фото', 'openMenuEdit()');
+    if (can('content.manage')) add('appcontent', 'тексты', 'Тексты приложения', '«О заведении» и «Вопросы» в приложении гостя', 'openAppContent()');
+    if (can('stories.manage')) add('stories', 'сторис', 'Сторис', 'Фото бара и ВИП-комнат', 'openStoriesEdit()');
+    if (can('settings.manage')) add('season', 'сезоны', 'Сезоны', 'Снег, сердечки, розы, Хэллоуин: в приложении и на ТВ', 'openSeason()');
+    if (can('site.manage')) add('site', 'сайт', 'Сайт', 'Надписи, фото, видео, ретушь и контакты на сайте', 'openSite()');
+    if (can('tv.manage')) add('tv', 'тв-экраны', 'ТВ-экраны', 'ВИП-комнаты и терраса: приветствие, фон, сообщения', 'openTv()');
+    if (can('tags.manage')) add('tags', 'теги', 'Теги', 'Список, цвета, подсказки', 'openTagsEdit()');
+    if (can('settings.manage')) add('autotags', 'автотеги', 'Автотеги', 'Что система отмечает в карточке гостя сама: пороги, цвета, кому показывать', 'openAutotags()');
+    if (can('settings.manage')) add('segments', 'сегменты', 'Правила сегментов', 'Границы: дни и визиты', 'openSegmentRules()');
+    if (can('settings.manage')) add('cardlevels', 'уровни карты', 'Уровни карты', 'Silver, Gold и Platinum: сколько гость тратит', 'openCardLevels()');
+    if (can('settings.manage') || can('marketing.send')) add('birthday', 'поздравления', 'Поздравления', 'Что бот пишет именинникам', 'openBirthdayText()');
+    if (can('settings.manage')) add('reviews', 'просьбы', 'Просьбы об отзыве', 'Когда и кому бот пишет', 'openReviewRules()');
+    if (can('surveys.manage')) add('surveys', 'оформление', 'Оформление отзыва', 'Отзыв гостя и опрос команды: фон, тексты', 'openSurveysEdit()');
+    if (can('settings.manage') || can('events.manage')) add('venue', 'режим работы', 'Режим работы', 'Часы, закрытые даты, терраса', 'openVenue()');
+    if (can('checklists.manage')) add('checklists', 'чек-листы', 'Чек-листы', 'Открытие и закрытие смены', 'openChecklistsEdit()');
+    if (can('standards.manage')) add('standards', 'стандарты', 'Стандарты', 'Правила сервиса, тесты, кто прочитал', "openStandardsEdit('service')");
+    if (can('tobacco.manage')) add('tobacco', 'табак', 'Табак', 'Вкусы, остатки табака и углей', 'openTobacco()');
+    if (can('tips.manage')) add('tips', 'чаевые', 'Чаевые', 'Отчёт, суммы, кто принимает, QR', 'openTipsAdmin()');
+    if (currentJobRole === 'Основатель') add('team', 'сотрудники', 'Сотрудники', 'Логины, роли и права', 'openEmployees()');
+    if (can('candidates.view')) add('candidates', 'кандидаты', 'Кандидаты', 'Отклики на вакансии', 'openCandidates()');
+    if (can('audit.view')) add('audit', 'журнал', 'Журнал', 'Кто и что менял', 'openAudit()');
+    if (currentJobRole === 'Основатель') add('status', 'состояние', 'Состояние', 'База, боты, копии', 'openSystemStatus()');
     return list;
+  }
+  // Что стоит на экране «Сервис» верхнего уровня: плитки-разделы и плитки-папки (по группам). Папка из одного открытого
+  // раздела — это просто плитка этого раздела; пустая папка не показывается.
+  function serviceEntriesFor() {
+    const byIcon = {};
+    serviceItemsFor().forEach(l => { byIcon[l.icon] = l; });
+    const out = [];
+    for (const [group, refs] of SVC_LAYOUT) {
+      for (const ref of refs) {
+        if (ref.indexOf('f:') !== 0) {
+          if (byIcon[ref]) out.push(Object.assign({}, byIcon[ref], { kind: 'item', group, svc: ref }));
+          continue;
+        }
+        const f = SVC_FOLDERS.find(x => 'f:' + x.id === ref);
+        const rows = f.rows.map(r => byIcon[r]).filter(Boolean);
+        if (rows.length === 1) { out.push(Object.assign({}, rows[0], { kind: 'item', group, svc: rows[0].icon })); continue; }
+        if (rows.length === 0) continue;
+        const names = rows.map(r => r.short).join(', ');
+        out.push({ kind: 'folder', group, id: f.id, svc: 'f-' + f.id, icon: f.icon, short: f.short, title: f.title, lead: f.lead,
+          sub: names.charAt(0).toUpperCase() + names.slice(1), rows, fn: `svcOpenFolder('${f.id}')` });
+      }
+    }
+    return out;
   }
 
   // «Внешние отзывы» — строка в группе «Аналитика» на главном: сколько отзывов ждут ответа и сколько просрочено.
@@ -7026,16 +7065,23 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     })();
     return svcBadgesBusy;
   }
+  // Плашка папки: сумма плашек её строк (в «Команде» — «Новых: N» по кандидатам), подпись — их подписи
+  function svcEntryBadge(e) {
+    if (e.kind !== 'folder') return svcBadgeInfo(e);
+    const bs = e.rows.map(svcBadgeInfo).filter(Boolean);
+    return bs.length ? { n: bs.reduce((t, b) => t + b.n, 0), sub: bs.map(b => b.sub).join(' · ') } : null;
+  }
   // Плашки обновляем прямо на готовых плитках (число и подпись), а не пересобираем весь экран: иначе плитки на глазах
   // мигают и анимация появления запускается заново. Если набор плиток не совпал — возвращаем false, и экран соберётся целиком.
   function patchServiceBadges() {
     const box = document.getElementById('serviceContent');
-    const items = serviceItemsFor();
+    if (svcFolder) return false;                       // внутри папки список строк маленький — его просто собираем заново
+    const items = serviceEntriesFor();
     if (!box || !items.length) return false;
-    const cards = items.map(i => box.querySelector(`.qcard[data-svc="${i.icon}"]`));
+    const cards = items.map(i => box.querySelector(`.qcard[data-svc="${i.svc}"]`));
     if (cards.some(c => !c) || box.querySelectorAll('.qcard').length !== items.length) return false;
     items.forEach((i, k) => {
-      const card = cards[k], b = svcBadgeInfo(i);
+      const card = cards[k], b = svcEntryBadge(i);
       const sub = card.querySelector('.qcard-sub');
       let badge = card.querySelector('.qcard-badge');
       if (b) {
@@ -7052,17 +7098,31 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
   // Инструменты «Сервиса» — плитки, как на главном экране
   function serviceCardHtml(i) {
-    const b = svcBadgeInfo(i);
-    return `<div class="qcard" data-svc="${i.icon}" onclick="${i.fn}">
+    const b = svcEntryBadge(i);
+    return `<div class="qcard${i.kind === 'folder' ? ' qcard-folder' : ''}" data-svc="${i.svc}" onclick="${i.fn}">
         <div class="qcard-icon">${homeIcons[i.icon] || ''}</div>
         ${b ? `<span class="qcard-badge">${escHtml(b.n)}</span>` : ''}
         <div class="qcard-title">${i.title}</div>
         <div class="qcard-sub${b ? ' warn' : ''}">${b ? escHtml(b.sub) : i.sub}</div>
       </div>`;
   }
+  // Строка внутри папки: название, подпись, число (если есть что разобрать) и стрелка — как список блоков «Сайта»
+  function serviceRowHtml(r) {
+    const b = svcBadgeInfo(r);
+    return `<button type="button" class="sx-row" data-svc="${r.icon}" onclick="${r.fn}">
+        <div class="sx-row-main"><div class="sx-row-t">${r.title}</div><div class="sx-row-s${b ? ' warn' : ''}">${b ? escHtml(b.sub) : r.sub}</div></div>
+        ${b ? `<div class="sx-row-m on">${escHtml(b.n)}</div>` : ''}${SX_CHEV}
+      </button>`;
+  }
   var svcHtmlCache = '';
+  var svcFolder = null;        // id открытой папки «Сервиса» или null — тогда на экране плитки. Экран один: «назад» из любого раздела возвращает сюда же.
+  function svcFolderEntry() {
+    return svcFolder ? (serviceEntriesFor().find(e => e.kind === 'folder' && e.id === svcFolder) || null) : null;
+  }
   function serviceHtml() {
-    const items = serviceItemsFor();
+    const f = svcFolderEntry();
+    if (f) return f.rows.map(serviceRowHtml).join('');
+    const items = serviceEntriesFor();
     const groups = [];
     for (const it of items) {
       let g = groups.find(x => x.name === it.group);
@@ -7078,14 +7138,31 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function renderService() {
     const box = document.getElementById('serviceContent');
     if (!box) return;
+    if (svcFolder && !svcFolderEntry()) svcFolder = null;   // папку закрыли права или она опустела — вернулись к плиткам
+    const f = svcFolderEntry();
+    const h1 = document.getElementById('svcH1'), h2 = document.getElementById('svcH2');
+    if (h1) h1.textContent = f ? f.title : 'Сервис';
+    if (h2) h2.textContent = f ? f.lead : 'Контент, гости, заведение, команда';
+    if (document.getElementById('screen-service')?.classList.contains('active')) document.body.classList.toggle('col-narrow', !!f);   // список строк на компьютере — колонкой, как «Сайт»
     const html = serviceHtml();
     if (html !== svcHtmlCache || !box.firstChild) { box.innerHTML = html; svcHtmlCache = html; }
     fitTileGrids();
   }
   function openService() {
+    svcFolder = null;        // со входа в «Сервис» с главного — всегда плитки
     renderService();         // плитки готовы до показа экрана (повторная сборка в showScreen разметку не меняет)
     showScreen('service');
     loadServiceBadges();     // второй такой же запрос внутри showScreen не уйдёт — см. loadServiceBadges
+  }
+  function svcOpenFolder(id) {
+    svcFolder = id;
+    renderService();
+    window.scrollTo(0, 0);
+  }
+  // «Назад» на экране «Сервис»: из папки — к плиткам, с плиток — на главный
+  function svcBack() {
+    if (svcFolder) { svcFolder = null; renderService(); window.scrollTo(0, 0); loadServiceBadges(); return; }
+    showScreen('home');
   }
 
   function applyRoleUI() {
@@ -7224,7 +7301,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     // «Сервис» — отдельный экран: меню, теги, сотрудники, кандидаты. На главной — одна строка.
     const serviceItems = serviceItemsFor();
     let serviceRows = '';
-    if (serviceItems.length) serviceRows = qrow(icons.service, 'Сервис', serviceItems.map(i => i.short).join(' · '), "openService()", { extraClass: 'svc-main' });
+    if (serviceItems.length) serviceRows = qrow(icons.service, 'Сервис', serviceEntriesFor().map(i => i.short).join(' · '), "openService()", { extraClass: 'svc-main' });
 
     let html = '';
     // Кнопки «Открыть смену» / «Закрыть смену» — наверху главного экрана (у основателя их нет: он только смотрит)
@@ -23158,6 +23235,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     document.body.classList.toggle('desk-home', name === 'home');   // боковые панели (дата, смена, афиша…) — только на главной
     // На широком экране всё занимает всю ширину, кроме форм и карточек одной записи: у них поля в 1200px бессмысленны,
     // они остаются колонкой 900px по центру.
+    if (name === 'home') svcFolder = null;   // с главного «Сервис» снова открывается плитками
     document.body.classList.toggle('col-narrow', NARROW_SCREENS.indexOf(name) >= 0);
     if (name === 'home' || name === 'service') fitTileGrids();   // экран только что стал видимым — теперь у плиток есть ширина
     if (name === 'pin' && prev !== 'pin' && !opts.keepAuth) authEnter(); // вход истёк или вышли: экран входа
