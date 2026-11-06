@@ -1162,6 +1162,31 @@
     #clvContent .sr-step input[type="number"]::-webkit-inner-spin-button, #clvContent .sr-step input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     .clv-sel { width: 100%; height: 44px; padding: 0 12px; font-size: 15px; }
     .clv-note { margin: 0 0 10px; padding: 12px 14px; border-radius: 14px; background: var(--accent-dim); border: 1px solid rgba(var(--ac),0.3); font-size: 12.5px; line-height: 1.5; color: var(--text-sub); }
+
+    /* ЗАПУСК КАРТЫ: три режима, цифры, список приглашённых */
+    .cro-opts { display: grid; gap: 8px; margin-bottom: 10px; }
+    .cro-opt { display: flex; align-items: flex-start; gap: 12px; width: 100%; padding: 14px; border-radius: 16px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text); font-family: 'Montserrat', sans-serif; text-align: left; cursor: pointer; }
+    .cro-opt:active { background: rgba(var(--fg-rgb),0.06); }
+    .cro-opt[aria-checked="true"] { border-color: rgba(var(--ac),0.55); background: var(--accent-dim); cursor: default; }
+    .cro-opt:disabled { opacity: 0.6; cursor: default; }
+    .cro-dot { flex: none; width: 18px; height: 18px; margin-top: 1px; border-radius: 50%; border: 1.5px solid rgba(var(--fg-rgb),0.35); position: relative; }
+    .cro-opt[aria-checked="true"] .cro-dot { border-color: var(--accent); }
+    .cro-opt[aria-checked="true"] .cro-dot::after { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: var(--accent); }
+    .cro-opt b { display: block; font-size: 14px; font-weight: 500; line-height: 1.35; }
+    .cro-opt small { display: block; margin-top: 3px; font-size: 12px; line-height: 1.45; color: var(--text-muted); }
+    .cro-counts { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px 14px; }
+    .cro-counts span { display: block; font-size: 11px; color: var(--text-muted); }
+    .cro-counts b { display: block; margin-top: 1px; font-size: 18px; font-weight: 400; color: var(--text); font-variant-numeric: tabular-nums; }
+    .cro-list { display: grid; }
+    .cro-row { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-top: 1px solid var(--border); }
+    .cro-row:first-child { border-top: none; }
+    .cro-who { flex: 1 1 auto; min-width: 0; background: none; border: none; padding: 0; color: var(--text); font-family: 'Montserrat', sans-serif; text-align: left; cursor: pointer; }
+    .cro-who b { display: block; font-size: 13.5px; font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .cro-who small { display: block; margin-top: 2px; font-size: 11.5px; line-height: 1.4; color: var(--text-muted); }
+    .cro-row .link-btn { flex: none; padding: 6px 0; }
+    .gd-lc-inv { margin: 0 auto; max-width: 420px; font-size: 12px; line-height: 1.45; color: var(--text-sub); }
+    .gd-lc-inv b { font-weight: 500; color: var(--text); }
+    @media (min-width: 700px) { #croContent { max-width: 640px; } }
     @media (min-width: 700px) { #clvContent { max-width: 640px; } #clvContent .sr-step input.form-input { flex: 0 0 140px; } #clvContent .sr-step select.clv-sel { flex: 0 0 auto; width: 260px; } }
 
     /* СЕРВИС: общие кирпичи экранов настроек (Состояние, Сезоны, Просьбы об отзыве, Поздравления, Журнал) */
@@ -5824,6 +5849,19 @@ body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-le
   </div>
 </div>
 
+<div class="screen" id="screen-card-rollout">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('service')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Запуск карты</h1><p>Кому гость видит карту: никому, приглашённым или всем</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div id="croContent" style="margin-top:6px"><div class="loading">Загружаю...</div></div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
 <!-- АВТОТЕГИ: список (Сервис → Автотеги, только основатель) и форма настройки одного -->
 <div class="screen" id="screen-autotags">
   <div class="header">
@@ -6511,7 +6549,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function fallbackPerms(jobRole) {
     const base = ['guests.view', 'guests.create', 'guests.edit', 'tags.use', 'visits.record', 'guests.birthdays', 'guests.vip_list', 'shift.mark', 'schedule.view', 'menu.view', 'problems.view', 'problems.report', 'problems.work_own_role'];
     const own = { 'Бармен': ['menu.stoplist_drinks', 'tips.view'], 'Повар': ['menu.stoplist_food'], 'КМ': ['menu.stoplist_hookah', 'tobacco.manage', 'tips.view'], 'Официант': ['tips.view'] }[jobRole] || [];
-    const admin = ['guests.spend', 'shifts.review', 'briefing.view', 'tobacco.manage', 'tips.view', 'tips.manage', 'ext_reviews.manage', 'stories.manage', 'tv.manage', 'standards.manage', 'checklists.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage', 'messages.view', 'guests.history'];
+    const admin = ['guests.spend', 'guests.card_invite', 'shifts.review', 'briefing.view', 'tobacco.manage', 'tips.view', 'tips.manage', 'ext_reviews.manage', 'stories.manage', 'tv.manage', 'standards.manage', 'checklists.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage', 'messages.view', 'guests.history'];
     const owner = ['surveys.manage', 'tags.manage', 'audit.view', 'settings.manage', 'founder_tasks.create', 'marketing.send', 'marketing.log', 'analytics.view', 'segments.view', 'feedback.view', 'guests.table', 'candidates.view'];
     if (jobRole === 'Основатель') return base.concat(admin, owner);
     if (jobRole === 'Администратор') return base.concat(admin);
@@ -6990,7 +7028,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // Сами разделы и права не менялись: если в папке у сотрудника открыт один раздел, на экране стоит плитка этого раздела.
   var SVC_FOLDERS = [
     { id: 'app',    icon: 'appcontent', title: 'Приложение гостя',      short: 'приложение гостя',      lead: 'Что гость видит в своём приложении',          rows: ['appcontent', 'stories', 'season'] },
-    { id: 'rules',  icon: 'tags',       title: 'Правила гостей',        short: 'правила гостей',        lead: 'Теги, сегменты и уровни карты гостей',       rows: ['tags', 'autotags', 'segments', 'cardlevels'] },
+    { id: 'rules',  icon: 'tags',       title: 'Правила гостей',        short: 'правила гостей',        lead: 'Теги, сегменты, уровни и запуск карты гостей',       rows: ['tags', 'autotags', 'segments', 'cardlevels', 'cardrollout'] },
     { id: 'bot',    icon: 'reviews',    title: 'Бот и отзывы',          short: 'бот и отзывы',          lead: 'Что бот пишет гостям и как выглядит отзыв',  rows: ['birthday', 'reviews', 'surveys'] },
     { id: 'checks', icon: 'checklists', title: 'Чек-листы и стандарты', short: 'чек-листы и стандарты', lead: 'Как проходит смена и как работает зал',      rows: ['checklists', 'standards'] },
     { id: 'team',   icon: 'team',       title: 'Команда',               short: 'команда',               lead: 'Сотрудники и отклики на вакансии',           rows: ['team', 'candidates'] },
@@ -7015,6 +7053,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('settings.manage')) add('autotags', 'автотеги', 'Автотеги', 'Что система отмечает в карточке гостя сама: пороги, цвета, кому показывать', 'openAutotags()');
     if (can('settings.manage')) add('segments', 'сегменты', 'Правила сегментов', 'Границы: дни и визиты', 'openSegmentRules()');
     if (can('settings.manage')) add('cardlevels', 'уровни карты', 'Уровни карты', 'Silver, Gold и Platinum: сколько гость тратит', 'openCardLevels()');
+    if (can('settings.manage')) add('cardrollout', 'запуск карты', 'Запуск карты', 'Кому показывать карту: никому, приглашённым или всем', 'openCardRollout()');
     if (can('settings.manage') || can('marketing.send')) add('birthday', 'поздравления', 'Поздравления', 'Что бот пишет именинникам', 'openBirthdayText()');
     if (can('settings.manage')) add('reviews', 'просьбы', 'Просьбы об отзыве', 'Когда и кому бот пишет', 'openReviewRules()');
     if (can('surveys.manage')) add('surveys', 'оформление', 'Оформление отзыва', 'Отзыв гостя и опрос команды: фон, тексты', 'openSurveysEdit()');
@@ -7221,7 +7260,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   var SVC_SCREENS = {
     menu: ['menu-edit', 'menu-item-form'], appcontent: ['app-content'], stories: ['stories-edit'], season: ['season'], site: ['site'],
     tv: ['tv', 'tv-room'], tags: ['tags-edit', 'tag-form', 'tag-merge'], autotags: ['autotags', 'autotag-edit'], segments: ['segment-rules'],
-    cardlevels: ['card-levels'], birthday: ['birthday-text'], reviews: ['review-rules'], surveys: ['surveys-edit', 'survey-form'],
+    cardlevels: ['card-levels'], cardrollout: ['card-rollout'], birthday: ['birthday-text'], reviews: ['review-rules'], surveys: ['surveys-edit', 'survey-form'],
     venue: ['venue'], checklists: ['checklists-edit', 'checklist-form'], standards: [], tobacco: ['tobacco'], tips: ['tips-admin'],
     team: ['employees', 'employee-form'], candidates: ['candidates'], audit: ['audit'], status: ['system-status']
   };
@@ -7312,6 +7351,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       analytics: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>',
       feedback: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M21 12a8 8 0 01-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1121 12z"/></svg>',
       cardlevels: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 10h18"/><path d="M7 15h4" opacity="0.6"/></svg>',
+      cardrollout: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"><rect x="3" y="7" width="18" height="10" rx="5"/><circle cx="16" cy="12" r="2.6"/><path d="M7 12h3" opacity="0.6"/></svg>',
       segments: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/><path d="M3 17.5l9 5 9-5" opacity="0.55"/></svg>',
       duplicates: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2"/></svg>',
       menu: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h11a3 3 0 013 3v15H8a3 3 0 01-3-3V3z"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="12" y2="16"/></svg>',
@@ -14005,6 +14045,93 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       btn.disabled = false; btn.textContent = 'Сохранить';
       notify(tgNetErr(e));
     }
+  }
+
+  // ─── СЕРВИС → ГОСТИ: ЗАПУСК КАРТЫ ПО ЭТАПАМ (право settings.manage — основатель) ───
+  // Режим «Выключена / По приглашению / Всем» и список приглашённых. Приглашает гостей кнопка в карточке гостя.
+  var cro = null;      // ответ сервера: режим, цифры, последние приглашённые
+  var croBusy = false;
+  const CRO_OPTS = [
+    ['off', 'Выключена', 'Карты нет ни в приложении, ни на сайте. Выданные карты не пропадают: вернутся, когда вы снова включите.'],
+    ['invite', 'По приглашению', 'Карту видит и оформляет гость, которого вы пригласили, и тот, у кого она уже есть. Остальные её не видят.'],
+    ['all', 'Всем', 'Карту видят и оформляют все гости, в приложении и на сайте.']
+  ];
+  function openCardRollout() {
+    if (!needPerm('settings.manage', 'менять запуск карты')) return;
+    showScreen('card-rollout');
+    loadCardRollout();
+  }
+  async function loadCardRollout() {
+    const el = document.getElementById('croContent');
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/card-rollout?pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить запуск карты'));
+      cro = await res.json();
+      renderCardRollout();
+    } catch (e) {
+      el.innerHTML = errorStateHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером', 'loadCardRollout()');
+    }
+  }
+  function renderCardRollout() {
+    const el = document.getElementById('croContent');
+    if (!cro) return;
+    const c = cro.counts || {};
+    const meta = cro.meta && cro.meta.updatedAt ? `Последняя правка: ${fmtDateTime(cro.meta.updatedAt)}${cro.meta.updatedBy ? ', ' + escHtml(cro.meta.updatedBy) : ''}` : 'Пока стоит режим по умолчанию';
+    const notReady = !cro.ready
+      ? '<div class="clv-note">Запуск по этапам ещё не включён на сервере: нужно применить миграцию 055. Пока карта открыта всем, как было.</div>' : '';
+    const opts = CRO_OPTS.map(([k, t, d]) => `<button type="button" class="cro-opt" role="radio" aria-checked="${cro.mode === k}" data-mode="${k}" ${cro.ready ? '' : 'disabled'} onclick="setCardRolloutMode('${k}')"><span class="cro-dot"></span><span><b>${escHtml(t)}</b><small>${escHtml(d)}</small></span></button>`).join('');
+    const who = (r) => {
+      const bits = [r.hasCard ? 'оформил карту' : 'ещё не оформил', r.invitedAt ? fmtDateTime(r.invitedAt) : '', r.invitedBy || ''].filter(Boolean);
+      return `<div class="cro-row"><button type="button" class="cro-who" onclick="openGuestCard('${escCls(r.guestId)}')"><b>${escHtml(r.name)}${r.phone ? ' · ' + escHtml(fmtPhoneRu(r.phone)) : ''}</b><small>${escHtml(bits.join(' · '))}</small></button>
+        <button type="button" class="link-btn" onclick="croRevoke('${escCls(r.guestId)}')">Отозвать</button></div>`;
+    };
+    el.innerHTML = notReady
+      + '<div class="sec">Кому показывать карту</div>'
+      + `<div class="cro-opts" role="radiogroup" aria-label="Кому показывать карту">${opts}</div>`
+      + `<div class="note">${meta}. Гости подхватывают смену за полминуты: приложение при следующем открытии, сайт при следующей загрузке.</div>`
+      + '<div class="sec">Приглашённые</div>'
+      + `<div class="sr-card"><div class="cro-counts"><div><span>Приглашено</span><b>${c.invited || 0}</b></div><div><span>Оформили карту</span><b>${c.invitedWithCard || 0}</b></div><div><span>Ещё не оформили</span><b>${c.invitedWaiting || 0}</b></div><div><span>Карта у гостей без приглашения</span><b>${c.holdersNotInvited || 0}</b></div></div>
+         <div class="rr-h" style="margin-top:10px">Приглашает любой сотрудник с правом «Приглашать гостей оформить карту» (у основателя и администратора оно есть): в карточке гостя, плитка «Карта гостя» → «Пригласить к карте». Согласие на данные гость даёт сам.</div></div>`
+      + ((cro.recent || []).length ? `<div class="sr-card"><div class="cro-list">${cro.recent.map(who).join('')}</div></div>` : '<div class="note">Пока никого не приглашали.</div>');
+  }
+  async function setCardRolloutMode(mode) {
+    if (!cro || !cro.ready || croBusy || cro.mode === mode) return;
+    if (!needPerm('settings.manage', 'менять запуск карты')) return;
+    const c = cro.counts || {};
+    const texts = {
+      off: `Выключить карту для всех?\n\nГости перестанут видеть карту в приложении и на сайте, даже те, у кого она уже есть${c.holders ? ` (карт выдано: ${c.holders})` : ''}. Выданные карты сохранятся и вернутся при включении.`,
+      invite: `Открыть карту по приглашению?\n\nКарту увидят приглашённые гости (${c.invited || 0}) и те, у кого она уже есть${c.holders ? ` (${c.holders})` : ''}. Остальные её не увидят.`,
+      all: 'Открыть карту всем?\n\nКарту увидят и смогут оформить все гости: в приложении и на сайте. Вернуть закрытие можно в любой момент.'
+    };
+    if (!await askConfirm(texts[mode], { ok: mode === 'off' ? 'Выключить' : 'Включить', danger: mode === 'off' })) return;
+    croBusy = true;
+    try {
+      cro = await tgRequest('PUT', '/api/admin/card-rollout', { mode });
+      renderCardRollout();
+      notify(`Карта: ${(CRO_OPTS.find(o => o[0] === mode) || [])[1] || mode}`);
+    } catch (e) {
+      notify(tgNetErr(e));
+    }
+    croBusy = false;
+  }
+  async function croRevoke(id) {
+    if (!id || croBusy) return;
+    const r = (cro.recent || []).find(x => x.guestId === id);
+    if (!await askConfirm(`Отозвать приглашение?\n\n${r ? r.name : 'Гость'} больше не сможет оформить карту.${r && r.hasCard ? ' Выданная карта у него останется и будет видна.' : ''}`, { ok: 'Отозвать', danger: true })) return;
+    croBusy = true;
+    try {
+      await tgRequest('PUT', `/api/staff/guest/${id}/card-invite`, { invited: false });
+      notify('Приглашение отозвано');
+      croBusy = false;
+      await loadCardRollout();
+      return;
+    } catch (e) {
+      notify(tgNetErr(e));
+    }
+    croBusy = false;
   }
 
   // ─── СЕРВИС → КОНТЕНТ: СЕЗОНЫ (праздничная анимация в приложении гостя) ───
@@ -23319,7 +23446,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'svforms', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'card-levels', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'app-content', 'site', 'tobacco', 'tips-mine', 'tips-admin', 'xr', 'xr-edit', 'xr-tpl', 'dashboard', 'autotags', 'autotag-edit'];
+  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'svforms', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'card-levels', 'card-rollout', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'app-content', 'site', 'tobacco', 'tips-mine', 'tips-admin', 'xr', 'xr-edit', 'xr-tpl', 'dashboard', 'autotags', 'autotag-edit'];
   var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'app-content', 'site', 'tips-mine', 'tips-admin', 'xr-edit', 'xr-tpl', 'autotag-edit', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklist-form'];
   // «card» остаётся в списке: на узком окне это колонка; на широком её растягивает правило «#screen-card» в wide-css, а две колонки включает container-запрос
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
@@ -24407,10 +24534,20 @@ function qrPlateSvg(text) {
     if (!c || !c.ready) return '';
     const day = (iso) => iso ? new Date(iso).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Moscow' }).replace(/\s?г\.$/, '') : '';
     if (!c.issued) {
+      const mode = c.rolloutMode || 'all';
+      // Карта открыта не всем (миграция 055): гостя можно пригласить, и тогда он увидит и оформит её сам
+      const gate = mode === 'all' ? '' : mode === 'off' ? 'Карта сейчас выключена для всех: приглашение сработает, когда её включат.' : '';
+      const who = c.invitedBy || c.invitedAt ? ` · ${c.invitedBy ? escHtml(c.invitedBy) + (c.invitedAt ? ', ' : '') : ''}${c.invitedAt ? escHtml(day(c.invitedAt)) : ''}` : '';
+      const invite = mode === 'all' ? ''
+        : c.invited ? `<div class="gd-lc-inv"><b>Приглашён к карте</b>${who}</div>${can('guests.card_invite') ? `<button type="button" class="link-btn gd-lc-invbtn" onclick="toggleCardInvite(false)">Отозвать приглашение</button>` : ''}`
+        : can('guests.card_invite') ? `<button type="button" class="btn-ghost gd-lc-invbtn" style="width:auto;margin:2px auto 0;padding:9px 18px" onclick="toggleCardInvite(true)">Пригласить к карте</button>`
+        : '<div class="gd-lc-inv">Карта открыта только по приглашению</div>';
       const note = c.phoneVerified === true ? 'Номер подтверждён через Telegram: гость может оформить карту сам в приложении.'
         : c.phoneVerified === false ? 'Номер ещё не подтверждён через Telegram: без этого карту не оформить.' : '';
       return `<div class="gd-panel gd-lc empty">
         <div class="gd-lc-none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4"/></svg>Нет карты гостя</div>
+        ${invite}
+        ${gate ? `<div class="gd-lc-note">${escHtml(gate)}</div>` : ''}
         ${note ? `<div class="gd-lc-note">${escHtml(note)}</div>` : ''}
       </div>`;
     }
@@ -24433,6 +24570,25 @@ function qrPlateSvg(text) {
         <div><span>Рассылки в Telegram</span><b>${mk}</b></div>
       </div>
     </div>`;
+  }
+
+  // Пригласить гостя к карте или отозвать приглашение (право guests.card_invite). Гость сам даёт согласие при оформлении.
+  var cardInviteBusy = false;
+  async function toggleCardInvite(want) {
+    const g = currentGuest;
+    if (!g || cardInviteBusy) return;
+    if (!needPerm('guests.card_invite', 'приглашать гостей к карте')) return;
+    const name = g.fullName || g.name || 'Гость';
+    if (!want && !await askConfirm('Отозвать приглашение к карте?\n\nГость больше не сможет оформить карту, пока карта открыта только по приглашению.', { ok: 'Отозвать', danger: true })) return;
+    cardInviteBusy = true;
+    try {
+      const d = await tgRequest('PUT', `/api/staff/guest/${g.id}/card-invite`, { invited: !!want });
+      if (currentGuest && currentGuest.id === g.id) { currentGuest.loyaltyCard = d.loyaltyCard; renderGuestCard(currentGuest); }
+      notify(want ? `${name}: приглашён к карте` : 'Приглашение отозвано');
+    } catch (e) {
+      notify(tgNetErr(e));
+    }
+    cardInviteBusy = false;
   }
 
   // Основатель назначает гостю уровень карты вручную или возвращает расчёт по тратам (право settings.manage)
@@ -27311,7 +27467,7 @@ function qrPlateSvg(text) {
       { key: 'svc', title: 'Сервис', icon: ic('<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'),
         dyn: function () { return typeof svcRailItems === 'function' ? svcRailItems() : []; },
         extra: ['service', 'employees', 'employee-form', 'stories-edit', 'surveys-edit', 'survey-form', 'tv', 'tv-room', 'tags-edit', 'tag-form', 'tag-merge', 'audit', 'venue',
-                'birthday-text', 'segment-rules', 'card-levels', 'autotags', 'autotag-edit', 'season', 'tips-admin', 'review-rules', 'system-status', 'menu-edit', 'menu-item-form', 'candidates',
+                'birthday-text', 'segment-rules', 'card-levels', 'card-rollout', 'autotags', 'autotag-edit', 'season', 'tips-admin', 'review-rules', 'system-status', 'menu-edit', 'menu-item-form', 'candidates',
                 'checklists-edit', 'checklist-form', 'tobacco', 'app-content', 'site'], items: [] }
     ];
     // Пункты группы: у «Сервиса» они зависят от прав и плашек и собираются каждый раз заново, у остальных — готовый список
