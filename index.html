@@ -6549,8 +6549,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function fallbackPerms(jobRole) {
     const base = ['guests.view', 'guests.create', 'guests.edit', 'tags.use', 'visits.record', 'guests.birthdays', 'guests.vip_list', 'shift.mark', 'schedule.view', 'menu.view', 'problems.view', 'problems.report', 'problems.work_own_role'];
     const own = { 'Бармен': ['menu.stoplist_drinks', 'tips.view'], 'Повар': ['menu.stoplist_food'], 'КМ': ['menu.stoplist_hookah', 'tobacco.manage', 'tips.view'], 'Официант': ['tips.view'] }[jobRole] || [];
-    const admin = ['guests.spend', 'guests.card_invite', 'shifts.review', 'briefing.view', 'tobacco.manage', 'tips.view', 'tips.manage', 'ext_reviews.manage', 'stories.manage', 'tv.manage', 'standards.manage', 'checklists.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage', 'messages.view', 'guests.history'];
-    const owner = ['surveys.manage', 'tags.manage', 'audit.view', 'settings.manage', 'founder_tasks.create', 'marketing.send', 'marketing.log', 'analytics.view', 'segments.view', 'feedback.view', 'guests.table', 'candidates.view'];
+    const admin = ['guests.spend', 'shifts.review', 'briefing.view', 'tobacco.manage', 'tips.view', 'tips.manage', 'ext_reviews.manage', 'stories.manage', 'tv.manage', 'standards.manage', 'checklists.manage', 'guests.merge', 'guests.list_inactive', 'bookings.view', 'bookings.create', 'bookings.confirm', 'bookings.cancel', 'bookings.edit', 'bookings.assign_table', 'bookings.mark_arrival', 'problems.manage_all', 'schedule.edit', 'menu.stoplist_drinks', 'menu.stoplist_food', 'menu.stoplist_hookah', 'events.manage', 'founder_tasks.manage', 'notes.manage', 'menu.manage', 'messages.view', 'guests.history'];
+    const owner = ['guests.card_invite', 'surveys.manage', 'tags.manage', 'audit.view', 'settings.manage', 'founder_tasks.create', 'marketing.send', 'marketing.log', 'analytics.view', 'segments.view', 'feedback.view', 'guests.table', 'candidates.view'];
     if (jobRole === 'Основатель') return base.concat(admin, owner);
     if (jobRole === 'Администратор') return base.concat(admin);
     return base.concat(own);
@@ -14094,7 +14094,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       + `<div class="note">${meta}. Гости подхватывают смену за полминуты: приложение при следующем открытии, сайт при следующей загрузке.</div>`
       + '<div class="sec">Приглашённые</div>'
       + `<div class="sr-card"><div class="cro-counts"><div><span>Приглашено</span><b>${c.invited || 0}</b></div><div><span>Оформили карту</span><b>${c.invitedWithCard || 0}</b></div><div><span>Ещё не оформили</span><b>${c.invitedWaiting || 0}</b></div><div><span>Карта у гостей без приглашения</span><b>${c.holdersNotInvited || 0}</b></div></div>
-         <div class="rr-h" style="margin-top:10px">Приглашает любой сотрудник с правом «Приглашать гостей оформить карту» (у основателя и администратора оно есть): в карточке гостя, плитка «Карта гостя» → «Пригласить к карте». Согласие на данные гость даёт сам.</div></div>`
+         <div class="rr-h" style="margin-top:10px">Приглашает сотрудник с правом «Приглашать гостей оформить карту», сейчас оно только у основателя: в карточке гостя, плитка «Карта гостя» → «Пригласить к карте». Согласие на данные гость даёт сам.</div></div>`
       + ((cro.recent || []).length ? `<div class="sr-card"><div class="cro-list">${cro.recent.map(who).join('')}</div></div>` : '<div class="note">Пока никого не приглашали.</div>');
   }
   async function setCardRolloutMode(mode) {
