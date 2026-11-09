@@ -1186,6 +1186,8 @@
     .cro-row .link-btn { flex: none; padding: 6px 0; }
     .gd-lc-inv { margin: 0 auto; max-width: 420px; font-size: 12px; line-height: 1.45; color: var(--text-sub); }
     .gd-lc-inv b { font-weight: 500; color: var(--text); }
+    .gd-lc-ntf { margin-top: 4px; color: var(--text-muted); }
+    .gd-lc-ntf.warn { color: var(--accent); }
     @media (min-width: 700px) { #croContent { max-width: 640px; } }
     @media (min-width: 700px) { #clvContent { max-width: 640px; } #clvContent .sr-step input.form-input { flex: 0 0 140px; } #clvContent .sr-step select.clv-sel { flex: 0 0 auto; width: 260px; } }
 
@@ -13492,7 +13494,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
         return { ...d.sendFailures, total: d.sendFailures.total - adminFailed, byKind, last };
       })() : null;
       if (sf) {
-        const KIND = { booking: 'по броням', broadcast: 'рассылки', birthday: 'поздравления', review: 'просьбы об отзыве' };
+        const KIND = { booking: 'по броням', broadcast: 'рассылки', birthday: 'поздравления', review: 'просьбы об отзыве', card: 'сообщения о карте' };
         if (!sf.total) add(2, 'mail', 'ok', 'Сообщения гостям', 'За сутки все дошли');
         else {
           const parts = Object.keys(sf.byKind).map(k => `${KIND[k] || k}: ${sf.byKind[k].failed}${sf.byKind[k].blocked ? ` (из них заблокировали бота: ${sf.byKind[k].blocked})` : ''}`);
@@ -14084,7 +14086,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       ? '<div class="clv-note">Запуск по этапам ещё не включён на сервере: нужно применить миграцию 055. Пока карта открыта всем, как было.</div>' : '';
     const opts = CRO_OPTS.map(([k, t, d]) => `<button type="button" class="cro-opt" role="radio" aria-checked="${cro.mode === k}" data-mode="${k}" ${cro.ready ? '' : 'disabled'} onclick="setCardRolloutMode('${k}')"><span class="cro-dot"></span><span><b>${escHtml(t)}</b><small>${escHtml(d)}</small></span></button>`).join('');
     const who = (r) => {
-      const bits = [r.hasCard ? 'оформил карту' : 'ещё не оформил', r.invitedAt ? fmtDateTime(r.invitedAt) : '', r.invitedBy || ''].filter(Boolean);
+      const bits = [r.hasCard ? 'оформил карту' : 'ещё не оформил', r.invitedAt ? fmtDateTime(r.invitedAt) : '', r.invitedBy || '',
+        r.notifyResult === 'sent' ? 'сообщение ушло' : r.notifyResult && !r.hasCard ? 'сообщение не дошло' : ''].filter(Boolean);
       return `<div class="cro-row"><button type="button" class="cro-who" onclick="openGuestCard('${escCls(r.guestId)}')"><b>${escHtml(r.name)}${r.phone ? ' · ' + escHtml(fmtPhoneRu(r.phone)) : ''}</b><small>${escHtml(bits.join(' · '))}</small></button>
         <button type="button" class="link-btn" onclick="croRevoke('${escCls(r.guestId)}')">Отозвать</button></div>`;
     };
@@ -24539,7 +24542,7 @@ function qrPlateSvg(text) {
       const gate = mode === 'all' ? '' : mode === 'off' ? 'Карта сейчас выключена для всех: приглашение сработает, когда её включат.' : '';
       const who = c.invitedBy || c.invitedAt ? ` · ${c.invitedBy ? escHtml(c.invitedBy) + (c.invitedAt ? ', ' : '') : ''}${c.invitedAt ? escHtml(day(c.invitedAt)) : ''}` : '';
       const invite = mode === 'all' ? ''
-        : c.invited ? `<div class="gd-lc-inv"><b>Приглашён к карте</b>${who}</div>${can('guests.card_invite') ? `<button type="button" class="link-btn gd-lc-invbtn" onclick="toggleCardInvite(false)">Отозвать приглашение</button>` : ''}`
+        : c.invited ? `<div class="gd-lc-inv"><b>Приглашён к карте</b>${who}</div>${cardNotifyLine(c)}${can('guests.card_invite') ? `<button type="button" class="link-btn gd-lc-invbtn" onclick="toggleCardInvite(false)">Отозвать приглашение</button>` : ''}`
         : can('guests.card_invite') ? `<button type="button" class="btn-ghost gd-lc-invbtn" style="width:auto;margin:2px auto 0;padding:9px 18px" onclick="toggleCardInvite(true)">Пригласить к карте</button>`
         : '<div class="gd-lc-inv">Карта открыта только по приглашению</div>';
       const note = c.phoneVerified === true ? 'Номер подтверждён через Telegram: гость может оформить карту сам в приложении.'
@@ -24573,18 +24576,46 @@ function qrPlateSvg(text) {
   }
 
   // Пригласить гостя к карте или отозвать приглашение (право guests.card_invite). Гость сам даёт согласие при оформлении.
+  // При приглашении гостю по умолчанию уходит одно сообщение от бота «Вам открыта карта» с кнопкой оформления (миграция 056);
+  // если пригласили лично, сообщение можно не отправлять. Результат (дошло или нет) показываем сразу и храним в карточке гостя.
   var cardInviteBusy = false;
+  const CARD_NOTIFY_TOAST = {
+    sent: 'сообщение отправлено', no_telegram: 'у гостя нет Telegram, скажите ему лично', opted_out: 'гость отписан от рассылок, скажите ему лично',
+    blocked: 'гость заблокировал бота, скажите ему лично', failed: 'сообщение не дошло, скажите гостю лично', closed: 'карта сейчас выключена, сообщение не отправляли',
+    has_card: 'карта у гостя уже есть', no_guest: 'карточка не найдена', unreachable: 'не удалось проверить, ушло ли сообщение'
+  };
+  // Строка в карточке гостя под «Приглашён к карте»: что с сообщением
+  function cardNotifyLine(c) {
+    const r = c.notifyResult || '';
+    const when = c.notifiedAt ? ' · ' + new Date(c.notifiedAt).toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Moscow' }) : '';
+    const L = {
+      sent: ['Сообщение гостю отправлено' + when, ''], '': ['Сообщение гостю не отправляли', ''],
+      no_telegram: ['Сообщение не отправлено: у гостя нет Telegram. Скажите ему лично', 'warn'], opted_out: ['Сообщение не отправлено: гость отписан от рассылок. Скажите ему лично', 'warn'],
+      blocked: ['Сообщение не доставлено: гость заблокировал бота. Скажите ему лично', 'warn'], failed: ['Сообщение не доставлено: Telegram не принял. Скажите ему лично', 'warn'],
+      closed: ['Сообщение не отправляли: карта была выключена', ''], unreachable: ['Не удалось проверить, ушло ли сообщение', 'warn']
+    };
+    const x = L[r]; if (!x || r === 'has_card' || r === 'no_guest') return '';
+    return `<div class="gd-lc-inv gd-lc-ntf${x[1] ? ' warn' : ''}">${escHtml(x[0])}</div>`;
+  }
   async function toggleCardInvite(want) {
     const g = currentGuest;
     if (!g || cardInviteBusy) return;
     if (!needPerm('guests.card_invite', 'приглашать гостей к карте')) return;
     const name = g.fullName || g.name || 'Гость';
     if (!want && !await askConfirm('Отозвать приглашение к карте?\n\nГость больше не сможет оформить карту, пока карта открыта только по приглашению.', { ok: 'Отозвать', danger: true })) return;
+    let writeToGuest = true;
+    if (want) {
+      const pick = await askChoice(`Пригласить ${name} к карте?\n\nГость увидит карту в приложении. Сообщение от бота «Вам открыта карта» с кнопкой оформления уходит один раз.`,
+        ['Пригласить и написать гостю', 'Пригласить без сообщения']);
+      if (!pick) return;
+      writeToGuest = pick === 'Пригласить и написать гостю';
+    }
     cardInviteBusy = true;
     try {
-      const d = await tgRequest('PUT', `/api/staff/guest/${g.id}/card-invite`, { invited: !!want });
+      const d = await tgRequest('PUT', `/api/staff/guest/${g.id}/card-invite`, want ? { invited: true, notify: writeToGuest } : { invited: false });
       if (currentGuest && currentGuest.id === g.id) { currentGuest.loyaltyCard = d.loyaltyCard; renderGuestCard(currentGuest); }
-      notify(want ? `${name}: приглашён к карте` : 'Приглашение отозвано');
+      const tail = want && writeToGuest && d.notifyResult ? ': ' + (CARD_NOTIFY_TOAST[d.notifyResult] || d.notifyResult) : '';
+      notify(want ? `${name}: приглашён к карте${tail}` : 'Приглашение отозвано');
     } catch (e) {
       notify(tgNetErr(e));
     }
