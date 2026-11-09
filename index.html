@@ -9928,6 +9928,20 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     });
     return { id: 'vip', title: 'ВИП-комнаты', baseWidth: 128, height: 394, decor: () => [], tables };
   })();
+  // Балкон колонкой — когда терраса не нарисована и справа от ВИП-комнат есть место: на плане он вытягивал схему вниз, под залом.
+  // Те же два стола «Балкон 1» и «Балкон 2» (ключи не меняются, брони и отметки те же), высота колонки — как у зала и ВИП-комнат.
+  const HALL_BALC_COL = (() => {
+    const cx = 50;
+    const tables = [[1, 130], [2, 262]].map(([n, y]) => ({ key: `Балкон ${n}`, short: `Б${n}`, seats: 2, shape: 'round', x: cx, y, r: 18, ticks: 'lr', label: [cx, y - 28, 'middle'], labelMax: 90 }));
+    return {
+      id: 'balcony', title: 'Балкон', baseWidth: 100, height: 394,
+      decor: (W) => [
+        `<rect x="2" y="2" width="${W - 4}" height="388" rx="10" class="hz-balc"/>`,
+        '<text x="14" y="379" class="hz-bar-word">БАЛКОН</text>'
+      ],
+      tables
+    };
+  })();
 
   // Раскладка зоны под ширину контейнера (px): на телефоне — как есть (ширина 400),
   // на широком экране — вширь, чтобы схема заняла всю ширину и не стала слишком высокой.
@@ -10558,12 +10572,14 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // Широкий экран: слева зал и под ним балкон, справа колонка ВИП-комнат (3 сверху, 1 снизу) в том же масштабе.
   // Схема не растягивается вширь: столы стоят так, как нарисованы (ширина зала всегда 400), на большом экране она просто крупнее —
   // до HALL_P_MAX пикселей на единицу — и прижата влево. Раньше зал растягивали на всю ширину, и между столами появлялись пустые поля.
+  // Терраса закрыта и на плане не нарисована, а справа остаётся много места (экран шире ~1030 px под схему): балкон встаёт узкой колонкой
+  // справа от ВИП-комнат (balcSide), схема становится ниже и поэтому может быть крупнее — до maxP (его задаёт высота окна), чтобы целиком умещаться на экране.
   // Если справа остаётся место для террасы (масштаб не меньше HALL_SIDE_P_MIN — не мельче, чем на телефоне), терраса стоит третьей колонкой
   // рядом с ВИП-комнатами в том же масштабе (под ней балкон — низ колонки вровень с залом), вкладки не нужны (side). Не хватает места — терраса на своей вкладке, как раньше.
   const HALL_WIDE_MIN = 620, HALL_PLAN_GAP = 12, HALL_P_MAX = 1.6, HALL_SIDE_P_MIN = 1.0;
   // Широкая схема: зал слева, справа колонка (шкала времени, режимы, «Ждут стола»). Ширина колонки — и в CSS (.hz-split)
   const HALL_SPLIT_MIN = 1280, HALL_SIDE_W = 340, HALL_SIDE_GAP = 18;
-  function layoutHallPlan(containerPx, wantTerr) {
+  function layoutHallPlan(containerPx, wantTerr, maxP) {
     const cw = Math.max(1, containerPx || 0);
     const wide = cw >= HALL_WIDE_MIN;
     const balcDef = HALL_ZONES.find(z => z.id === 'balcony');
@@ -10576,15 +10592,19 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const vipU = HALL_VIP_COL.baseWidth, terrU = terrDef.baseWidth;
     // терраса рядом: в ряд зал + ВИП-колонка + терраса, два промежутка
     const side = !!wantTerr && (cw - 2 * HALL_PLAN_GAP) / (400 + vipU + terrU) >= HALL_SIDE_P_MIN;
-    // масштаб p (пикселей на единицу схемы): как можно крупнее, но зал не выше ~650px
-    const p = side ? Math.min(HALL_P_MAX, (cw - 2 * HALL_PLAN_GAP) / (400 + vipU + terrU)) : Math.min(HALL_P_MAX, (cw - HALL_PLAN_GAP) / (400 + vipU));
+    // балкон колонкой справа: только если при этом зал не мельче, чем в обычной раскладке (масштаб не меньше HALL_P_MAX)
+    const balcU = HALL_BALC_COL.baseWidth;
+    const pCol = Math.min(Math.max(HALL_P_MAX, maxP || 0), (cw - 2 * HALL_PLAN_GAP) / (400 + vipU + balcU));
+    const balcSide = !side && pCol >= HALL_P_MAX;
+    // масштаб p (пикселей на единицу схемы): как можно крупнее, но зал не выше ~650px (с балконом колонкой — выше, пока схема умещается в окно)
+    const p = side ? Math.min(HALL_P_MAX, (cw - 2 * HALL_PLAN_GAP) / (400 + vipU + terrU)) : balcSide ? pCol : Math.min(HALL_P_MAX, (cw - HALL_PLAN_GAP) / (400 + vipU));
     const vipPx = Math.round(vipU * p);
     const W = 400; // без растяжения вширь
     return {
-      wide: true, side, vipPx,
-      planPx: side ? Math.round((W + vipU + terrU) * p) + 2 * HALL_PLAN_GAP : Math.round((W + vipU) * p) + HALL_PLAN_GAP, // ширина всего плана (с промежутками)
+      wide: true, side, balcSide, vipPx,
+      planPx: side ? Math.round((W + vipU + terrU) * p) + 2 * HALL_PLAN_GAP : balcSide ? Math.round((W + vipU + balcU) * p) + 2 * HALL_PLAN_GAP : Math.round((W + vipU) * p) + HALL_PLAN_GAP, // ширина всего плана (с промежутками)
       zone: layoutZone(HALL_ZONES[0], cw, W),
-      balcZone: layoutZone(balcDef, cw, W),
+      balcZone: balcSide ? layoutZone(HALL_BALC_COL, cw, balcU) : layoutZone(balcDef, cw, W),
       terrZone,
       vipZone: layoutZone(HALL_VIP_COL, cw, vipU)
     };
@@ -10600,7 +10620,10 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const terrCount = items.filter(it => it.table && it.table.zone === 'terrace').length; // броней дня на столах террасы
     // терраса рядом с залом — если есть место; закрытую террасу без броней в этот день на плане не рисуем (она остаётся на вкладке)
     const split = body.clientWidth >= HALL_SPLIT_MIN;
-    const lay = layoutHallPlan(body.clientWidth - 14 - (split ? HALL_SIDE_W + HALL_SIDE_GAP : 0), terraceOn() || terrCount > 0);
+    hallLastHeight = window.innerHeight;
+    // крупнее 1,6 схема бывает только с балконом колонкой справа (ниже на четверть): зал высотой 394 единицы плюс всё, что над ним, должны уместиться в окно
+    const maxP = Math.min(2.2, (window.innerHeight - 260) / HALL_ZONES[0].height);
+    const lay = layoutHallPlan(body.clientWidth - 14 - (split ? HALL_SIDE_W + HALL_SIDE_GAP : 0), terraceOn() || terrCount > 0, maxP);
     const { zone, balcZone, vipZone, terrZone } = lay;
     // выбранный стол остался на другой вкладке (например, после смены дня) — снимаем выбор; когда зал и терраса рядом, вкладок нет
     if (!lay.side) { const selTb = HALL_TABLES.find(x => x.key === hallSelectedTable); if (selTb && hallAreaOf(selTb) !== hallArea) hallSelectedTable = null; }
@@ -10708,6 +10731,11 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
           ${head(terrZone)}<div class="hz-wrap">${terrSvg}</div>
           ${terrNote}
         </div>`;
+        // терраса не нарисована, места много: зал, колонка ВИП-комнат и колонка балкона в один ряд, все в одном масштабе
+        if (lay.balcSide) return `<div class="hz-plan wide" style="grid-template-columns:minmax(0,${zone.width}fr) minmax(0,${vipZone.width}fr) minmax(0,${balcZone.width}fr);max-width:${lay.planPx}px">
+          ${head(zone)}${head(vipZone, true)}${head(balcZone, true)}
+          <div class="hz-wrap">${svg}</div><div class="hz-wrap">${vipSvg}</div><div class="hz-wrap">${balcSvg}</div>
+        </div>`;
         // компьютер: слева зал и под ним балкон, справа колонка ВИП-комнат — как на плане; телефон: зал → балкон → ВИП
         if (lay.wide) return `<div class="hz-plan wide" style="grid-template-columns:minmax(0,${zone.width}fr) minmax(0,${vipZone.width}fr);max-width:${lay.planPx}px">
           ${head(zone)}${head(vipZone, true)}
@@ -10750,12 +10778,13 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
   let hallResizeTimer = null;
   let hallLastWidth = 0;
+  let hallLastHeight = 0;
   window.addEventListener('resize', () => {
     clearTimeout(hallResizeTimer);
     hallResizeTimer = setTimeout(() => {
       const body = document.getElementById('bookingsViewBody');
       const active = document.getElementById('screen-bookings')?.classList.contains('active');
-      if (!body || !active || bookingsView !== 'plan' || body.clientWidth === hallLastWidth) return;
+      if (!body || !active || bookingsView !== 'plan' || (body.clientWidth === hallLastWidth && window.innerHeight === hallLastHeight)) return;
       hallLastWidth = body.clientWidth;
       renderHallPlan();
     }, 200);
