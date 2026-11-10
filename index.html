@@ -2561,6 +2561,78 @@
     .fc-h i { display: block; width: 100%; border-radius: 4px 4px 0 0; background: rgba(var(--ac),0.5); }
     .fc-h.peak i { background: var(--accent); }
     .fc-h span { font-size: 9.5px; color: var(--text-muted); }
+
+    /* ПУТЬ ГОСТЯ: восемь этапов визита, сигналы по каждому, причины, стандарты и «что меняли».
+       Узкая колонка: этапы строками (слева цветная полоса), от 800 px: лента карточек в один ряд.
+       Вернуть как было: убрать этот блок, экран-заглушку screen-journey, пункт в «Аналитике» и поле «этап» в форме проблемы. */
+    #journeyContent { container: jn / inline-size; padding-bottom: 24px; }
+    .jn-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 14px; margin-bottom: 10px; }
+    .jn-sum { flex: 1 1 260px; min-width: 0; font-size: 13px; line-height: 1.5; color: var(--text-sub); }
+    .jn-sum b { color: var(--text); font-weight: 600; }
+    .jn-per { display: flex; gap: 4px; padding: 4px; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border); }
+    .jn-per button { height: 36px; padding: 0 14px; border: 0; border-radius: 10px; background: transparent; color: var(--text-sub); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; }
+    .jn-per button.on { background: var(--accent); color: var(--on-solid); font-weight: 600; }
+    .jn-leg { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-bottom: 12px; font-size: 11.5px; color: var(--text-muted); }
+    .jn-leg i { display: inline-block; width: 8px; height: 8px; margin-right: 6px; border-radius: 50%; }
+    .jn-flow { display: flex; flex-direction: column; gap: 8px; }
+    .jn-st { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "name num" "d num"; align-items: center; gap: 2px 12px; width: 100%; padding: 12px 14px 12px 18px; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text); font-family: 'Montserrat', sans-serif; text-align: left; cursor: pointer; --jn-c: var(--text-muted); }
+    .jn-st::before { content: ''; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; border-radius: 0 3px 3px 0; background: var(--jn-c); }
+    .jn-st.sel { border-color: var(--accent); background: var(--bg-card-hover); }
+    .jn-st.lvl-ok { --jn-c: var(--c-green); }
+    .jn-st.lvl-warn { --jn-c: var(--c-gold); }
+    .jn-st.lvl-bad { --jn-c: var(--c-red2); }
+    .jn-st.lvl-none { --jn-c: rgba(var(--fg-rgb),0.3); border-style: dashed; }
+    .jn-no { display: none; grid-area: no; font-size: 12px; color: var(--text-muted); }
+    .jn-name { grid-area: name; font-size: 14px; font-weight: 600; line-height: 1.3; }
+    .jn-name small { font-size: 12px; font-weight: 400; color: var(--text-muted); }
+    .jn-num { grid-area: num; text-align: right; }
+    .jn-num b { display: block; font-size: 22px; font-weight: 600; line-height: 1; color: var(--jn-c); font-variant-numeric: tabular-nums; }
+    .jn-num small { display: block; margin-top: 3px; font-size: 11px; color: var(--text-muted); }
+    .jn-d { grid-area: d; font-size: 11.5px; line-height: 1.4; color: var(--text-muted); }
+    .jn-d.up { color: var(--c-red2); }
+    .jn-d.down { color: var(--c-green); }
+    @container jn (min-width: 800px) {
+      .jn-flow { flex-direction: row; }
+      .jn-st { flex: 1 1 88px; min-width: 0; grid-template-columns: minmax(0, 1fr); grid-template-areas: "no" "name" "num" "d"; align-content: start; gap: 8px; padding: 16px 12px 12px; overflow: hidden; }
+      .jn-st::before { left: 0; right: 0; top: 0; bottom: auto; width: auto; height: 3px; border-radius: 0; }
+      .jn-no { display: block; }
+      .jn-name { min-height: 34px; font-size: 13px; }
+      .jn-name small { display: none; }
+      .jn-num { text-align: left; }
+      .jn-num b { display: inline; font-size: 30px; }
+      .jn-num small { display: inline; margin-left: 5px; }
+      .jn-d { min-height: 32px; }
+    }
+    .jn-det { margin-top: 14px; padding: 18px 16px; border-radius: 18px; background: var(--bg-card); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 20px; }
+    .jn-dh { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .jn-dt { font-size: 18px; font-weight: 600; line-height: 1.3; }
+    .jn-ds { margin-top: 4px; font-size: 12.5px; line-height: 1.5; color: var(--text-sub); }
+    .jn-acts .btn-primary { margin: 0; }
+    .jn-cols { display: flex; flex-wrap: wrap; gap: 22px 28px; }
+    .jn-col { flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+    .jn-ch { font-size: 12px; font-weight: 500; color: var(--text-sub); }
+    .jn-rk { display: flex; flex-direction: column; gap: 6px; }
+    .jn-rk-t { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; line-height: 1.4; }
+    .jn-rk-t b { font-weight: 600; font-variant-numeric: tabular-nums; }
+    .jn-rk-b { height: 4px; border-radius: 2px; background: rgba(var(--fg-rgb),0.08); }
+    .jn-rk-b i { display: block; height: 4px; border-radius: 2px; background: rgba(var(--fg-rgb),0.3); }
+    .jn-ch + .jn-rk .jn-rk-b i { background: var(--accent); }   /* главная причина — акцентом, остальные серые */
+    .jn-note { font-size: 12px; line-height: 1.5; color: var(--text-muted); }
+    .jn-item { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border); background: rgba(var(--fg-rgb),0.03); color: var(--text); font-family: 'Montserrat', sans-serif; text-align: left; }
+    button.jn-item { cursor: pointer; }
+    .jn-item b { font-size: 13px; font-weight: 500; line-height: 1.4; }
+    .jn-item span { font-size: 12px; line-height: 1.5; color: var(--text-sub); }
+    .jn-item-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; width: 100%; }
+    .jn-item-h span { flex: 0 0 auto; color: var(--text-muted); }
+    .jn-gap { border-style: dashed; border-color: rgba(var(--c-red2-rgb),0.55); }
+    .jn-res-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 2px; }
+    .jn-res-row small { font-size: 11px; color: var(--text-muted); }
+    .jn-res { padding: 3px 10px; border-radius: 100px; border: 1px solid rgba(var(--fg-rgb),0.18); font-size: 12px; font-weight: 500; color: var(--text-sub); }
+    .jn-res.good { color: var(--c-green); border-color: rgba(var(--c-green-rgb),0.4); background: rgba(var(--c-green-rgb),0.08); }
+    .jn-res.bad { color: var(--c-red2); border-color: rgba(var(--c-red2-rgb),0.45); background: rgba(var(--c-red2-rgb),0.08); }
+    .jn-link { margin-top: 4px; padding: 8px 0; border: 0; background: none; color: var(--accent); font-family: 'Montserrat', sans-serif; font-size: 12.5px; font-weight: 500; text-align: left; cursor: pointer; }
+    .jn-link.sm { padding: 4px 0 0; font-size: 12px; color: var(--text-muted); font-weight: 400; }
+    .jn-foot { font-size: 12px; line-height: 1.6; color: var(--text-muted); }
     .fc-risk { display: flex; gap: 12px; padding: 11px 12px; margin-bottom: 7px; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border); }
     .fc-p { flex: 0 0 52px; text-align: center; font-family: 'Montserrat', sans-serif; font-size: 18px; line-height: 1.15; color: var(--c-red-soft); }
     .fc-p small { display: block; font-family: 'Montserrat', sans-serif; font-size: 9.5px; letter-spacing: 0.4px; color: var(--text-muted); }
@@ -5364,6 +5436,17 @@ body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-le
   <div style="padding:0 16px" id="forecastContent"><div class="loading">Считаю...</div></div>
 </div>
 
+<!-- ПУТЬ ГОСТЯ: на каком этапе визита мы теряем гостей, что с этим делаем -->
+<div class="screen" id="screen-journey">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('home')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Путь гостя</h1><p>Где мы теряем гостей</p></div>
+  </div>
+  <div style="padding:0 16px" id="journeyContent"><div class="loading">Считаю...</div></div>
+</div>
+
 <!-- СТОП-ЛИСТ. Видят все, переключает только тот, чья категория (бар/кухня/кальян), админ — всё -->
 <div class="screen" id="screen-stoplist">
   <div class="header">
@@ -6253,6 +6336,11 @@ body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-le
         <div class="chip" data-value="Команда" onclick="selectChip(this,'probCategoryChips')">Команда</div>
         <div class="chip" data-value="Общее" onclick="selectChip(this,'probCategoryChips')">Общее</div>
       </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">На каком этапе <span style="color:var(--text-muted);font-weight:400">· по желанию</span></label>
+      <div class="chip-row" id="probStageChips"></div>
+      <div class="pb-note" style="margin-top:6px">Не уверены — не выбирайте: этап определится по категории. Нажмите ещё раз, чтобы снять выбор.</div>
     </div>
     <div class="form-group">
       <label class="form-label">Что случилось</label>
@@ -7425,6 +7513,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     icons.checklists = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 13l2 2 4-4"/></svg>';
     icons.tobacco = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v3a2 2 0 01-2 2h-4a2 2 0 01-2-2V3z"/><path d="M9 8v10a3 3 0 006 0V8"/><path d="M9 13h6"/></svg>';
     icons.forecast = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20v-6M10 20V9M16 20v-9"/><path d="M3 7l5-3 4 2 5-4" stroke-dasharray="2 2"/><path d="M2 20h20"/></svg>';
+    icons.journey = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="5.5" r="2"/><circle cx="18" cy="12" r="2"/><circle cx="6" cy="18.5" r="2"/><path d="M8 5.5h3a4 4 0 0 1 4 4v.5M16 14v.5a4 4 0 0 1-4 4H8"/></svg>';
     icons.briefing = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h9M4 12h9M4 18h5"/><path d="M16 13l2.2 2.2L22 10.5"/></svg>';
     icons.venue = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>';
     icons.tips = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 17V7h3.2a2.7 2.7 0 010 5.4H10M8.5 14.6h5.2"/></svg>';
@@ -7495,6 +7584,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('analytics.view')) analyticsRows += qrow(icons.dashboard, 'Дашборд', 'Показатели за период', "openDashboard()");
     if (can('analytics.view')) analyticsRows += qrow(icons.analytics, 'Аналитика', 'Сравнение периодов', "openAnalytics()");
     if (can('analytics.view')) analyticsRows += qrow(icons.forecast, 'Прогноз', 'Загрузка на неделю', "openForecast()");
+    // «Путь гостя»: видит основатель (аналитика) и администратор (проблемы любые)
+    if (can('analytics.view') || can('problems.manage_all')) analyticsRows += qrow(icons.journey, 'Путь гостя', 'Где теряем гостей', "openJourney()");
     if (can('segments.view')) analyticsRows += qrow(icons.segments, 'Сегменты', 'Чемпионы → потерянные', "openSegments()");
     if (can('feedback.view')) analyticsRows += qrow(icons.feedback, 'Обратная связь', 'Отзывы · eNPS', "openFeedback()");
     if (can('ext_reviews.manage')) analyticsRows += qrow(icons.extreviews, 'Внешние отзывы', xrHomeSub().text, "openExtReviews()", { subId: 'qsubXr' });
@@ -12291,6 +12382,9 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const reassign = !isResolved && can('problems.manage_all')
       ? `<button type="button" class="pb-link" onclick="reassignProblem('${id}')">Переназначить</button>`
       : '';
+    // этап пути гостя: свой или по категории; исправить может администратор
+    const stageName = p.stage ? JN_STAGE_NAMES[p.stage - 1] : '';
+    const stageEdit = can('problems.manage_all');
 
     return `<div class="pr-card" style="--sev:${sevColor}">
       <div class="pr-head">
@@ -12302,6 +12396,9 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       <div class="ls-chips">
         <span class="sv-chip ${isResolved ? 'ok' : p.status === 'В работе' ? 'acc' : 'warn'}">${escHtml(statusLabel)}</span>
         ${p.responsible ? `<span class="sv-chip dim">${escHtml(p.responsible)}</span>` : ''}
+        ${stageName ? (stageEdit
+          ? `<span class="sv-chip dim" role="button" tabindex="0" style="cursor:pointer" title="Этап пути гостя${p.stageSet ? '' : ' (по категории)'}: нажмите, чтобы изменить" onclick="pickProblemStage('${id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();pickProblemStage('${id}')}">${escHtml(stageName)} ▾</span>`
+          : `<span class="sv-chip dim" title="Этап пути гостя${p.stageSet ? '' : ' (по категории)'}">${escHtml(stageName)}</span>`) : ''}
         ${dl && !isResolved ? `<span class="sv-chip ${dl.overdue ? 'bad' : dl.soon ? 'warn' : 'dim'}">${escHtml(dl.text)}</span>` : ''}
       </div>
       ${when ? `<div class="pb-when">Сообщили ${escHtml(when)}</div>` : ''}
@@ -16302,13 +16399,14 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   // ── редактор ──
   function openStandardsEdit(from) {
-    stdEditFrom = from === 'standards' ? 'standards' : 'service';
+    stdEditFrom = from === 'standards' || from === 'journey' ? from : 'service';   // откуда открыли — туда и ведёт «назад»
     stdTplOpen = false;
     showScreen('standards-edit');
     loadStandardsAdmin();
   }
   function stdEditBack() {
     if (stdEditFrom === 'standards') { openStandards(); return; }
+    if (stdEditFrom === 'journey') { openJourney(); return; }
     showScreen('service');
   }
   async function loadStandardsAdmin(silent) {
@@ -16568,6 +16666,219 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     }
   }
   function spBack() { showScreen(spFrom === 'standards-edit' ? 'standards-edit' : 'standard-form'); }
+
+  // ─── ПУТЬ ГОСТЯ ─────
+  // Сервер (/api/admin/journey) раскладывает сигналы (проблемы, неявки, брони без ответа) по восьми этапам визита и считает,
+  // где их больше всего. Здесь — только показ и запись «Что меняли». Названия этапов — те же, что в db/journey.js сервера.
+  const JN_STAGE_NAMES = ['Узнал о нас', 'Бронь', 'Приезд и встреча', 'Посадка', 'Заказ и кальян', 'Вечер', 'Счёт и уход', 'После визита'];
+  const JN_SIGNAL = ['сигнал', 'сигнала', 'сигналов'];
+  const JN_MON = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+  let jn = { days: 30, data: null, stage: null, detail: null, seq: 0, detSeq: 0, busy: false };
+  function jnDay(iso) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso || ''));
+    return m ? Number(m[3]) + ' ' + JN_MON[Number(m[2]) - 1] : '';
+  }
+  function jnCount(n, w) { return n + ' ' + ruPlural(n, w[0], w[1], w[2]); }
+  function jnErr(e) { return e && e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи — попробуйте ещё раз'; }
+  async function jnGet(suffix) {
+    const res = await fetch(`${PROXY_BASE}/api/admin/journey${suffix}${suffix.includes('?') ? '&' : '?'}pin=${getPin()}`);
+    if (res.status === 401) { showScreen('pin'); return null; }
+    if (res.status === 403) { accessDenied(); return null; }
+    if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить'));
+    return res.json();
+  }
+  async function jnSend(method, path, body) {
+    const res = await fetch(`${PROXY_BASE}/api/admin/journey${path}?pin=${getPin()}`, {
+      method, headers: { 'Content-Type': 'application/json' }, body: body ? JSON.stringify({ pin: getPin(), ...body }) : undefined
+    });
+    if (res.status === 401) { showScreen('pin'); return null; }
+    if (!res.ok) { notify(await responseError(res, 'Не удалось сохранить')); return null; }
+    return res.json().catch(() => ({}));
+  }
+
+  async function openJourney() {
+    showScreen('journey');
+    const el = document.getElementById('journeyContent');
+    if (!document.getElementById('jnTop')) el.innerHTML = '<div id="jnTop"><div class="loading">Считаю...</div></div><div id="jnDetail"></div>';
+    await loadJourney(!!jn.stage);
+  }
+  async function loadJourney(keep) {
+    const my = ++jn.seq;
+    try {
+      const d = await jnGet('?days=' + jn.days);
+      if (!d || my !== jn.seq) return;
+      if (!Array.isArray(d.stages)) throw new Error('Не удалось посчитать путь гостя');
+      jn.data = d;
+      if (!keep || !jn.stage) jn.stage = d.worstStage || 5;   // выбранный этап остаётся; иначе открываем самый тяжёлый
+      renderJourney();
+      loadJourneyStage();
+    } catch (e) {
+      if (my !== jn.seq) return;
+      document.getElementById('journeyContent').innerHTML = errorStateHtml(jnErr(e), 'openJourney()');
+    }
+  }
+  function jnPeriod(n) {
+    if (jn.days === n) return;
+    jn.days = n;
+    loadJourney(true);
+  }
+  function jnPick(n) {
+    jn.stage = n;
+    renderJourney();
+    loadJourneyStage();
+    const box = document.getElementById('jnDetail'), wrap = document.getElementById('journeyContent');
+    if (box && wrap && wrap.clientWidth < 800) box.scrollIntoView({ behavior: 'smooth', block: 'start' });   // на телефоне подробности ниже списка
+  }
+
+  function renderJourney() {
+    const d = jn.data, top = document.getElementById('jnTop');
+    if (!d || !top) return;
+    const worst = d.stages.find(s => s.n === d.worstStage);
+    const sum = d.total
+      ? `<b>${jnCount(d.total, JN_SIGNAL)}</b>${worst ? `, больше всего на этапе «${escHtml(worst.name)}»` : ''}`
+      : '<b>Сигналов нет</b>';
+    const was = d.prevTotal ? ` · в прошлые ${d.days} дней было ${d.prevTotal}` : '';
+    const per = [7, 30, 90].map(n => `<button type="button" class="${jn.days === n ? 'on' : ''}" aria-pressed="${jn.days === n}" onclick="jnPeriod(${n})">${n} дней</button>`).join('');
+    const cards = d.stages.map(s => {
+      const dl = s.noData ? 'Источника сигналов пока нет'
+        : s.delta === 0 ? (s.count || s.prev ? 'без изменений' : 'сигналов нет')
+        : (s.delta > 0 ? '+' : '−') + Math.abs(s.delta) + ' к прошлому периоду';
+      const dc = s.noData || s.delta === 0 ? '' : s.delta > 0 ? ' up' : ' down';
+      return `<button type="button" class="jn-st lvl-${s.level}${s.n === jn.stage ? ' sel' : ''}" aria-pressed="${s.n === jn.stage}" onclick="jnPick(${s.n})">
+        <span class="jn-no">${s.n}</span>
+        <span class="jn-name"><small>${s.n} · </small>${escHtml(s.name)}</span>
+        <span class="jn-num"><b>${s.noData ? '—' : s.count}</b><small>${s.noData ? 'нет данных' : ruPlural(s.count, JN_SIGNAL[0], JN_SIGNAL[1], JN_SIGNAL[2])}</small></span>
+        <span class="jn-d${dc}">${dl}</span>
+      </button>`;
+    }).join('');
+    top.innerHTML = `<div class="jn-bar"><div class="jn-sum">${jnDay(d.from)} – ${jnDay(d.to)} · ${sum}${was}</div><div class="jn-per" role="group" aria-label="Период">${per}</div></div>
+      <div class="jn-leg"><span><i style="background:var(--c-green)"></i>спокойно</span><span><i style="background:var(--c-gold)"></i>внимание</span><span><i style="background:var(--c-red2)"></i>плохо</span><span>${jn.days === 30 ? 'до 4 · 5–9 · 10 и больше за 30 дней' : 'границы пересчитаны на месяц'}</span></div>
+      <div class="jn-flow">${cards}</div>`;
+  }
+
+  async function loadJourneyStage() {
+    const box = document.getElementById('jnDetail');
+    if (!box) return;
+    const n = jn.stage, my = ++jn.detSeq;
+    if (!jn.detail || jn.detail.stage.n !== n) box.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const d = await jnGet('/' + n + '?days=' + jn.days);
+      if (!d || my !== jn.detSeq) return;
+      jn.detail = d;
+      renderJourneyStage();
+    } catch (e) {
+      if (my === jn.detSeq) box.innerHTML = errorStateHtml(jnErr(e), 'loadJourneyStage()');
+    }
+  }
+
+  function renderJourneyStage() {
+    const d = jn.detail, box = document.getElementById('jnDetail');
+    if (!d || !box) return;
+    const src = d.sources, canStd = can('standards.manage');
+    const parts = [];
+    if (src.problems) parts.push('проблемы ' + src.problems + (src.fromReviews ? ` (из отзывов гостей ${src.fromReviews})` : ''));
+    if (src.noShow) parts.push('неявки ' + src.noShow);
+    if (src.unconfirmed) parts.push('брони без ответа ' + src.unconfirmed);
+    const sub = d.count ? `${jnCount(d.count, JN_SIGNAL)} за ${d.days} дней: ${parts.join(', ')}` : `За ${d.days} дней сигналов нет`;
+
+    // что идёт не так: причины по убыванию
+    const max = d.causes.reduce((m, c) => Math.max(m, c.count), 1);
+    let why = d.causes.length
+      ? d.causes.map(c => `<div class="jn-rk"><div class="jn-rk-t"><span>${escHtml(c.label)}</span><b>${c.count}</b></div><div class="jn-rk-b"><i style="width:${Math.max(4, Math.round(c.count / max * 100))}%"></i></div></div>`).join('')
+      : '<div class="jn-note">Причин пока нет: их записывают, когда закрывают проблему.</div>';
+    if (d.otherCauses) why += `<div class="jn-note">Ещё причин: ${d.otherCauses}</div>`;
+    if (d.unspecified) why += `<div class="jn-note">Без указанной причины: ${d.unspecified}. Причину спрашиваем, когда проблему закрывают.</div>`;
+
+    // стандарты этапа (по совпадению «раздела» с названием этапа)
+    let std = d.standards.map(x => {
+      const inner = `<b>${escHtml(x.title)}</b><span>Версия ${x.version} · прочитали ${x.acked} из ${x.audience}</span>`;
+      return canStd ? `<button type="button" class="jn-item" onclick="jnOpenStandard('${escJs(x.id)}')">${inner}</button>` : `<div class="jn-item">${inner}</div>`;
+    }).join('');
+    if (!d.standards.length) {
+      std = `<div class="jn-item jn-gap"><b>На этапе нет стандарта</b><span>${d.count ? 'Сигналы есть, а правил для команды нет.' : 'Правил для команды пока нет.'} Стандарт привязывается по разделу: он должен называться «${escHtml(d.stage.name)}».</span>${canStd ? '<button type="button" class="jn-link" onclick="jnNewStandard()">Создать стандарт</button>' : ''}</div>`;
+    } else if (canStd) std += '<button type="button" class="jn-link" onclick="jnNewStandard()">+ Добавить стандарт</button>';
+
+    // что меняли и что вышло
+    let chg;
+    if (!d.changes.available) chg = '<div class="jn-note">Чтобы вести журнал, нужно обновление базы (миграция 057).</div>';
+    else if (!d.changes.items.length) chg = '<div class="jn-note">Пока ничего не меняли. Когда решите поменять что-то на этом этапе, нажмите «Улучшить этап»: через 14 дней покажем, стало ли меньше сигналов.</div>';
+    else chg = d.changes.items.map(c => {
+      const res = c.after === null
+        ? `<span class="jn-res">Считаем: прошло ${c.elapsed} из ${c.window} дней</span>`
+        : `<span class="jn-res ${c.after < c.before ? 'good' : c.after > c.before ? 'bad' : ''}">Сигналов: ${c.before} → ${c.after}</span><small>за ${c.window} дней до и после</small>`;
+      return `<div class="jn-item"><div class="jn-item-h"><b>${escHtml(c.title)}</b><span>${jnDay(c.day)}</span></div>${c.note ? `<span>${escHtml(c.note)}</span>` : ''}<div class="jn-res-row">${res}</div><button type="button" class="jn-link sm" onclick="jnDeleteChange('${escJs(c.id)}')">Убрать</button></div>`;
+    }).join('');
+
+    box.innerHTML = `<div class="jn-det">
+      <div class="jn-dh">
+        <div><div class="jn-dt">${d.stage.n} · ${escHtml(d.stage.name)}</div><div class="jn-ds">${sub}</div></div>
+        <div class="jn-acts"><button type="button" class="btn-primary" onclick="jnAddChange()">Улучшить этап</button></div>
+      </div>
+      <div class="jn-cols">
+        <div class="jn-col"><div class="jn-ch">Что идёт не так</div>${why}</div>
+        <div class="jn-col"><div class="jn-ch">Стандарты этапа</div>${std}</div>
+        <div class="jn-col"><div class="jn-ch">Что меняли</div>${chg}</div>
+      </div>
+      <div class="jn-foot">Этап выбирают, когда сообщают о проблеме, или его ставит администратор в карточке проблемы; если не выбран, этап берётся по категории. Неявки и брони без ответа считаются на этапе «Бронь». Обращения гостей и откуда гость о нас узнал пока не считаются.</div>
+    </div>`;
+  }
+
+  async function jnAddChange() {
+    const st = jn.detail && jn.detail.stage;
+    if (!st || jn.busy) return;
+    const v = await askText(`Что меняем на этапе «${st.name}»?\n\nНапишите одной фразой. Через 14 дней покажем, стало ли меньше сигналов.`, { placeholder: 'Например: проверяем вкусы до открытия смены', ok: 'Записать', required: true });
+    if (v === null) return;
+    if (v.length > 120) { notify('Слишком длинно: не больше 120 знаков, сейчас ' + v.length); return; }
+    jn.busy = true;
+    try {
+      const r = await jnSend('POST', '/' + st.n + '/changes', { title: v });
+      if (r) { showToast('Записано'); loadJourneyStage(); }
+    } catch { notify('Нет связи — не сохранилось. Попробуйте ещё раз.'); } finally { jn.busy = false; }
+  }
+  async function jnDeleteChange(id) {
+    if (jn.busy || !(await askConfirm('Убрать запись?\n\nОна пропадёт из списка «Что меняли».', { ok: 'Убрать', danger: true }))) return;
+    jn.busy = true;
+    try {
+      const r = await jnSend('DELETE', '/changes/' + encodeURIComponent(id));
+      if (r) { showToast('Убрано'); loadJourneyStage(); }
+    } catch { notify('Нет связи — не получилось убрать. Попробуйте ещё раз.'); } finally { jn.busy = false; }
+  }
+  // Стандарты открываются в обычном редакторе («Сервис → Чек-листы и стандарты → Стандарты»); «назад» оттуда ведёт сюда
+  async function jnOpenStandard(id) {
+    stdEditFrom = 'journey'; stdTplOpen = false;
+    showScreen('standards-edit');
+    await loadStandardsAdmin(true);
+    if (stdAdmin) openStandardForm(id);
+  }
+  async function jnNewStandard() {
+    const st = jn.detail && jn.detail.stage;
+    if (!st) return;
+    stdEditFrom = 'journey'; stdTplOpen = false;
+    showScreen('standards-edit');
+    await loadStandardsAdmin(true);
+    if (!stdAdmin) return;
+    openStandardForm(null);
+    stdForm.category = st.name;                      // «раздел» = название этапа: так стандарт привязывается к этапу
+    document.getElementById('sfCat').value = st.name;
+  }
+
+  // Этап у самой проблемы: чипы в форме «Сообщить о проблеме» и кнопка «Этап» в карточке (для администратора)
+  function probStageChips() {
+    const el = document.getElementById('probStageChips');
+    if (el) el.innerHTML = JN_STAGE_NAMES.map((nm, i) => `<div class="chip" data-value="${i + 1}" onclick="pickProbStage(this)">${escHtml(nm)}</div>`).join('');
+  }
+  function pickProbStage(el) {
+    const was = el.classList.contains('selected');
+    document.querySelectorAll('#probStageChips .chip').forEach(c => c.classList.remove('selected'));
+    if (!was) el.classList.add('selected');
+  }
+  async function pickProblemStage(id) {
+    const auto = 'Определять по категории';
+    const v = await askChoice('На каком этапе пути гостя это случилось?\n\nПо этапу проблема попадёт в «Аналитика → Путь гостя».', [...JN_STAGE_NAMES.map((nm, i) => (i + 1) + ' · ' + nm), auto]);
+    if (!v) return;
+    const stage = v === auto ? null : Number(v.split(' ')[0]);
+    return problemPost(id, 'stage', { stage }, stage ? `Этап: ${JN_STAGE_NAMES[stage - 1]}` : 'Этап снова по категории');
+  }
 
   // ─── ПРОГНОЗ ЗАГРУЗКИ ─────
   // Сервер (/api/admin/forecast) сравнивает темп набора броней с прошлыми такими же днями недели и отдаёт диапазон гостей,
@@ -17282,6 +17593,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     document.getElementById('probComment').value = '';
     document.querySelectorAll('#probCategoryChips .chip').forEach(c => c.classList.remove('selected'));
     document.querySelectorAll('#probSeverityChips .chip').forEach((c) => c.classList.toggle('selected', c.dataset.value === 'Средняя'));
+    probStageChips();
     showScreen('report-problem');
   }
 
@@ -17293,6 +17605,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     const category = chip.dataset.value;
     const sevChip = document.querySelector('#probSeverityChips .chip.selected');
     const severity = sevChip ? sevChip.dataset.value : 'Средняя';
+    const stageChip = document.querySelector('#probStageChips .chip.selected');
+    const stage = stageChip ? Number(stageChip.dataset.value) : null;   // не выбран — сервер определит этап по категории
 
     const btn = document.getElementById('probSubmitBtn');
     btn.disabled = true;
@@ -17302,7 +17616,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
       const res = await fetch(`${PROXY_BASE}/api/staff/problem?pin=${getPin()}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: getPin(), category, comment, severity })
+        body: JSON.stringify({ pin: getPin(), category, comment, severity, stage })
       });
       btn.disabled = false;
       btn.textContent = 'Отправить';
@@ -23526,7 +23840,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'svforms', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'card-levels', 'card-rollout', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'app-content', 'site', 'tobacco', 'tips-mine', 'tips-admin', 'xr', 'xr-edit', 'xr-tpl', 'dashboard', 'autotags', 'autotag-edit'];
+  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'journey', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'svforms', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'card-levels', 'card-rollout', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'app-content', 'site', 'tobacco', 'tips-mine', 'tips-admin', 'xr', 'xr-edit', 'xr-tpl', 'dashboard', 'autotags', 'autotag-edit'];
   var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'app-content', 'site', 'tips-mine', 'tips-admin', 'xr-edit', 'xr-tpl', 'autotag-edit', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklist-form'];
   // «card» остаётся в списке: на узком окне это колонка; на широком её растягивает правило «#screen-card» в wide-css, а две колонки включает container-запрос
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
@@ -27587,6 +27901,7 @@ function qrPlateSvg(text) {
       { key: 'an', title: 'Аналитика', icon: ic('<path d="M5 20V11M11 20V4M17 20v-6M3 20h18"/>'), items: [
         { key: 'analytics', label: 'Аналитика', ok: perm('analytics.view'), go: function () { openAnalytics(); }, screens: ['analytics'] },
         { key: 'forecast', label: 'Прогноз', ok: perm('analytics.view'), go: function () { openForecast(); }, screens: ['forecast'] },
+        { key: 'journey', label: 'Путь гостя', ok: perm('analytics.view') || perm('problems.manage_all'), go: function () { openJourney(); }, screens: ['journey'] },
         { key: 'segments', label: 'Сегменты', ok: perm('segments.view'), go: function () { openSegments(); }, screens: ['segments'] },
         { key: 'feedback', label: 'Обратная связь', ok: perm('feedback.view'), go: function () { openFeedback(); }, screens: ['feedback', 'enps'] },
         { key: 'xr', label: 'Внешние отзывы', ok: perm('ext_reviews.manage'), go: function () { openExtReviews(); }, screens: ['xr', 'xr-edit', 'xr-tpl'] } ] },
