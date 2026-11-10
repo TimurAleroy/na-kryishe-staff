@@ -800,8 +800,13 @@
     .gd-p-chart { order: 4; }
     /* плитка «Карта гостя» в шапке дашборда: справа от имени (как «Карта лояльности» у Cosmos), на телефоне — под именем */
     .gd-tiles { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; margin: 10px 0 4px; }
-    .gd-lc { display: flex; flex-wrap: wrap; align-items: center; align-content: center; gap: 14px 20px; margin: 0; }
+    /* 10.11.2026 (Тимур: «надпись в середине, карта в середине, много свободного места»): содержимое плиток прижато к верху, а не
+       по центру; у плитки с текстом заметки нет минимальной высоты (раньше она тянулась на высоту соседней и держала строку
+       посередине пустой плитки). Пустая плитка («Добавить заметку», «Нет карты гостя») по-прежнему по центру. */
+    .gd-lc { display: flex; flex-wrap: wrap; align-items: flex-start; align-content: flex-start; gap: 14px 20px; margin: 0; }
+    .gd-lc.empty { align-items: center; }
     .gd-note { display: flex; flex-direction: column; justify-content: center; min-height: 84px; }
+    .gd-note:has(> .gd-note-h) { justify-content: flex-start; min-height: 0; }
     .gd-note.edit { cursor: pointer; -webkit-tap-highlight-color: transparent; }
     .gd-note.edit:hover { background: var(--bg-card-hover, var(--bg-card)); }
     .gd-note-add { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 54px; padding: 0; border: 0; background: none; font: inherit; font-size: 12.5px; color: var(--text-sub); cursor: pointer; }
@@ -845,6 +850,7 @@
     .gd-lv-edit { display: block; margin: 4px 0 0; padding: 0; font-size: 12px; text-align: left; }
     .gd-lv { display: inline-block; width: 8px; height: 8px; margin-right: 7px; border-radius: 50%; background: var(--seg); vertical-align: 1px; }
     .gd-lc-rows { flex: 1 1 210px; min-width: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 18px; }
+    .gd-lc-rows > [class*="lv-"] { grid-row: span 2; }   /* «Уровень» занимает две строки: рядом с ним встают скидка и траты, а не пустота под ними */
     .gd-lc-rows span { display: block; font-size: 11px; color: var(--text-muted); }
     .gd-lc-rows b { display: block; margin-top: 1px; font-size: 12.5px; font-weight: 400; color: var(--text); overflow-wrap: anywhere; }
     .gd-lc.empty { flex-direction: column; justify-content: center; gap: 8px; min-height: 84px; text-align: center; }
@@ -4704,8 +4710,16 @@ body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-le
   .gd-ta { grid-column: 1; grid-row: 1; min-width: 0; }
   .gd-board { grid-column: 2; grid-row: 1 / span 2; margin: 0; }
   .gd-top:has(> .gd-tiles) > .gd-board { grid-row: 2; }
-  .gd-tiles { grid-column: 2; grid-row: 1; align-self: stretch; margin: 0 0 10px; }
-  .gd-tiles:has(> .gd-lc) { grid-template-columns: minmax(0, 4fr) minmax(0, 6fr); }
+  /* плитки друг под другом, а не рядом: заметка — тонкой полосой в одну строку, ниже карта с показателями в несколько колонок.
+     Раньше они стояли рядом (4fr/6fr), заметка растягивалась на высоту длинного столбца показателей и оставалась почти пустой.
+     Вернуть прежнее: align-self: stretch и grid-template-columns: minmax(0, 4fr) minmax(0, 6fr) у .gd-tiles:has(> .gd-lc). */
+  .gd-tiles, .gd-tiles:has(> .gd-lc) { grid-column: 2; grid-row: 1; align-self: start; grid-template-columns: minmax(0, 1fr); margin: 0 0 10px; }
+  .gd-note:has(> .gd-note-h) { flex-direction: row; align-items: baseline; gap: 16px; padding-top: 11px; padding-bottom: 11px; }
+  .gd-note-h { flex: none; justify-content: flex-start; margin: 0; }
+  .gd-note-t { flex: 1 1 auto; min-width: 0; }
+  .gd-note:not(:has(> .gd-note-h)) { min-height: 0; }
+  .gd-note-add { flex-direction: row; justify-content: flex-start; min-height: 0; }
+  .gd-lc:not(.empty) { flex-wrap: nowrap; gap: 24px; }
   .gd-tc { grid-column: 1; grid-row: 2; min-width: 0; }
   .gd-tc > .sec:first-child { margin-top: 10px; }
   .gd-visits { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 10px; align-items: start; }
