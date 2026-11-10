@@ -3450,6 +3450,10 @@
     .hz-tdot.pending { background: var(--c-amber); }
     .hz-tbusy { display: inline-block; width: 14px; height: 8px; border-radius: 3px; background: rgba(var(--c-green-rgb),0.18); border: 1px solid rgba(var(--c-green-rgb),0.3); margin: 0 2px 0 8px; }
     .hz-zonehead { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin: 14px 2px 8px; font-size: 13px; color: var(--text); }
+    /* Экран «Брони»: место под полосу прокрутки занято всегда. Иначе при выборе стола под схемой появляется панель, страница становится выше,
+       появляется полоса (10–17 px), ширина под схему и график сужается, и они перерисовываются мельче (на ряде ширин окна — со 640 до 531 px).
+       Откатить: убрать это правило. */
+    html:has(#screen-bookings.active) { scrollbar-gutter: stable; }
     .hz-wrap { background: transparent; border: none; padding: 0; }
     .hz-svg { display: block; width: 100%; height: auto; font-family: 'Montserrat', sans-serif; user-select: none; -webkit-user-select: none; }
     .hz-wall { fill: none; stroke: none; }
@@ -10054,11 +10058,13 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     decor: () => [],
     tables: [1, 2, 3].map(n => ({ key: `VIP ${n}`, short: `ВИП ${n}`, seats: 5, shape: 'room', x: 70 + (n - 1) * 130, y: 40, w: 112, h: 60, ticks: '', label: [70 + (n - 1) * 130, 92, 'middle'], labelMax: 116 }))
   }];
-  // ВИП-комнаты колонкой справа от зала — как на плане: ВИП 3 сверху (самая большая, 14,7 м²), ВИП 2 посередине, ВИП 1 снизу (по 11,5 м²).
+  // ВИП-комнаты колонкой справа от зала: ВИП 3 сверху, ВИП 2 посередине, ВИП 1 снизу. Все три одинакового размера (старый проект с разными площадями не действует).
   // Высота колонки = высоте зала (394), ширина 128 — рисуется в том же масштабе, что и зал.
+  // Вернуть разные размеры: вместо равной высоты задать heights = { 3: …, 2: …, 1: … } (сумма + два промежутка по 12 + поля по 4 = 394).
   const HALL_VIP_COL = (() => {
-    const w = 108, cx = 64, gap = 12, top = 4;
-    const heights = { 3: 141, 2: 111, 1: 110 }; // пропорционально площади комнат
+    const w = 108, cx = 64, gap = 12, top = 4, colH = 394;
+    const hEq = (colH - top * 2 - gap * 2) / 3; // поровну: комнаты занимают всю колонку от верхнего до нижнего поля
+    const heights = { 3: hEq, 2: hEq, 1: hEq };
     let y = top;
     const tables = [3, 2, 1].map(n => {
       const h = heights[n], cy = y + h / 2;
