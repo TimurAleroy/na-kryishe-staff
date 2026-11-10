@@ -793,7 +793,9 @@
     .gd-pt { font-size: 11px; letter-spacing: 0.1px; text-transform: none; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
     .gd-pe { white-space: nowrap; flex: none; }
     .gd-pe { font-style: normal; font-size: 11px; color: var(--text-muted); }
-    .gd-p-tags { order: 5; }
+    /* теги и вкусы теперь первой плиткой блока «О госте» (под «Что делать»); на узком экране остаются там же, где и были — после графиков */
+    .gd-tc > .gd-p-tags { margin: 10px 0 0; }
+    .gd-colR { display: contents; }   /* на узком экране обёртка не влияет на раскладку: плитки и показатели идут друг за другом */
     .gd-p-ring { order: 1; }
     .gd-mini-grid { order: 2; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
     .gd-p-ind { order: 3; container: gdind / inline-size; }
@@ -803,8 +805,9 @@
     /* 10.11.2026 (Тимур: «надпись в середине, карта в середине, много свободного места»): содержимое плиток прижато к верху, а не
        по центру; у плитки с текстом заметки нет минимальной высоты (раньше она тянулась на высоту соседней и держала строку
        посередине пустой плитки). Пустая плитка («Добавить заметку», «Нет карты гостя») по-прежнему по центру. */
-    .gd-lc { display: flex; flex-wrap: wrap; align-items: flex-start; align-content: flex-start; gap: 14px 20px; margin: 0; }
-    .gd-lc.empty { align-items: center; }
+    .gd-lc { display: flex; flex-wrap: wrap; align-items: flex-start; align-content: flex-start; gap: 12px 24px; margin: 0; }
+    .gd-lc-h { flex: 0 0 100%; min-width: 0; }
+    .gd-lc.empty { align-items: center; align-content: center; flex-wrap: nowrap; }
     .gd-note { display: flex; flex-direction: column; justify-content: center; min-height: 84px; }
     .gd-note:has(> .gd-note-h) { justify-content: flex-start; min-height: 0; }
     .gd-note.edit { cursor: pointer; -webkit-tap-highlight-color: transparent; }
@@ -846,18 +849,33 @@
     .gd-lcard-qr { flex: none; align-self: center; width: 100px; height: 100px; border-radius: 8px; overflow: hidden; line-height: 0; }
     .gd-lcard-qr svg { width: 100%; height: 100%; display: block; }
     .gd-lcard-lv { font-size: 10.5px; font-weight: 500; letter-spacing: 1.4px; text-transform: uppercase; color: var(--seg); line-height: 1; }
-    .gd-lc-rows small { display: block; margin-top: 2px; font-size: 11px; line-height: 1.4; color: var(--text-muted); }
-    .gd-lv-edit { display: block; margin: 4px 0 0; padding: 0; font-size: 12px; text-align: left; }
-    .gd-lv { display: inline-block; width: 8px; height: 8px; margin-right: 7px; border-radius: 50%; background: var(--seg); vertical-align: 1px; }
-    .gd-lc-rows { flex: 1 1 210px; min-width: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 18px; }
-    .gd-lc-rows > [class*="lv-"] { grid-row: span 2; }   /* «Уровень» занимает две строки: рядом с ним встают скидка и траты, а не пустота под ними */
-    .gd-lc-rows span { display: block; font-size: 11px; color: var(--text-muted); }
-    .gd-lc-rows b { display: block; margin-top: 1px; font-size: 12.5px; font-weight: 400; color: var(--text); overflow-wrap: anywhere; }
+    /* справа от карты: крупно главное (уровень, скидка, траты), строка про назначение уровня, мелко остальное */
+    .gd-lc-rows { flex: 1 1 230px; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+    .gd-lc-main { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 18px; }
+    .gd-lc-main > div { display: flex; flex-direction: column; justify-content: space-between; }   /* подписи сверху, значения на одной линии, даже если одна подпись переносится */
+    .gd-lc-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 6px 18px; padding-top: 10px; border-top: 1px solid var(--border); }
+    .gd-lc-meta > div { display: flex; align-items: baseline; gap: 8px; min-width: 0; }   /* мелкие сведения строкой «подпись — значение», по две в ряд */
+    .gd-lc-meta span { flex: none; }
+    .gd-lc-meta b { margin-top: 0; }
+    .gd-lc-rows span { display: block; font-size: 11px; line-height: 1.35; color: var(--text-muted); }
+    .gd-lc-rows b { display: block; margin-top: 2px; font-size: 12.5px; font-weight: 400; color: var(--text); overflow-wrap: anywhere; }
+    .gd-lc-main b { font-size: 17px; font-weight: 500; line-height: 1.2; }
+    .gd-lc-why { font-size: 11.5px; line-height: 1.5; color: var(--text-muted); }
+    .gd-auto > .autotag-card { margin-bottom: 8px; }
+    .gd-lv-edit { display: inline; margin: 0; padding: 0; font-size: 11.5px; text-align: left; }
+    .gd-lv { display: inline-block; width: 8px; height: 8px; margin-right: 7px; border-radius: 50%; background: var(--seg); vertical-align: 2px; }
     .gd-lc.empty { flex-direction: column; justify-content: center; gap: 8px; min-height: 84px; text-align: center; }
     .gd-lc-none { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: var(--text-sub); }
     .gd-lc-none svg { flex: none; color: var(--text-muted); }
     .gd-lc-note { max-width: 420px; margin: 0 auto; font-size: 12px; line-height: 1.45; color: var(--text-muted); }
     .gd-p-tags .tag-group-label:first-child { margin-top: 0; }
+    .gd-tg + .gd-tg { padding-top: 16px; }   /* между группами тегов тот же отступ, что был у подписи (16 px); обёртка нужна, чтобы лишнее место делилось между группами */
+    .gd-p-tags .gd-tg > .tag-group-label { margin-top: 0; }
+    .gd-nostat { grid-column: 1 / -1; font-size: 12.5px; color: var(--text-muted); text-align: center; }
+    /* группа тегов без единого тега («Особые» у нового гостя): подпись и «+ Добавить» в одну строку вместо двух (экономит ~35 px на группу) */
+    .gd-tg:has(> .tag-chip-row > .tag-add-chip:only-child):not(:has(> .tag-add-row)) { display: flex; align-items: center; gap: 12px; }
+    .gd-tg:has(> .tag-chip-row > .tag-add-chip:only-child):not(:has(> .tag-add-row)) > .tag-group-label { flex: 0 0 132px; margin: 0; }
+    .gd-p-tags .gd-tg:has(> .tag-chip-row > .tag-add-chip:only-child):not(:has(> .tag-add-row)) { padding-top: 10px; }
 
     /* кольцо посещений */
     .gd-ring { display: flex; flex-direction: column; align-items: center; gap: 14px; }
@@ -867,7 +885,7 @@
     .gd-ring-num { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
     .gd-ring-num small { font-size: 11px; letter-spacing: 0.1px; text-transform: none; color: var(--text-muted); }
     .gd-ring-num b { font-family: 'Montserrat', sans-serif; font-size: 42px; font-weight: 500; line-height: 1.05; color: var(--text); }
-    .gd-ring-num span { font-size: 11.5px; color: var(--text-sub); margin-top: 2px; }
+    .gd-ring-num span { max-width: 104px; font-size: 11.5px; line-height: 1.25; color: var(--text-sub); margin-top: 2px; }   /* «был(а) 8 дней назад» переносится внутри кольца, а не вылезает на обводку */
     .gd-leg { width: 100%; display: grid; gap: 6px; font-size: 12.5px; color: var(--text-sub); }
     .gd-leg div { display: flex; align-items: center; gap: 8px; }
     .gd-leg i { width: 8px; height: 8px; border-radius: 50%; background: var(--seg, var(--accent)); flex: none; }
@@ -932,9 +950,15 @@
     .autotag-card.time .autotag-icon { background: rgba(var(--c-purple-rgb),0.16); color: var(--c-purple); }
     .autotag-card.stay .autotag-icon { background: rgba(var(--c-blue-rgb),0.16); color: var(--c-blue-b); }
     @container gdcard (min-width: 600px) {
-      .gd-board { grid-template-columns: 238px minmax(0, 1fr); align-items: start; }
-      .gd-left, .gd-right { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-      .gd-p-tags, .gd-p-ring, .gd-mini-grid, .gd-p-ind, .gd-p-chart { order: 0; }
+      /* первая строка: кольцо посещений слева и четыре плитки справа (одной высоты, без пустоты под кольцом); ниже на всю ширину показатели и график.
+         Теги вынесены из этой сетки в блок «О госте» — раньше они стояли узкой колонкой и тянули её вниз на 500 px */
+      .gd-board { grid-template-columns: 238px minmax(0, 1fr); align-items: stretch; }
+      .gd-p-ring, .gd-mini-grid, .gd-p-ind, .gd-p-chart { order: 0; }
+      .gd-p-ring { grid-column: 1; grid-row: 1; display: flex; flex-direction: column; }
+      .gd-p-ring .gd-ring { flex: 1; justify-content: center; }
+      .gd-mini-grid { grid-column: 2; grid-row: 1; }
+      .gd-p-ind { grid-column: 1 / -1; grid-row: 2; }
+      .gd-p-chart { grid-column: 1 / -1; grid-row: 3; }
       .gd-info { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
     .alert-strip { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
@@ -4706,25 +4730,35 @@ html.rail-wide .rail-row .rail-btn { font-size: 13px; }
 /* карточка гостя: слева «Что делать», «О госте», автотеги; справа показатели; визиты — сеткой на всю ширину */
 body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-left: 0; margin-right: 0; }
 @container gdcard (min-width: 1000px) {
+  /* две независимые колонки: слева «кто это и что делать» (шапка, подсказки, теги, данные, автотеги), справа «карта и цифры»
+     (заметка, карта, кольцо и плитки, показатели, график). Раньше блоки делили общие строки сетки, и там, где одна колонка
+     короче другой, оставались пустые места (под картой справа, под автотегами слева).
+     Вернуть прежнее: .gd-colR снова display: contents; .gd-tiles — grid-column: 2, grid-row: 1; .gd-board — grid-row: 2; теги — внутрь .gd-left. */
   .gd-top { display: grid; grid-template-columns: minmax(380px, 5fr) minmax(0, 7fr); grid-template-rows: auto 1fr; column-gap: 18px; align-items: start; }
   .gd-ta { grid-column: 1; grid-row: 1; min-width: 0; }
-  .gd-board { grid-column: 2; grid-row: 1 / span 2; margin: 0; }
-  .gd-top:has(> .gd-tiles) > .gd-board { grid-row: 2; }
-  /* плитки друг под другом, а не рядом: заметка — тонкой полосой в одну строку, ниже карта с показателями в несколько колонок.
-     Раньше они стояли рядом (4fr/6fr), заметка растягивалась на высоту длинного столбца показателей и оставалась почти пустой.
-     Вернуть прежнее: align-self: stretch и grid-template-columns: minmax(0, 4fr) minmax(0, 6fr) у .gd-tiles:has(> .gd-lc). */
-  .gd-tiles, .gd-tiles:has(> .gd-lc) { grid-column: 2; grid-row: 1; align-self: start; grid-template-columns: minmax(0, 1fr); margin: 0 0 10px; }
+  .gd-colR { grid-column: 2; grid-row: 1 / span 2; align-self: stretch; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .gd-colR > .gd-tiles { margin: 0; }
+  .gd-colR > .gd-board { margin: 0; flex: 1 1 auto; grid-template-rows: 1fr auto auto; }
+  /* низ колонок выравнивается сам: если левая короче правой, лишнее место берёт плитка тегов; если правая короче — кольцо и плитки */
+  .gd-tc { grid-column: 1; grid-row: 2; min-width: 0; align-self: stretch; display: flex; flex-direction: column; }
+  .gd-tc > .gd-p-tags { margin: 0; flex: 1 1 auto; display: flex; flex-direction: column; }
+  .gd-p-tags > .gd-tg { flex: 1 1 auto; }   /* лишняя высота делится поровну между группами тегов, а не копится пустотой внизу плитки */
+  .gd-colR > .gd-board.nostat { flex: none; }
+  /* автотеги — полоса карточек на всю ширину под обеими колонками (раньше стопкой в левой колонке: пять карточек растягивали её на 370 px) */
+  .gd-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px; align-items: stretch; }
+  .gd-auto > .autotag-card { margin: 0; }
+  .gd-auto > .autotag-empty { grid-column: 1 / -1; }
+  .gd-tc > .sec { margin: 16px 0 8px; }
+  .gd-info .info-row { padding: 11px 14px; }
+  /* заметка «Важно для гостя» — тонкая строка: подпись слева, текст рядом (в узкой колонке остаётся плиткой с подписью сверху) */
   .gd-note:has(> .gd-note-h) { flex-direction: row; align-items: baseline; gap: 16px; padding-top: 11px; padding-bottom: 11px; }
   .gd-note-h { flex: none; justify-content: flex-start; margin: 0; }
   .gd-note-t { flex: 1 1 auto; min-width: 0; }
   .gd-note:not(:has(> .gd-note-h)) { min-height: 0; }
   .gd-note-add { flex-direction: row; justify-content: flex-start; min-height: 0; }
-  .gd-lc:not(.empty) { flex-wrap: nowrap; gap: 24px; }
-  .gd-tc { grid-column: 1; grid-row: 2; min-width: 0; }
-  .gd-tc > .sec:first-child { margin-top: 10px; }
   .gd-visits { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 10px; align-items: start; }
   .gd-visits > .visit-item { margin: 0; }
-  .gd-visits > .empty-state { grid-column: 1 / -1; }
+  .gd-visits > .empty-state { grid-column: 1 / -1; padding: 12px 20px; }
 }
 /* до 1400 px левая колонка узкая: «О госте» строками друг под другом; показатели в две колонки — только когда справа больше 900 px */
 @container gdcard (min-width: 1000px) and (max-width: 1399px) { .gd-info { grid-template-columns: minmax(0, 1fr); } }
@@ -24598,22 +24632,33 @@ function qrPlateSvg(text) {
       </div>`;
     }
     const mk = c.marketing === true ? 'Согласен' : c.marketing === false ? 'Отказался' : 'Не указано';
+    // 10.11.2026 (Тимур: «сделай красиво и интуитивно понятно»): главное крупно (уровень, скидка, траты), под ним одна строка про то,
+    // как назначен уровень, ниже мелко то, что нужно реже (когда оформлена, откуда пришёл, согласия). Раньше все семь значений шли
+    // одним списком одинакового размера, а пояснение про уровень растягивало первую колонку.
+    const canLv = can('settings.manage');
+    const lvWhy = c.levelManual
+      ? `Назначен вручную (по тратам: ${escHtml(c.levelAutoLabel || '')})${c.levelReason ? ` · причина: ${escHtml(c.levelReason)}` : ''}${c.levelSetBy || c.levelSetAt ? ` · ${escHtml(c.levelSetBy || '')}${c.levelSetBy && c.levelSetAt ? ', ' : ''}${c.levelSetAt ? escHtml(day(c.levelSetAt)) : ''}` : ''}`
+      : 'Уровень считается по тратам';
+    const lvNote = c.levelLabel ? `<div class="gd-lc-why">${lvWhy}${canLv ? ` <button type="button" class="link-btn gd-lv-edit" onclick="changeCardLevel()">Изменить уровень</button>` : ''}</div>` : '';
     return `<div class="gd-panel gd-lc">
+      <div class="gd-lc-h"><span class="gd-pt">Карта гостя</span></div>
       <div class="gd-lcard${c.level ? ' lv-' + escCls(c.level) : ''}" role="img" aria-label="Карта гостя${c.levelLabel ? ', уровень ' + escHtml(c.levelLabel) : ''}, QR-код">
         <div class="gd-lcard-body"><img src="${GD_CARD_LOGO}" alt="">${c.levelLabel ? `<span class="gd-lcard-lv">${escHtml(c.levelLabel)}</span>` : ''}</div>
         <div class="gd-lcard-qr">${qrPlateSvg(String(c.number || '').replace(/\D/g, ''))}</div>
       </div>
       <div class="gd-lc-rows">
-        ${c.levelLabel ? `<div class="lv-${escCls(c.level)}"><span>Уровень</span><b><i class="gd-lv"></i>${escHtml(c.levelLabel)}</b>
-          ${c.levelManual ? `<small>назначен вручную · по тратам: ${escHtml(c.levelAutoLabel || '')}</small>` : ''}
-          ${c.levelManual && c.levelReason ? `<small class="gd-lv-why">Причина: ${escHtml(c.levelReason)}${c.levelSetBy || c.levelSetAt ? `<br>${escHtml(c.levelSetBy || '')}${c.levelSetBy && c.levelSetAt ? ', ' : ''}${c.levelSetAt ? escHtml(day(c.levelSetAt)) : ''}` : ''}</small>` : ''}
-          ${can('settings.manage') ? `<button type="button" class="link-btn gd-lv-edit" onclick="changeCardLevel()">Изменить уровень</button>` : ''}</div>
-        <div><span>Скидка</span><b>${c.discount > 0 ? escHtml(c.discount) + '%' : 'нет'}</b></div>
-        ${c.spendHidden ? '' : `<div><span>Траты ${escHtml(c.spentWindow || '')}</span><b>${escHtml(clvRub(c.spent || 0))}</b></div>`}` : ''}
-        <div><span>Оформлена</span><b>${escHtml(day(c.issuedAt))}</b></div>
-        <div><span>Откуда пришёл</span><b>${escHtml(c.sourceLabel || '')}</b></div>
-        <div><span>Согласие на данные</span><b>${escHtml(day(c.consentPdAt))}${c.consentPdVer ? ' · ред. ' + escHtml(c.consentPdVer) : ''}</b></div>
-        <div><span>Рассылки в Telegram</span><b>${mk}</b></div>
+        <div class="gd-lc-main">
+          ${c.levelLabel ? `<div class="lv-${escCls(c.level)}"><span>Уровень</span><b><i class="gd-lv"></i>${escHtml(c.levelLabel)}</b></div>` : ''}
+          <div><span>Скидка</span><b>${c.discount > 0 ? escHtml(c.discount) + '%' : 'нет'}</b></div>
+          ${c.spendHidden ? '' : `<div><span>Траты ${escHtml(c.spentWindow || '')}</span><b>${escHtml(clvRub(c.spent || 0))}</b></div>`}
+        </div>
+        ${lvNote}
+        <div class="gd-lc-meta">
+          <div><span>Оформлена</span><b>${escHtml(day(c.issuedAt))}</b></div>
+          <div><span>Откуда пришёл</span><b>${escHtml(c.sourceLabel || '')}</b></div>
+          <div><span>Согласие на данные</span><b>${escHtml(day(c.consentPdAt))}${c.consentPdVer ? ' · ред. ' + escHtml(c.consentPdVer) : ''}</b></div>
+          <div><span>Рассылки в Telegram</span><b>${mk}</b></div>
+        </div>
       </div>
     </div>`;
   }
@@ -24716,11 +24761,18 @@ function qrPlateSvg(text) {
   function gdTagsHtml(guest, tagCount) {
     return `<div class="gd-panel gd-p-tags">
       <div class="gd-ph"><span class="gd-pt">Теги и вкусы</span><em class="gd-pe">${tagCount ? `${tagCount} ${ruPlural(tagCount, 'тег', 'тега', 'тегов')}` : 'пока нет'}</em></div>
-      ${renderTagGroup('special', guest.tagsSpecial, 'Особые')}
-      ${renderTagGroup('allergy', guest.tagsAllergy, 'Аллергии')}
-      ${renderTagGroup('tasteLike', guest.tastesLike, 'Любит (табак / вкусы)')}
-      ${renderTagGroup('tasteDislike', guest.tastesDislike, 'Не любит')}
+      <div class="gd-tg">${renderTagGroup('special', guest.tagsSpecial, 'Особые')}</div>
+      <div class="gd-tg">${renderTagGroup('allergy', guest.tagsAllergy, 'Аллергии')}</div>
+      <div class="gd-tg">${renderTagGroup('tasteLike', guest.tastesLike, 'Любит (табак / вкусы)')}</div>
+      <div class="gd-tg">${renderTagGroup('tasteDislike', guest.tastesDislike, 'Не любит')}</div>
     </div>`;
+  }
+
+  // Есть ли что показывать в панелях со статистикой: визиты или хоть одна бронь с отметкой. Новому гостю пустые кольцо, четыре плитки
+  // с прочерками, список из десяти «—» и пустой график ничего не дают и занимают пол-экрана, вместо них одна строка.
+  function gdHasStats(guest) {
+    const st = guest.stats || {}, bs = guest.bookingStats || {};
+    return (st.visitsTotal || 0) > 0 || (bs.came || 0) + (bs.noShows || 0) + (bs.guestCancels || 0) > 0 || ((st.bookings || {}).avgParty || 0) > 0;
   }
 
   // Плашки-автотеги под именем (как у Cosmos): время визита, продолжительность, ДР
@@ -24805,11 +24857,11 @@ function qrPlateSvg(text) {
       ${renderHints(guest)}
       </div>
 
+      <div class="gd-colR">
       <div class="gd-tiles">${gdNoteHtml(guest, canEdit)}${gdCardHtml(guest)}</div>
 
-      <div class="gd-board">
+      ${gdHasStats(guest) ? `<div class="gd-board">
         <div class="gd-left">
-          ${gdTagsHtml(guest, tagCount)}
           ${gdRingHtml(guest)}
         </div>
         <div class="gd-right">
@@ -24817,9 +24869,11 @@ function qrPlateSvg(text) {
           ${gdIndicatorsHtml(guest)}
           ${gdChartHtml(guest)}
         </div>
+      </div>` : '<div class="gd-board nostat"><div class="gd-panel gd-nostat">Показателей пока нет: они появятся после первого визита или брони</div></div>'}
       </div>
 
       <div class="gd-tc">
+      ${gdTagsHtml(guest, tagCount)}
       <div class="sec">О госте</div>
       <div class="gd-info">
         <div class="info-row" onclick="openSegmentInfo()">
@@ -24854,10 +24908,11 @@ function qrPlateSvg(text) {
         </div>
       </div>
 
+      </div>
+      </div>
+
       <div class="sec">Автотеги</div>
-      ${renderAutoTags(guest)}
-      </div>
-      </div>
+      <div class="gd-auto">${renderAutoTags(guest)}</div>
 
       <div class="sec">Последние визиты</div>
       <div class="gd-visits">${visitsHtml}</div>
