@@ -4815,10 +4815,12 @@ body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-le
   .gd-colR { grid-column: 2; grid-row: 1 / span 2; align-self: stretch; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
   .gd-colR > .gd-tiles { margin: 0; }
   .gd-colR > .gd-board { margin: 0; flex: 1 1 auto; grid-template-rows: 1fr auto auto; }
-  /* низ колонок выравнивается сам: если левая короче правой, лишнее место берёт плитка тегов; если правая короче — кольцо и плитки */
-  .gd-tc { grid-column: 1; grid-row: 2; min-width: 0; align-self: stretch; display: flex; flex-direction: column; }
-  .gd-tc > .gd-p-tags { margin: 0; flex: 1 1 auto; display: flex; flex-direction: column; }
-  .gd-p-tags > .gd-tg { flex: 1 1 auto; }   /* лишняя высота делится поровну между группами тегов, а не копится пустотой внизу плитки */
+  /* левая колонка занимает свою высоту; если она короче правой, пустое место остаётся под «О госте», а не внутри плитки тегов.
+     Раньше лишняя высота делилась между группами тегов, и между ними оставалось до 40 px пустоты (10.11.2026 — «слишком много пустоты»).
+     Вернуть прежнее: .gd-tc — align-self: stretch; .gd-tc > .gd-p-tags — flex: 1 1 auto; display: flex; flex-direction: column;
+     и добавить правило .gd-p-tags > .gd-tg { flex: 1 1 auto; } (лишняя высота делится поровну между группами). */
+  .gd-tc { grid-column: 1; grid-row: 2; min-width: 0; align-self: start; display: flex; flex-direction: column; }
+  .gd-tc > .gd-p-tags { margin: 0; }
   .gd-colR > .gd-board.nostat { flex: none; }
   /* автотеги — полоса карточек на всю ширину под обеими колонками (раньше стопкой в левой колонке: пять карточек растягивали её на 370 px) */
   .gd-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px; align-items: stretch; }
