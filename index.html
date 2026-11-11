@@ -531,6 +531,63 @@
     .vh-acts { display: flex; gap: 8px; margin-top: 11px; }
     .vh-act { flex: 1; padding: 10px 10px; border-radius: 12px; border: 1px solid var(--border); background: rgba(0,0,0,0.12); color: var(--text-sub); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; }
     .vh-act:active { background: var(--accent-dim); }
+    /* Таймер углей: плитки-кольца по кальянам, окно выбора места и окно одного кальяна. Цвет — состояние: медный идёт, янтарный скоро, красный пора
+       (состояние ещё и подписано словами, цвет не единственный признак). Кольцо рисуется маской поверх conic-gradient: фон плитки не важен. */
+    .ct-s-ok { --ct-c: var(--accent); --ct-t: var(--text); }
+    .ct-s-soon { --ct-c: #E0A060; --ct-t: #F2B574; }
+    .ct-s-over { --ct-c: #E5705C; --ct-t: #FF9A86; }
+    .ct-main { margin-top: 14px; max-width: 420px; }
+    .ct-stat { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; margin: 14px 2px 12px; min-height: 18px; font-size: 13px; color: var(--text-sub); }
+    .ct-stat > span { display: inline-flex; align-items: center; gap: 7px; }
+    .ct-stat .ct-off { color: #E5705C; }
+    .ct-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+    .ct-dot.soon { background: #E0A060; }
+    .ct-dot.over { background: #E5705C; }
+    .ct-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+    .ct-card { display: flex; flex-direction: column; align-items: stretch; gap: 12px; box-sizing: border-box; min-width: 0; padding: 14px 14px 12px; border-radius: 18px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text); font-family: 'Montserrat', sans-serif; text-align: left; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .ct-card:active { transform: scale(0.985); }
+    .ct-card:focus-visible { outline: 2px solid rgba(var(--ac),0.7); outline-offset: 2px; }
+    .ct-card.ct-s-soon { border-color: rgba(224,160,96,0.6); }
+    .ct-card.ct-s-over { border-color: rgba(229,112,92,0.75); background: linear-gradient(rgba(229,112,92,0.13), rgba(229,112,92,0.13)), var(--bg-card); }
+    .ct-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+    .ct-place { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 16px; font-weight: 600; line-height: 1.15; }
+    .ct-tag { flex-shrink: 0; }
+    .ct-tag { font-size: 12.5px; color: var(--text-muted); }
+    .ct-ring { position: relative; width: min(100%, 132px); aspect-ratio: 1; align-self: center; --ct-deg: 360deg; }
+    .ct-ring::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(var(--ct-c) var(--ct-deg), rgba(var(--fg-rgb),0.10) 0);
+      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 9px), #000 calc(100% - 8px)); mask: radial-gradient(farthest-side, transparent calc(100% - 9px), #000 calc(100% - 8px)); }
+    .ct-ring-in { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; }
+    .ct-time { font-size: 26px; font-weight: 500; line-height: 1; font-variant-numeric: tabular-nums; color: var(--ct-t); }
+    .ct-time.ct-long { font-size: 20px; }
+    .ct-st { font-size: 11.5px; color: var(--text-sub); }
+    .ct-bot { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--text-muted); }
+    .ct-foot { margin: 20px 2px 8px; font-size: 12.5px; line-height: 1.55; color: var(--text-muted); }
+    .ct-cfg { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-bottom: 8px; color: var(--text-sub); font-size: 13px; }
+    .ct-cfg .form-input { width: 76px; padding: 9px 10px; text-align: center; }
+    .ct-cfg .tb-btn { flex: 0 0 auto; padding: 10px 16px; }
+    .ct-ov { position: fixed; inset: 0; z-index: 390; background: rgba(10,5,0,0.62); backdrop-filter: blur(4px); display: none; align-items: flex-end; justify-content: center; }
+    .ct-ov.show { display: flex; animation: dlgFade .15s ease; }
+    .ct-sheet { width: 100%; max-width: 560px; max-height: 92vh; max-height: min(92dvh, 760px); overflow-y: auto; box-sizing: border-box; padding: 18px 18px 22px; background: var(--bg-pop); border: 1px solid rgba(var(--ac),0.3); border-bottom: none; border-radius: 22px 22px 0 0; }
+    @media (min-width: 640px) { .ct-ov { align-items: center; } .ct-sheet { border-bottom: 1px solid rgba(var(--ac),0.3); border-radius: 22px; } }
+    .ct-sh-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .ct-sh-title { font-size: 20px; font-weight: 600; line-height: 1.2; color: var(--text); }
+    .ct-sh-sub { margin-top: 3px; font-size: 12.5px; color: var(--text-muted); }
+    .ct-x { flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(var(--fg-rgb),0.1); color: var(--text); font-size: 16px; cursor: pointer; }
+    .ct-zone { margin: 16px 0 8px; font-size: 11.5px; color: var(--text-muted); }
+    .ct-zone:first-of-type { margin-top: 4px; }
+    .ct-places { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
+    .ct-pl { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 56px; padding: 10px 6px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text); font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .ct-pl:active { filter: brightness(1.2); }
+    .ct-pl small { font-size: 11.5px; font-weight: 400; color: var(--text-sub); }
+    .ct-big { display: flex; justify-content: center; margin: 4px 0 8px; }
+    .ct-big .ct-ring { width: 200px; }
+    .ct-big .ct-time { font-size: 46px; }
+    .ct-big .ct-time.ct-long { font-size: 34px; }
+    .ct-big .ct-st { font-size: 13px; }
+    .ct-facts { margin-bottom: 16px; }
+    .ct-facts > div { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text); font-variant-numeric: tabular-nums; }
+    .ct-facts > div:last-child { border-bottom: 0; }
+    .ct-facts span:first-child { color: var(--text-muted); }
     .tb-ov { position: fixed; inset: 0; z-index: 390; background: rgba(10,5,0,0.62); backdrop-filter: blur(4px); display: none; align-items: flex-end; justify-content: center; }
     .tb-ov.show { display: flex; animation: dlgFade .15s ease; }
     .tb-sheet { width: 100%; max-width: 560px; height: 92vh; height: min(92dvh, 780px); display: flex; flex-direction: column; background: var(--bg-pop); border: 1px solid rgba(var(--ac),0.3); border-bottom: none; border-radius: 22px 22px 0 0; box-shadow: 0 -12px 40px rgba(0,0,0,0.5); overflow: hidden; }
@@ -6565,6 +6622,23 @@ body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-le
   <div class="tb-sheet" id="tbSheet" role="dialog" aria-modal="true" aria-label="Кальян из справочника"></div>
 </div>
 
+<!-- СМЕНА: ТАЙМЕР УГЛЕЙ (кальяны на столах, замена каждые N минут; db/coaltimers.js, миграция 058) -->
+<div class="screen" id="screen-coaltimer">
+  <div class="header">
+    <div class="back-btn" onclick="showScreen('home')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 style="font-size:14px;letter-spacing:1px;">Таймер углей</h1><p>Кальяны на столах: когда менять угли</p></div>
+  </div>
+  <div style="padding:0 16px" id="ctContent"><div class="loading">Загружаю...</div><div style="height:16px"></div></div>
+</div>
+
+<!-- ТАЙМЕР УГЛЕЙ: выбор места («Кальян вынесен») и окно одного кальяна («Угли заменены», «Кальян убран») -->
+<div class="ct-ov" id="ctOv" onclick="if(event.target===this)ctSheetClose()">
+  <div class="ct-sheet" id="ctSheet" role="dialog" aria-modal="true" aria-label="Таймер углей"></div>
+</div>
+
+
 <!-- EDIT FIELD OVERLAY -->
 <!-- Аналитика: боковая панель «Редактировать показатель» и окно «Фильтры» -->
 <div class="ax-ov" id="axOv" onclick="if(event.target===this)axDrClose()"></div>
@@ -7518,6 +7592,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     icons.standards = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h11a3 3 0 013 3v15H8a3 3 0 01-3-3V3z"/><path d="M9 11l2 2 4-4"/><line x1="9" y1="17" x2="14" y2="17"/></svg>';
     icons.checklists = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 13l2 2 4-4"/></svg>';
     icons.tobacco = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v3a2 2 0 01-2 2h-4a2 2 0 01-2-2V3z"/><path d="M9 8v10a3 3 0 006 0V8"/><path d="M9 13h6"/></svg>';
+    icons.coaltimer = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.6 1.6"/><path d="M9.5 3h5"/><path d="M12 3v3"/></svg>';
     icons.forecast = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20v-6M10 20V9M16 20v-9"/><path d="M3 7l5-3 4 2 5-4" stroke-dasharray="2 2"/><path d="M2 20h20"/></svg>';
     icons.journey = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="5.5" r="2"/><circle cx="18" cy="12" r="2"/><circle cx="6" cy="18.5" r="2"/><path d="M8 5.5h3a4 4 0 0 1 4 4v.5M16 14v.5a4 4 0 0 1-4 4H8"/></svg>';
     icons.briefing = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h9M4 12h9M4 18h5"/><path d="M16 13l2.2 2.2L22 10.5"/></svg>';
@@ -7535,6 +7610,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('schedule.view')) shiftCards += qcard(icons.schedule, 'График', 'Кто когда работает', "openSchedule()");
     // Стоп-лист: официант принимает заказы и должен знать, чего нет
     if (can('menu.view')) shiftCards += qcard(icons.stoplist, 'Стоп-лист', 'Чего нет в меню', "openStoplist()");
+    // Таймер углей: КМ отмечает, когда кальян вынесен на стол, и видит, у кого пора менять угли
+    if (can('tobacco.manage')) shiftCards += qcard(icons.coaltimer, 'Таймер углей', 'Кальяны на столах', "openCoalTimers()");
     if (can('tips.view') && currentJobRole !== 'Основатель') shiftCards += qcard(icons.tips, 'Мои чаевые', 'Лента и итоги', "openTipsMine()");
     // Стандарты: читать правила сервиса и сдавать тесты — всем сотрудникам (точка и «Новых: N» — если есть непрочитанное)
     shiftCards += qcard(icons.standards, 'Стандарты', 'Как мы работаем', "openStandards()", { dotId: 'qdotStandards', extraClass: 'qc-standards' });
@@ -23848,7 +23925,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'journey', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'svforms', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'card-levels', 'card-rollout', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'app-content', 'site', 'tobacco', 'tips-mine', 'tips-admin', 'xr', 'xr-edit', 'xr-tpl', 'dashboard', 'autotags', 'autotag-edit'];
+  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'journey', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'svforms', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'card-levels', 'card-rollout', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'app-content', 'site', 'tobacco', 'coaltimer', 'tips-mine', 'tips-admin', 'xr', 'xr-edit', 'xr-tpl', 'dashboard', 'autotags', 'autotag-edit'];
   var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'app-content', 'site', 'tips-mine', 'tips-admin', 'xr-edit', 'xr-tpl', 'autotag-edit', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklist-form'];
   // «card» остаётся в списке: на узком окне это колонка; на широком её растягивает правило «#screen-card» в wide-css, а две колонки включает container-запрос
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
@@ -23866,6 +23943,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     if (prev) screenScroll[prev] = window.scrollY;
     screens.forEach(s => document.getElementById('screen-' + s)?.classList.remove('active'));
     document.getElementById('screen-' + name)?.classList.add('active');
+    try { if (name !== 'coaltimer' && (ctPollT || ctView)) ctLeave(); } catch (e) { /* таймер углей ещё не загружен */ }   // ушли с таймера: счёт и окно останавливаем
     try { if (name !== 'analytics') axCloseAll(); } catch (e) { /* экран аналитики ещё не загружен */ }   // панель и окна аналитики не должны остаться висеть на другом экране
     document.body.classList.toggle('bk-wide', name === 'bookings'); // на широком экране «Брони» занимают и место правой панели
     document.body.classList.toggle('desk-home', name === 'home');   // боковые панели (дата, смена, афиша…) — только на главной
@@ -23903,6 +23981,7 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
     if (dlg && dlg._cancel) return dlg._cancel();
     if (activeScreenName() === 'analytics' && axCloseTop()) return;
     if (tbMode) { tbClose(); return; }
+    if (ctView) { ctSheetClose(); return; }
     const overlay = document.querySelector('.overlay.show');
     if (overlay) { overlay.classList.remove('show'); return; }
     const back = document.querySelector('.screen.active .back-btn');
@@ -25990,6 +26069,362 @@ function qrPlateSvg(text) {
     } finally { tbBusy = false; }
   }
 
+  // ═══ Смена → «Таймер углей» (право tobacco.manage; интервал меняет settings.manage; сервер: db/coaltimers.js, миграция 058) ═══
+  // КМ нажимает «Кальян вынесен» и выбирает стол: для него идёт круг на N минут (по умолчанию 20). «Угли заменены» начинает новый круг,
+  // «Кальян убран» снимает таймер. Время круга живёт на сервере: телефон и планшет показывают одно и то же, перезагрузка ничего не сбрасывает.
+  // Секунды приложение считает само по часам сервера (ctOffset = часы сервера минус часы устройства) и раз в 10 с сверяется с ним.
+  var ctData = null;          // последний ответ сервера: { available, now, intervalMinutes, warnMinutes, canConfigure, timers: [...] }
+  var ctOffset = 0;           // мс: часы сервера минус часы этого устройства
+  var ctOnline = true;        // последний опрос дошёл до сервера
+  var ctView = null;          // открытое окно: { mode: 'pick' } | { mode: 'one', id }
+  var ctBusy = false;         // идёт запрос действия: второе касание не отправляем
+  var ctSeq = 0;              // номер запроса: ответ на старый опрос не затирает свежее состояние
+  var ctSig = '', ctCfgSig = '';
+  var ctPollT = null, ctTickT = null, ctWake = null, ctPrev = {}, ctFocusBack = null;
+  const CT_POLL_MS = 10000;
+  const CT_STATE_TEXT = { ok: 'идёт', soon: 'скоро менять', over: 'пора менять' };
+
+  const ctNow = () => Date.now() + ctOffset;
+  const ctErr = e => e && e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи — не сохранилось';
+  async function ctApi(method, path, body) {
+    const res = await fetch(`${PROXY_BASE}/api/staff/coal-timers${path}`, { method, headers: body === undefined ? undefined : { 'Content-Type': 'application/json' }, body: body === undefined ? undefined : JSON.stringify(body) });
+    if (res.status === 401) { showScreen('pin'); throw new Error('Нужно войти заново'); }
+    if (res.status === 403) { accessDenied(); throw new Error('Нет доступа'); }
+    if (!res.ok) throw new Error(await responseError(res, 'Не получилось — попробуйте ещё раз'));
+    return res.json();
+  }
+  // Часы сервера приходят в каждом ответе: подгоняем смещение, чтобы кольца не расходились между устройствами
+  function ctSync(now) { const t = Date.parse(now); if (!isNaN(t)) ctOffset = t - Date.now(); }
+
+  function ctFmt(ms) {
+    const s = Math.max(0, Math.floor(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60;
+    return h ? `${h}:${String(m).padStart(2, '0')}:${String(x).padStart(2, '0')}` : `${m}:${String(x).padStart(2, '0')}`;
+  }
+  // Сколько осталось до замены и в каком состоянии кальян: идёт / скоро (за warnMinutes) / пора (время вышло)
+  function ctCalc(t) {
+    const iv = ctData.intervalMinutes * 60000, warn = ctData.warnMinutes * 60000;
+    const left = Date.parse(t.cycleStartedAt) + iv - ctNow();
+    return { left, iv, state: left <= 0 ? 'over' : (left <= warn ? 'soon' : 'ok') };
+  }
+  const ctTimeText = c => c.left > 0 ? ctFmt(Math.ceil(c.left / 1000) * 1000) : '+' + ctFmt(-c.left);
+  const ctDeg = c => c.left <= 0 ? 360 : Math.round(Math.min(1, c.left / c.iv) * 3600) / 10;
+  function ctPlaceName(place) { const tb = hallTableFor(place); return tb ? hallPlaceName(tb) : place; }
+  // На карточке имя короче: «ВИП 2» вместо «ВИП-комната 2», чтобы заголовок не переносился и кольца стояли на одной линии
+  function ctCardName(place) { const tb = hallTableFor(place); return tb && tb.zone === 'vip' ? 'ВИП ' + tb.key.slice(-1) : ctPlaceName(place); }
+  // «№2», когда на одном месте стоит несколько кальянов (ВИП): номер — по порядку, в каком их вынесли
+  function ctNumbers() {
+    const by = {}, out = {};
+    ctData.timers.slice().sort((a, b) => Date.parse(a.startedAt) - Date.parse(b.startedAt) || (a.id < b.id ? -1 : 1))
+      .forEach(t => { (by[t.place] = by[t.place] || []).push(t); });
+    Object.keys(by).forEach(p => by[p].forEach((t, i) => { out[t.id] = { n: i + 1, of: by[p].length }; }));
+    return out;
+  }
+  const ctById = id => ctData && ctData.timers ? ctData.timers.find(t => t.id === id) || null : null;
+  const ctCountAt = place => ctData && ctData.timers ? ctData.timers.filter(t => t.place === place).length : 0;
+
+  // ── Экран ──
+  function openCoalTimers() {
+    ctData = null; ctView = null; ctSig = ''; ctCfgSig = ''; ctPrev = {}; ctOnline = true;
+    const el = document.getElementById('ctContent');
+    if (el) el.innerHTML = '<div class="loading">Загружаю...</div><div style="height:16px"></div>';
+    showScreen('coaltimer');
+    ctStartLoops();
+    ctReload();
+  }
+  function ctStartLoops() {
+    ctStopLoops();
+    ctPollT = setInterval(() => { if (activeScreenName() === 'coaltimer') ctReload(); }, CT_POLL_MS);
+    ctTickLoop();
+    ctWakeOn();
+  }
+  function ctStopLoops() {
+    if (ctPollT) clearInterval(ctPollT);
+    if (ctTickT) clearTimeout(ctTickT);
+    ctPollT = ctTickT = null;
+    ctWakeOff();
+  }
+  // Ушли с экрана (в том числе кнопкой «назад» или выходом): останавливаем счёт и закрываем окно
+  function ctLeave() {
+    ctStopLoops(); ctSeq++;
+    ctView = null; ctFocusBack = null;
+    document.getElementById('ctOv')?.classList.remove('show');
+  }
+  // Планшет за стойкой не должен гаснуть, пока открыт таймер (там, где браузер это умеет)
+  async function ctWakeOn() {
+    try {
+      if (navigator.wakeLock && !ctWake) {
+        ctWake = await navigator.wakeLock.request('screen');
+        ctWake.addEventListener('release', () => { ctWake = null; });
+      }
+    } catch (e) { ctWake = null; }
+  }
+  function ctWakeOff() { try { if (ctWake) ctWake.release(); } catch (e) { /* уже отпущено */ } ctWake = null; }
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && activeScreenName() === 'coaltimer') { ctWakeOn(); ctReload(); }
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && ctView && !document.querySelector('.app-dialog-ov')) ctSheetClose();
+  });
+
+  async function ctReload() {
+    const my = ++ctSeq;
+    try {
+      const d = await ctApi('GET', '');
+      if (my !== ctSeq) return;
+      ctOnline = true;
+      ctApply(d);
+    } catch (e) {
+      if (my !== ctSeq) return;
+      ctOnline = false;
+      if (!ctData) {
+        const el = document.getElementById('ctContent');
+        if (el && activeScreenName() === 'coaltimer') el.innerHTML = errorStateHtml(ctErr(e) === 'Нет связи — не сохранилось' ? 'Нет связи с сервером' : ctErr(e), 'openCoalTimers()');
+      } else ctRenderStat();
+    }
+  }
+  function ctApply(d) {
+    ctData = d; ctSync(d.now);
+    ctShell();
+    ctRenderGrid();
+    ctRenderCfg();
+    // окно кальяна, которого уже нет (убрали с другого устройства), закрываем
+    if (ctView && ctView.mode === 'one' && !ctById(ctView.id)) { ctSheetClose(); showToast('Этот кальян уже убран'); }
+    else if (ctView && ctView.mode === 'pick') ctSheetPickRender();
+    else if (ctView && ctView.mode === 'one' && ctOneSig(ctById(ctView.id)) !== ctView.sig) ctSheetOneRender();   // замену отметили с другого устройства
+  }
+  const ctOneSig = t => t ? `${t.cycleStartedAt}:${t.replacements}:${ctData.intervalMinutes}` : '';
+
+  // Каркас экрана ставится один раз: кнопка, счётчик, сетка, подпись, настройка. Дальше обновляются только части,
+  // чтобы касание по карточке и набор числа в настройке не сбрасывались от опроса сервера.
+  function ctShell() {
+    const el = document.getElementById('ctContent');
+    if (!el || document.getElementById('ctGrid')) return;
+    if (ctData.available === false) {
+      el.innerHTML = '<div class="empty-state">Таймер углей ещё не подключён: на сервере не хватает обновления базы (миграция 058). Скажите основателю.</div>';
+      return;
+    }
+    el.innerHTML = `<button type="button" class="btn-cta ct-main" onclick="ctOpenPick()">Кальян вынесен</button>
+      <div class="ct-stat" id="ctStat"></div>
+      <div id="ctGrid"></div>
+      <div class="ct-foot" id="ctFoot"></div>
+      <div id="ctCfg"></div>
+      <div style="height:16px"></div>`;
+  }
+  function ctRenderStat() {
+    const el = document.getElementById('ctStat');
+    if (!el || !ctData || !ctData.timers) return;
+    const n = { ok: 0, soon: 0, over: 0 };
+    ctData.timers.forEach(t => { n[ctCalc(t).state]++; });
+    const off = ctOnline ? '' : '<span class="ct-off">нет связи, время считается по последним данным</span>';
+    el.innerHTML = ctData.timers.length
+      ? `<span><i class="ct-dot"></i>идёт ${n.ok}</span><span><i class="ct-dot soon"></i>скоро ${n.soon}</span><span><i class="ct-dot over"></i>пора ${n.over}</span>${off}`
+      : off;
+  }
+  function ctCardHtml(t, num) {
+    const c = ctCalc(t);
+    return `<button type="button" class="ct-card ct-s-${c.state}" data-id="${escHtml(t.id)}" onclick="ctOpenOne(this.dataset.id)">
+      <div class="ct-top"><span class="ct-place">${escHtml(ctCardName(t.place))}</span>${num && num.of > 1 ? `<span class="ct-tag">№${num.n}</span>` : ''}</div>
+      <div class="ct-ring" style="--ct-deg:${ctDeg(c)}deg"><div class="ct-ring-in"><div class="ct-time${ctTimeText(c).length > 6 ? ' ct-long' : ''}">${ctTimeText(c)}</div><div class="ct-st">${CT_STATE_TEXT[c.state]}</div></div></div>
+      <div class="ct-bot"><span>${t.replacements ? 'замен: ' + t.replacements : 'без замен'}</span><span>с ${escHtml(mskHm(t.startedAt))}</span></div>
+    </button>`;
+  }
+  // Сетка перерисовывается, только если что-то изменилось (новый кальян, замена, другой интервал); секунды красит ctTickOnce
+  function ctRenderGrid(force) {
+    const el = document.getElementById('ctGrid');
+    if (!el || !ctData || !ctData.timers) return;
+    const sig = [ctData.intervalMinutes, ctData.warnMinutes].concat(ctData.timers.map(t => `${t.id}:${t.cycleStartedAt}:${t.replacements}`)).join('|');
+    if (force || sig !== ctSig) {
+      ctSig = sig;
+      if (!ctData.timers.length) {
+        el.className = '';
+        el.innerHTML = '<div class="empty-state">На таймере пока нет кальянов<br>Вынесли кальян — нажмите «Кальян вынесен»</div>';
+      } else {
+        const nums = ctNumbers();
+        el.className = 'ct-grid';
+        // по времени замены: сверху те, кому менять раньше всех. Порядок от времени не зависит, карточки не прыгают
+        el.innerHTML = ctData.timers.slice().sort((a, b) => Date.parse(a.cycleStartedAt) - Date.parse(b.cycleStartedAt) || (a.id < b.id ? -1 : 1))
+          .map(t => ctCardHtml(t, nums[t.id])).join('');
+      }
+    }
+    const foot = document.getElementById('ctFoot');
+    if (foot) foot.textContent = `Угли меняем каждые ${ctData.intervalMinutes} мин. Коснитесь кальяна, чтобы отметить замену или убрать его.`;
+    ctRenderStat();
+  }
+  // Настройка интервала — только у основателя; остальные её не видят
+  function ctRenderCfg() {
+    const el = document.getElementById('ctCfg');
+    if (!el || !ctData) return;
+    const sig = (ctData.canConfigure ? 1 : 0) + '|' + ctData.intervalMinutes + '|' + ctData.warnMinutes;
+    if (sig === ctCfgSig) return;
+    ctCfgSig = sig;
+    el.innerHTML = ctData.canConfigure ? `<div class="ct-zone">Настройка · для основателя</div>
+      <div class="ct-cfg"><span>Менять угли каждые</span><input class="form-input" id="ctCfgMin" type="number" inputmode="numeric" min="1" max="180" value="${ctData.intervalMinutes}" aria-label="Минут между заменами"><span>мин</span></div>
+      <div class="ct-cfg"><span>Предупредить за</span><input class="form-input" id="ctCfgWarn" type="number" inputmode="numeric" min="0" max="179" value="${ctData.warnMinutes}" aria-label="За сколько минут предупредить"><span>мин</span><button type="button" class="tb-btn ok" onclick="ctSaveCfg()">Сохранить</button></div>
+      <div class="ct-foot" style="margin-top:0">Действует сразу на все кальяны на таймере.</div>` : '';
+  }
+  async function ctSaveCfg() {
+    if (ctBusy) return;
+    const mEl = document.getElementById('ctCfgMin'), wEl = document.getElementById('ctCfgWarn');
+    if (!mEl || !wEl) return;
+    const m = Number(mEl.value), w = Number(wEl.value);
+    if (mEl.value.trim() === '' || !Number.isInteger(m) || m < 1 || m > 180) { showToast('Интервал замены: целое число минут от 1 до 180', true); return; }
+    if (wEl.value.trim() === '' || !Number.isInteger(w) || w < 0 || w >= m) { showToast('Предупреждение: целое число минут, меньше интервала', true); return; }
+    ctBusy = true;
+    try {
+      const r = await ctApi('PUT', '/config', { minutes: m, warnMinutes: w });
+      ctSeq++;
+      ctData.intervalMinutes = r.intervalMinutes; ctData.warnMinutes = r.warnMinutes;
+      ctRenderGrid(true); ctRenderCfg();
+      showToast(r.changed ? `Сохранено: замена каждые ${r.intervalMinutes} мин` : 'Без изменений');
+    } catch (e) { showToast(ctErr(e), true); }
+    finally { ctBusy = false; }
+  }
+
+  // ── Секунды: раз в секунду (в момент смены секунды) обновляем время, цвет и кольцо ──
+  function ctTickLoop() {
+    if (ctTickT) clearTimeout(ctTickT);
+    ctTickOnce();
+    ctTickT = setTimeout(ctTickLoop, 1000 - (ctNow() % 1000) + 25);
+  }
+  function ctPaint(el, c) {
+    const cls = 'ct-s-' + c.state;
+    if (!el.classList.contains(cls)) { el.classList.remove('ct-s-ok', 'ct-s-soon', 'ct-s-over'); el.classList.add(cls); }
+    const tm = el.querySelector('.ct-time'), txt = ctTimeText(c);
+    if (tm) { if (tm.textContent !== txt) tm.textContent = txt; tm.classList.toggle('ct-long', txt.length > 6); }
+    const st = el.querySelector('.ct-st'); if (st && st.textContent !== CT_STATE_TEXT[c.state]) st.textContent = CT_STATE_TEXT[c.state];
+    const ring = el.querySelector('.ct-ring'); if (ring) ring.style.setProperty('--ct-deg', ctDeg(c) + 'deg');
+  }
+  function ctTickOnce() {
+    if (activeScreenName() !== 'coaltimer') { ctLeave(); return; }
+    if (!ctData || !ctData.timers) return;
+    const cards = {};
+    document.querySelectorAll('#ctGrid .ct-card').forEach(el => { cards[el.dataset.id] = el; });
+    const seen = {};
+    let buzz = false;
+    ctData.timers.forEach(t => {
+      const c = ctCalc(t);
+      if (cards[t.id]) ctPaint(cards[t.id], c);
+      if (ctPrev[t.id] && ctPrev[t.id] !== 'over' && c.state === 'over') buzz = true;   // время вышло прямо сейчас (не при открытии экрана)
+      ctPrev[t.id] = c.state; seen[t.id] = 1;
+      if (ctView && ctView.mode === 'one' && ctView.id === t.id) { const big = document.getElementById('ctBig'); if (big) ctPaint(big, c); }
+    });
+    Object.keys(ctPrev).forEach(id => { if (!seen[id]) delete ctPrev[id]; });
+    ctRenderStat();
+    if (buzz) { try { if (navigator.vibrate) navigator.vibrate([220, 120, 220]); } catch (e) { /* без вибрации */ } }
+  }
+
+  // ── Окна: выбор стола («Кальян вынесен») и один кальян («Угли заменены», «Кальян убран») ──
+  function ctSheetShow(mode, extra) {
+    if (!ctView) ctFocusBack = document.activeElement;
+    ctView = Object.assign({ mode }, extra || {});
+    document.getElementById('ctOv')?.classList.add('show');
+    const sh = document.getElementById('ctSheet'); if (sh) sh.scrollTop = 0;
+  }
+  function ctSheetClose() {
+    ctView = null;
+    document.getElementById('ctOv')?.classList.remove('show');
+    try { if (ctFocusBack && ctFocusBack.focus && document.body.contains(ctFocusBack)) ctFocusBack.focus(); } catch (e) { /* не вернуть фокус — не страшно */ }
+    ctFocusBack = null;
+  }
+  function ctOpenPick() {
+    if (!ctData || ctData.available === false) return;
+    ctSheetShow('pick');
+    ctSheetPickRender();
+  }
+  function ctSheetPickRender() {
+    const sh = document.getElementById('ctSheet');
+    if (!sh) return;
+    const zones = HALL_ZONES.map(z => {
+      const btns = z.tables.map(tb => {
+        const n = ctCountAt(tb.key);
+        return `<button type="button" class="ct-pl" data-p="${escHtml(tb.key)}" onclick="ctStart(this.dataset.p)" aria-label="${escHtml(ctPlaceName(tb.key))}">${escHtml(tb.short)}${n ? `<small>уже ${n}</small>` : ''}</button>`;
+      }).join('');
+      return `<div class="ct-zone">${escHtml(z.title)}</div><div class="ct-places">${btns}</div>`;
+    }).join('');
+    const top = sh.scrollTop;
+    sh.innerHTML = `<div class="ct-sh-head"><div><div class="ct-sh-title">Кальян вынесен</div><div class="ct-sh-sub">Выберите стол: таймер пойдёт сразу</div></div>
+      <button type="button" class="ct-x" onclick="ctSheetClose()" aria-label="Закрыть">✕</button></div>${zones}`;
+    sh.scrollTop = top;
+  }
+  function ctOpenOne(id) {
+    if (!ctById(id)) return;
+    ctSheetShow('one', { id });
+    ctSheetOneRender();
+    ctTickOnce();
+  }
+  function ctSheetOneRender() {
+    const sh = document.getElementById('ctSheet'), t = ctView && ctView.mode === 'one' ? ctById(ctView.id) : null;
+    if (!sh || !t) return;
+    const c = ctCalc(t), num = ctNumbers()[t.id];
+    ctView.sig = ctOneSig(t);
+    const next = mskHm(Date.parse(t.cycleStartedAt) + c.iv);
+    sh.innerHTML = `<div class="ct-sh-head"><div><div class="ct-sh-title">${escHtml(ctPlaceName(t.place))}${num && num.of > 1 ? ` · №${num.n}` : ''}</div><div class="ct-sh-sub">Угли меняем каждые ${ctData.intervalMinutes} мин</div></div>
+      <button type="button" class="ct-x" onclick="ctSheetClose()" aria-label="Закрыть">✕</button></div>
+      <div class="ct-big ct-s-${c.state}" id="ctBig"><div class="ct-ring" style="--ct-deg:${ctDeg(c)}deg"><div class="ct-ring-in"><div class="ct-time${ctTimeText(c).length > 6 ? ' ct-long' : ''}">${ctTimeText(c)}</div><div class="ct-st">${CT_STATE_TEXT[c.state]}</div></div></div></div>
+      <div class="ct-facts">
+        <div><span>Вынесен</span><span>${escHtml(mskHm(t.startedAt))}</span></div>
+        <div><span>Замен</span><span>${t.replacements}</span></div>
+        <div><span>Последняя замена</span><span>${t.replacements ? escHtml(mskHm(t.cycleStartedAt)) : '—'}</span></div>
+        <div><span>Следующая замена</span><span>${escHtml(next)}</span></div>
+        ${t.by ? `<div><span>Кто запустил</span><span>${escHtml(t.by)}</span></div>` : ''}
+      </div>
+      <button type="button" class="btn-cta" style="margin-top:0" onclick="ctReplace()">Угли заменены</button>
+      <button type="button" class="btn-ghost" onclick="ctEnd()">Кальян убран</button>`;
+  }
+
+  // ── Действия ──
+  async function ctStart(place) {
+    if (ctBusy || !ctData) return;
+    ctBusy = true;
+    try {
+      const r = await ctApi('POST', '', { place });
+      ctSeq++; ctSync(r.now);
+      if (r.timer && !ctById(r.timer.id)) ctData.timers.push(r.timer);
+      ctData.timers.sort((a, b) => Date.parse(a.startedAt) - Date.parse(b.startedAt) || (a.id < b.id ? -1 : 1));
+      ctSheetClose();
+      ctRenderGrid(true);
+      showToast(r.duplicate ? `${ctPlaceName(place)}: этот кальян уже на таймере` : `${ctPlaceName(place)}: таймер пошёл`);
+    } catch (e) { showToast(ctErr(e), true); }
+    finally { ctBusy = false; }
+    ctReload();
+  }
+  async function ctReplace() {
+    const id = ctView && ctView.mode === 'one' ? ctView.id : null;
+    if (!id || ctBusy) return;
+    ctBusy = true;
+    try {
+      const r = await ctApi('POST', `/${encodeURIComponent(id)}/replace`);
+      ctSeq++; ctSync(r.now);
+      const i = ctData.timers.findIndex(x => x.id === id);
+      if (i >= 0 && r.timer) ctData.timers[i] = r.timer;
+      const name = ctPlaceName(r.timer ? r.timer.place : '');
+      ctSheetClose();
+      ctRenderGrid(true);
+      showToast(r.changed ? `${name}: угли заменены, следующая замена в ${mskHm(Date.parse(r.timer.cycleStartedAt) + ctData.intervalMinutes * 60000)}` : `${name}: замену только что отметили`);
+    } catch (e) { showToast(ctErr(e), true); }
+    finally { ctBusy = false; }
+    ctReload();
+  }
+  async function ctEnd() {
+    const id = ctView && ctView.mode === 'one' ? ctView.id : null;
+    const t = id ? ctById(id) : null;
+    if (!t || ctBusy) return;
+    const name = ctPlaceName(t.place);
+    const ok = await askConfirm(`Кальян убран со стола «${name}»?\n\nТаймер этого кальяна остановится.`, { ok: 'Убран' });
+    if (!ok) return;
+    ctBusy = true;
+    try {
+      const r = await ctApi('POST', `/${encodeURIComponent(id)}/end`);
+      ctSeq++; ctSync(r.now);
+      ctData.timers = ctData.timers.filter(x => x.id !== id);
+      ctSheetClose();
+      ctRenderGrid(true);
+      showToast(`${name}: кальян убран`);
+    } catch (e) { showToast(ctErr(e), true); }
+    finally { ctBusy = false; }
+    ctReload();
+  }
+
   // ═══ Раздел «Сервис» → «Табак» (право tobacco.manage) ═══
   let tbScreenQ = '', tbScreenFilter = 'all';
   function openTobacco() {
@@ -27890,6 +28325,7 @@ function qrPlateSvg(text) {
         { key: 'shifts', label: 'Кто на смене', ok: perm('shifts.review'), go: function () { openShifts(); }, screens: ['shifts', 'shift-check'] },
         { key: 'schedule', label: 'График', ok: perm('schedule.view'), go: function () { openSchedule(); }, screens: ['schedule', 'add-shift'] },
         { key: 'stoplist', label: 'Стоп-лист', ok: perm('menu.view'), go: function () { openStoplist(); }, screens: ['stoplist'] },
+        { key: 'coaltimer', label: 'Таймер углей', ok: perm('tobacco.manage'), go: function () { openCoalTimers(); }, screens: ['coaltimer'] },
         { key: 'tips', label: 'Мои чаевые', ok: function () { return can('tips.view') && currentJobRole !== 'Основатель'; }, go: function () { openTipsMine(); }, screens: ['tips-mine'] },
         { key: 'standards', label: 'Стандарты', ok: T, go: function () { openStandards(); }, screens: ['standards', 'standards-edit', 'standard-form', 'standard-progress'], dot: 'qdotStandards' } ] },
 
