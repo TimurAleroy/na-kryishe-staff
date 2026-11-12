@@ -588,6 +588,28 @@
     .ct-facts > div { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text); font-variant-numeric: tabular-nums; }
     .ct-facts > div:last-child { border-bottom: 0; }
     .ct-facts span:first-child { color: var(--text-muted); }
+    /* Окно выбора: переключатель «Схема / Список», схема зала (те же столы, что на плане броней) и нижняя панель «Запустить» */
+    .ct-modes { margin: 0 0 12px; }
+    .ct-areas { margin: 0 0 4px; }
+    .ct-areas small { margin-left: 6px; padding: 1px 6px; border-radius: 9px; background: rgba(var(--ac),0.22); color: var(--accent); font-size: 11px; font-weight: 600; }
+    .ct-plan { max-width: 460px; margin: 0 auto 4px; }
+    .ct-plan .hz-svg { overflow: visible; }
+    .ct-plan .hz-t { -webkit-tap-highlight-color: transparent; outline: none; }
+    .ct-plan .ct-hit { fill: transparent; stroke: none; }
+    .ct-plan .hz-t.ct-has .hz-shape { stroke: var(--ct-c); stroke-width: 1.9; }
+    .ct-plan .hz-t.ct-has.ct-s-over .hz-shape { fill: rgba(229,112,92,0.18); }
+    .ct-plan .hz-t.ct-has.ct-s-soon .hz-shape { fill: rgba(224,160,96,0.14); }
+    .ct-plan .hz-t.ct-has .hz-stool { stroke: var(--ct-c); }
+    .ct-plan .hz-t.sel .hz-shape { fill: rgba(var(--ac),0.3); stroke: var(--accent); stroke-width: 2.8; }
+    .ct-plan .hz-t:focus-visible .hz-shape { stroke: var(--accent); stroke-width: 2.8; }
+    @media (hover: hover) { .ct-plan .hz-t:hover .hz-shape { stroke: var(--accent); } }
+    .ct-badge circle { fill: var(--ct-c); stroke: var(--bg-pop); stroke-width: 2; }
+    .ct-badge text { fill: #1B0F08; font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 600; text-anchor: middle; }
+    .ct-bar { position: sticky; bottom: -22px; z-index: 2; margin: 10px -18px -22px; padding: 12px 18px 22px; background: var(--bg-pop); border-top: 1px solid var(--border); }
+    .ct-bar-t { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 10px; min-height: 20px; font-size: 15px; font-weight: 600; color: var(--text); }
+    .ct-bar-t span { font-size: 12.5px; font-weight: 400; color: var(--text-muted); text-align: right; }
+    .ct-bar-t.none { font-weight: 400; font-size: 13.5px; color: var(--text-muted); }
+    .ct-bar .btn-cta { margin-top: 0; }
     .tb-ov { position: fixed; inset: 0; z-index: 390; background: rgba(10,5,0,0.62); backdrop-filter: blur(4px); display: none; align-items: flex-end; justify-content: center; }
     .tb-ov.show { display: flex; animation: dlgFade .15s ease; }
     .tb-sheet { width: 100%; max-width: 560px; height: 92vh; height: min(92dvh, 780px); display: flex; flex-direction: column; background: var(--bg-pop); border: 1px solid rgba(var(--ac),0.3); border-bottom: none; border-radius: 22px 22px 0 0; box-shadow: 0 -12px 40px rgba(0,0,0,0.5); overflow: hidden; }
@@ -26080,6 +26102,11 @@ function qrPlateSvg(text) {
   var ctBusy = false;         // идёт запрос действия: второе касание не отправляем
   var ctSeq = 0;              // номер запроса: ответ на старый опрос не затирает свежее состояние
   var ctSig = '', ctCfgSig = '';
+  var ctPickView = 'plan';    // вид окна выбора: 'plan' (схема зала) | 'list' (список); запоминается на этом устройстве
+  var ctPickArea = 'hall';    // на схеме: 'hall' (зал, балкон, ВИП) | 'terrace'
+  var ctPickSel = null;       // стол, выбранный на схеме (ключ вроде «Общий зал 5»); таймер идёт только после кнопки «Запустить»
+  var ctPickSigS = '';        // отпечаток нарисованного окна: опрос раз в 10 с не перерисовывает его без перемен (касание по схеме не теряется)
+  try { const pv = JSON.parse(localStorage.getItem('ct.pick') || '{}'); if (pv.view === 'list' || pv.view === 'plan') ctPickView = pv.view; } catch (e) { /* без памяти — схема */ }
   var ctPollT = null, ctTickT = null, ctWake = null, ctPrev = {}, ctFocusBack = null;
   const CT_POLL_MS = 10000;
   const CT_STATE_TEXT = { ok: 'идёт', soon: 'скоро менять', over: 'пора менять' };
@@ -26310,6 +26337,7 @@ function qrPlateSvg(text) {
     });
     Object.keys(ctPrev).forEach(id => { if (!seen[id]) delete ctPrev[id]; });
     ctRenderStat();
+    if (ctView && ctView.mode === 'pick') ctSheetPickRender();   // значки на схеме меняют цвет, когда подходит время замены
     if (buzz) { try { if (navigator.vibrate) navigator.vibrate([220, 120, 220]); } catch (e) { /* без вибрации */ } }
   }
 
@@ -26328,22 +26356,98 @@ function qrPlateSvg(text) {
   }
   function ctOpenPick() {
     if (!ctData || ctData.available === false) return;
+    ctPickSel = null; ctPickSigS = '';
     ctSheetShow('pick');
-    ctSheetPickRender();
+    ctSheetPickRender(true);
   }
-  function ctSheetPickRender() {
-    const sh = document.getElementById('ctSheet');
-    if (!sh) return;
-    const zones = HALL_ZONES.map(z => {
+  // Сколько кальянов стоит на месте и в каком они состоянии (худшее: пора > скоро > идёт) — для значка на схеме
+  const CT_RANK = { ok: 1, soon: 2, over: 3 };
+  function ctPlaceInfo(place) {
+    let n = 0, worst = 'ok';
+    if (ctData && ctData.timers) for (const t of ctData.timers) if (t.place === place) { n++; const st = ctCalc(t).state; if (CT_RANK[st] > CT_RANK[worst]) worst = st; }
+    return { n, worst };
+  }
+  function ctPickSignature(w) {
+    const parts = [ctPickView, ctPickArea, ctPickSel || '', Math.round(w / 8), ctBusy ? 'b' : ''];
+    for (const tb of HALL_TABLES) { const i = ctPlaceInfo(tb.key); if (i.n) parts.push(tb.key + ':' + i.n + i.worst[0]); }
+    return parts.join('|');
+  }
+  function ctPickSetView(v) {
+    if (v !== 'plan' && v !== 'list') return;
+    ctPickView = v; ctPickSel = null;
+    try { localStorage.setItem('ct.pick', JSON.stringify({ view: v })); } catch (e) { /* не запомнилось — не страшно */ }
+    ctSheetPickRender(true);
+  }
+  function ctPickSetArea(a) { ctPickArea = a === 'terrace' || a === 'vip' ? a : 'hall'; ctPickSel = null; ctSheetPickRender(true); }   // выбор не переносим на другую вкладку: панель внизу не должна называть стол, которого не видно
+  function ctPlanPick(key) { if (!hallTableFor(key)) return; ctPickSel = key; ctSheetPickRender(true); }
+  function ctPickGo() { if (ctPickSel) ctStart(ctPickSel); }
+  // Значок «сколько кальянов на столе» — в правом верхнем углу стола
+  function ctBadgeAt(tb) {
+    if (tb.shape === 'round') return [tb.x + tb.r * 0.78, tb.y - tb.r * 0.78];
+    if (tb.shape === 'bar') return [tb.x + tb.w + 3, tb.y + 10];
+    return [tb.x + tb.w / 2 - 1, tb.y - tb.h / 2 + 1];
+  }
+  // Зона схемы: те же очертания и столы, что на плане броней (HALL_ZONES / layoutZone), но нажатие — выбор места
+  function ctZoneSvg(z) {
+    let out = `<svg viewBox="0 0 ${z.width} ${z.height}" class="hz-svg" xmlns="http://www.w3.org/2000/svg">${z.decor.join('')}`;
+    for (const tb of z.tables) {
+      const info = ctPlaceInfo(tb.key), name = ctPlaceName(tb.key);
+      // нажимаемая область шире самого стола: на телефоне она не меньше ~44 px (46 единиц схемы при масштабе ~0,9)
+      const hw = Math.max(tb.shape === 'round' ? tb.r * 2 + 16 : tb.w + 12, 48), hh = Math.max(tb.shape === 'round' ? tb.r * 2 + 16 : tb.h + 12, 48);
+      const hit = tb.shape === 'bar'
+        ? `<rect x="${tb.x + tb.w / 2 - hw / 2}" y="${tb.y - 4}" width="${hw}" height="${tb.h + 8}" class="ct-hit"/>`
+        : `<rect x="${tb.x - hw / 2}" y="${tb.y - hh / 2}" width="${hw}" height="${hh}" rx="10" class="ct-hit"/>`;
+      let badge = '';
+      if (info.n) { const [bx, by] = ctBadgeAt(tb); badge = `<g class="ct-badge" pointer-events="none"><circle cx="${bx}" cy="${by}" r="9"/><text x="${bx}" y="${by}" dy=".35em">${info.n}</text></g>`; }
+      const cls = ['hz-t', 'free', info.n ? 'ct-has ct-s-' + info.worst : '', ctPickSel === tb.key ? 'sel' : ''].filter(Boolean).join(' ');
+      const label = `${name}${info.n ? `, уже ${info.n} на таймере` : ''}`;
+      out += `<g class="${cls}" data-table="${escHtml(tb.key)}" role="button" tabindex="0" aria-label="${escHtml(label)}" aria-pressed="${ctPickSel === tb.key}" onclick="ctPlanPick(this.dataset.table)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();ctPlanPick(this.dataset.table)}">${hit}${tableTicksSvg(tb)}${tableShapeSvg(tb)}${tableTextSvg(tb)}${badge}</g>`;
+    }
+    return out + '</svg>';
+  }
+  // Вкладки схемы: на телефоне зал, ВИП-комнаты с балконом и терраса не умещаются в одно окно без прокрутки — каждая на своей вкладке
+  function ctPlanHtml(w) {
+    const cw = Math.max(240, w);
+    const def = id => HALL_ZONES.find(z => z.id === id);
+    const main = layoutZone(HALL_ZONES[0], cw);   // ширина зала — общая мера: комнаты и балкон рисуются в том же масштабе
+    const zones = ctPickArea === 'terrace' ? [layoutZone(def('terrace'), cw, def('terrace').baseWidth)]
+      : ctPickArea === 'vip' ? [layoutZone(def('vip'), cw, main.width), layoutZone(def('balcony'), cw, main.width)]
+      : [main];
+    const cnt = ids => ids.reduce((n, id) => n + def(id).tables.reduce((m, tb) => m + ctPlaceInfo(tb.key).n, 0), 0);
+    const tab = (v, label, ids) => [v, `${label}${cnt(ids) ? `<small>${cnt(ids)}</small>` : ''}`];
+    const areas = segControl([tab('hall', 'Зал', ['main']), tab('vip', 'ВИП и балкон', ['vip', 'balcony']), tab('terrace', 'Терраса', ['terrace'])], ctPickArea, 'ctPickSetArea', 'seg-sm ct-areas');
+    const body = zones.map(z => `${zones.length > 1 ? `<div class="ct-zone">${escHtml(z.title)}</div>` : ''}<div class="ct-plan">${ctZoneSvg(z)}</div>`).join('');
+    let bar;
+    if (ctPickSel) {
+      const n = ctCountAt(ctPickSel);
+      bar = `<div class="ct-bar"><div class="ct-bar-t"><b style="font-weight:600">${escHtml(ctPlaceName(ctPickSel))}</b><span>${n ? `уже ${n} ${ruPlural(n, 'кальян', 'кальяна', 'кальянов')} на таймере` : 'кальянов пока нет'}</span></div>
+        <button type="button" class="btn-cta" onclick="ctPickGo()"${ctBusy ? ' disabled' : ''}>Запустить таймер</button></div>`;
+    } else {
+      bar = `<div class="ct-bar"><div class="ct-bar-t none">Нажмите на стол на схеме</div><button type="button" class="btn-cta" disabled>Запустить таймер</button></div>`;
+    }
+    return `${areas}${body}${bar}`;
+  }
+  function ctListHtml() {
+    return HALL_ZONES.map(z => {
       const btns = z.tables.map(tb => {
         const n = ctCountAt(tb.key);
         return `<button type="button" class="ct-pl" data-p="${escHtml(tb.key)}" onclick="ctStart(this.dataset.p)" aria-label="${escHtml(ctPlaceName(tb.key))}">${escHtml(tb.short)}${n ? `<small>уже ${n}</small>` : ''}</button>`;
       }).join('');
       return `<div class="ct-zone">${escHtml(z.title)}</div><div class="ct-places">${btns}</div>`;
     }).join('');
+  }
+  function ctSheetPickRender(force) {
+    const sh = document.getElementById('ctSheet');
+    if (!sh) return;
+    const w = (sh.clientWidth || 390) - 36;
+    const sig = ctPickSignature(w);
+    if (!force && sig === ctPickSigS && sh.firstElementChild) return;   // ничего не изменилось: не трогаем окно (иначе касание между опросами пропадает)
+    ctPickSigS = sig;
+    const plan = ctPickView === 'plan';
+    const modes = segControl([['plan', 'Схема'], ['list', 'Список']], ctPickView, 'ctPickSetView', 'seg-sm ct-modes');
     const top = sh.scrollTop;
-    sh.innerHTML = `<div class="ct-sh-head"><div><div class="ct-sh-title">Кальян вынесен</div><div class="ct-sh-sub">Выберите стол: таймер пойдёт сразу</div></div>
-      <button type="button" class="ct-x" onclick="ctSheetClose()" aria-label="Закрыть">✕</button></div>${zones}`;
+    sh.innerHTML = `<div class="ct-sh-head"><div><div class="ct-sh-title">Кальян вынесен</div><div class="ct-sh-sub">${plan ? 'Выберите стол на схеме и запустите таймер' : 'Выберите стол: таймер пойдёт сразу'}</div></div>
+      <button type="button" class="ct-x" onclick="ctSheetClose()" aria-label="Закрыть">✕</button></div>${modes}${plan ? ctPlanHtml(w) : ctListHtml()}`;
     sh.scrollTop = top;
   }
   function ctOpenOne(id) {
