@@ -1587,6 +1587,41 @@
     .sx-m .tv-rg { padding-left: 2px; padding-right: 2px; }
     .sx-pk { margin: 6px 2px 0; font-size: 11.5px; line-height: 1.45; color: var(--text-muted); }
     .sx-reset { margin-top: 12px; }
+
+    /* ── «Акции на сайте» в Сервисе: список окон с акциями и редактор ── */
+    .prm-card { display: flex; align-items: center; gap: 4px; margin-top: 8px; padding: 4px 8px 4px 4px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); }
+    .prm-card.off .prm-main { opacity: 0.62; }
+    .prm-main { flex: 1; min-width: 0; display: block; padding: 10px 10px; border: 0; background: none; color: var(--text); text-align: left; cursor: pointer; font-family: inherit; border-radius: 12px; }
+    .prm-t { font-size: 15px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .prm-s { margin-top: 3px; font-size: 12px; line-height: 1.4; color: var(--text-muted); }
+    .prm-s.live { color: var(--c-green); }
+    .prm-s.wait { color: var(--accent); }
+    .prm-side { flex: 0 0 auto; display: flex; align-items: center; gap: 4px; }
+    .prm-mv { display: flex; flex-direction: column; gap: 2px; }
+    .prm-mv button { width: 30px; height: 22px; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 8px; background: rgba(var(--fg-rgb),0.06); color: var(--text-sub); cursor: pointer; padding: 0; }
+    .prm-mv button:disabled { opacity: 0.25; cursor: default; }
+    .prm-pv { position: relative; margin-top: 10px; border-radius: 18px; overflow: hidden; background: #20120A; border: 1px solid rgba(184,115,51,.35); touch-action: pan-y; color: #F4E2D1; }
+    .prm-pv.pick { cursor: crosshair; touch-action: none; }
+    .prm-pv.no-img { background: radial-gradient(120% 90% at 50% 0%, rgba(184,115,51,.26), transparent 62%), #20120A; }
+    .prm-pv-bg { position: absolute; inset: -14px; background-size: cover; background-repeat: no-repeat; }
+    .prm-pv-veil { position: absolute; inset: 0; background: #100906; pointer-events: none; }
+    .prm-pv-in { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 250px; padding: 36px 22px 26px; overflow-wrap: anywhere; pointer-events: none; }
+    .prm-pv-k { margin: 0 0 10px; font-size: 10.5px; letter-spacing: 2.4px; text-transform: uppercase; color: #CD8C4F; }
+    .prm-pv-t { margin: 0; font-size: 24px; line-height: 1.15; font-weight: 400; color: #F4E2D1; }
+    .prm-pv-p { margin: 12px 0 0; font-size: 18px; line-height: 1.25; font-weight: 500; color: #E5B07A; }
+    .prm-pv-n { margin: 10px 0 0; max-width: 36ch; font-size: 11.5px; line-height: 1.55; color: #C9A880; }
+    .prm-pv-b { margin-top: 18px; padding: 11px 22px; border-radius: 100px; background: linear-gradient(135deg, #CD8C4F 0%, #B87333 55%, #A6672E 100%); color: #1E1004; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+    .prm-pv-x { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(16,9,6,.82); border: 1px solid rgba(244,226,209,.25); color: #F4E2D1; pointer-events: none; }
+    .prm-pv-e { color: #8A6A52; font-size: 12px; }
+    .prm-two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .prm-two > div { min-width: 0; }
+    .prm-lb { display: block; margin: 0 0 6px 2px; font-size: 11px; color: var(--text-muted); }
+    .prm-days { display: flex; gap: 6px; }
+    .prm-days .chip { flex: 1 1 0; min-width: 0; text-align: center; padding: 9px 0; }
+    .prm-pre { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; }
+    .prm-sub { margin: 12px 0 6px 2px; font-size: 11px; color: var(--text-muted); }
+    .prm-field .form-input { width: 100%; }
+    .prm-warn { margin: 10px 2px 0; padding: 10px 12px; border-radius: 12px; background: rgba(var(--c-amber-rgb, 230,170,60),0.10); font-size: 12px; line-height: 1.5; color: var(--c-amber); }
     .ac-item { margin-top: 10px; padding: 12px 12px 12px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); }
     .ac-item.off { opacity: 0.6; }
     .ac-ih { display: flex; align-items: center; gap: 4px; }
@@ -6050,6 +6085,20 @@ body:has(#deskLeft.role-ok).col-narrow #screen-card { max-width: none; margin-le
   <input type="file" id="sxFile" style="display:none" onchange="sxFileChosen(this.files[0]); this.value='';">
 </div>
 
+<div class="screen" id="screen-promos">
+  <div class="header">
+    <div class="back-btn" onclick="prmBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div><h1 id="prmH1" style="font-size:14px;letter-spacing:1px;">Акции на сайте</h1><p id="prmH2">Окно с акцией при заходе на главную</p></div>
+  </div>
+  <div style="padding:0 16px">
+    <div id="promosContent" style="margin-top:6px"><div class="loading">Загружаю...</div></div>
+    <div style="height:16px"></div>
+  </div>
+  <input type="file" id="prmFile" accept="image/*" style="display:none" onchange="prmFileChosen(this.files[0]); this.value='';">
+</div>
+
 <div class="screen" id="screen-segment-rules">
   <div class="header">
     <div class="back-btn" onclick="srBack()">
@@ -7284,7 +7333,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     { id: 'log',    icon: 'audit',      title: 'Журнал и состояние',    short: 'журнал и состояние',    lead: 'Что менялось и как себя чувствует система',  rows: ['audit', 'status'] }
   ];
   var SVC_LAYOUT = [
-    ['Контент для гостей', ['menu', 'f:app', 'site', 'tv']],
+    ['Контент для гостей', ['menu', 'f:app', 'site', 'promos', 'tv']],
     ['Гости', ['f:rules', 'f:bot']],
     ['Заведение', ['venue', 'f:checks', 'tobacco', 'tips']],
     ['Команда и система', ['f:team', 'f:log']]
@@ -7297,6 +7346,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (can('stories.manage')) add('stories', 'сторис', 'Сторис', 'Фото бара и ВИП-комнат', 'openStoriesEdit()');
     if (can('settings.manage')) add('season', 'сезоны', 'Сезоны', 'Снег, сердечки, розы, Хэллоуин: в приложении и на ТВ', 'openSeason()');
     if (can('site.manage')) add('site', 'сайт', 'Сайт', 'Надписи, фото, видео, размытие и контакты на сайте', 'openSite()');
+    if (can('site.manage')) add('promos', 'акции', 'Акции на сайте', 'Окно с акцией при заходе на сайт: тексты, фото, дни и часы', 'openPromos()');
     if (can('tv.manage')) add('tv', 'тв-экраны', 'ТВ-экраны', 'ВИП-комнаты и терраса: приветствие, фон, сообщения', 'openTv()');
     if (can('tags.manage')) add('tags', 'теги', 'Теги', 'Список, цвета, подсказки', 'openTagsEdit()');
     if (can('settings.manage')) add('autotags', 'автотеги', 'Автотеги', 'Что система отмечает в карточке гостя сама: пороги, цвета, кому показывать', 'openAutotags()');
@@ -7507,7 +7557,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // любой раздел внутри папки или страница этой папки. «Стандарты» из «Сервиса» и «Стандарты» из «Смены» — один экран редактора,
   // различаем по тому, откуда его открыли (stdEditFrom).
   var SVC_SCREENS = {
-    menu: ['menu-edit', 'menu-item-form'], appcontent: ['app-content'], stories: ['stories-edit'], season: ['season'], site: ['site'],
+    menu: ['menu-edit', 'menu-item-form'], appcontent: ['app-content'], stories: ['stories-edit'], season: ['season'], site: ['site'], promos: ['promos'],
     tv: ['tv', 'tv-room'], tags: ['tags-edit', 'tag-form', 'tag-merge'], autotags: ['autotags', 'autotag-edit'], segments: ['segment-rules'],
     cardlevels: ['card-levels'], cardrollout: ['card-rollout'], birthday: ['birthday-text'], reviews: ['review-rules'], surveys: ['surveys-edit', 'survey-form'],
     venue: ['venue'], checklists: ['checklists-edit', 'checklist-form'], standards: [], tobacco: ['tobacco'], tips: ['tips-admin'],
@@ -7631,6 +7681,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     icons.tips = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 17V7h3.2a2.7 2.7 0 010 5.4H10M8.5 14.6h5.2"/></svg>';
     icons.appcontent = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7.5V5h15v2.5"/><path d="M12 5v14"/><path d="M9 19h6"/></svg>';
     icons.site = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.6 4 5.6 4 9s-1.4 6.4-4 9c-2.6-2.6-4-5.6-4-9s1.4-6.4 4-9z"/></svg>';
+    icons.promos = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="14" rx="3"/><path d="M8 10h8M8 14h5"/><path d="M17.2 8.2l.01 0"/></svg>';
     icons.extreviews = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.5s-6.5-5.4-6.5-11a6.5 6.5 0 0113 0c0 5.6-6.5 11-6.5 11z"/><polygon points="12 6.8 13.1 9.1 15.6 9.4 13.8 11.1 14.3 13.6 12 12.4 9.7 13.6 10.2 11.1 8.4 9.4 10.9 9.1"/></svg>';
     homeIcons = icons;
     // Что показывать — решают права сотрудника (основатель выдаёт их галочками на экране «Сотрудники»)
@@ -9584,6 +9635,343 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       sxRender();
     } catch { showToast('Нет связи — не получилось', true); }
     finally { if (sx) sx.busy = false; }
+  }
+
+  // ─── АКЦИИ НА САЙТЕ: окно при заходе на главную («Сервис» → «Акции на сайте») ───────────
+  // Список акций: у каждой выключатель, место в очереди (что выше, то и показывается, если подходят сразу несколько) и расписание.
+  // Редактор акции: тексты, фото с размытием и затемнением, кнопка, даты, дни недели, часы, частота показа. Фото загружается сразу,
+  // остальное уходит кнопкой «Сохранить». Сайт получает подходящую акцию у гостевого сервера при каждом заходе.
+  var prm = null;
+  const PRM_FREQ = [['visit', 'Раз за визит'], ['day', 'Раз в сутки'], ['week', 'Раз в неделю'], ['always', 'При каждом заходе']];
+  const PRM_ACT = [['book', 'Бронь стола'], ['menu', 'Меню'], ['vip', 'ВИП-комнаты'], ['link', 'Своя ссылка'], ['none', 'Без кнопки']];
+  const PRM_LABEL = { book: 'Забронировать', menu: 'Открыть меню', vip: 'Смотреть ВИП-комнаты', link: 'Подробнее', none: '' };
+  const PRM_DAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+  const prmEl = (id) => document.getElementById(id);
+  const prmOf = (id) => prm && prm.data.promos.find(p => p.id === id);
+  const prmCur = () => (prm && prm.open ? prmOf(prm.open) : null);
+  function prmEdOf(p) {                                       // копия того, что правится на экране
+    return { on: !!p.on, name: p.name, kicker: p.kicker, title: p.title, text: p.text, note: p.note,
+      btn: { action: p.btn.action, label: p.btn.label || PRM_LABEL[p.btn.action], url: p.btn.url || '' },
+      sched: { from: p.sched.from || '', to: p.sched.to || '', days: p.sched.days.slice(), tf: p.sched.tf || '', tt: p.sched.tt || '' },
+      freq: p.freq, delay: p.delay, img: p.img ? { blur: p.img.blur, veil: p.img.veil, fx: p.img.fx, fy: p.img.fy } : null };
+  }
+  function prmSig(e) {                                        // то, по чему узнаём, что есть несохранённые правки
+    const n = (v) => sxNorm(v);
+    return JSON.stringify({ on: !!e.on, name: n(e.name), kicker: n(e.kicker), title: n(e.title), text: n(e.text), note: n(e.note),
+      btn: { action: e.btn.action, label: e.btn.action === 'none' ? '' : n(e.btn.label || PRM_LABEL[e.btn.action]), url: e.btn.action === 'link' ? String(e.btn.url || '').trim() : '' },
+      sched: { from: e.sched.from || '', to: e.sched.to || '', days: (e.sched.days.length === 7 ? [] : e.sched.days.slice().sort((a, b) => a - b)), tf: e.sched.tf || '', tt: e.sched.tt || '' },
+      freq: e.freq, delay: Number(e.delay), img: e.img ? [Number(e.img.blur), Number(e.img.veil), Number(e.img.fx), Number(e.img.fy)] : null });
+  }
+  function prmDirty() {
+    const p = prmCur();
+    return !!(p && prm.ed && prmSig(prm.ed) !== prmSig(prmEdOf(p)));
+  }
+  // Как сказать про расписание человеческими словами
+  function prmDaysText(days) {
+    if (!days.length || days.length === 7) return 'каждый день';
+    const d = days.slice().sort((a, b) => a - b);
+    const parts = []; let i = 0;
+    while (i < d.length) {
+      let j = i; while (j + 1 < d.length && d[j + 1] === d[j] + 1) j++;
+      parts.push(j - i >= 2 ? `${PRM_DAYS[d[i] - 1].toLowerCase()}–${PRM_DAYS[d[j] - 1].toLowerCase()}` : d.slice(i, j + 1).map(x => PRM_DAYS[x - 1].toLowerCase()).join(', '));
+      i = j + 1;
+    }
+    return parts.join(', ');
+  }
+  const prmDate = (s) => (s ? `${s.slice(8, 10)}.${s.slice(5, 7)}.${s.slice(0, 4)}` : '');
+  function prmSchedText(s) {
+    const t = [prmDaysText(s.days), s.tf && s.tt ? `${s.tf}–${s.tt}` : 'весь день'];
+    if (s.from && s.to) t.push(`${prmDate(s.from)} – ${prmDate(s.to)}`);
+    else if (s.from) t.push(`с ${prmDate(s.from)}`);
+    else if (s.to) t.push(`до ${prmDate(s.to)}`);
+    return t.join(' · ');
+  }
+
+  async function openPromos() {
+    showScreen('promos');
+    prm = null;
+    prmEl('prmH1').textContent = 'Акции на сайте'; prmEl('prmH2').textContent = 'Окно с акцией при заходе на главную';
+    const el = prmEl('promosContent');
+    el.innerHTML = '<div class="loading">Загружаю...</div>';
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/site-promos?pin=${getPin()}`);
+      if (res.status === 401) { showScreen('pin'); return; }
+      if (res.status === 403) { accessDenied(); return; }
+      if (!res.ok) throw new Error(await responseError(res, 'Не удалось загрузить акции'));
+      const d = await res.json();
+      if (!d || !Array.isArray(d.promos)) throw new Error('Не удалось загрузить акции');
+      prm = { data: d, open: null, ed: null, busy: false };
+      prmRender();
+    } catch (e) {
+      el.innerHTML = errorStateHtml(e.message && e.message !== 'Failed to fetch' ? e.message : 'Нет связи с сервером', 'openPromos()');
+    }
+  }
+  async function prmBack() {
+    if (prm && prm.open) {
+      if (prmDirty() && !await askConfirm('Выйти без сохранения?\n\nИзменения в этой акции пропадут.', { ok: 'Выйти', cancel: 'Остаться', danger: true })) return;
+      prm.open = null; prm.ed = null; prmRender(); window.scrollTo(0, 0);
+      return;
+    }
+    prm = null;
+    showScreen('service');
+  }
+  function prmRender() {
+    const el = prmEl('promosContent');
+    if (!el || !prm) return;
+    if (!prm.open) { prmEl('prmH1').textContent = 'Акции на сайте'; prmEl('prmH2').textContent = 'Окно с акцией при заходе на главную'; el.innerHTML = prmListHtml(); return; }
+    const p = prmCur();
+    if (!p) { prm.open = null; prm.ed = null; return prmRender(); }
+    prmEl('prmH1').textContent = p.name || 'Акция'; prmEl('prmH2').textContent = 'Редактор акции';
+    el.innerHTML = prmEditHtml(p);
+    prmPaint();
+  }
+  // ── список ──
+  function prmListHtml() {
+    const d = prm.data, n = d.promos.length;
+    const rows = d.promos.map((p, i) => {
+      const st = p.showing ? ['live', 'Показывается на сайте сейчас']
+        : p.on ? (p.fits ? ['wait', 'Подходит по времени, но выше есть другая акция'] : ['wait', 'Включена, ждёт своего времени'])
+        : ['', 'Выключена'];
+      const arrow = (dir) => `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${dir < 0 ? '<polyline points="6 15 12 9 18 15"/>' : '<polyline points="6 9 12 15 18 9"/>'}</svg>`;
+      return `<div class="prm-card${p.on ? '' : ' off'}"><button type="button" class="prm-main" onclick="prmOpen('${p.id}')"><div class="prm-t">${escHtml(p.name || p.title || 'Акция')}</div>`
+        + `<div class="prm-s ${st[0]}">${escHtml(st[1])}</div><div class="prm-s">${escHtml(prmSchedText(p.sched))}</div></button>`
+        + `<div class="prm-side"><div class="ax-switch${p.on ? ' on' : ''}" role="switch" aria-checked="${p.on ? 'true' : 'false'}" aria-label="Показывать на сайте" tabindex="0" onclick="prmToggle('${p.id}')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();prmToggle('${p.id}')}"></div>`
+        + `<div class="prm-mv"><button type="button" aria-label="Выше" ${i === 0 ? 'disabled' : ''} onclick="prmMove('${p.id}',-1)">${arrow(-1)}</button><button type="button" aria-label="Ниже" ${i === n - 1 ? 'disabled' : ''} onclick="prmMove('${p.id}',1)">${arrow(1)}</button></div></div></div>`;
+    }).join('');
+    const showing = d.promos.find(p => p.showing);
+    const lead = `Окно с акцией открывается на главной странице сайта. Соберите акцию, задайте дни и часы, включите. Если по расписанию подходят сразу несколько, показывается верхняя в списке. Время московское.`;
+    return `<div class="sx-lead">${lead}</div>`
+      + `<div class="poster-note" style="margin-top:8px">${showing ? `Сейчас на сайте: «${escHtml(showing.name || showing.title)}»` : 'Сейчас на сайте окна нет'}</div>`
+      + rows
+      + (n ? '' : '<div class="poster-note" style="margin-top:10px">Акций пока нет. Нажмите «Новая акция».</div>')
+      + `<div class="vn-save"><button class="btn-cta" id="prmAddBtn" onclick="prmAdd()"${n >= d.max ? ' disabled' : ''}>＋ Новая акция</button></div>`
+      + (n >= d.max ? `<div class="poster-note">Можно держать до ${d.max} акций. Удалите ненужную.</div>` : '');
+  }
+  async function prmCall(method, url, body, fail) {                 // общий вызов сервера; null — не получилось (сообщение уже показано)
+    prm.busy = true;
+    try {
+      const res = await fetch(`${PROXY_BASE}${url}${url.includes('?') ? '&' : '?'}pin=${getPin()}&v=${encodeURIComponent(prm.data.version)}`, {
+        method, headers: body === undefined ? {} : { 'Content-Type': 'application/json' }, body: body === undefined ? undefined : JSON.stringify(body) });
+      if (res.status === 401) { showScreen('pin'); return null; }
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 409) { showToast(data.error || 'Акции только что изменил другой сотрудник', true); prm.busy = false; const o = prm.open; await openPromos(); if (o && prm && prmOf(o)) prmOpen(o); return null; }
+      if (!res.ok) { showToast(data.error || fail, true); return null; }
+      return data;
+    } catch { showToast('Нет связи — не получилось', true); return null; }
+    finally { if (prm) prm.busy = false; }
+  }
+  async function prmAdd() {
+    if (!prm || prm.busy) return;
+    const d = await prmCall('POST', '/api/admin/site-promos', {}, 'Не удалось создать акцию');
+    if (!d) return;
+    prm.data = d; prmOpen(d.id);
+  }
+  async function prmToggle(id) {
+    if (!prm || prm.busy) return;
+    const p = prmOf(id); if (!p) return;
+    const d = await prmCall('PUT', `/api/admin/site-promos/${encodeURIComponent(id)}`, { on: !p.on }, 'Не получилось переключить');
+    if (!d) return;
+    prm.data = d;
+    const np = prmOf(id);
+    showToast(np && np.on ? 'Акция включена: гости увидят её при следующем заходе, когда подойдёт время' : 'Акция выключена');
+    prmRender();
+  }
+  async function prmMove(id, dir) {
+    if (!prm || prm.busy) return;
+    const d = await prmCall('POST', `/api/admin/site-promos/${encodeURIComponent(id)}/move`, { dir }, 'Не получилось сдвинуть');
+    if (!d) return;
+    prm.data = d; prmRender();
+  }
+  function prmOpen(id) {
+    const p = prmOf(id); if (!p) return;
+    prm.open = id; prm.ed = prmEdOf(p); prmRender(); window.scrollTo(0, 0);
+  }
+  // ── редактор ──
+  function prmFieldHtml(key, label, max, long) {
+    const e = prm.ed;
+    const attrs = `id="prmF-${key}" data-k="${key}" maxlength="${max}" oninput="prmIn(this)" autocomplete="off"`;
+    const val = escHtml(e[key] || '');
+    const input = long ? `<textarea class="form-input" rows="2" ${attrs}>${val}</textarea>` : `<input class="form-input" type="text" ${attrs} value="${val}">`;
+    return `<div class="bd-field sx-field prm-field"><div class="bd-fh"><span class="bd-fk">${escHtml(label)}</span><span class="bd-cnt" id="prmC-${key}"></span></div>${input}</div>`;
+  }
+  function prmEditHtml(p) {
+    const e = prm.ed, lim = prm.data.lim;
+    const chips = (list, cur, fn) => `<div class="chip-row">${list.map(([k, l]) => `<div class="chip${cur === k ? ' selected' : ''}" role="button" tabindex="0" onclick="${fn}('${k}')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();${fn}('${k}')}">${escHtml(l)}</div>`).join('')}</div>`;
+    const img = p.img;
+    return `<div class="bd-field"><div class="ax-row"><div>Показывать на сайте<small id="prmOnS"></small></div><div class="ax-switch" id="prmOn" role="switch" tabindex="0" aria-label="Показывать на сайте" onclick="prmSetOn()" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();prmSetOn()}"></div></div></div>`
+      + `<div class="sv-gl">Так увидит гость</div>`
+      + `<div class="sx-lead" style="margin-top:0">Примерный вид: на сайте окно выглядит так же, шрифты чуть другие.${img ? ' Нажмите на фото: эта точка останется в кадре, когда окно будет обрезано по размеру экрана.' : ''}</div>`
+      + `<div class="prm-pv${img ? ' pick' : ' no-img'}" id="prmPv"${img ? ` onpointerdown="prmPick(event)" onpointermove="prmPick(event)"` : ''}><div class="prm-pv-bg" id="prmPvBg" style="display:none"></div><div class="prm-pv-veil" id="prmPvVeil" style="display:none"></div>`
+      + `<div class="prm-pv-x"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></div>`
+      + `<div class="prm-pv-in"><p class="prm-pv-k" id="prmPvK"></p><h3 class="prm-pv-t" id="prmPvT"></h3><p class="prm-pv-p" id="prmPvP"></p><p class="prm-pv-n" id="prmPvN"></p><div class="prm-pv-b" id="prmPvB"></div><div class="prm-pv-e" id="prmPvE"></div></div>`
+      + `<div class="sx-pv-dot" id="prmDot" style="display:none"></div></div>`
+      + `<div class="poster-note" id="prmN"></div>`
+      + `<div class="poster-actions"><button type="button" class="btn-primary" onclick="prmChoose()">${img ? 'Заменить фото' : 'Загрузить фото'}</button>${img ? `<button type="button" class="btn-primary tv-rm" onclick="prmRemovePhoto()">Убрать фото</button>` : ''}</div>`
+      + (img ? `<div class="bd-field" style="padding:2px 0 8px"><div class="tv-rg" style="border-top:0"><div class="tv-rg-h"><span>Размытие</span><b id="prmV-blur"></b></div><input type="range" class="sv-range" id="prmR-blur" min="${prm.data.tune.blur.min}" max="${prm.data.tune.blur.max}" step="1" value="${e.img ? e.img.blur : 0}" oninput="prmTune()"><div class="sv-range-l"><span>чётко</span><span>сильно размыто</span></div></div>`
+        + `<div class="tv-rg"><div class="tv-rg-h"><span>Затемнение</span><b id="prmV-veil"></b></div><input type="range" class="sv-range" id="prmR-veil" min="${prm.data.tune.veil.min}" max="${prm.data.tune.veil.max}" step="1" value="${e.img ? e.img.veil : 45}" oninput="prmTune()"><div class="sv-range-l"><span>светлее</span><span>темнее: текст читается лучше</span></div></div></div>` : `<div class="sx-lead">Без фото окно рисуется на тёмном фоне в цвет сайта.</div>`)
+      + `<div class="sv-gl">Тексты</div>`
+      + `<div class="prm-warn">Цены и скидки на кальяны и табак в акции лучше не писать: реклама табачных изделий в России запрещена.</div>`
+      + prmFieldHtml('kicker', 'Малая надпись над заголовком', lim.kicker, false)
+      + prmFieldHtml('title', 'Заголовок', lim.title, true)
+      + prmFieldHtml('text', 'Крупный текст под заголовком', lim.text, true)
+      + prmFieldHtml('note', 'Мелкая приписка (условия)', lim.note, true)
+      + `<div class="sv-gl">Кнопка</div>`
+      + `<div class="bd-field"><div class="bd-fh"><span class="bd-fk">Что делает кнопка</span></div>${chips(PRM_ACT, e.btn.action, 'prmAct')}`
+      + `<div id="prmBtnMore"></div></div>`
+      + `<div class="sv-gl">Когда показывать</div>`
+      + `<div class="bd-field"><div class="bd-fh"><span class="bd-fk">Дни недели</span></div><div class="prm-days">${PRM_DAYS.map((d, i) => `<div class="chip" id="prmD-${i + 1}" role="button" tabindex="0" onclick="prmDay(${i + 1})" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();prmDay(${i + 1})}">${d}</div>`).join('')}</div>`
+      + `<div class="prm-pre"><button type="button" class="sx-link" onclick="prmDays([])">Каждый день</button><button type="button" class="sx-link" onclick="prmDays([1,2,3,4])">Пн–Чт</button><button type="button" class="sx-link" onclick="prmDays([5,6,7])">Пт–Вс</button><button type="button" class="sx-link" onclick="prmDays([5,6])">Пт–Сб</button></div>`
+      + `<div class="prm-sub">Часы (московское время). Если пусто, акция действует весь день</div>`
+      + `<div class="prm-two"><div><label class="prm-lb" for="prmTf">С</label><input class="form-input" type="time" id="prmTf" value="${escHtml(e.sched.tf)}" oninput="prmTime()"></div><div><label class="prm-lb" for="prmTt">До</label><input class="form-input" type="time" id="prmTt" value="${escHtml(e.sched.tt)}" oninput="prmTime()"></div></div>`
+      + `<div class="sx-fl"><span class="sx-hint">Если время переходит через полночь (22:00–04:00), день недели считается по началу вечера.</span><button type="button" class="sx-link" onclick="prmTimeClear()">Весь день</button></div>`
+      + `<div class="prm-sub">Даты. Если пусто, без ограничений</div>`
+      + `<div class="prm-two"><div><label class="prm-lb" for="prmFrom">С</label><input class="form-input" type="date" id="prmFrom" value="${escHtml(e.sched.from)}" oninput="prmDates()"></div><div><label class="prm-lb" for="prmTo">По (включительно)</label><input class="form-input" type="date" id="prmTo" value="${escHtml(e.sched.to)}" oninput="prmDates()"></div></div>`
+      + `<div class="sx-fl"><span class="sx-hint" id="prmSchedS"></span><button type="button" class="sx-link" onclick="prmDatesClear()">Без дат</button></div></div>`
+      + `<div class="sv-gl">Как часто показывать</div>`
+      + `<div class="bd-field">${chips(PRM_FREQ, e.freq, 'prmFreq')}<div class="sx-fl"><span class="sx-hint" id="prmFreqS"></span></div>`
+      + `<div class="tv-rg" style="padding-left:0;padding-right:0"><div class="tv-rg-h"><span>Показать через</span><b id="prmV-delay"></b></div><input type="range" class="sv-range" id="prmR-delay" min="${prm.data.delay.min}" max="${prm.data.delay.max}" step="1" value="${e.delay}" oninput="prmDelay()"><div class="sv-range-l"><span>сразу</span><span>${prm.data.delay.max} сек</span></div></div></div>`
+      + `<div class="sv-gl">Для вас</div>`
+      + prmFieldHtml('name', 'Название в списке (гости его не видят)', lim.name, false)
+      + `<div class="ckf-tools sx-reset"><button type="button" class="ckf-tool" onclick="prmDelete()">Удалить акцию</button></div>`
+      + `<div class="vn-save" id="prmSaveWrap"><button class="btn-cta" id="prmSaveBtn" onclick="prmSave()">Сохранить</button></div>`;
+  }
+  // Перерисовка живых частей без пересборки экрана: предпросмотр, счётчики, выключатель, кнопка, подписи, «сохранить»
+  function prmPaint() {
+    const p = prmCur(), e = prm && prm.ed; if (!p || !e) return;
+    const lim = prm.data.lim;
+    ['kicker', 'title', 'text', 'note', 'name'].forEach(k => { const c = prmEl('prmC-' + k); if (c) c.textContent = `${(e[k] || '').length} / ${lim[k]}`; });
+    const sw = prmEl('prmOn'); if (sw) { sw.classList.toggle('on', !!e.on); sw.setAttribute('aria-checked', e.on ? 'true' : 'false'); }
+    const os = prmEl('prmOnS');
+    if (os) os.textContent = e.on !== p.on ? 'Нажмите «Сохранить», и изменение вступит в силу'
+      : (p.showing ? 'Сейчас на сайте' : p.on ? (p.fits ? 'Подходит по времени, но выше в списке показывается другая' : 'Включена, ждёт своего времени по расписанию') : 'Выключена: на сайте её нет');
+    // предпросмотр
+    const set = (id, t) => { const el = prmEl(id); if (el) { el.textContent = t; el.style.display = t ? '' : 'none'; } };
+    set('prmPvK', sxNorm(e.kicker)); set('prmPvT', sxNorm(e.title)); set('prmPvP', sxNorm(e.text)); set('prmPvN', sxNorm(e.note));
+    const b = prmEl('prmPvB'); if (b) { const l = e.btn.action === 'none' ? '' : sxNorm(e.btn.label || PRM_LABEL[e.btn.action]); b.textContent = l; b.style.display = l ? '' : 'none'; }
+    const empty = !sxNorm(e.title) && !sxNorm(e.text);
+    const pe = prmEl('prmPvE'); if (pe) { pe.textContent = empty ? 'Заполните заголовок или крупный текст: без них окно не показывается' : ''; pe.style.display = empty ? '' : 'none'; }
+    const pv = prmEl('prmPv'), bg = prmEl('prmPvBg'), vl = prmEl('prmPvVeil'), dot = prmEl('prmDot');
+    if (pv && p.img && e.img) {
+      const w = pv.clientWidth || 340;
+      bg.style.display = ''; bg.style.backgroundImage = `url("${p.img.url}")`; bg.style.backgroundPosition = `${e.img.fx}% ${e.img.fy}%`;
+      bg.style.filter = Number(e.img.blur) ? `blur(${(e.img.blur * w / 560).toFixed(2)}px)` : 'none';
+      vl.style.display = ''; vl.style.opacity = String(e.img.veil / 100);
+      if (dot) { dot.style.display = ''; dot.style.left = e.img.fx + '%'; dot.style.top = e.img.fy + '%'; }
+      const vb = prmEl('prmV-blur'), vv = prmEl('prmV-veil'), rb = prmEl('prmR-blur'), rv = prmEl('prmR-veil');
+      if (vb) vb.textContent = e.img.blur ? e.img.blur + ' px' : 'без размытия';
+      if (vv) vv.textContent = e.img.veil + ' %';
+      if (rb) rangeFill(rb); if (rv) rangeFill(rv);
+    }
+    // кнопка: поля надписи и ссылки
+    const more = prmEl('prmBtnMore');
+    if (more) {
+      const key = e.btn.action + '|' + (e.btn.action === 'link');
+      if (more.dataset.k !== key) {
+        more.dataset.k = key;
+        more.innerHTML = e.btn.action === 'none' ? '<div class="sx-hint" style="margin-top:8px">Останется только крестик: окно просто сообщает об акции.</div>'
+          : `<div class="bd-fh" style="margin-top:12px"><span class="bd-fk">Надпись на кнопке</span><span class="bd-cnt" id="prmC-label"></span></div><input class="form-input" type="text" id="prmF-label" maxlength="${lim.label}" value="${escHtml(e.btn.label)}" placeholder="${escHtml(PRM_LABEL[e.btn.action])}" oninput="prmBtnIn()" autocomplete="off">`
+          + (e.btn.action === 'link' ? `<div class="bd-fh" style="margin-top:12px"><span class="bd-fk">Адрес страницы (начинается с https://)</span></div><input class="form-input" type="url" inputmode="url" id="prmF-url" maxlength="${lim.url}" value="${escHtml(e.btn.url)}" placeholder="https://" oninput="prmBtnIn()" autocomplete="off" autocapitalize="off">` : '');
+      }
+      const lc = prmEl('prmC-label'); if (lc) lc.textContent = `${(e.btn.label || '').length} / ${lim.label}`;
+    }
+    // расписание
+    for (let i = 1; i <= 7; i++) { const c = prmEl('prmD-' + i); if (c) c.classList.toggle('selected', e.sched.days.includes(i)); }
+    const ss = prmEl('prmSchedS');
+    if (ss) ss.textContent = 'Сейчас по расписанию: ' + prmSchedText(Object.assign({}, e.sched, { days: e.sched.days }));
+    const fs = prmEl('prmFreqS');
+    if (fs) fs.textContent = ({ visit: 'Один раз, пока гость не закрыл вкладку.', day: 'Не чаще раза в сутки на одном устройстве.', week: 'Не чаще раза в неделю на одном устройстве.', always: 'Каждый раз, когда открывают главную. Для редких коротких акций.' })[e.freq] + ' Если вы поправите акцию, её покажут заново.';
+    const dv = prmEl('prmV-delay'), dr = prmEl('prmR-delay'); if (dv) dv.textContent = Number(e.delay) ? `${e.delay} сек` : 'сразу'; if (dr) rangeFill(dr);
+    const sb = prmEl('prmSaveWrap'); if (sb) sb.classList.toggle('dirty', prmDirty());
+  }
+  function prmIn(el) { prm.ed[el.dataset.k] = el.value; prmPaint(); }
+  function prmBtnIn() { const l = prmEl('prmF-label'), u = prmEl('prmF-url'); if (l) prm.ed.btn.label = l.value; if (u) prm.ed.btn.url = u.value; prmPaint(); }
+  function prmSetOn() { prm.ed.on = !prm.ed.on; prmPaint(); }
+  function prmAct(a) {
+    const b = prm.ed.btn, oldDef = PRM_LABEL[b.action];
+    if (!sxNorm(b.label) || sxNorm(b.label) === oldDef) b.label = PRM_LABEL[a];
+    b.action = a; prmPaint();
+  }
+  function prmFreq(f) { prm.ed.freq = f; prmEl('promosContent').querySelectorAll('.bd-field .chip-row .chip').forEach(c => { if (/prmFreq\(/.test(c.getAttribute('onclick') || '')) c.classList.toggle('selected', c.getAttribute('onclick') === `prmFreq('${f}')`); }); prmPaint(); }
+  function prmDelay() { prm.ed.delay = Number(prmEl('prmR-delay').value); prmPaint(); }
+  function prmDay(n) { const d = prm.ed.sched.days; const i = d.indexOf(n); if (i >= 0) d.splice(i, 1); else d.push(n); d.sort((a, b) => a - b); prmPaint(); }
+  function prmDays(list) { prm.ed.sched.days = list.slice(); prmPaint(); }
+  function prmTime() { prm.ed.sched.tf = prmEl('prmTf').value; prm.ed.sched.tt = prmEl('prmTt').value; prmPaint(); }
+  function prmTimeClear() { prm.ed.sched.tf = ''; prm.ed.sched.tt = ''; prmEl('prmTf').value = ''; prmEl('prmTt').value = ''; prmPaint(); }
+  function prmDates() { prm.ed.sched.from = prmEl('prmFrom').value; prm.ed.sched.to = prmEl('prmTo').value; prmPaint(); }
+  function prmDatesClear() { prm.ed.sched.from = ''; prm.ed.sched.to = ''; prmEl('prmFrom').value = ''; prmEl('prmTo').value = ''; prmPaint(); }
+  function prmTune() {
+    const e = prm.ed; if (!e.img) return;
+    e.img.blur = Number(prmEl('prmR-blur').value); e.img.veil = Number(prmEl('prmR-veil').value); prmPaint();
+  }
+  function prmPick(ev) {
+    if (ev.type === 'pointermove' && !(ev.buttons & 1)) return;
+    const e = prm.ed, box = prmEl('prmPv'); if (!e || !e.img || !box) return;
+    const r = box.getBoundingClientRect();
+    e.img.fx = Math.round(Math.min(100, Math.max(0, (ev.clientX - r.left) / r.width * 100)));
+    e.img.fy = Math.round(Math.min(100, Math.max(0, (ev.clientY - r.top) / r.height * 100)));
+    try { box.setPointerCapture(ev.pointerId); } catch {}
+    prmPaint();
+  }
+  // ── фото ──
+  const prmNote = (t, warn) => { const n = prmEl('prmN'); if (n) { n.textContent = t || ''; n.classList.toggle('warn', !!warn); } };
+  function prmChoose() { if (prm && !prm.busy && prm.open) prmEl('prmFile').click(); }
+  async function prmFileChosen(file) {
+    if (!file || !prm || !prm.open) return;
+    if (file.type && !file.type.startsWith('image/')) { prmNote('Нужно фото (JPG, PNG)', true); return; }
+    prmNote('Готовлю фото…');
+    let blob;
+    try { blob = (await compressPoster(file, 2000)).blob; } catch { prmNote('Не получилось открыть это фото. Сохраните его как JPG или PNG и выберите снова.', true); return; }
+    const id = prm.open;
+    prm.busy = true; prmNote('Загружаю фото…');
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/admin/site-promos/${encodeURIComponent(id)}/media?pin=${getPin()}&v=${encodeURIComponent(prm.data.version)}`, { method: 'POST', headers: { 'Content-Type': 'image/jpeg' }, body: blob });
+      if (res.status === 401) { showScreen('pin'); return; }
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 409) { showToast(data.error || 'Акции только что изменил другой сотрудник', true); prm.busy = false; await openPromos(); if (prm && prmOf(id)) prmOpen(id); return; }
+      if (!res.ok) { prmNote(data.error || 'Не загрузилось — попробуйте ещё раз', true); return; }
+      const had = prm.ed && prm.ed.img;
+      prm.data = data;
+      const np = prmOf(id); if (!np) { prm.open = null; prmRender(); return; }
+      if (prm.ed) prm.ed.img = np.img ? { blur: had ? had.blur : np.img.blur, veil: had ? had.veil : np.img.veil, fx: 50, fy: 50 } : null;
+      const keep = prm.ed;
+      prmRender(); prm.ed = keep; prmRender();   // экран собирается заново с фото, правки в полях остаются
+      showToast('Фото загружено. Не забудьте нажать «Сохранить», если меняли тексты');
+    } catch { prmNote('Нет связи — фото не загрузилось', true); }
+    finally { if (prm) prm.busy = false; }
+  }
+  async function prmRemovePhoto() {
+    if (!prm || prm.busy || !prm.open) return;
+    if (!await askConfirm('Убрать фото из этой акции?\n\nОкно останется на тёмном фоне в цвет сайта.', { ok: 'Убрать', danger: true })) return;
+    const id = prm.open;
+    const d = await prmCall('DELETE', `/api/admin/site-promos/${encodeURIComponent(id)}/media`, undefined, 'Не получилось убрать фото');
+    if (!d) return;
+    prm.data = d; const keep = prm.ed; if (keep) keep.img = null; prmRender(); prm.ed = keep; prmRender();
+  }
+  // ── сохранить и удалить ──
+  async function prmSave() {
+    if (!prm || !prm.open || prm.busy) return;
+    const e = prm.ed, id = prm.open, btn = prmEl('prmSaveBtn');
+    const body = { on: !!e.on, name: sxNorm(e.name), kicker: sxNorm(e.kicker), title: sxNorm(e.title), text: sxNorm(e.text), note: sxNorm(e.note),
+      btn: { action: e.btn.action, label: sxNorm(e.btn.label), url: String(e.btn.url || '').trim() },
+      sched: { from: e.sched.from || '', to: e.sched.to || '', days: e.sched.days.slice(), tf: e.sched.tf || '', tt: e.sched.tt || '' },
+      freq: e.freq, delay: Number(e.delay), ...(e.img ? { img: e.img } : {}) };
+    if (btn) { btn.disabled = true; btn.textContent = 'Сохраняем...'; }
+    const d = await prmCall('PUT', `/api/admin/site-promos/${encodeURIComponent(id)}`, body, 'Не сохранилось — попробуйте ещё раз');
+    const bb = prmEl('prmSaveBtn'); if (bb) { bb.disabled = false; bb.textContent = 'Сохранить'; }
+    if (!d) return;
+    prm.data = d;
+    const np = prmOf(id); if (!np) { prm.open = null; prmRender(); return; }
+    prm.ed = prmEdOf(np);
+    showToast(np.on ? 'Сохранено. Гости увидят акцию при следующем заходе, когда подойдёт время' : 'Сохранено. Акция выключена, на сайте её нет');
+    prmRender();
+  }
+  async function prmDelete() {
+    if (!prm || !prm.open || prm.busy) return;
+    const p = prmCur(); if (!p) return;
+    if (!await askConfirm(`Удалить акцию «${p.name || p.title || 'без названия'}»?\n\nОна пропадёт с сайта вместе с фото. Вернуть её будет нельзя.`, { ok: 'Удалить', danger: true })) return;
+    const d = await prmCall('DELETE', `/api/admin/site-promos/${encodeURIComponent(p.id)}`, undefined, 'Не получилось удалить');
+    if (!d) return;
+    prm.data = d; prm.open = null; prm.ed = null; showToast('Акция удалена'); prmRender(); window.scrollTo(0, 0);
   }
 
   // ─── АДМИН: ПРОБЛЕМЫ ───────────────────────────
@@ -23956,8 +24344,8 @@ ${escHtml(gmDrafts[m.id] || '')}</textarea>
 
   // ─── NAVIGATION ────────────────────────────────
 
-  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'journey', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'svforms', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'card-levels', 'card-rollout', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'app-content', 'site', 'tobacco', 'coaltimer', 'tips-mine', 'tips-admin', 'xr', 'xr-edit', 'xr-tpl', 'dashboard', 'autotags', 'autotag-edit'];
-  var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'app-content', 'site', 'tips-mine', 'tips-admin', 'xr-edit', 'xr-tpl', 'autotag-edit', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklist-form'];
+  const screens = ['pin', 'access', 'home', 'card', 'new-guest', 'visit', 'birthdays', 'problems', 'founder-tasks', 'bookings', 'booking-detail', 'add-booking', 'events', 'add-event', 'recent-guests', 'guests-by-status', 'inactive-guests', 'report-problem', 'shifts', 'enps', 'schedule', 'add-shift', 'stoplist', 'briefing', 'forecast', 'journey', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklists-edit', 'checklist-form', 'guests-table', 'marketing', 'svforms', 'analytics', 'feedback', 'segments', 'duplicates', 'employees', 'employee-form', 'menu-edit', 'menu-item-form', 'candidates', 'service', 'stories-edit', 'surveys-edit', 'survey-form', 'tags-edit', 'tag-form', 'tag-merge', 'system-status', 'audit', 'review-rules', 'segment-rules', 'card-levels', 'card-rollout', 'season', 'venue', 'birthday-text', 'messages', 'tv', 'tv-room', 'app-content', 'site', 'promos', 'tobacco', 'coaltimer', 'tips-mine', 'tips-admin', 'xr', 'xr-edit', 'xr-tpl', 'dashboard', 'autotags', 'autotag-edit'];
+  var NARROW_SCREENS = ['pin', 'access', 'card', 'visit', 'new-guest', 'booking-detail', 'add-booking', 'add-event', 'add-shift', 'employee-form', 'survey-form', 'tag-form', 'tag-merge', 'menu-item-form', 'report-problem', 'birthday-text', 'app-content', 'site', 'promos', 'tips-mine', 'tips-admin', 'xr-edit', 'xr-tpl', 'autotag-edit', 'standards', 'standards-edit', 'standard-form', 'standard-progress', 'shift-check', 'checklist-form'];
   // «card» остаётся в списке: на узком окне это колонка; на широком её растягивает правило «#screen-card» в wide-css, а две колонки включает container-запрос
   var screenScroll = {};     // где была прокрутка на экране — чтобы вернуться туда же
   var cardReturn = null;     // откуда открыли карточку гостя — туда и «назад»
@@ -28474,7 +28862,7 @@ function qrPlateSvg(text) {
         dyn: function () { return typeof svcRailItems === 'function' ? svcRailItems() : []; },
         extra: ['service', 'employees', 'employee-form', 'stories-edit', 'surveys-edit', 'survey-form', 'tv', 'tv-room', 'tags-edit', 'tag-form', 'tag-merge', 'audit', 'venue',
                 'birthday-text', 'segment-rules', 'card-levels', 'card-rollout', 'autotags', 'autotag-edit', 'season', 'tips-admin', 'review-rules', 'system-status', 'menu-edit', 'menu-item-form', 'candidates',
-                'checklists-edit', 'checklist-form', 'tobacco', 'app-content', 'site'], items: [] }
+                'checklists-edit', 'checklist-form', 'tobacco', 'app-content', 'site', 'promos'], items: [] }
     ];
     // Пункты группы: у «Сервиса» они зависят от прав и плашек и собираются каждый раз заново, у остальных — готовый список
     function itemsOf(g) { return g.dyn ? g.dyn() : g.items; }
