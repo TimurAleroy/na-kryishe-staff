@@ -564,6 +564,10 @@
     .ct-foot { margin: 20px 2px 8px; font-size: 12.5px; line-height: 1.55; color: var(--text-muted); }
     .ct-cfg { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-bottom: 8px; color: var(--text-sub); font-size: 13px; }
     .ct-cfg .form-input { width: 76px; padding: 9px 10px; text-align: center; }
+    /* число с кнопками «больше / меньше» приложения (.num-field, stepNum) вместо белых системных стрелок браузера */
+    .ct-cfg > span:first-child { flex: 0 0 auto; min-width: 132px; }   /* подписи разной длины: поля стоят на одной вертикали */
+    .ct-cfg .num-field { flex: 0 0 auto; width: 100px; }
+    .ct-cfg .num-field .form-input { width: 100%; height: 44px; box-sizing: border-box; padding: 0 42px 0 12px; }
     .ct-cfg .tb-btn { flex: 0 0 auto; padding: 10px 16px; }
     .ct-ov { position: fixed; inset: 0; z-index: 390; background: rgba(10,5,0,0.62); backdrop-filter: blur(4px); display: none; align-items: flex-end; justify-content: center; }
     .ct-ov.show { display: flex; animation: dlgFade .15s ease; }
@@ -26283,6 +26287,11 @@ function qrPlateSvg(text) {
     ctRenderStat();
   }
   // Настройка интервала — только у основателя; остальные её не видят
+  // Поле числа с нашими кнопками вверх/вниз (те же .num-field / .num-steps / stepNum, что в форме брони)
+  function ctNumField(id, value, min, max, label) {
+    const arrow = pts => `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="${pts}"/></svg>`;
+    return `<div class="num-field"><input class="form-input" id="${id}" type="number" inputmode="numeric" min="${min}" max="${max}" value="${value}" aria-label="${label}"><div class="num-steps"><button type="button" tabindex="-1" aria-label="Больше" onclick="stepNum(this,1)">${arrow('6 15 12 9 18 15')}</button><button type="button" tabindex="-1" aria-label="Меньше" onclick="stepNum(this,-1)">${arrow('6 9 12 15 18 9')}</button></div></div>`;
+  }
   function ctRenderCfg() {
     const el = document.getElementById('ctCfg');
     if (!el || !ctData) return;
@@ -26290,8 +26299,8 @@ function qrPlateSvg(text) {
     if (sig === ctCfgSig) return;
     ctCfgSig = sig;
     el.innerHTML = ctData.canConfigure ? `<div class="ct-zone">Настройка · для основателя</div>
-      <div class="ct-cfg"><span>Менять угли каждые</span><input class="form-input" id="ctCfgMin" type="number" inputmode="numeric" min="1" max="180" value="${ctData.intervalMinutes}" aria-label="Минут между заменами"><span>мин</span></div>
-      <div class="ct-cfg"><span>Предупредить за</span><input class="form-input" id="ctCfgWarn" type="number" inputmode="numeric" min="0" max="179" value="${ctData.warnMinutes}" aria-label="За сколько минут предупредить"><span>мин</span><button type="button" class="tb-btn ok" onclick="ctSaveCfg()">Сохранить</button></div>
+      <div class="ct-cfg"><span>Менять угли каждые</span>${ctNumField('ctCfgMin', ctData.intervalMinutes, 1, 180, 'Минут между заменами')}<span>мин</span></div>
+      <div class="ct-cfg"><span>Предупредить за</span>${ctNumField('ctCfgWarn', ctData.warnMinutes, 0, 179, 'За сколько минут предупредить')}<span>мин</span><button type="button" class="tb-btn ok" onclick="ctSaveCfg()">Сохранить</button></div>
       <div class="ct-foot" style="margin-top:0">Действует сразу на все кальяны на таймере.</div>` : '';
   }
   async function ctSaveCfg() {
