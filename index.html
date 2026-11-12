@@ -578,7 +578,12 @@
     .ct-places { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
     .ct-pl { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 56px; padding: 10px 6px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text); font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; }
     .ct-pl:active { filter: brightness(1.2); }
-    .ct-pl small { font-size: 11.5px; font-weight: 400; color: var(--text-sub); }
+    .ct-pl { position: relative; }
+    .ct-pl.ct-has { border-color: var(--ct-c); }
+    .ct-pl.ct-has.ct-s-soon { background: linear-gradient(rgba(224,160,96,0.12), rgba(224,160,96,0.12)), var(--bg-card); }
+    .ct-pl.ct-has.ct-s-over { background: linear-gradient(rgba(229,112,92,0.16), rgba(229,112,92,0.16)), var(--bg-card); }
+    /* Значок «сколько кальянов на месте» — как на схеме: круг с числом в правом верхнем углу, цвет по самому срочному кальяну */
+    .ct-pbadge { position: absolute; top: -7px; right: -7px; min-width: 20px; height: 20px; padding: 0 5px; box-sizing: border-box; border-radius: 10px; border: 2px solid var(--bg-pop); background: var(--ct-c); color: #1B0F08; font-size: 11px; font-weight: 600; line-height: 16px; text-align: center; font-variant-numeric: tabular-nums; }
     .ct-big { display: flex; justify-content: center; margin: 4px 0 8px; }
     .ct-big .ct-ring { width: 200px; }
     .ct-big .ct-time { font-size: 46px; }
@@ -26430,8 +26435,8 @@ function qrPlateSvg(text) {
   function ctListHtml() {
     return HALL_ZONES.map(z => {
       const btns = z.tables.map(tb => {
-        const n = ctCountAt(tb.key);
-        return `<button type="button" class="ct-pl" data-p="${escHtml(tb.key)}" onclick="ctStart(this.dataset.p)" aria-label="${escHtml(ctPlaceName(tb.key))}">${escHtml(tb.short)}${n ? `<small>уже ${n}</small>` : ''}</button>`;
+        const info = ctPlaceInfo(tb.key), n = info.n;
+        return `<button type="button" class="ct-pl${n ? ' ct-has ct-s-' + info.worst : ''}" data-p="${escHtml(tb.key)}" onclick="ctStart(this.dataset.p)" aria-label="${escHtml(ctPlaceName(tb.key) + (n ? `, уже ${n} на таймере` : ''))}">${escHtml(tb.short)}${n ? `<span class="ct-pbadge" aria-hidden="true">${n}</span>` : ''}</button>`;
       }).join('');
       return `<div class="ct-zone">${escHtml(z.title)}</div><div class="ct-places">${btns}</div>`;
     }).join('');
