@@ -11696,6 +11696,29 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (warn) { const w = venueWarnText(dateVal, timeVal); warn.textContent = w; warn.style.display = w ? 'block' : 'none'; }
   }
 
+  // Только сервер знает самую свежую занятость стола. При 409 ничего ещё не записано.
+  // После явного согласия сотрудника повторяем тот же запрос с force=true.
+  async function sendBookingWithTableConfirmation(path, payload, confirmLabel) {
+    let force = false;
+    for (let n = 0; n < 2; n++) {
+      const res = await fetch(`${PROXY_BASE}${path}?pin=${getPin()}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), ...payload, force })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 409 && data.needConfirm && !force) {
+        const yes = await askConfirm(`${data.error || 'Стол уже назначен на этот вечер.'}\n\nПодтвердить назначение несмотря на конфликт?`,
+          { ok: confirmLabel });
+        if (!yes) return { cancelled: true };
+        force = true;
+        continue;
+      }
+      return { res, data, confirmed: force };
+    }
+    return { cancelled: true };
+  }
+
   async function submitAddBooking() {
     const name = document.getElementById('abName').value.trim();
     const phone = document.getElementById('abPhone').value.trim();
@@ -11709,35 +11732,21 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (!phone || phone.replace(/\D/g, '').length !== 11) { notify('Телефон гостя — 11 цифр: +7 и ещё 10'); return; }
     if (!dateVal || !timeVal) { notify('Укажите дату и время'); return; }
     if (abPicked && abPicked.nonGrata && !await askConfirm(`«${abPicked.name}» в списке «нон-грата».\n\nВсё равно записать бронь?`, { ok: 'Записать' })) return;
-    let knownTableConflict = false;
-
-    // Финальная проверка конфликта прямо перед созданием — не полагаемся
-    // только на подсказку в списке (вдруг сотрудник не заметил, дата
-    // сменилась после открытия формы и т.п.).
-    if (tableVal) {
-      const occ = getOccupiedTablesForDate(`${dateVal}T${timeVal}`, null)[tableVal];
-      knownTableConflict = !!occ;
-      if (occ && !await askConfirm(`Стол «${tableVal}» уже занят бронью ${occ.name}${occ.time ? ' на ' + occ.time : ''}.\n\nВсё равно создать бронь на этот стол?`, { ok: 'Создать' })) {
-        return;
-      }
-    }
+    // Подсказка о занятости уже есть в форме; окончательное подтверждение — по свежему ответу сервера.
 
     const btn = document.getElementById('abSubmitBtn');
     btn.disabled = true;
     btn.textContent = 'Создаём...';
     try {
-      const res = await fetch(`${PROXY_BASE}/api/staff/bookings/add?pin=${getPin()}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          pin: getPin(), name, phone, dateISO: dateVal, time: timeVal,
-          guests: guestsVal, comment: commentVal, table: tableVal
-        })
-      });
-      const data = await res.json();
+      const outcome = await sendBookingWithTableConfirmation('/api/staff/bookings/add', {
+        name, phone, dateISO: dateVal, time: timeVal,
+        guests: guestsVal, comment: commentVal, table: tableVal
+      }, 'Создать');
+      if (outcome.cancelled) return;
+      const { res, data } = outcome;
       if (!res.ok) { notify(data.error || 'Не удалось создать бронь'); return; }
       await openBookings();
-      if (data.tableWarning && !knownTableConflict) showToast(data.tableWarning, true);
+      if (outcome.confirmed) showToast('Бронь создана с подтверждённым конфликтом столов', true);
     } catch {
       notify('Не удалось создать бронь');
     } finally {
@@ -12221,25 +12230,22 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   async function assignTableToBooking(b, table, opts) {
     opts = opts || {};
     if (table) {
-      const occ = getOccupiedTablesForDate(b.iso || '', b.entry)[table];
-      if (occ && !await askConfirm(`${vipNo(table) ? tableTitle(table) + ' уже занята' : `Стол «${table}» уже занят`} бронью ${occ.name}${occ.time ? ' на ' + occ.time : ''}.\n\nВсё равно посадить сюда?`, { ok: 'Посадить' })) return false;
-      if (occ) opts.knownConflict = true; // сотрудник уже предупреждён и согласился — второй раз не напоминаем
+      // На сервере проверяем актуальные брони и запрашиваем подтверждение только при реальном конфликте.
       const hall = hallTableFor(table);
       const guests = Number(b.guests) || 0;
       if (opts.checkSeats && hall && hall.seats && guests > hall.seats &&
           !await askConfirm(`${hallSeatsWhere(hall)} ${hall.seats} ${ruPlural(hall.seats, 'место', 'места', 'мест')}, а гостей ${guests}.\n\nВсё равно посадить сюда?`, { ok: 'Посадить' })) return false;
     }
-    const res = await fetch(`${PROXY_BASE}/api/staff/bookings/table?pin=${getPin()}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ pin: getPin(), phone: b.phone, entry: b.entry, table })
-    });
-    const data = await res.json().catch(() => ({}));
+    const outcome = await sendBookingWithTableConfirmation('/api/staff/bookings/table',
+      { phone: b.phone, entry: b.entry, table }, 'Назначить');
+    if (outcome.cancelled) return false;
+    const { res, data } = outcome;
     if (!res.ok) { notify(data.error || 'Не удалось сохранить стол'); return false; }
     b.table = table;
     if (data.newEntry) b.entry = data.newEntry;
     // сервер видит все брони (в том числе те, что другой администратор внёс секунду назад) — показываем его предупреждение
-    if (data.tableWarning && !opts.knownConflict) showToast(data.tableWarning, true);
+    if (outcome.confirmed) showToast('Назначение стола при конфликте подтверждено', true);
+    else if (data.tableWarning) showToast(data.tableWarning, true);
     return true;
   }
 
@@ -12637,12 +12643,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     const saveBtn = document.getElementById('bkEditSaveBtn');
     if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Сохраняем...'; }
     try {
-      const res = await fetch(`${PROXY_BASE}/api/staff/bookings/edit?pin=${getPin()}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: getPin(), phone: b.phone, entry: b.entry, dateISO: dateVal, time: timeVal, guests: guestsVal, comment: commentVal })
-      });
-      const data = await res.json();
+      const outcome = await sendBookingWithTableConfirmation('/api/staff/bookings/edit', {
+        phone: b.phone, entry: b.entry, dateISO: dateVal, time: timeVal,
+        guests: guestsVal, comment: commentVal
+      }, 'Перенести');
+      if (outcome.cancelled) return;
+      const { res, data } = outcome;
       if (!res.ok) { notify(data.error || 'Не удалось сохранить'); return; }
       const oldDay = bookingVenueDay(b.iso);
       b.entry = data.newEntry;

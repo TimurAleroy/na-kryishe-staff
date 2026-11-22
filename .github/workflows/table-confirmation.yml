@@ -1,0 +1,22 @@
+name: Booking table conflict - staff UI
+
+on:
+  push:
+    branches:
+      - fix/booking-table-conflict-confirmation-20261122
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ui-confirmation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check UI syntax and confirmation flows
+        run: node --test test/table-confirmation.test.js
